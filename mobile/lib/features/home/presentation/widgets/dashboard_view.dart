@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/models/live_queue.dart';
 import '../../../../core/models/recommended_doctor.dart';
 import '../../../../core/models/specialty.dart';
+import '../../../live_queue/domain/entities/patient_queue_snapshot.dart';
+import '../../../live_queue/domain/entities/queue_types.dart';
+import '../../../live_queue/live_queue_feature.dart';
 import 'dashboard_header.dart';
 import 'dashboard_search_bar.dart';
 import 'live_queue_card.dart';
@@ -73,30 +75,49 @@ class DashboardView extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           LiveQueueCard(
-            queue: const LiveQueue(
-              doctorName: 'Dr. Ahmed Hassan',
-              specialty: 'Dentist',
-              currentPatientNumber: 18,
-              patientNumber: 23,
+            queue: PatientQueueSnapshot(
+              sessionId: 'session-duhok-01',
+              queueEntryId: 'entry-patient-23',
+              queueVersion: 12,
+              careProviderDisplayName: 'Dr. Ahmed Hassan',
+              serviceDisplayName: 'Dentistry',
+              anonymousCurrentToken: '18',
+              patientNumber: '23',
               patientsAhead: 4,
-              estimatedWaitMinutes: 26,
-              doctorDelayMinutes: 8,
+              estimatedWaitLowerMinutes: 21,
+              estimatedWaitUpperMinutes: 29,
+              estimateConfidence: QueueEstimateConfidence.medium,
+              doctorTimingMinutes: 8,
+              patientStatus: PatientQueueStatus.expected,
+              sessionStatus: QueueSessionStatus.open,
+              lastUpdatedAt: DateTime.now(),
+              remoteWaitingAllowed: true,
+              allowedActions: const {
+                PatientQueueAction.onMyWay,
+                PatientQueueAction.arrived,
+              },
+              guidanceMessage: 'Relax, no need to leave yet.',
             ),
             labels: const LiveQueueLabels(
               title: 'Live queue',
               live: 'LIVE',
               currentPatient: 'Current patient',
-              youAre: 'You are',
+              youAre: 'Your Number',
               patientsAhead: 'Patients ahead',
               estimatedWait: 'Estimated wait',
-              doctorDelay: 'Doctor delay',
+              doctorDelay: 'Doctor status',
               minutes: 'min',
               action: 'View live queue',
               semanticSummary:
-                  'Live queue. Current patient 18. You are 23. '
-                  '4 patients ahead. Estimated wait 26 minutes. Doctor delay 8 minutes.',
+                  'Live queue. Now serving 18. Your number is 23. '
+                  '4 patients ahead. Estimated wait 21 to 29 minutes.',
             ),
-            onActionPressed: () {},
+            onActionPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) =>
+                    const LiveQueueFeature(queueEntryId: 'entry-patient-23'),
+              ),
+            ),
           ),
           const SizedBox(height: 30),
           PopularSpecialtiesSection(

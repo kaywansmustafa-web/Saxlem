@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/models/live_queue.dart';
+import '../../../live_queue/domain/entities/patient_queue_snapshot.dart';
 
 class LiveQueueLabels {
   const LiveQueueLabels({
@@ -36,7 +36,7 @@ class LiveQueueCard extends StatelessWidget {
     super.key,
   });
 
-  final LiveQueue queue;
+  final PatientQueueSnapshot queue;
   final LiveQueueLabels labels;
   final VoidCallback? onActionPressed;
 
@@ -92,7 +92,7 @@ class LiveQueueCard extends StatelessWidget {
 class _QueueHeader extends StatelessWidget {
   const _QueueHeader({required this.queue, required this.labels});
 
-  final LiveQueue queue;
+  final PatientQueueSnapshot queue;
   final LiveQueueLabels labels;
 
   @override
@@ -138,7 +138,7 @@ class _QueueHeader extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               Text(
-                '${queue.doctorName} · ${queue.specialty}',
+                '${queue.careProviderDisplayName} · ${queue.serviceDisplayName}',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(color: onPrimary.withValues(alpha: 0.76)),
@@ -156,7 +156,7 @@ class _QueueHeader extends StatelessWidget {
 class _QueueNumbers extends StatelessWidget {
   const _QueueNumbers({required this.queue, required this.labels});
 
-  final LiveQueue queue;
+  final PatientQueueSnapshot queue;
   final LiveQueueLabels labels;
 
   @override
@@ -167,7 +167,7 @@ class _QueueNumbers extends StatelessWidget {
         Expanded(
           child: _QueueNumber(
             label: labels.currentPatient,
-            value: '${queue.currentPatientNumber}',
+            value: queue.anonymousCurrentToken ?? '—',
             color: onPrimary,
           ),
         ),
@@ -179,7 +179,7 @@ class _QueueNumbers extends StatelessWidget {
         Expanded(
           child: _QueueNumber(
             label: labels.youAre,
-            value: '${queue.patientNumber}',
+            value: queue.patientNumber,
             color: onPrimary,
           ),
         ),
@@ -218,7 +218,7 @@ class _QueueNumber extends StatelessWidget {
 class _QueueMetrics extends StatelessWidget {
   const _QueueMetrics({required this.queue, required this.labels});
 
-  final LiveQueue queue;
+  final PatientQueueSnapshot queue;
   final LiveQueueLabels labels;
 
   @override
@@ -227,12 +227,12 @@ class _QueueMetrics extends StatelessWidget {
       (labels.patientsAhead, '${queue.patientsAhead}', Icons.groups_rounded),
       (
         labels.estimatedWait,
-        '${queue.estimatedWaitMinutes} ${labels.minutes}',
+        '${queue.estimatedWaitLowerMinutes}–${queue.estimatedWaitUpperMinutes} ${labels.minutes}',
         Icons.schedule_rounded,
       ),
       (
         labels.doctorDelay,
-        '${queue.doctorDelayMinutes} ${labels.minutes}',
+        _doctorStatus(queue.doctorTimingMinutes),
         Icons.history_rounded,
       ),
     ];
@@ -259,6 +259,12 @@ class _QueueMetrics extends StatelessWidget {
         );
       },
     );
+  }
+
+  String _doctorStatus(int minutes) {
+    if (minutes.abs() <= 2) return 'On time';
+    if (minutes > 0) return '$minutes ${labels.minutes} late';
+    return '${minutes.abs()} ${labels.minutes} early';
   }
 }
 
