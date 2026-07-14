@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../config/theme/app_colors.dart';
 import '../widgets/dashboard_header.dart';
+import '../widgets/dashboard_search_bar.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -13,9 +14,19 @@ class HomePage extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
-          child: DashboardHeader(
-            userName: 'Kaywan',
-            onNotificationPressed: () {},
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              DashboardHeader(
+                userName: 'Kaywan',
+                onNotificationPressed: () {},
+              ),
+              const SizedBox(height: 28),
+              DashboardSearchBar(
+                onTap: () {},
+                onFilterPressed: () {},
+              ),
+            ],
           ),
         ),
       ),
