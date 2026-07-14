@@ -6,11 +6,12 @@ class BookingSuccessPage extends StatelessWidget {
   const BookingSuccessPage({
     required this.confirmation,
     required this.onViewDoctor,
+    required this.onMyAppointments,
     required this.onReturnHome,
     super.key,
   });
   final BookingConfirmation confirmation;
-  final VoidCallback onViewDoctor, onReturnHome;
+  final VoidCallback onViewDoctor, onMyAppointments, onReturnHome;
   @override
   Widget build(BuildContext context) {
     const copy = BookingCopy();
@@ -60,14 +61,16 @@ class BookingSuccessPage extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           FilledButton(
+            onPressed: onMyAppointments,
+            child: const Text('Go to My Appointments'),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton(
             onPressed: onViewDoctor,
             child: const Text('View Doctor'),
           ),
           const SizedBox(height: 10),
-          OutlinedButton(
-            onPressed: onReturnHome,
-            child: const Text('Return Home'),
-          ),
+          TextButton(onPressed: onReturnHome, child: const Text('Return Home')),
         ],
       ),
     );

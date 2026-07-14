@@ -5,6 +5,7 @@ import '../../domain/entities/booking_clinic_option.dart';
 import '../../domain/entities/booking_doctor_reference.dart';
 import '../../domain/entities/booking_draft.dart';
 import '../../domain/entities/booking_types.dart';
+import '../../domain/entities/booking_confirmation.dart';
 import '../../domain/repositories/booking_repository.dart';
 import '../../domain/use_cases/confirm_booking.dart';
 import '../../domain/use_cases/create_booking_quote.dart';
@@ -19,12 +20,14 @@ class BookingController extends ChangeNotifier {
     required this.getAvailability,
     required this.createQuote,
     required this.confirmBooking,
+    this.onConfirmed,
   });
   final BookingDoctorReference doctor;
   final GetDoctorClinics getClinics;
   final GetBookingAvailability getAvailability;
   final CreateBookingQuote createQuote;
   final ConfirmBooking confirmBooking;
+  final Future<void> Function(BookingConfirmation confirmation)? onConfirmed;
   BookingState state = const BookingLoading();
   bool confirming = false;
   BookingClinicOption? clinic;
@@ -100,9 +103,12 @@ class BookingController extends ChangeNotifier {
     state = BookingConfirming(current.quote);
     notifyListeners();
     try {
-      state = BookingSuccess(
-        await confirmBooking(current.quote, 'confirm-${current.quote.id}'),
+      final confirmation = await confirmBooking(
+        current.quote,
+        'confirm-${current.quote.id}',
       );
+      await onConfirmed?.call(confirmation);
+      state = BookingSuccess(confirmation);
     } on SlotUnavailableException {
       state = const BookingSlotUnavailable('That time is no longer available.');
     } catch (_) {

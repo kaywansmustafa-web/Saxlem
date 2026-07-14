@@ -5,6 +5,7 @@ import '../../../../shared/widgets/navigation/saxlem_bottom_navigation.dart';
 import '../widgets/dashboard_view.dart';
 import '../../../discover/discover_feature.dart';
 import '../../../discover/domain/entities/doctor_search_criteria.dart';
+import '../../../appointments/appointments_feature.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -50,7 +51,7 @@ class _HomePageState extends State<HomePage> {
               focusSearch: _focusDiscover,
               openFilters: _openDiscoverFilters,
             ),
-            const _PlaceholderTab(title: 'Appointments'),
+            const AppointmentsFeature(),
             const _PlaceholderTab(title: 'Alerts'),
             const _PlaceholderTab(title: 'Profile'),
           ],

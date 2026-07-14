@@ -11,18 +11,15 @@ class LanguageSelectionScreen extends StatefulWidget {
       _LanguageSelectionScreenState();
 }
 
-class _LanguageSelectionScreenState
-    extends State<LanguageSelectionScreen> {
+class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   String? selectedLanguage;
 
   void _continueToHome() {
     if (selectedLanguage == null) return;
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => const HomePage(),
-      ),
-    );
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (_) => const HomePage()));
   }
 
   @override
@@ -82,8 +79,7 @@ class _LanguageSelectionScreenState
               ),
               const Spacer(),
               ElevatedButton(
-                onPressed:
-                    selectedLanguage == null ? null : _continueToHome,
+                onPressed: selectedLanguage == null ? null : _continueToHome,
                 child: const Text('Continue'),
               ),
             ],
@@ -120,16 +116,11 @@ class _LanguageCard extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOut,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 18,
-            vertical: 18,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: isSelected
-                  ? AppColors.primary
-                  : AppColors.border,
+              color: isSelected ? AppColors.primary : AppColors.border,
               width: isSelected ? 1.5 : 1,
             ),
           ),
@@ -139,16 +130,12 @@ class _LanguageCard extends StatelessWidget {
                 width: 42,
                 height: 42,
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.primary
-                      : AppColors.background,
+                  color: isSelected ? AppColors.primary : AppColors.background,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.language_rounded,
-                  color: isSelected
-                      ? AppColors.white
-                      : AppColors.primary,
+                  color: isSelected ? AppColors.white : AppColors.primary,
                   size: 22,
                 ),
               ),
@@ -159,10 +146,9 @@ class _LanguageCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge
-                          ?.copyWith(fontSize: 17),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleLarge?.copyWith(fontSize: 17),
                     ),
                     const SizedBox(height: 3),
                     Text(

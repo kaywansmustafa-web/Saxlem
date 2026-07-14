@@ -46,16 +46,11 @@ class SaxlemBottomNavigation extends StatelessWidget {
       top: false,
       child: Container(
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 8,
-          vertical: 8,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: AppColors.border,
-          ),
+          border: Border.all(color: AppColors.border),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.08),
@@ -65,21 +60,18 @@ class SaxlemBottomNavigation extends StatelessWidget {
           ],
         ),
         child: Row(
-          children: List.generate(
-            _items.length,
-            (index) {
-              final item = _items[index];
-              final isSelected = selectedIndex == index;
+          children: List.generate(_items.length, (index) {
+            final item = _items[index];
+            final isSelected = selectedIndex == index;
 
-              return Expanded(
-                child: _NavigationItem(
-                  item: item,
-                  isSelected: isSelected,
-                  onTap: () => onItemSelected(index),
-                ),
-              );
-            },
-          ),
+            return Expanded(
+              child: _NavigationItem(
+                item: item,
+                isSelected: isSelected,
+                onTap: () => onItemSelected(index),
+              ),
+            );
+          }),
         ),
       ),
     );
@@ -109,10 +101,7 @@ class _NavigationItem extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 4,
-            vertical: 8,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
           decoration: BoxDecoration(
             color: isSelected
                 ? AppColors.primary.withValues(alpha: 0.10)
@@ -140,8 +129,7 @@ class _NavigationItem extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: 10,
-                  fontWeight:
-                      isSelected ? FontWeight.w700 : FontWeight.w500,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                   color: isSelected
                       ? AppColors.primary
                       : AppColors.textSecondary,

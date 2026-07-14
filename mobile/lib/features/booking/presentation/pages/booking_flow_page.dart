@@ -12,11 +12,12 @@ class BookingFlowPage extends StatelessWidget {
   const BookingFlowPage({
     required this.controller,
     required this.onViewDoctor,
+    required this.onMyAppointments,
     required this.onReturnHome,
     super.key,
   });
   final BookingController controller;
-  final VoidCallback onViewDoctor, onReturnHome;
+  final VoidCallback onViewDoctor, onMyAppointments, onReturnHome;
   @override
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: AppColors.background,
@@ -82,6 +83,7 @@ class BookingFlowPage extends StatelessWidget {
     BookingSuccess(:final confirmation) => BookingSuccessPage(
       confirmation: confirmation,
       onViewDoctor: onViewDoctor,
+      onMyAppointments: onMyAppointments,
       onReturnHome: onReturnHome,
     ),
     BookingSlotUnavailable(:final message) => _error(

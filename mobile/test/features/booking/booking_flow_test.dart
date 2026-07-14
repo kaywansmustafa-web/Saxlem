@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:saxlem_app/config/theme/app_theme.dart';
 import 'package:saxlem_app/features/booking/booking_feature.dart';
 import 'package:saxlem_app/features/booking/domain/entities/booking_doctor_reference.dart';
+import 'package:saxlem_app/features/appointments/data/repositories/in_memory_patient_appointments_repository.dart';
 
 void main() {
   const doctor = BookingDoctorReference(
@@ -13,10 +14,14 @@ void main() {
   testWidgets('completes booking and shows View Doctor and Return Home', (
     tester,
   ) async {
+    final appointments = InMemoryPatientAppointmentsRepository();
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light,
-        home: const BookingFeature(doctor: doctor),
+        home: BookingFeature(
+          doctor: doctor,
+          appointmentsRepository: appointments,
+        ),
       ),
     );
     await tester.pump(const Duration(milliseconds: 400));
@@ -31,7 +36,13 @@ void main() {
     await tester.pump(const Duration(milliseconds: 700));
     expect(find.text('Appointment confirmed'), findsOneWidget);
     expect(find.text('View Doctor'), findsOneWidget);
+    expect(find.text('Go to My Appointments'), findsOneWidget);
     expect(find.text('Return Home'), findsOneWidget);
+    expect((await appointments.load()).appointments, hasLength(1));
+    await tester.tap(find.text('Go to My Appointments'));
+    await tester.pumpAndSettle();
+    expect(find.text('My Appointments'), findsOneWidget);
+    expect(find.text('Dr. Demo'), findsOneWidget);
   });
   testWidgets('renders booking in RTL at 200 percent text', (tester) async {
     await tester.pumpWidget(
