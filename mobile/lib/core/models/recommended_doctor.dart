@@ -15,7 +15,7 @@ class RecommendedDoctor {
   final String specialty;
   final double rating;
   final String availability;
-  final double price;
+  final int price;
   final String currency;
   final String? photoUrl;
 }

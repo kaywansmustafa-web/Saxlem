@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../shared/widgets/navigation/saxlem_bottom_navigation.dart';
 import '../widgets/dashboard_view.dart';
+import '../../../discover/discover_feature.dart';
+import '../../../discover/domain/entities/doctor_search_criteria.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,6 +15,24 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  int _discoverRequest = 0;
+  DoctorSearchCriteria? _discoverCriteria;
+  bool _focusDiscover = false;
+  bool _openDiscoverFilters = false;
+
+  void _openDiscover({
+    DoctorSearchCriteria? criteria,
+    bool focus = false,
+    bool openFilters = false,
+  }) {
+    setState(() {
+      _selectedIndex = 1;
+      _discoverCriteria = criteria;
+      _focusDiscover = focus;
+      _openDiscoverFilters = openFilters;
+      _discoverRequest++;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +42,17 @@ class _HomePageState extends State<HomePage> {
         bottom: false,
         child: IndexedStack(
           index: _selectedIndex,
-          children: const [
-            DashboardView(),
-            _PlaceholderTab(title: 'Discover'),
-            _PlaceholderTab(title: 'Appointments'),
-            _PlaceholderTab(title: 'Alerts'),
-            _PlaceholderTab(title: 'Profile'),
+          children: [
+            DashboardView(onOpenDiscover: _openDiscover),
+            DiscoverFeature(
+              key: ValueKey(_discoverRequest),
+              initialCriteria: _discoverCriteria,
+              focusSearch: _focusDiscover,
+              openFilters: _openDiscoverFilters,
+            ),
+            const _PlaceholderTab(title: 'Appointments'),
+            const _PlaceholderTab(title: 'Alerts'),
+            const _PlaceholderTab(title: 'Profile'),
           ],
         ),
       ),

@@ -5,6 +5,12 @@ import '../../../../core/models/specialty.dart';
 import '../../../live_queue/domain/entities/patient_queue_snapshot.dart';
 import '../../../live_queue/domain/entities/queue_types.dart';
 import '../../../live_queue/live_queue_feature.dart';
+import '../../../discover/domain/entities/discovery_types.dart';
+import '../../../discover/domain/entities/doctor_search_criteria.dart';
+import '../../../discover/domain/entities/doctor_discovery_result.dart';
+import '../../../discover/domain/entities/discovery_location.dart';
+import '../../../discover/domain/entities/doctor_availability_summary.dart';
+import '../../../discover/presentation/pages/doctor_details_page.dart';
 import 'dashboard_header.dart';
 import 'dashboard_search_bar.dart';
 import 'live_queue_card.dart';
@@ -12,7 +18,13 @@ import 'popular_specialties_section.dart';
 import 'recommended_doctors_section.dart';
 
 class DashboardView extends StatelessWidget {
-  const DashboardView({super.key});
+  const DashboardView({required this.onOpenDiscover, super.key});
+  final void Function({
+    DoctorSearchCriteria? criteria,
+    bool focus,
+    bool openFilters,
+  })
+  onOpenDiscover;
 
   static const _specialties = [
     Specialty(id: 'dentist', name: 'Dentist', iconKey: 'dentist'),
@@ -70,8 +82,9 @@ class DashboardView extends StatelessWidget {
             hintText: 'Search doctors, clinics or specialties',
             searchSemanticLabel: 'Open healthcare search',
             filterSemanticLabel: 'Open search filters',
-            onTap: () {},
-            onFilterPressed: () {},
+            onTap: () => onOpenDiscover(focus: true, openFilters: false),
+            onFilterPressed: () =>
+                onOpenDiscover(focus: false, openFilters: true),
           ),
           const SizedBox(height: 24),
           LiveQueueCard(
@@ -124,7 +137,18 @@ class DashboardView extends StatelessWidget {
             title: 'Popular specialties',
             specialties: _specialties,
             semanticLabelBuilder: (item) => 'Browse ${item.name} doctors',
-            onSpecialtySelected: (_) {},
+            onSpecialtySelected: (item) => onOpenDiscover(
+              criteria: DoctorSearchCriteria(
+                specialty: MedicalSpecialty.values.firstWhere(
+                  (value) =>
+                      value.name ==
+                      (item.id == 'eye' ? 'ophthalmology' : item.id),
+                  orElse: () => MedicalSpecialty.internalMedicine,
+                ),
+              ),
+              focus: false,
+              openFilters: false,
+            ),
           ),
           const SizedBox(height: 30),
           RecommendedDoctorsSection(
@@ -132,13 +156,20 @@ class DashboardView extends StatelessWidget {
             actionLabel: 'See all',
             doctors: _doctors,
             bookLabel: 'Book',
-            priceLabelBuilder: (doctor) =>
-                '${doctor.price.toStringAsFixed(0)} ${doctor.currency}',
+            priceLabelBuilder: (doctor) => '${doctor.price} ${doctor.currency}',
             semanticLabelBuilder: (doctor) =>
                 '${doctor.name}, ${doctor.specialty}, '
                 '${doctor.rating} rating, ${doctor.availability}',
-            onActionPressed: () {},
-            onBookPressed: (_) {},
+            onActionPressed: () =>
+                onOpenDiscover(focus: false, openFilters: false),
+            onBookPressed: (doctor) => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => DoctorDetailsPage(
+                  doctor: _discoveryDoctor(doctor),
+                  bookingEmphasized: true,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -150,4 +181,40 @@ class DashboardView extends StatelessWidget {
     if (hour < 17) return 'Good afternoon,';
     return 'Good evening,';
   }
+
+  DoctorDiscoveryResult _discoveryDoctor(RecommendedDoctor doctor) =>
+      DoctorDiscoveryResult(
+        doctorId: doctor.id,
+        clinicId: 'demo-clinic-dashboard',
+        doctorDisplayName: doctor.name,
+        clinicDisplayName: 'Saxlem Demo Clinic',
+        specialty: doctor.specialty == 'Dentist'
+            ? MedicalSpecialty.dentistry
+            : doctor.specialty == 'Pediatrician'
+            ? MedicalSpecialty.pediatrics
+            : MedicalSpecialty.cardiology,
+        subSpecialtyDisplayName: 'General consultation',
+        location: const DiscoveryLocation(
+          cityId: 'duhok',
+          cityDisplayName: 'Duhok',
+          areaId: 'city-center',
+          areaDisplayName: 'City Center',
+          distanceMeters: 1200,
+        ),
+        gender: DoctorGender.female,
+        languages: const {SpokenLanguage.badiniKurdish, SpokenLanguage.arabic},
+        verified: true,
+        consultationFeeIqd: doctor.price,
+        patientRating: doctor.rating,
+        totalRatings: 126,
+        totalReviews: 48,
+        availability: DoctorAvailabilitySummary(
+          status: doctor.availability.contains('today')
+              ? AvailabilityStatus.availableToday
+              : AvailabilityStatus.tomorrow,
+        ),
+        recommendationScore: 90,
+        isInMyDoctors: false,
+        photoUrl: doctor.photoUrl,
+      );
 }
