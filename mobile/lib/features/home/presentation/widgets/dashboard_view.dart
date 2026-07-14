@@ -16,15 +16,23 @@ import 'dashboard_search_bar.dart';
 import 'live_queue_card.dart';
 import 'popular_specialties_section.dart';
 import 'recommended_doctors_section.dart';
+import '../../../../core/localization/localization_extensions.dart';
 
 class DashboardView extends StatelessWidget {
-  const DashboardView({required this.onOpenDiscover, super.key});
+  const DashboardView({
+    required this.onOpenDiscover,
+    required this.onOpenAlerts,
+    required this.onOpenAppointments,
+    super.key,
+  });
   final void Function({
     DoctorSearchCriteria? criteria,
     bool focus,
     bool openFilters,
   })
   onOpenDiscover;
+  final VoidCallback onOpenAlerts;
+  final VoidCallback onOpenAppointments;
 
   static const _specialties = [
     Specialty(id: 'dentist', name: 'Dentist', iconKey: 'dentist'),
@@ -66,22 +74,23 @@ class DashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = context.l10n;
     return SingleChildScrollView(
       padding: const EdgeInsetsDirectional.fromSTEB(24, 24, 24, 36),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           DashboardHeader(
-            greeting: _greeting(DateTime.now().hour),
+            greeting: _greeting(context, DateTime.now().hour),
             userName: 'Kaywan',
-            notificationLabel: 'Notifications',
-            onNotificationPressed: () {},
+            notificationLabel: strings.alerts,
+            onNotificationPressed: onOpenAlerts,
           ),
           const SizedBox(height: 26),
           DashboardSearchBar(
-            hintText: 'Search doctors, clinics or specialties',
-            searchSemanticLabel: 'Open healthcare search',
-            filterSemanticLabel: 'Open search filters',
+            hintText: strings.searchHint,
+            searchSemanticLabel: strings.openHealthcareSearch,
+            filterSemanticLabel: strings.openSearchFilters,
             onTap: () => onOpenDiscover(focus: true, openFilters: false),
             onFilterPressed: () =>
                 onOpenDiscover(focus: false, openFilters: true),
@@ -111,19 +120,20 @@ class DashboardView extends StatelessWidget {
               },
               guidanceMessage: 'Relax, no need to leave yet.',
             ),
-            labels: const LiveQueueLabels(
-              title: 'Live queue',
-              live: 'LIVE',
-              currentPatient: 'Current patient',
-              youAre: 'Your Number',
-              patientsAhead: 'Patients ahead',
-              estimatedWait: 'Estimated wait',
-              doctorDelay: 'Doctor status',
-              minutes: 'min',
-              action: 'View live queue',
+            labels: LiveQueueLabels(
+              title: strings.liveQueue,
+              live: strings.live,
+              currentPatient: strings.currentPatient,
+              youAre: strings.yourNumber,
+              patientsAhead: strings.patientsAhead,
+              estimatedWait: strings.estimatedWait,
+              doctorDelay: strings.doctorStatus,
+              minutes: strings.minutesShort,
+              action: strings.viewLiveQueue,
               semanticSummary:
-                  'Live queue. Now serving 18. Your number is 23. '
-                  '4 patients ahead. Estimated wait 21 to 29 minutes.',
+                  '${strings.liveQueue}. ${strings.currentPatient} 18. '
+                  '${strings.yourNumber} 23. ${strings.patientsAhead} 4. '
+                  '${strings.estimatedWait} 21–29 ${strings.minutesShort}.',
             ),
             onActionPressed: () => Navigator.of(context).push(
               MaterialPageRoute<void>(
@@ -134,7 +144,7 @@ class DashboardView extends StatelessWidget {
           ),
           const SizedBox(height: 30),
           PopularSpecialtiesSection(
-            title: 'Popular specialties',
+            title: strings.popularSpecialties,
             specialties: _specialties,
             semanticLabelBuilder: (item) => 'Browse ${item.name} doctors',
             onSpecialtySelected: (item) => onOpenDiscover(
@@ -152,10 +162,10 @@ class DashboardView extends StatelessWidget {
           ),
           const SizedBox(height: 30),
           RecommendedDoctorsSection(
-            title: 'Recommended doctors',
-            actionLabel: 'See all',
+            title: strings.recommendedDoctors,
+            actionLabel: strings.seeAll,
             doctors: _doctors,
-            bookLabel: 'Book',
+            bookLabel: strings.book,
             priceLabelBuilder: (doctor) => '${doctor.price} ${doctor.currency}',
             semanticLabelBuilder: (doctor) =>
                 '${doctor.name}, ${doctor.specialty}, '
@@ -167,6 +177,7 @@ class DashboardView extends StatelessWidget {
                 builder: (_) => DoctorDetailsPage(
                   doctor: _discoveryDoctor(doctor),
                   bookingEmphasized: true,
+                  onOpenAppointments: onOpenAppointments,
                 ),
               ),
             ),
@@ -176,10 +187,10 @@ class DashboardView extends StatelessWidget {
     );
   }
 
-  String _greeting(int hour) {
-    if (hour < 12) return 'Good morning,';
-    if (hour < 17) return 'Good afternoon,';
-    return 'Good evening,';
+  String _greeting(BuildContext context, int hour) {
+    if (hour < 12) return context.l10n.goodMorning;
+    if (hour < 17) return context.l10n.goodAfternoon;
+    return context.l10n.goodEvening;
   }
 
   DoctorDiscoveryResult _discoveryDoctor(RecommendedDoctor doctor) =>

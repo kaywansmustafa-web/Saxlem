@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/localization/localization_extensions.dart';
 
 class AppointmentsEmptyState extends StatelessWidget {
   const AppointmentsEmptyState({
@@ -21,21 +22,23 @@ class AppointmentsEmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           Text(
-            firstTime ? 'Your care starts here' : 'Nothing here right now',
+            firstTime
+                ? context.l10n.firstAppointmentTitle
+                : context.l10n.emptyAppointmentsTitle,
             style: Theme.of(context).textTheme.titleLarge,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             firstTime
-                ? 'Book your first visit with a trusted doctor.'
-                : 'Your appointments in this category will appear here.',
+                ? context.l10n.firstAppointmentBody
+                : context.l10n.emptyAppointmentsBody,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 22),
           FilledButton(
             onPressed: onDiscover,
-            child: const Text('Discover Doctors'),
+            child: Text(context.l10n.discoverDoctors),
           ),
         ],
       ),

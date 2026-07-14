@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/booking_quote.dart';
 import '../booking_copy.dart';
+import '../../../../core/localization/localization_extensions.dart';
 
 class BookingReviewPage extends StatelessWidget {
   const BookingReviewPage({
@@ -22,7 +23,7 @@ class BookingReviewPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Review appointment',
+            context.l10n.reviewAppointment,
             style: Theme.of(
               context,
             ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
@@ -30,10 +31,10 @@ class BookingReviewPage extends StatelessWidget {
           const SizedBox(height: 20),
           _Summary(
             rows: [
-              ('Doctor', d.doctor.displayName),
-              ('Clinic', d.clinic.displayName),
-              ('Date', copy.date(d.slot!.start)),
-              ('Time', copy.time(d.slot!.start)),
+              (context.l10n.viewDoctor, d.doctor.displayName),
+              (context.l10n.clinic, d.clinic.displayName),
+              (context.l10n.date, copy.date(d.slot!.start)),
+              (context.l10n.time, copy.time(d.slot!.start)),
               ('Consultation fee', copy.fee(d.clinic.consultationFeeIqd)),
               ('Estimated duration', '${d.clinic.durationMinutes} minutes'),
               ('Arrival', quote.arrivalRecommendation),
@@ -45,8 +46,8 @@ class BookingReviewPage extends StatelessWidget {
             button: true,
             liveRegion: confirming,
             label: confirming
-                ? 'Confirming appointment'
-                : 'Confirm appointment',
+                ? context.l10n.confirmingAppointment
+                : context.l10n.confirmAppointment,
             child: FilledButton(
               onPressed: confirming ? null : onConfirm,
               child: confirming
@@ -55,7 +56,7 @@ class BookingReviewPage extends StatelessWidget {
                       height: 22,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Confirm appointment'),
+                  : Text(context.l10n.confirmAppointment),
             ),
           ),
         ],

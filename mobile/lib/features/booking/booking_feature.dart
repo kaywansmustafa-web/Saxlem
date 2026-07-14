@@ -19,10 +19,12 @@ class BookingFeature extends StatefulWidget {
   const BookingFeature({
     required this.doctor,
     this.appointmentsRepository,
+    this.onOpenAppointments,
     super.key,
   });
   final BookingDoctorReference doctor;
   final PatientAppointmentsRepository? appointmentsRepository;
+  final VoidCallback? onOpenAppointments;
   @override
   State<BookingFeature> createState() => _BookingFeatureState();
 }
@@ -63,14 +65,21 @@ class _BookingFeatureState extends State<BookingFeature> {
   Widget build(BuildContext context) => BookingFlowPage(
     controller: controller,
     onViewDoctor: () => Navigator.pop(context),
-    onMyAppointments: () => Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => Scaffold(
-          body: SafeArea(child: AppointmentsFeature(repository: appointments)),
-        ),
-      ),
-    ),
+    onMyAppointments: widget.onOpenAppointments == null
+        ? () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => Scaffold(
+                body: SafeArea(
+                  child: AppointmentsFeature(repository: appointments),
+                ),
+              ),
+            ),
+          )
+        : () {
+            Navigator.popUntil(context, (route) => route.isFirst);
+            widget.onOpenAppointments!();
+          },
     onReturnHome: () => Navigator.popUntil(context, (route) => route.isFirst),
   );
 }

@@ -6,11 +6,13 @@ class SaxlemBottomNavigation extends StatelessWidget {
   const SaxlemBottomNavigation({
     required this.selectedIndex,
     required this.onItemSelected,
+    required this.labels,
     super.key,
   });
 
   final int selectedIndex;
   final ValueChanged<int> onItemSelected;
+  final List<String> labels;
 
   static const List<_NavigationItemData> _items = [
     _NavigationItemData(
@@ -42,11 +44,15 @@ class SaxlemBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assert(labels.length == _items.length);
     return SafeArea(
       top: false,
       child: Container(
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        margin: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 12),
+        padding: const EdgeInsetsDirectional.symmetric(
+          horizontal: 8,
+          vertical: 8,
+        ),
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(24),
@@ -67,6 +73,7 @@ class SaxlemBottomNavigation extends StatelessWidget {
             return Expanded(
               child: _NavigationItem(
                 item: item,
+                label: labels[index],
                 isSelected: isSelected,
                 onTap: () => onItemSelected(index),
               ),
@@ -81,11 +88,13 @@ class SaxlemBottomNavigation extends StatelessWidget {
 class _NavigationItem extends StatelessWidget {
   const _NavigationItem({
     required this.item,
+    required this.label,
     required this.isSelected,
     required this.onTap,
   });
 
   final _NavigationItemData item;
+  final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -94,14 +103,18 @@ class _NavigationItem extends StatelessWidget {
     return Semantics(
       button: true,
       selected: isSelected,
-      label: item.label,
+      label: label,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(18),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+          constraints: const BoxConstraints(minHeight: 48),
+          padding: const EdgeInsetsDirectional.symmetric(
+            horizontal: 4,
+            vertical: 8,
+          ),
           decoration: BoxDecoration(
             color: isSelected
                 ? AppColors.primary.withValues(alpha: 0.10)
@@ -124,7 +137,7 @@ class _NavigationItem extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                item.label,
+                label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(

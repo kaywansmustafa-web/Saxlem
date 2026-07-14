@@ -6,6 +6,8 @@ import '../widgets/dashboard_view.dart';
 import '../../../discover/discover_feature.dart';
 import '../../../discover/domain/entities/doctor_search_criteria.dart';
 import '../../../appointments/appointments_feature.dart';
+import '../../../../core/localization/localization_extensions.dart';
+import 'informational_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -37,6 +39,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = context.l10n;
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -44,34 +47,45 @@ class _HomePageState extends State<HomePage> {
         child: IndexedStack(
           index: _selectedIndex,
           children: [
-            DashboardView(onOpenDiscover: _openDiscover),
+            DashboardView(
+              onOpenDiscover: _openDiscover,
+              onOpenAlerts: () => setState(() => _selectedIndex = 3),
+              onOpenAppointments: () => setState(() => _selectedIndex = 2),
+            ),
             DiscoverFeature(
               key: ValueKey(_discoverRequest),
               initialCriteria: _discoverCriteria,
               focusSearch: _focusDiscover,
               openFilters: _openDiscoverFilters,
+              onOpenAppointments: () => setState(() => _selectedIndex = 2),
             ),
-            const AppointmentsFeature(),
-            const _PlaceholderTab(title: 'Alerts'),
-            const _PlaceholderTab(title: 'Profile'),
+            AppointmentsFeature(onOpenDiscover: () => _openDiscover()),
+            InformationalPage(
+              title: strings.alertsTitle,
+              message: strings.alertsBody,
+              icon: Icons.notifications_none_rounded,
+              semanticLabel: strings.informationalScreen,
+            ),
+            InformationalPage(
+              title: strings.profileTitle,
+              message: strings.profileBody,
+              icon: Icons.person_outline_rounded,
+              semanticLabel: strings.informationalScreen,
+            ),
           ],
         ),
       ),
       bottomNavigationBar: SaxlemBottomNavigation(
         selectedIndex: _selectedIndex,
         onItemSelected: (index) => setState(() => _selectedIndex = index),
+        labels: [
+          strings.home,
+          strings.discover,
+          strings.appointments,
+          strings.alerts,
+          strings.profile,
+        ],
       ),
     );
   }
-}
-
-class _PlaceholderTab extends StatelessWidget {
-  const _PlaceholderTab({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) => Center(
-    child: Text(title, style: Theme.of(context).textTheme.headlineMedium),
-  );
 }

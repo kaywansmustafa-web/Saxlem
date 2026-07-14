@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/booking_confirmation.dart';
 import '../booking_copy.dart';
+import '../../../../core/localization/localization_extensions.dart';
 
 class BookingSuccessPage extends StatelessWidget {
   const BookingSuccessPage({
@@ -28,7 +29,7 @@ class BookingSuccessPage extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'Appointment confirmed',
+            context.l10n.appointmentConfirmed,
             textAlign: TextAlign.center,
             style: Theme.of(
               context,
@@ -47,7 +48,9 @@ class BookingSuccessPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Appointment ID ${confirmation.mockAppointmentId}',
+                  context.l10n.appointmentIdValue(
+                    confirmation.mockAppointmentId,
+                  ),
                   style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
                 const Divider(height: 28),
@@ -62,15 +65,18 @@ class BookingSuccessPage extends StatelessWidget {
           const SizedBox(height: 24),
           FilledButton(
             onPressed: onMyAppointments,
-            child: const Text('Go to My Appointments'),
+            child: Text(context.l10n.goToAppointments),
           ),
           const SizedBox(height: 10),
           OutlinedButton(
             onPressed: onViewDoctor,
-            child: const Text('View Doctor'),
+            child: Text(context.l10n.viewDoctor),
           ),
           const SizedBox(height: 10),
-          TextButton(onPressed: onReturnHome, child: const Text('Return Home')),
+          TextButton(
+            onPressed: onReturnHome,
+            child: Text(context.l10n.returnHome),
+          ),
         ],
       ),
     );

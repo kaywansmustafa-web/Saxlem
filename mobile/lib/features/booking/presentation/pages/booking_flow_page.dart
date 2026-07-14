@@ -7,6 +7,7 @@ import '../widgets/date_selector.dart';
 import '../widgets/slot_grid.dart';
 import 'booking_review_page.dart';
 import 'booking_success_page.dart';
+import '../../../../core/localization/localization_extensions.dart';
 
 class BookingFlowPage extends StatelessWidget {
   const BookingFlowPage({
@@ -21,7 +22,7 @@ class BookingFlowPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: AppColors.background,
-    appBar: AppBar(title: const Text('Book appointment')),
+    appBar: AppBar(title: Text(context.l10n.bookAppointment)),
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
@@ -36,13 +37,13 @@ class BookingFlowPage extends StatelessWidget {
   Widget _body(BuildContext context, BookingState state) => switch (state) {
     BookingLoading() => Center(
       child: Semantics(
-        label: 'Loading booking options',
+        label: context.l10n.loadingBooking,
         child: const CircularProgressIndicator(),
       ),
     ),
     BookingSelectingClinic(:final doctor, :final clinics) => _scroll(
       context,
-      'Choose a clinic',
+      context.l10n.chooseClinic,
       doctor.displayName,
       clinics
           .map(
@@ -55,7 +56,7 @@ class BookingFlowPage extends StatelessWidget {
     ),
     BookingSelectingDate(:final draft, :final availability) => _scroll(
       context,
-      'Choose a date',
+      context.l10n.chooseDate,
       draft.clinic.displayName,
       [
         DateSelector(
@@ -66,7 +67,7 @@ class BookingFlowPage extends StatelessWidget {
     ),
     BookingSelectingSlot(:final draft, :final day) => _scroll(
       context,
-      'Choose a time',
+      context.l10n.chooseTime,
       draft.clinic.displayName,
       [SlotGrid(slots: day.slots, onSelected: controller.selectSlot)],
     ),
@@ -88,12 +89,12 @@ class BookingFlowPage extends StatelessWidget {
     ),
     BookingSlotUnavailable(:final message) => _error(
       context,
-      'Time unavailable',
+      context.l10n.timeUnavailable,
       message,
     ),
     BookingFailure(:final message) => _error(
       context,
-      'Booking unavailable',
+      context.l10n.bookingUnavailable,
       message,
     ),
     BookingInitial() => const SizedBox.shrink(),
@@ -135,7 +136,7 @@ class BookingFlowPage extends StatelessWidget {
           const SizedBox(height: 20),
           FilledButton(
             onPressed: controller.restart,
-            child: const Text('Try again'),
+            child: Text(context.l10n.tryAgain),
           ),
         ],
       ),

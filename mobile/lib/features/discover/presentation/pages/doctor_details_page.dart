@@ -5,21 +5,24 @@ import '../../domain/entities/discovery_types.dart';
 import '../discover_copy.dart';
 import '../../../booking/booking_feature.dart';
 import '../../../booking/domain/entities/booking_doctor_reference.dart';
+import '../../../../core/localization/localization_extensions.dart';
 
 class DoctorDetailsPage extends StatelessWidget {
   const DoctorDetailsPage({
     required this.doctor,
     this.bookingEmphasized = false,
+    this.onOpenAppointments,
     super.key,
   });
   final DoctorDiscoveryResult doctor;
   final bool bookingEmphasized;
+  final VoidCallback? onOpenAppointments;
   @override
   Widget build(BuildContext context) {
     const copy = DiscoverCopy();
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text('Doctor Profile')),
+      appBar: AppBar(title: Text(context.l10n.doctorProfile)),
       body: SafeArea(
         top: false,
         child: SingleChildScrollView(
@@ -79,8 +82,8 @@ class DoctorDetailsPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'This permanent profile foundation will support qualifications, services, clinic schedules, reviews, and booking as those capabilities are delivered.',
+                  Text(
+                    context.l10n.findRightCareBody,
                     style: TextStyle(height: 1.5),
                   ),
                 ],
@@ -101,13 +104,14 @@ class DoctorDetailsPage extends StatelessWidget {
                               ),
                               photoUrl: doctor.photoUrl,
                             ),
+                            onOpenAppointments: onOpenAppointments,
                           ),
                         ),
                       ),
                 child: Text(
                   bookingEmphasized
-                      ? 'Choose an appointment'
-                      : 'Book appointment',
+                      ? context.l10n.chooseAppointment
+                      : context.l10n.bookAppointment,
                 ),
               ),
             ],

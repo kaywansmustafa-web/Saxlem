@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../config/theme/app_colors.dart';
-import '../language/language_selection_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -37,20 +36,6 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    Future.delayed(const Duration(milliseconds: 2800), () {
-      if (!mounted) return;
-
-      Navigator.of(context).pushReplacement(
-        PageRouteBuilder<void>(
-          transitionDuration: const Duration(milliseconds: 800),
-          pageBuilder: (_, animation, secondaryAnimation) =>
-              const LanguageSelectionScreen(),
-          transitionsBuilder: (_, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-        ),
-      );
-    });
   }
 
   @override

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/doctor_discovery_result.dart';
 import '../../domain/entities/discovery_types.dart';
 import '../discover_copy.dart';
+import '../../../../core/localization/localization_extensions.dart';
 
 class DoctorResultCard extends StatelessWidget {
   const DoctorResultCard({
@@ -87,8 +88,8 @@ class DoctorResultCard extends StatelessWidget {
                 IconButton(
                   onPressed: onFavorite,
                   tooltip: doctor.isInMyDoctors
-                      ? 'Remove from My Doctors'
-                      : 'Add to My Doctors',
+                      ? context.l10n.removeFromMyDoctors
+                      : context.l10n.addToMyDoctors,
                   icon: Icon(
                     doctor.isInMyDoctors
                         ? Icons.favorite_rounded
@@ -134,7 +135,7 @@ class DoctorResultCard extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: onProfile,
-                    child: const Text('View profile'),
+                    child: Text(context.l10n.viewProfile),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -143,7 +144,7 @@ class DoctorResultCard extends StatelessWidget {
                     onPressed: a.status == AvailabilityStatus.fullyBooked
                         ? null
                         : onBook,
-                    child: const Text('Book'),
+                    child: Text(context.l10n.book),
                   ),
                 ),
               ],

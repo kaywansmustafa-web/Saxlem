@@ -4,6 +4,7 @@ import '../state/appointments_state.dart';
 import '../widgets/appointment_card.dart';
 import '../widgets/appointments_empty_state.dart';
 import 'appointment_details_page.dart';
+import '../../../../core/localization/localization_extensions.dart';
 
 class AppointmentsPage extends StatelessWidget {
   const AppointmentsPage({
@@ -18,7 +19,13 @@ class AppointmentsPage extends StatelessWidget {
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: controller,
     builder: (context, _) => switch (controller.state) {
-      AppointmentsLoading() => const Center(child: CircularProgressIndicator()),
+      AppointmentsLoading() => Center(
+        child: Semantics(
+          liveRegion: true,
+          label: context.l10n.loadingAppointments,
+          child: const CircularProgressIndicator(),
+        ),
+      ),
       AppointmentsFailure(:final message) => Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -27,7 +34,7 @@ class AppointmentsPage extends StatelessWidget {
             const SizedBox(height: 16),
             FilledButton(
               onPressed: controller.load,
-              child: const Text('Try Again'),
+              child: Text(context.l10n.tryAgain),
             ),
           ],
         ),
@@ -45,7 +52,7 @@ class AppointmentsPage extends StatelessWidget {
       Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(24, 24, 24, 14),
         child: Text(
-          'My Appointments',
+          context.l10n.myAppointments,
           style: Theme.of(
             context,
           ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
@@ -60,7 +67,12 @@ class AppointmentsPage extends StatelessWidget {
               .map(
                 (tab) => ButtonSegment(
                   value: tab,
-                  label: Text('${_label(tab)} (${state.count(tab)})'),
+                  label: Text(
+                    context.l10n.tabWithCount(
+                      _label(context, tab),
+                      state.count(tab),
+                    ),
+                  ),
                 ),
               )
               .toList(),
@@ -97,9 +109,9 @@ class AppointmentsPage extends StatelessWidget {
     ],
   );
 
-  String _label(AppointmentsTab tab) => switch (tab) {
-    AppointmentsTab.upcoming => 'Upcoming',
-    AppointmentsTab.completed => 'Completed',
-    AppointmentsTab.cancelled => 'Cancelled',
+  String _label(BuildContext context, AppointmentsTab tab) => switch (tab) {
+    AppointmentsTab.upcoming => context.l10n.upcoming,
+    AppointmentsTab.completed => context.l10n.completed,
+    AppointmentsTab.cancelled => context.l10n.cancelled,
   };
 }

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../config/theme/app_colors.dart';
-import '../home/presentation/pages/home_page.dart';
+import '../../app/app_controller.dart';
+import '../../core/localization/localization_extensions.dart';
+import '../../core/localization/supported_app_locale.dart';
 
 class LanguageSelectionScreen extends StatefulWidget {
-  const LanguageSelectionScreen({super.key});
+  const LanguageSelectionScreen({required this.controller, super.key});
+  final AppController controller;
 
   @override
   State<LanguageSelectionScreen> createState() =>
@@ -12,75 +15,95 @@ class LanguageSelectionScreen extends StatefulWidget {
 }
 
 class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
-  String? selectedLanguage;
+  SupportedAppLocale? selectedLanguage;
 
-  void _continueToHome() {
+  Future<void> _continueToHome() async {
     if (selectedLanguage == null) return;
-
-    Navigator.of(
-      context,
-    ).pushReplacement(MaterialPageRoute(builder: (_) => const HomePage()));
+    await widget.controller.selectLocale(selectedLanguage!);
   }
 
   @override
   Widget build(BuildContext context) {
+    final strings = context.l10n;
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+          padding: const EdgeInsetsDirectional.fromSTEB(24, 32, 24, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Spacer(),
               Text(
-                'Choose your language',
+                strings.chooseLanguage,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(height: 8),
               Text(
-                'You can change this later in your profile.',
+                strings.languageCanChange,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 40),
               _LanguageCard(
                 title: 'کوردی بادینی',
-                subtitle: 'Badini Kurdish',
-                isSelected: selectedLanguage == 'badini',
+                subtitle: strings.badiniKurdish,
+                isSelected: selectedLanguage == SupportedAppLocale.badini,
                 onTap: () {
                   setState(() {
-                    selectedLanguage = 'badini';
+                    selectedLanguage = SupportedAppLocale.badini;
                   });
                 },
               ),
               const SizedBox(height: 12),
               _LanguageCard(
-                title: 'English',
-                subtitle: 'English',
-                isSelected: selectedLanguage == 'english',
+                title: strings.english,
+                subtitle: strings.english,
+                isSelected: selectedLanguage == SupportedAppLocale.english,
                 onTap: () {
                   setState(() {
-                    selectedLanguage = 'english';
+                    selectedLanguage = SupportedAppLocale.english;
                   });
                 },
               ),
               const SizedBox(height: 12),
               _LanguageCard(
                 title: 'العربية',
-                subtitle: 'Arabic',
-                isSelected: selectedLanguage == 'arabic',
+                subtitle: strings.arabic,
+                isSelected: selectedLanguage == SupportedAppLocale.arabic,
                 onTap: () {
                   setState(() {
-                    selectedLanguage = 'arabic';
+                    selectedLanguage = SupportedAppLocale.arabic;
                   });
                 },
               ),
               const Spacer(),
-              ElevatedButton(
-                onPressed: selectedLanguage == null ? null : _continueToHome,
-                child: const Text('Continue'),
+              if (widget.controller.localeFailure != null) ...[
+                Text(
+                  strings.languageSaveFailed,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+                const SizedBox(height: 12),
+              ],
+              Semantics(
+                liveRegion: widget.controller.savingLocale,
+                label: widget.controller.savingLocale
+                    ? strings.savingLanguage
+                    : null,
+                child: ElevatedButton(
+                  onPressed:
+                      selectedLanguage == null || widget.controller.savingLocale
+                      ? null
+                      : _continueToHome,
+                  child: widget.controller.savingLocale
+                      ? const SizedBox.square(
+                          dimension: 22,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(strings.continueLabel),
+                ),
               ),
             ],
           ),
@@ -116,7 +139,10 @@ class _LanguageCard extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOut,
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+          padding: const EdgeInsetsDirectional.symmetric(
+            horizontal: 18,
+            vertical: 18,
+          ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
             border: Border.all(

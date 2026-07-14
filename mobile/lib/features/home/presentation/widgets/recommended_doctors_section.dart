@@ -28,6 +28,7 @@ class RecommendedDoctorsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textScale = MediaQuery.textScalerOf(context).scale(1).clamp(1, 2);
     final cardWidth = (MediaQuery.sizeOf(context).width - 48).clamp(
       250.0,
       300.0,
@@ -42,7 +43,7 @@ class RecommendedDoctorsSection extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         SizedBox(
-          height: 218,
+          height: 218 + ((textScale - 1) * 84),
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: doctors.length,

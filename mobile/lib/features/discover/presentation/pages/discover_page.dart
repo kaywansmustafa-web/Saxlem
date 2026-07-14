@@ -7,17 +7,20 @@ import '../discover_copy.dart';
 import '../state/discover_state.dart';
 import '../widgets/doctor_result_card.dart';
 import 'doctor_details_page.dart';
+import '../../../../core/localization/localization_extensions.dart';
 
 class DiscoverPage extends StatefulWidget {
   const DiscoverPage({
     required this.controller,
     this.focusSearch = false,
     this.openFilters = false,
+    this.onOpenAppointments,
     super.key,
   });
   final DiscoverController controller;
   final bool focusSearch;
   final bool openFilters;
+  final VoidCallback? onOpenAppointments;
   @override
   State<DiscoverPage> createState() => _DiscoverPageState();
 }
@@ -64,7 +67,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                       focusNode: _focus,
                       onChanged: widget.controller.updateQuery,
                       decoration: InputDecoration(
-                        hintText: 'Search doctors, clinics or health concerns',
+                        hintText: context.l10n.searchHint,
                         prefixIcon: const Icon(Icons.search_rounded),
                         suffixIcon: _search.text.isEmpty
                             ? null
@@ -81,11 +84,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   const SizedBox(width: 8),
                   IconButton.filledTonal(
                     onPressed: _showFilters,
-                    tooltip: 'Filters',
+                    tooltip: context.l10n.filters,
                     icon: const Icon(Icons.tune_rounded),
                   ),
                   PopupMenuButton<DiscoverySort>(
-                    tooltip: 'Sort results',
+                    tooltip: context.l10n.sortResults,
                     onSelected: widget.controller.sort,
                     itemBuilder: (_) => DiscoverySort.values
                         .map(
@@ -155,7 +158,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 spacing: 7,
                 children: [
                   ActionChip(
-                    label: const Text('Clear filters'),
+                    label: Text(context.l10n.clearFilters),
                     onPressed: widget.controller.clearFilters,
                   ),
                 ],
@@ -197,17 +200,18 @@ class _DiscoverPageState extends State<DiscoverPage> {
     padding: const EdgeInsetsDirectional.fromSTEB(24, 12, 24, 36),
     children: [
       Text(
-        'Find the right care',
+        context.l10n.findRightCare,
         style: Theme.of(
           context,
         ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
       ),
       const SizedBox(height: 8),
-      const Text(
-        'Search in everyday words. We’ll help you find doctors who may be able to help.',
-      ),
+      Text(context.l10n.findRightCareBody),
       const SizedBox(height: 24),
-      Text('Quick categories', style: Theme.of(context).textTheme.titleLarge),
+      Text(
+        context.l10n.quickCategories,
+        style: Theme.of(context).textTheme.titleLarge,
+      ),
       const SizedBox(height: 12),
       Wrap(
         spacing: 8,
@@ -243,7 +247,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
           const SizedBox(height: 7),
           Text(message, textAlign: TextAlign.center),
           const SizedBox(height: 20),
-          FilledButton(onPressed: action, child: const Text('Try again')),
+          FilledButton(onPressed: action, child: Text(context.l10n.tryAgain)),
         ],
       ),
     ),
@@ -251,8 +255,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
   void _details(dynamic doctor, {bool book = false}) =>
       Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) =>
-              DoctorDetailsPage(doctor: doctor, bookingEmphasized: book),
+          builder: (_) => DoctorDetailsPage(
+            doctor: doctor,
+            bookingEmphasized: book,
+            onOpenAppointments: widget.onOpenAppointments,
+          ),
         ),
       );
   String _sortLabel(DiscoverySort v) => switch (v) {
@@ -276,7 +283,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Filters',
+                  context.l10n.filters,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 18),

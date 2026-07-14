@@ -6,8 +6,9 @@ import 'presentation/controllers/appointments_controller.dart';
 import 'presentation/pages/appointments_page.dart';
 
 class AppointmentsFeature extends StatefulWidget {
-  const AppointmentsFeature({this.repository, super.key});
+  const AppointmentsFeature({this.repository, this.onOpenDiscover, super.key});
   final PatientAppointmentsRepository? repository;
+  final VoidCallback? onOpenDiscover;
   @override
   State<AppointmentsFeature> createState() => _AppointmentsFeatureState();
 }
@@ -31,12 +32,14 @@ class _AppointmentsFeatureState extends State<AppointmentsFeature> {
   @override
   Widget build(BuildContext context) => AppointmentsPage(
     controller: controller,
-    onDiscover: () => Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) =>
-            const Scaffold(body: SafeArea(child: DiscoverFeature())),
-      ),
-    ),
+    onDiscover:
+        widget.onOpenDiscover ??
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) =>
+                const Scaffold(body: SafeArea(child: DiscoverFeature())),
+          ),
+        ),
   );
 }

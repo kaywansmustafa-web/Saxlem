@@ -14,11 +14,13 @@ class DiscoverFeature extends StatefulWidget {
     this.initialCriteria,
     this.focusSearch = false,
     this.openFilters = false,
+    this.onOpenAppointments,
     super.key,
   });
   final DoctorSearchCriteria? initialCriteria;
   final bool focusSearch;
   final bool openFilters;
+  final VoidCallback? onOpenAppointments;
   @override
   State<DiscoverFeature> createState() => _DiscoverFeatureState();
 }
@@ -54,5 +56,6 @@ class _DiscoverFeatureState extends State<DiscoverFeature> {
     controller: controller,
     focusSearch: widget.focusSearch,
     openFilters: widget.openFilters,
+    onOpenAppointments: widget.onOpenAppointments,
   );
 }

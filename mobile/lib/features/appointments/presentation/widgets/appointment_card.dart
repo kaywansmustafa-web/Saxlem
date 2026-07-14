@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../domain/entities/patient_appointment.dart';
+import '../../../../core/localization/localization_extensions.dart';
 
 class AppointmentCard extends StatelessWidget {
   const AppointmentCard({
@@ -60,13 +61,19 @@ class AppointmentCard extends StatelessWidget {
             Text('$date  •  $time'),
             if (appointment.status == PatientAppointmentStatus.upcoming) ...[
               const SizedBox(height: 6),
-              Text('${appointment.durationMinutes} min consultation'),
+              Text(
+                context.l10n.consultationMinutes(appointment.durationMinutes),
+              ),
               if (appointment.estimatedWaitMinutes != null)
-                Text('Estimated wait: ${appointment.estimatedWaitMinutes} min'),
+                Text(
+                  context.l10n.estimatedWaitMinutes(
+                    appointment.estimatedWaitMinutes!,
+                  ),
+                ),
             ],
             const SizedBox(height: 6),
             Text(
-              'Appointment ID ${appointment.id}',
+              context.l10n.appointmentIdValue(appointment.id),
               style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 16),
@@ -75,7 +82,7 @@ class AppointmentCard extends StatelessWidget {
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: onView,
-                  child: const Text('View Appointment'),
+                  child: Text(context.l10n.viewAppointment),
                 ),
               )
             else
@@ -83,15 +90,26 @@ class AppointmentCard extends StatelessWidget {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  OutlinedButton(
-                    onPressed: onView,
-                    child: Text(
-                      appointment.status == PatientAppointmentStatus.cancelled
-                          ? 'View Doctor'
-                          : 'Rate Visit',
+                  Semantics(
+                    label: context.l10n.actionUnavailable,
+                    enabled: false,
+                    child: OutlinedButton(
+                      onPressed: null,
+                      child: Text(
+                        appointment.status == PatientAppointmentStatus.cancelled
+                            ? context.l10n.viewDoctor
+                            : context.l10n.rateVisit,
+                      ),
                     ),
                   ),
-                  TextButton(onPressed: () {}, child: const Text('Book Again')),
+                  Semantics(
+                    label: context.l10n.actionUnavailable,
+                    enabled: false,
+                    child: TextButton(
+                      onPressed: null,
+                      child: Text(context.l10n.bookAgain),
+                    ),
+                  ),
                 ],
               ),
           ],
@@ -107,9 +125,9 @@ class _Status extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     switch (status) {
-      PatientAppointmentStatus.upcoming => 'Upcoming',
-      PatientAppointmentStatus.completed => 'Completed',
-      PatientAppointmentStatus.cancelled => 'Cancelled',
+      PatientAppointmentStatus.upcoming => context.l10n.upcoming,
+      PatientAppointmentStatus.completed => context.l10n.completed,
+      PatientAppointmentStatus.cancelled => context.l10n.cancelled,
     },
     style: TextStyle(
       color: status == PatientAppointmentStatus.cancelled

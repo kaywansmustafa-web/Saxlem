@@ -20,13 +20,14 @@ class PopularSpecialtiesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textScale = MediaQuery.textScalerOf(context).scale(1).clamp(1, 2);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DashboardSectionHeader(title: title),
         const SizedBox(height: 12),
         SizedBox(
-          height: 112,
+          height: 112 + ((textScale - 1) * 36),
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.zero,
