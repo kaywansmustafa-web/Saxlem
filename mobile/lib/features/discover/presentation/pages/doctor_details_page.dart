@@ -3,6 +3,8 @@ import '../../../../config/theme/app_colors.dart';
 import '../../domain/entities/doctor_discovery_result.dart';
 import '../../domain/entities/discovery_types.dart';
 import '../discover_copy.dart';
+import '../../../booking/booking_feature.dart';
+import '../../../booking/domain/entities/booking_doctor_reference.dart';
 
 class DoctorDetailsPage extends StatelessWidget {
   const DoctorDetailsPage({
@@ -88,7 +90,20 @@ class DoctorDetailsPage extends StatelessWidget {
                 onPressed:
                     doctor.availability.status == AvailabilityStatus.fullyBooked
                     ? null
-                    : () {},
+                    : () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => BookingFeature(
+                            doctor: BookingDoctorReference(
+                              id: doctor.doctorId,
+                              displayName: doctor.doctorDisplayName,
+                              specialtyDisplayName: copy.specialty(
+                                doctor.specialty,
+                              ),
+                              photoUrl: doctor.photoUrl,
+                            ),
+                          ),
+                        ),
+                      ),
                 child: Text(
                   bookingEmphasized
                       ? 'Choose an appointment'
