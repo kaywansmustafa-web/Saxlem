@@ -319,4 +319,122 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get informationalScreen => 'Informational screen';
+
+  @override
+  String get welcomeTitle => 'Healthcare, made clearer';
+
+  @override
+  String get welcomeBody =>
+      'Saxlem brings trusted care, appointments, and live clinic updates into one calm experience.';
+
+  @override
+  String get welcomeTrust => 'Built for patients across Kurdistan and Iraq';
+
+  @override
+  String get welcomeBook => 'Find and book trusted doctors';
+
+  @override
+  String get welcomeQueue => 'Understand your place in the live queue';
+
+  @override
+  String get welcomeAppointments => 'Keep your care organized';
+
+  @override
+  String get continueAsGuest => 'Continue as Guest';
+
+  @override
+  String get verifyNumber => 'Verify my number';
+
+  @override
+  String get guestMode => 'Guest mode';
+
+  @override
+  String get guestModeMessage =>
+      'You can explore Saxlem, but booking and personal appointments require verification.';
+
+  @override
+  String get phoneTitle => 'Your mobile number';
+
+  @override
+  String get phoneBody =>
+      'We\'ll send a one-time code to securely verify your number.';
+
+  @override
+  String get country => 'Country';
+
+  @override
+  String get iraq => 'Iraq';
+
+  @override
+  String get phoneNumber => 'Mobile number';
+
+  @override
+  String get phoneHint => '750 123 4567';
+
+  @override
+  String get phoneInvalid => 'Enter a valid Iraqi mobile number.';
+
+  @override
+  String get sendCode => 'Send code';
+
+  @override
+  String get otpTitle => 'Enter your code';
+
+  @override
+  String otpBody(String phone) {
+    return 'We sent a 6-digit code to $phone.';
+  }
+
+  @override
+  String get otpLabel => '6-digit verification code';
+
+  @override
+  String get otpHint => '123456';
+
+  @override
+  String get verify => 'Verify and continue';
+
+  @override
+  String get changeNumber => 'Change number';
+
+  @override
+  String get resendCode => 'Resend code';
+
+  @override
+  String resendIn(int seconds) {
+    return 'Resend in ${seconds}s';
+  }
+
+  @override
+  String get otpInvalid => 'That code is not correct. Please try again.';
+
+  @override
+  String get otpExpired => 'This code has expired. Request a new one.';
+
+  @override
+  String get otpLimited => 'Too many attempts. Please request a new code.';
+
+  @override
+  String get authUnavailable =>
+      'Verification is temporarily unavailable. Please try again.';
+
+  @override
+  String get sessionExpiredTitle => 'Your session has expired';
+
+  @override
+  String get sessionExpiredBody =>
+      'Verify your number again to continue securely.';
+
+  @override
+  String get developmentCodeHint => 'Development code: 123456';
+
+  @override
+  String get logOut => 'Log out';
+
+  @override
+  String get personalizedFeatureTitle => 'Verification required';
+
+  @override
+  String get personalizedFeatureBody =>
+      'Sign in with your mobile number to use appointments and other personalized care features.';
 }

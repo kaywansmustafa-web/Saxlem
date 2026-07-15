@@ -13,11 +13,13 @@ class DoctorDetailsPage extends StatelessWidget {
     required this.doctor,
     this.bookingEmphasized = false,
     this.onOpenAppointments,
+    this.guestMode = false,
     super.key,
   });
   final DoctorDiscoveryResult doctor;
   final bool bookingEmphasized;
   final VoidCallback? onOpenAppointments;
+  final bool guestMode;
   @override
   Widget build(BuildContext context) {
     const copy = DiscoverCopy();
@@ -98,6 +100,12 @@ class DoctorDetailsPage extends StatelessWidget {
                       doctor.availability.status ==
                           AvailabilityStatus.fullyBooked
                       ? null
+                      : guestMode
+                      ? () => ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(context.l10n.personalizedFeatureBody),
+                          ),
+                        )
                       : () => Navigator.of(context).push(
                           MaterialPageRoute<void>(
                             builder: (_) => BookingFeature(

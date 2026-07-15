@@ -316,4 +316,121 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get informationalScreen => 'پەڕا زانیاریێ';
+
+  @override
+  String get welcomeTitle => 'ساخله‌می، ڕوونتر';
+
+  @override
+  String get welcomeBody =>
+      'ساخله‌م چاڤدێرییا باوەرپێکری، وەعدە و نویکرنێن زیندی یێن کلینیکێ د ئەزموونەکا ئارام دا دکەتە ئێک.';
+
+  @override
+  String get welcomeTrust => 'بۆ نەخۆشێن کوردستان و عیراقێ هاتیە چێکرن';
+
+  @override
+  String get welcomeBook => 'نوژدارێن باوەرپێکری ببینە و وەعدە بگرە';
+
+  @override
+  String get welcomeQueue => 'جهێ خۆ د ڕیزا زیندی دا بزانە';
+
+  @override
+  String get welcomeAppointments => 'چاڤدێرییا خۆ ڕێک و پێک بکە';
+
+  @override
+  String get continueAsGuest => 'وەک میڤان بەردەوام بە';
+
+  @override
+  String get verifyNumber => 'ژمارا من پشتڕاست بکە';
+
+  @override
+  String get guestMode => 'دۆخێ میڤانی';
+
+  @override
+  String get guestModeMessage =>
+      'تو دشێی ساخله‌مێ بگەڕی، لێ وەعدە و تایبەتمەندیێن کەسی پشتڕاستکرنێ دخوازن.';
+
+  @override
+  String get phoneTitle => 'ژمارا موبایلا تە';
+
+  @override
+  String get phoneBody =>
+      'ئەم دێ کودەکا ئێکجارێ فرێکەین دا ژمارا تە ب پارێزراوی پشتڕاست بکەین.';
+
+  @override
+  String get country => 'وەلات';
+
+  @override
+  String get iraq => 'عیراق';
+
+  @override
+  String get phoneNumber => 'ژمارا موبایلێ';
+
+  @override
+  String get phoneHint => '750 123 4567';
+
+  @override
+  String get phoneInvalid => 'ژمارەکا موبایلا عیراقی یا دروست بنڤیسە.';
+
+  @override
+  String get sendCode => 'کودێ فرێکە';
+
+  @override
+  String get otpTitle => 'کودێ بنڤیسە';
+
+  @override
+  String otpBody(String phone) {
+    return 'مە کودەکا 6 ژمارەیی فرێکر $phone.';
+  }
+
+  @override
+  String get otpLabel => 'کودا پشتڕاستکرنێ یا 6 ژمارەیی';
+
+  @override
+  String get otpHint => '123456';
+
+  @override
+  String get verify => 'پشتڕاست بکە و بەردەوام بە';
+
+  @override
+  String get changeNumber => 'ژمارێ بگوهۆڕە';
+
+  @override
+  String get resendCode => 'کودێ دیسان فرێکە';
+
+  @override
+  String resendIn(int seconds) {
+    return 'پشتی $seconds چرکەیان دیسان فرێکە';
+  }
+
+  @override
+  String get otpInvalid => 'ئەڤ کود نە دروستە. دیسان تاقی بکە.';
+
+  @override
+  String get otpExpired => 'دەمێ ڤی کودی قەدیا. کودەکا نوی بخوازە.';
+
+  @override
+  String get otpLimited => 'هەول زێدە بوون. کودەکا نوی بخوازە.';
+
+  @override
+  String get authUnavailable => 'پشتڕاستکرن نوکە نە بەردەستە. دیسان تاقی بکە.';
+
+  @override
+  String get sessionExpiredTitle => 'دەمێ دانیشتنا تە قەدیا';
+
+  @override
+  String get sessionExpiredBody =>
+      'بۆ بەردەوامبوونا پارێزراوی ژمارا خۆ دیسان پشتڕاست بکە.';
+
+  @override
+  String get developmentCodeHint => 'کودا پەرەپێدانێ: 123456';
+
+  @override
+  String get logOut => 'دەرکەڤە';
+
+  @override
+  String get personalizedFeatureTitle => 'پشتڕاستکرن پێدڤییە';
+
+  @override
+  String get personalizedFeatureBody =>
+      'ب ژمارا خۆ بچە ژوور بۆ بکارئینانا وەعدە و تایبەتمەندیێن چاڤدێرییا کەسی.';
 }

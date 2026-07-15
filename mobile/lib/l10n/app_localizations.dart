@@ -681,6 +681,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Informational screen'**
   String get informationalScreen;
+
+  /// No description provided for @welcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthcare, made clearer'**
+  String get welcomeTitle;
+
+  /// No description provided for @welcomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Saxlem brings trusted care, appointments, and live clinic updates into one calm experience.'**
+  String get welcomeBody;
+
+  /// No description provided for @welcomeTrust.
+  ///
+  /// In en, this message translates to:
+  /// **'Built for patients across Kurdistan and Iraq'**
+  String get welcomeTrust;
+
+  /// No description provided for @welcomeBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Find and book trusted doctors'**
+  String get welcomeBook;
+
+  /// No description provided for @welcomeQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Understand your place in the live queue'**
+  String get welcomeQueue;
+
+  /// No description provided for @welcomeAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your care organized'**
+  String get welcomeAppointments;
+
+  /// No description provided for @continueAsGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as Guest'**
+  String get continueAsGuest;
+
+  /// No description provided for @verifyNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify my number'**
+  String get verifyNumber;
+
+  /// No description provided for @guestMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest mode'**
+  String get guestMode;
+
+  /// No description provided for @guestModeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You can explore Saxlem, but booking and personal appointments require verification.'**
+  String get guestModeMessage;
+
+  /// No description provided for @phoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your mobile number'**
+  String get phoneTitle;
+
+  /// No description provided for @phoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll send a one-time code to securely verify your number.'**
+  String get phoneBody;
+
+  /// No description provided for @country.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get country;
+
+  /// No description provided for @iraq.
+  ///
+  /// In en, this message translates to:
+  /// **'Iraq'**
+  String get iraq;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile number'**
+  String get phoneNumber;
+
+  /// No description provided for @phoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'750 123 4567'**
+  String get phoneHint;
+
+  /// No description provided for @phoneInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid Iraqi mobile number.'**
+  String get phoneInvalid;
+
+  /// No description provided for @sendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send code'**
+  String get sendCode;
+
+  /// No description provided for @otpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your code'**
+  String get otpTitle;
+
+  /// No description provided for @otpBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a 6-digit code to {phone}.'**
+  String otpBody(String phone);
+
+  /// No description provided for @otpLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'6-digit verification code'**
+  String get otpLabel;
+
+  /// No description provided for @otpHint.
+  ///
+  /// In en, this message translates to:
+  /// **'123456'**
+  String get otpHint;
+
+  /// No description provided for @verify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify and continue'**
+  String get verify;
+
+  /// No description provided for @changeNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Change number'**
+  String get changeNumber;
+
+  /// No description provided for @resendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code'**
+  String get resendCode;
+
+  /// No description provided for @resendIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend in {seconds}s'**
+  String resendIn(int seconds);
+
+  /// No description provided for @otpInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'That code is not correct. Please try again.'**
+  String get otpInvalid;
+
+  /// No description provided for @otpExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'This code has expired. Request a new one.'**
+  String get otpExpired;
+
+  /// No description provided for @otpLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Please request a new code.'**
+  String get otpLimited;
+
+  /// No description provided for @authUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification is temporarily unavailable. Please try again.'**
+  String get authUnavailable;
+
+  /// No description provided for @sessionExpiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has expired'**
+  String get sessionExpiredTitle;
+
+  /// No description provided for @sessionExpiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your number again to continue securely.'**
+  String get sessionExpiredBody;
+
+  /// No description provided for @developmentCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Development code: 123456'**
+  String get developmentCodeHint;
+
+  /// No description provided for @logOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get logOut;
+
+  /// No description provided for @personalizedFeatureTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification required'**
+  String get personalizedFeatureTitle;
+
+  /// No description provided for @personalizedFeatureBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with your mobile number to use appointments and other personalized care features.'**
+  String get personalizedFeatureBody;
 }
 
 class _AppLocalizationsDelegate

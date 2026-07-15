@@ -314,4 +314,119 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get informationalScreen => 'شاشة معلومات';
+
+  @override
+  String get welcomeTitle => 'رعاية صحية أكثر وضوحاً';
+
+  @override
+  String get welcomeBody =>
+      'يجمع ساكسلم الرعاية الموثوقة والمواعيد وتحديثات العيادة المباشرة في تجربة هادئة واحدة.';
+
+  @override
+  String get welcomeTrust => 'مصمم للمرضى في كردستان والعراق';
+
+  @override
+  String get welcomeBook => 'ابحث عن أطباء موثوقين واحجز معهم';
+
+  @override
+  String get welcomeQueue => 'اعرف مكانك في الطابور المباشر';
+
+  @override
+  String get welcomeAppointments => 'نظّم رعايتك بسهولة';
+
+  @override
+  String get continueAsGuest => 'المتابعة كضيف';
+
+  @override
+  String get verifyNumber => 'تحقق من رقمي';
+
+  @override
+  String get guestMode => 'وضع الضيف';
+
+  @override
+  String get guestModeMessage =>
+      'يمكنك استكشاف ساكسلم، لكن الحجز والمواعيد الشخصية تتطلب التحقق.';
+
+  @override
+  String get phoneTitle => 'رقم هاتفك المحمول';
+
+  @override
+  String get phoneBody => 'سنرسل رمزاً لمرة واحدة للتحقق من رقمك بأمان.';
+
+  @override
+  String get country => 'الدولة';
+
+  @override
+  String get iraq => 'العراق';
+
+  @override
+  String get phoneNumber => 'رقم الهاتف';
+
+  @override
+  String get phoneHint => '750 123 4567';
+
+  @override
+  String get phoneInvalid => 'أدخل رقم هاتف عراقي صالحاً.';
+
+  @override
+  String get sendCode => 'إرسال الرمز';
+
+  @override
+  String get otpTitle => 'أدخل الرمز';
+
+  @override
+  String otpBody(String phone) {
+    return 'أرسلنا رمزاً من 6 أرقام إلى $phone.';
+  }
+
+  @override
+  String get otpLabel => 'رمز التحقق المكون من 6 أرقام';
+
+  @override
+  String get otpHint => '123456';
+
+  @override
+  String get verify => 'تحقق وتابع';
+
+  @override
+  String get changeNumber => 'تغيير الرقم';
+
+  @override
+  String get resendCode => 'إعادة إرسال الرمز';
+
+  @override
+  String resendIn(int seconds) {
+    return 'إعادة الإرسال خلال $seconds ث';
+  }
+
+  @override
+  String get otpInvalid => 'الرمز غير صحيح. حاول مرة أخرى.';
+
+  @override
+  String get otpExpired => 'انتهت صلاحية الرمز. اطلب رمزاً جديداً.';
+
+  @override
+  String get otpLimited => 'محاولات كثيرة. اطلب رمزاً جديداً.';
+
+  @override
+  String get authUnavailable => 'التحقق غير متاح مؤقتاً. حاول مرة أخرى.';
+
+  @override
+  String get sessionExpiredTitle => 'انتهت صلاحية جلستك';
+
+  @override
+  String get sessionExpiredBody => 'تحقق من رقمك مرة أخرى للمتابعة بأمان.';
+
+  @override
+  String get developmentCodeHint => 'رمز التطوير: 123456';
+
+  @override
+  String get logOut => 'تسجيل الخروج';
+
+  @override
+  String get personalizedFeatureTitle => 'التحقق مطلوب';
+
+  @override
+  String get personalizedFeatureBody =>
+      'سجل الدخول برقم هاتفك لاستخدام المواعيد وميزات الرعاية الشخصية.';
 }

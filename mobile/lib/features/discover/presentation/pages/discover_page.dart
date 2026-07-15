@@ -15,12 +15,14 @@ class DiscoverPage extends StatefulWidget {
     this.focusSearch = false,
     this.openFilters = false,
     this.onOpenAppointments,
+    this.guestMode = false,
     super.key,
   });
   final DiscoverController controller;
   final bool focusSearch;
   final bool openFilters;
   final VoidCallback? onOpenAppointments;
+  final bool guestMode;
   @override
   State<DiscoverPage> createState() => _DiscoverPageState();
 }
@@ -178,8 +180,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 child: DoctorResultCard(
                   doctor: doctor,
                   copy: copy,
-                  onFavorite: () =>
-                      widget.controller.toggleMyDoctor(doctor.doctorId),
+                  onFavorite: widget.guestMode
+                      ? _requiresAuthentication
+                      : () => widget.controller.toggleMyDoctor(doctor.doctorId),
                   onProfile: () => _details(doctor),
                   onBook: () => _details(doctor, book: true),
                 ),
@@ -259,9 +262,17 @@ class _DiscoverPageState extends State<DiscoverPage> {
             doctor: doctor,
             bookingEmphasized: book,
             onOpenAppointments: widget.onOpenAppointments,
+            guestMode: widget.guestMode,
           ),
         ),
       );
+
+  void _requiresAuthentication() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(context.l10n.personalizedFeatureBody)),
+    );
+  }
+
   String _sortLabel(DiscoverySort v) => switch (v) {
     DiscoverySort.recommended => 'Recommended',
     DiscoverySort.earliestAvailability => 'Earliest availability',

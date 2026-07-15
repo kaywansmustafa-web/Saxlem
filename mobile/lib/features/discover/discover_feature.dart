@@ -15,12 +15,14 @@ class DiscoverFeature extends StatefulWidget {
     this.focusSearch = false,
     this.openFilters = false,
     this.onOpenAppointments,
+    this.guestMode = false,
     super.key,
   });
   final DoctorSearchCriteria? initialCriteria;
   final bool focusSearch;
   final bool openFilters;
   final VoidCallback? onOpenAppointments;
+  final bool guestMode;
   @override
   State<DiscoverFeature> createState() => _DiscoverFeatureState();
 }
@@ -57,5 +59,6 @@ class _DiscoverFeatureState extends State<DiscoverFeature> {
     focusSearch: widget.focusSearch,
     openFilters: widget.openFilters,
     onOpenAppointments: widget.onOpenAppointments,
+    guestMode: widget.guestMode,
   );
 }

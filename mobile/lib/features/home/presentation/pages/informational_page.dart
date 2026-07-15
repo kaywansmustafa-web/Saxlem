@@ -6,12 +6,16 @@ class InformationalPage extends StatelessWidget {
     required this.message,
     required this.icon,
     required this.semanticLabel,
+    this.actionLabel,
+    this.onAction,
     super.key,
   });
   final String title;
   final String message;
   final IconData icon;
   final String semanticLabel;
+  final String? actionLabel;
+  final VoidCallback? onAction;
 
   @override
   Widget build(BuildContext context) => Semantics(
@@ -33,6 +37,10 @@ class InformationalPage extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(message, textAlign: TextAlign.center),
+            if (actionLabel != null && onAction != null) ...[
+              const SizedBox(height: 24),
+              FilledButton(onPressed: onAction, child: Text(actionLabel!)),
+            ],
           ],
         ),
       ),

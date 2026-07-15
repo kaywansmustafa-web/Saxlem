@@ -8,6 +8,7 @@ export 'components/feedback/saxlem_state_view.dart';
 export 'components/layout/saxlem_responsive_content.dart';
 export 'components/navigation/saxlem_navigation_bar.dart';
 export 'components/inputs/saxlem_search_bar.dart';
+export 'components/inputs/saxlem_text_field.dart';
 export 'foundations/saxlem_breakpoints.dart';
 export 'foundations/saxlem_elevation.dart';
 export 'foundations/saxlem_motion.dart';
