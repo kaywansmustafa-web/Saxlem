@@ -12,6 +12,7 @@ import '../../domain/use_cases/create_booking_quote.dart';
 import '../../domain/use_cases/get_booking_availability.dart';
 import '../../domain/use_cases/get_doctor_clinics.dart';
 import '../state/booking_state.dart';
+import '../../../../core/models/patient_profile.dart';
 
 class BookingController extends ChangeNotifier {
   BookingController({
@@ -21,6 +22,7 @@ class BookingController extends ChangeNotifier {
     required this.createQuote,
     required this.confirmBooking,
     this.onConfirmed,
+    this.profileId = PatientProfileId.me,
   });
   final BookingDoctorReference doctor;
   final GetDoctorClinics getClinics;
@@ -28,6 +30,12 @@ class BookingController extends ChangeNotifier {
   final CreateBookingQuote createQuote;
   final ConfirmBooking confirmBooking;
   final Future<void> Function(BookingConfirmation confirmation)? onConfirmed;
+  PatientProfileId profileId;
+  void selectProfile(PatientProfileId value) {
+    profileId = value;
+    load();
+  }
+
   BookingState state = const BookingLoading();
   bool confirming = false;
   BookingClinicOption? clinic;
@@ -50,7 +58,7 @@ class BookingController extends ChangeNotifier {
     try {
       availability = await getAvailability(doctor, value);
       state = BookingSelectingDate(
-        BookingDraft(doctor: doctor, clinic: value),
+        BookingDraft(doctor: doctor, clinic: value, profileId: profileId),
         availability!,
       );
     } catch (_) {
@@ -67,6 +75,7 @@ class BookingController extends ChangeNotifier {
         clinic: clinic!,
         date: day.date,
         availabilityVersion: availability!.version,
+        profileId: profileId,
       ),
       day,
     );
@@ -81,6 +90,7 @@ class BookingController extends ChangeNotifier {
       date: slot.start,
       slot: slot,
       availabilityVersion: availability!.version,
+      profileId: profileId,
     );
     state = const BookingLoading();
     notifyListeners();

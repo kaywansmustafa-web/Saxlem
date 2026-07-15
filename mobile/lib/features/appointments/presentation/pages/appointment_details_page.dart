@@ -4,10 +4,17 @@ import '../../domain/entities/patient_appointment.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../live_queue/live_queue_feature.dart';
 import '../../../../design_system/components/layout/saxlem_responsive_content.dart';
+import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
+import '../../../family_profiles/presentation/widgets/patient_selector.dart';
 
 class AppointmentDetailsPage extends StatelessWidget {
-  const AppointmentDetailsPage({required this.appointment, super.key});
+  const AppointmentDetailsPage({
+    required this.appointment,
+    this.profilesController,
+    super.key,
+  });
   final PatientAppointment appointment;
+  final PatientProfilesController? profilesController;
 
   bool _isToday(DateTime value) {
     final now = DateTime.now();
@@ -31,6 +38,13 @@ class AppointmentDetailsPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                if (profilesController != null) ...[
+                  PatientSelector(
+                    controller: profilesController!,
+                    label: context.l10n.currentPatient,
+                  ),
+                  const SizedBox(height: 18),
+                ],
                 Text(
                   appointment.doctor.displayName,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(

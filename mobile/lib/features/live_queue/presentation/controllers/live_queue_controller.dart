@@ -8,6 +8,7 @@ import '../../domain/repositories/live_queue_repository.dart';
 import '../../domain/use_cases/perform_queue_action.dart';
 import '../../domain/use_cases/watch_patient_queue.dart';
 import '../state/live_queue_state.dart';
+import '../../../../core/models/patient_profile.dart';
 
 class LiveQueueController extends ChangeNotifier {
   factory LiveQueueController({
@@ -15,11 +16,13 @@ class LiveQueueController extends ChangeNotifier {
     required WatchPatientQueue watchQueue,
     required PerformQueueAction performAction,
     required LiveQueueRepository repository,
+    PatientProfileId profileId = PatientProfileId.me,
   }) => LiveQueueController._(
     queueEntryId,
     watchQueue,
     performAction,
     repository,
+    profileId,
   );
 
   LiveQueueController._(
@@ -27,12 +30,14 @@ class LiveQueueController extends ChangeNotifier {
     this._watchQueue,
     this._performAction,
     this._repository,
+    this._profileId,
   );
 
   final String _queueEntryId;
   final WatchPatientQueue _watchQueue;
   final PerformQueueAction _performAction;
   final LiveQueueRepository _repository;
+  final PatientProfileId _profileId;
   StreamSubscription<LiveQueueUpdate>? _subscription;
   LiveQueueState _state = const LiveQueueInitial();
   bool _actionInFlight = false;
@@ -96,7 +101,7 @@ class LiveQueueController extends ChangeNotifier {
   void _handleUpdate(LiveQueueUpdate update) {
     switch (update) {
       case QueueSnapshotUpdate(:final snapshot):
-        _setState(_stateForSnapshot(snapshot));
+        _setState(_stateForSnapshot(snapshot.copyWith(profileId: _profileId)));
       case QueueConnectionUpdate(:final status):
         _handleConnection(status);
       case QueueFailureUpdate(:final message):

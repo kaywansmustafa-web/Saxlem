@@ -5,15 +5,19 @@ import '../../domain/entities/notification_snapshot.dart';
 import '../../domain/entities/notification_types.dart';
 import '../controllers/notifications_controller.dart';
 import '../notification_copy.dart';
+import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
+import '../../../family_profiles/presentation/widgets/patient_selector.dart';
 
 class NotificationDetailsPage extends StatelessWidget {
   const NotificationDetailsPage({
     required this.group,
     required this.controller,
+    this.profilesController,
     super.key,
   });
   final NotificationGroup group;
   final NotificationsController controller;
+  final PatientProfilesController? profilesController;
   @override
   Widget build(BuildContext context) {
     final strings = context.l10n;
@@ -27,6 +31,13 @@ class NotificationDetailsPage extends StatelessWidget {
             vertical: SaxlemSpacing.three,
           ),
           children: [
+            if (profilesController != null) ...[
+              PatientSelector(
+                controller: profilesController!,
+                label: strings.currentPatient,
+              ),
+              const SizedBox(height: SaxlemSpacing.two),
+            ],
             SaxlemCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

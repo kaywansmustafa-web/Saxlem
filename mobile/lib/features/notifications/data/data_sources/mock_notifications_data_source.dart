@@ -41,6 +41,7 @@ class MockNotificationsDataSource {
         type: 'accountWelcome',
         priority: 'informational',
         occurredAt: now.subtract(const Duration(days: 2)).toIso8601String(),
+        profileId: null,
       ),
     ];
   }

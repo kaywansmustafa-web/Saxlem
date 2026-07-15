@@ -1,4 +1,5 @@
 import 'queue_types.dart';
+import '../../../../core/models/patient_profile.dart';
 
 class PatientQueueSnapshot {
   const PatientQueueSnapshot({
@@ -20,6 +21,7 @@ class PatientQueueSnapshot {
     required this.remoteWaitingAllowed,
     required this.allowedActions,
     required this.guidanceMessage,
+    this.profileId = PatientProfileId.me,
   }) : assert(queueVersion >= 0),
        assert(patientsAhead >= 0),
        assert(estimatedWaitLowerMinutes >= 0),
@@ -43,6 +45,7 @@ class PatientQueueSnapshot {
   final bool remoteWaitingAllowed;
   final Set<PatientQueueAction> allowedActions;
   final String guidanceMessage;
+  final PatientProfileId profileId;
 
   PatientQueueSnapshot copyWith({
     int? queueVersion,
@@ -59,6 +62,7 @@ class PatientQueueSnapshot {
     bool? remoteWaitingAllowed,
     Set<PatientQueueAction>? allowedActions,
     String? guidanceMessage,
+    PatientProfileId? profileId,
   }) => PatientQueueSnapshot(
     sessionId: sessionId,
     queueEntryId: queueEntryId,
@@ -80,5 +84,6 @@ class PatientQueueSnapshot {
     remoteWaitingAllowed: remoteWaitingAllowed ?? this.remoteWaitingAllowed,
     allowedActions: allowedActions ?? this.allowedActions,
     guidanceMessage: guidanceMessage ?? this.guidanceMessage,
+    profileId: profileId ?? this.profileId,
   );
 }

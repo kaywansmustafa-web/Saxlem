@@ -7,6 +7,7 @@ import '../../domain/services/notification_grouping_service.dart';
 import '../../domain/services/notification_sorting_service.dart';
 import '../../domain/use_cases/notification_use_cases.dart';
 import '../state/notifications_state.dart';
+import '../../../../core/models/patient_profile.dart';
 
 class NotificationsController extends ChangeNotifier {
   NotificationsController(
@@ -21,15 +22,18 @@ class NotificationsController extends ChangeNotifier {
   final _sort = const NotificationSortingService();
   StreamSubscription<NotificationSnapshot>? _subscription;
   NotificationsState state = const NotificationsLoading();
+  PatientProfileId profileId = PatientProfileId.me;
 
   int get unreadCount => state is NotificationsReady
       ? (state as NotificationsReady).unreadCount
       : 0;
 
-  Future<void> load() async {
+  Future<void> load([PatientProfileId? selected]) async {
+    if (selected != null) profileId = selected;
+    await _subscription?.cancel();
     try {
-      _set(await LoadNotifications(_repository)());
-      _subscription ??= WatchNotifications(_repository)().listen(_set);
+      _set(await _repository.load(profileId));
+      _subscription = _repository.watch(profileId).listen(_set);
     } catch (_) {
       state = const NotificationsFailure();
       notifyListeners();

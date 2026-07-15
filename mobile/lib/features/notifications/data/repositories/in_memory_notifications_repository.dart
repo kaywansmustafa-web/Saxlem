@@ -5,6 +5,7 @@ import '../../domain/entities/notification_types.dart';
 import '../../domain/repositories/notifications_repository.dart';
 import '../data_sources/mock_notifications_data_source.dart';
 import '../mappers/patient_notification_mapper.dart';
+import '../../../../core/models/patient_profile.dart';
 
 class InMemoryNotificationsRepository implements NotificationsRepository {
   InMemoryNotificationsRepository(this._source, this._mapper);
@@ -14,13 +15,22 @@ class InMemoryNotificationsRepository implements NotificationsRepository {
   List<PatientNotification>? _items;
 
   @override
-  Future<NotificationSnapshot> load() async {
+  Future<NotificationSnapshot> load([
+    PatientProfileId profileId = PatientProfileId.me,
+  ]) async {
     _items ??= (await _source.load()).map(_mapper.map).toList();
-    return _snapshot;
+    return _for(profileId);
   }
 
   @override
-  Stream<NotificationSnapshot> watch() => _changes.stream;
+  Stream<NotificationSnapshot> watch([
+    PatientProfileId profileId = PatientProfileId.me,
+  ]) => _changes.stream.map((_) => _for(profileId));
+  NotificationSnapshot _for(PatientProfileId id) => NotificationSnapshot(
+    notifications: _items!.where(
+      (e) => e.profileId == null || e.profileId == id,
+    ),
+  );
   @override
   Future<PatientNotification?> get(NotificationId id) async =>
       (await load()).notifications.where((e) => e.id == id).firstOrNull;

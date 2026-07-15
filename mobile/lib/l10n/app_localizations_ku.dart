@@ -587,4 +587,57 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get notificationTimeEarlier => 'بەری نوکە هاتە نووکرن';
+
+  @override
+  String get choosePatient => 'نەخۆشی هەلبژێرە';
+
+  @override
+  String get bookingFor => 'وەعدە بۆ';
+
+  @override
+  String get addPatient => 'ئەندامەکێ خێزانێ زێدە بکە';
+
+  @override
+  String get firstName => 'ناڤ';
+
+  @override
+  String get lastName => 'ناڤێ خێزانێ';
+
+  @override
+  String get relationship => 'پەیوەندی';
+
+  @override
+  String get gender => 'رەگەز';
+
+  @override
+  String get dateOfBirth => 'رووژا ژ دایکبوونێ';
+
+  @override
+  String patientRelationship(String relationship) {
+    String _temp0 = intl.Intl.selectLogic(relationship, {
+      'mother': 'دایک',
+      'father': 'باب',
+      'wife': 'ژین',
+      'husband': 'مێر',
+      'son': 'کوڕ',
+      'daughter': 'کچ',
+      'brother': 'برا',
+      'sister': 'خوشک',
+      'grandfather': 'باپیر',
+      'grandmother': 'داپیر',
+      'me': 'ئەز',
+      'other': 'یێ دی',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String patientGender(String gender) {
+    String _temp0 = intl.Intl.selectLogic(gender, {
+      'female': 'مێ',
+      'male': 'نێر',
+      'other': 'نەدیار',
+    });
+    return '$_temp0';
+  }
 }

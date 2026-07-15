@@ -15,6 +15,8 @@ import 'features/authentication/domain/repositories/auth_repository.dart';
 import 'features/authentication/presentation/authentication_feature.dart';
 import 'app/app_dependencies.dart';
 import 'config/environment/app_configuration.dart';
+import 'features/family_profiles/data/repositories/in_memory_patient_profiles_repository.dart';
+import 'features/family_profiles/presentation/controllers/patient_profiles_controller.dart';
 
 void main() {
   final dependencies = AppDependencies.create(
@@ -65,16 +67,22 @@ class _AppBootstrap extends StatefulWidget {
 
 class _AppBootstrapState extends State<_AppBootstrap> {
   late final AppController controller;
+  late final PatientProfilesController profiles;
   @override
   void initState() {
     super.initState();
     controller = AppController(widget.localeRepository, widget.authRepository)
       ..load();
+    profiles = PatientProfilesController(
+      InMemoryPatientProfilesRepository(),
+      guest: false,
+    )..load();
   }
 
   @override
   void dispose() {
     controller.dispose();
+    profiles.dispose();
     super.dispose();
   }
 
@@ -109,11 +117,17 @@ class _AppBootstrapState extends State<_AppBootstrap> {
           onGuest: controller.continueAsGuest,
           developmentOtp: widget.developmentOtp,
         ),
-        AppBootstrapStatus.ready => HomePage(
-          guestMode: controller.guestMode,
-          onLogout: controller.logout,
-        ),
+        AppBootstrapStatus.ready => _readyHome(),
       },
     ),
   );
+
+  Widget _readyHome() {
+    profiles.setGuest(controller.guestMode);
+    return HomePage(
+      guestMode: controller.guestMode,
+      onLogout: controller.logout,
+      profilesController: profiles,
+    );
+  }
 }

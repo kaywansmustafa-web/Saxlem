@@ -16,6 +16,8 @@ import 'live_queue_card.dart';
 import 'popular_specialties_section.dart';
 import 'recommended_doctors_section.dart';
 import '../../../../core/localization/localization_extensions.dart';
+import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
+import '../../../family_profiles/presentation/widgets/patient_selector.dart';
 
 class DashboardView extends StatelessWidget {
   const DashboardView({
@@ -23,6 +25,7 @@ class DashboardView extends StatelessWidget {
     required this.onOpenAlerts,
     required this.onOpenAppointments,
     required this.onOpenLiveQueue,
+    this.profilesController,
     super.key,
   });
   final void Function({
@@ -34,6 +37,7 @@ class DashboardView extends StatelessWidget {
   final VoidCallback onOpenAlerts;
   final VoidCallback onOpenAppointments;
   final VoidCallback onOpenLiveQueue;
+  final PatientProfilesController? profilesController;
 
   static const _specialties = [
     Specialty(id: 'dentist', name: 'Dentist', iconKey: 'dentist'),
@@ -87,6 +91,13 @@ class DashboardView extends StatelessWidget {
             notificationLabel: strings.alerts,
             onNotificationPressed: onOpenAlerts,
           ),
+          if (profilesController != null) ...[
+            const SizedBox(height: 16),
+            PatientSelector(
+              controller: profilesController!,
+              label: strings.currentPatient,
+            ),
+          ],
           const SizedBox(height: 26),
           DashboardSearchBar(
             hintText: strings.searchHint,
@@ -174,6 +185,7 @@ class DashboardView extends StatelessWidget {
                   doctor: _discoveryDoctor(doctor),
                   bookingEmphasized: true,
                   onOpenAppointments: onOpenAppointments,
+                  profilesController: profilesController,
                 ),
               ),
             ),

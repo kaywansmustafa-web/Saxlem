@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../../domain/repositories/patient_appointments_repository.dart';
 import '../../domain/entities/appointments_snapshot.dart';
 import '../state/appointments_state.dart';
+import '../../../../core/models/patient_profile.dart';
 
 class AppointmentsController extends ChangeNotifier {
   AppointmentsController(this._repository);
@@ -10,10 +11,11 @@ class AppointmentsController extends ChangeNotifier {
   AppointmentsState state = const AppointmentsLoading();
   StreamSubscription? _subscription;
 
-  Future<void> load() async {
+  Future<void> load([PatientProfileId profileId = PatientProfileId.me]) async {
+    await _subscription?.cancel();
     try {
-      _setReady(await _repository.load());
-      _subscription ??= _repository.watch().listen(_setReady);
+      _setReady(await _repository.load(profileId));
+      _subscription = _repository.watch(profileId).listen(_setReady);
     } catch (_) {
       state = const AppointmentsFailure('We could not load your appointments.');
       notifyListeners();

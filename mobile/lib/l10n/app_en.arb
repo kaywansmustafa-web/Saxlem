@@ -190,5 +190,9 @@
   "notificationTimeJustNow": "Updated just now",
   "notificationTimeMinutesAgo": "Updated {minutes} minutes ago",
   "@notificationTimeMinutesAgo": {"placeholders": {"minutes": {"type": "int"}}},
-  "notificationTimeEarlier": "Updated earlier"
+  "notificationTimeEarlier": "Updated earlier",
+  "currentPatient": "Current Patient", "choosePatient": "Choose Patient", "bookingFor": "Booking For", "addPatient": "Add family member",
+  "firstName": "First name", "lastName": "Last name", "relationship": "Relationship", "gender": "Gender", "dateOfBirth": "Date of birth",
+  "patientRelationship": "{relationship, select, mother {Mother} father {Father} wife {Wife} husband {Husband} son {Son} daughter {Daughter} brother {Brother} sister {Sister} grandfather {Grandfather} grandmother {Grandmother} me {Me} other {Other}}",
+  "patientGender": "{gender, select, female {Female} male {Male} other {Not specified}}"
 }

@@ -8,6 +8,8 @@ import '../widgets/slot_grid.dart';
 import 'booking_review_page.dart';
 import 'booking_success_page.dart';
 import '../../../../core/localization/localization_extensions.dart';
+import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
+import '../../../family_profiles/presentation/widgets/patient_selector.dart';
 
 class BookingFlowPage extends StatelessWidget {
   const BookingFlowPage({
@@ -15,10 +17,12 @@ class BookingFlowPage extends StatelessWidget {
     required this.onViewDoctor,
     required this.onMyAppointments,
     required this.onReturnHome,
+    this.profilesController,
     super.key,
   });
   final BookingController controller;
   final VoidCallback onViewDoctor, onMyAppointments, onReturnHome;
+  final PatientProfilesController? profilesController;
   @override
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: AppColors.background,
@@ -27,9 +31,23 @@ class BookingFlowPage extends StatelessWidget {
       top: false,
       child: ListenableBuilder(
         listenable: controller,
-        builder: (context, _) => AnimatedSwitcher(
-          duration: const Duration(milliseconds: 220),
-          child: _body(context, controller.state),
+        builder: (context, _) => Column(
+          children: [
+            if (profilesController != null)
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(24, 12, 24, 0),
+                child: PatientSelector(
+                  controller: profilesController!,
+                  label: context.l10n.bookingFor,
+                ),
+              ),
+            Expanded(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 220),
+                child: _body(context, controller.state),
+              ),
+            ),
+          ],
         ),
       ),
     ),

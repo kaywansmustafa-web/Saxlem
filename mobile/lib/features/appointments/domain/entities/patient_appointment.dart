@@ -1,4 +1,5 @@
 import '../../../../core/models/doctor_reference.dart';
+import '../../../../core/models/patient_profile.dart';
 
 enum PatientAppointmentStatus { upcoming, completed, cancelled }
 
@@ -14,6 +15,7 @@ class PatientAppointment {
     required this.durationMinutes,
     this.estimatedWaitMinutes,
     this.queueEntryId,
+    this.profileId = PatientProfileId.me,
   });
 
   final String id;
@@ -26,4 +28,5 @@ class PatientAppointment {
   final int durationMinutes;
   final int? estimatedWaitMinutes;
   final String? queueEntryId;
+  final PatientProfileId profileId;
 }

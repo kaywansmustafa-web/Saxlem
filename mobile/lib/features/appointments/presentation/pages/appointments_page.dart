@@ -5,15 +5,19 @@ import '../widgets/appointment_card.dart';
 import '../widgets/appointments_empty_state.dart';
 import 'appointment_details_page.dart';
 import '../../../../core/localization/localization_extensions.dart';
+import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
+import '../../../family_profiles/presentation/widgets/patient_selector.dart';
 
 class AppointmentsPage extends StatelessWidget {
   const AppointmentsPage({
     required this.controller,
     required this.onDiscover,
+    this.profilesController,
     super.key,
   });
   final AppointmentsController controller;
   final VoidCallback onDiscover;
+  final PatientProfilesController? profilesController;
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
@@ -58,6 +62,14 @@ class AppointmentsPage extends StatelessWidget {
           ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
         ),
       ),
+      if (profilesController != null)
+        Padding(
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: 24),
+          child: PatientSelector(
+            controller: profilesController!,
+            label: context.l10n.currentPatient,
+          ),
+        ),
       SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsetsDirectional.symmetric(horizontal: 18),
@@ -98,8 +110,10 @@ class AppointmentsPage extends StatelessWidget {
                     onView: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) =>
-                            AppointmentDetailsPage(appointment: appointment),
+                        builder: (_) => AppointmentDetailsPage(
+                          appointment: appointment,
+                          profilesController: profilesController,
+                        ),
                       ),
                     ),
                   );

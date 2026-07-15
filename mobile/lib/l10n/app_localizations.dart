@@ -259,7 +259,7 @@ abstract class AppLocalizations {
   /// No description provided for @currentPatient.
   ///
   /// In en, this message translates to:
-  /// **'Current patient'**
+  /// **'Current Patient'**
   String get currentPatient;
 
   /// No description provided for @yourNumber.
@@ -1155,6 +1155,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Updated earlier'**
   String get notificationTimeEarlier;
+
+  /// No description provided for @choosePatient.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Patient'**
+  String get choosePatient;
+
+  /// No description provided for @bookingFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking For'**
+  String get bookingFor;
+
+  /// No description provided for @addPatient.
+  ///
+  /// In en, this message translates to:
+  /// **'Add family member'**
+  String get addPatient;
+
+  /// No description provided for @firstName.
+  ///
+  /// In en, this message translates to:
+  /// **'First name'**
+  String get firstName;
+
+  /// No description provided for @lastName.
+  ///
+  /// In en, this message translates to:
+  /// **'Last name'**
+  String get lastName;
+
+  /// No description provided for @relationship.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship'**
+  String get relationship;
+
+  /// No description provided for @gender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get gender;
+
+  /// No description provided for @dateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of birth'**
+  String get dateOfBirth;
+
+  /// No description provided for @patientRelationship.
+  ///
+  /// In en, this message translates to:
+  /// **'{relationship, select, mother {Mother} father {Father} wife {Wife} husband {Husband} son {Son} daughter {Daughter} brother {Brother} sister {Sister} grandfather {Grandfather} grandmother {Grandmother} me {Me} other {Other}}'**
+  String patientRelationship(String relationship);
+
+  /// No description provided for @patientGender.
+  ///
+  /// In en, this message translates to:
+  /// **'{gender, select, female {Female} male {Male} other {Not specified}}'**
+  String patientGender(String gender);
 }
 
 class _AppLocalizationsDelegate

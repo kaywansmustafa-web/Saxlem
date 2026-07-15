@@ -8,16 +8,21 @@ import '../state/live_queue_state.dart';
 import '../widgets/live_queue_content.dart';
 import '../widgets/live_queue_failure_view.dart';
 import '../widgets/live_queue_loading_view.dart';
+import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
+import '../../../family_profiles/presentation/widgets/patient_selector.dart';
+import '../../../../core/localization/localization_extensions.dart';
 
 class LiveQueuePage extends StatelessWidget {
   const LiveQueuePage({
     required this.controller,
     this.copy = const LiveQueueCopy(),
+    this.profilesController,
     super.key,
   });
 
   final LiveQueueController controller;
   final LiveQueueCopy copy;
+  final PatientProfilesController? profilesController;
 
   @override
   Widget build(BuildContext context) {
@@ -26,12 +31,26 @@ class LiveQueuePage extends StatelessWidget {
       appBar: AppBar(title: Text(copy.pageTitle)),
       body: SafeArea(
         top: false,
-        child: ListenableBuilder(
-          listenable: controller,
-          builder: (context, _) => AnimatedSwitcher(
-            duration: const Duration(milliseconds: 220),
-            child: _bodyFor(controller.state),
-          ),
+        child: Column(
+          children: [
+            if (profilesController != null)
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(24, 12, 24, 0),
+                child: PatientSelector(
+                  controller: profilesController!,
+                  label: context.l10n.currentPatient,
+                ),
+              ),
+            Expanded(
+              child: ListenableBuilder(
+                listenable: controller,
+                builder: (context, _) => AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 220),
+                  child: _bodyFor(controller.state),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

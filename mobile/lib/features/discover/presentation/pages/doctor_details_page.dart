@@ -7,6 +7,7 @@ import '../../../booking/booking_feature.dart';
 import '../../../booking/domain/entities/booking_doctor_reference.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../../design_system/components/layout/saxlem_responsive_content.dart';
+import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
 
 class DoctorDetailsPage extends StatelessWidget {
   const DoctorDetailsPage({
@@ -14,12 +15,14 @@ class DoctorDetailsPage extends StatelessWidget {
     this.bookingEmphasized = false,
     this.onOpenAppointments,
     this.guestMode = false,
+    this.profilesController,
     super.key,
   });
   final DoctorDiscoveryResult doctor;
   final bool bookingEmphasized;
   final VoidCallback? onOpenAppointments;
   final bool guestMode;
+  final PatientProfilesController? profilesController;
   @override
   Widget build(BuildContext context) {
     const copy = DiscoverCopy();
@@ -118,6 +121,7 @@ class DoctorDetailsPage extends StatelessWidget {
                                 photoUrl: doctor.photoUrl,
                               ),
                               onOpenAppointments: onOpenAppointments,
+                              profilesController: profilesController,
                             ),
                           ),
                         ),

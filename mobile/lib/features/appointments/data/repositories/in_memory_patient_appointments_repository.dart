@@ -4,6 +4,7 @@ import '../../../../core/models/doctor_reference.dart';
 import '../../domain/entities/appointments_snapshot.dart';
 import '../../domain/entities/patient_appointment.dart';
 import '../../domain/repositories/patient_appointments_repository.dart';
+import '../../../../core/models/patient_profile.dart';
 
 class InMemoryPatientAppointmentsRepository
     implements PatientAppointmentsRepository {
@@ -28,10 +29,21 @@ class InMemoryPatientAppointmentsRepository
   );
 
   @override
-  Future<AppointmentsSnapshot> load() async => _snapshot;
+  Future<AppointmentsSnapshot> load([
+    PatientProfileId profileId = PatientProfileId.me,
+  ]) async => _for(profileId);
 
   @override
-  Stream<AppointmentsSnapshot> watch() => _changes.stream;
+  Stream<AppointmentsSnapshot> watch([
+    PatientProfileId profileId = PatientProfileId.me,
+  ]) => _changes.stream.map((_) => _for(profileId));
+
+  AppointmentsSnapshot _for(PatientProfileId id) => AppointmentsSnapshot(
+    appointments: _appointments
+        .where((item) => item.profileId == id)
+        .toList(growable: false),
+    hasAppointmentHistory: _appointments.any((item) => item.profileId == id),
+  );
 
   @override
   Future<void> add(PatientAppointment appointment) async {

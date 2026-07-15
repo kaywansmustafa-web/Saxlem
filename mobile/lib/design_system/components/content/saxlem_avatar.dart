@@ -5,12 +5,14 @@ import '../../theme/saxlem_colors.dart';
 class SaxlemAvatar extends StatelessWidget {
   const SaxlemAvatar({
     required this.semanticLabel,
+    this.initials,
     this.imageUrl,
     this.size = 56,
     this.icon = Icons.person_rounded,
     super.key,
   });
   final String semanticLabel;
+  final String? initials;
   final String? imageUrl;
   final double size;
   final IconData icon;
@@ -18,7 +20,16 @@ class SaxlemAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.saxlemColors;
-    final fallback = Icon(icon, size: size * .55, color: colors.brandPrimary);
+    final fallback = initials == null
+        ? Icon(icon, size: size * .55, color: colors.brandPrimary)
+        : Center(
+            child: Text(
+              initials!,
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: colors.brandPrimary),
+            ),
+          );
     return Semantics(
       image: true,
       label: semanticLabel,

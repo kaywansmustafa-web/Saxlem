@@ -1,4 +1,5 @@
 import 'notification_types.dart';
+import '../../../../core/models/patient_profile.dart';
 
 class NotificationId {
   const NotificationId(this.value) : assert(value != '');
@@ -44,6 +45,7 @@ class PatientNotification {
     required this.payload,
     this.action = const NotificationAction.none(),
     this.groupKey,
+    this.profileId = PatientProfileId.me,
   });
 
   final NotificationId id;
@@ -55,6 +57,7 @@ class PatientNotification {
   final NotificationPayload payload;
   final NotificationAction action;
   final String? groupKey;
+  final PatientProfileId? profileId;
 
   bool get isUnread => readState == NotificationReadState.unread;
   bool get isQueue => category == NotificationCategory.queue;
@@ -70,5 +73,6 @@ class PatientNotification {
     payload: payload,
     action: action,
     groupKey: groupKey,
+    profileId: profileId,
   );
 }

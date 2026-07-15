@@ -11,8 +11,10 @@ class PatientNotificationDto {
     this.queueNumber,
     this.message,
     this.targetId,
+    this.profileId = 'me',
   });
   final String id, type, priority, occurredAt;
   final String? groupKey, doctorName, clinicName, message, targetId;
+  final String? profileId;
   final int? minutes, queueNumber;
 }

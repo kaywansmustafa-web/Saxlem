@@ -579,4 +579,57 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get notificationTimeEarlier => 'تم التحديث سابقاً';
+
+  @override
+  String get choosePatient => 'اختر المريض';
+
+  @override
+  String get bookingFor => 'الحجز لـ';
+
+  @override
+  String get addPatient => 'إضافة فرد من العائلة';
+
+  @override
+  String get firstName => 'الاسم الأول';
+
+  @override
+  String get lastName => 'اسم العائلة';
+
+  @override
+  String get relationship => 'صلة القرابة';
+
+  @override
+  String get gender => 'الجنس';
+
+  @override
+  String get dateOfBirth => 'تاريخ الميلاد';
+
+  @override
+  String patientRelationship(String relationship) {
+    String _temp0 = intl.Intl.selectLogic(relationship, {
+      'mother': 'الأم',
+      'father': 'الأب',
+      'wife': 'الزوجة',
+      'husband': 'الزوج',
+      'son': 'الابن',
+      'daughter': 'الابنة',
+      'brother': 'الأخ',
+      'sister': 'الأخت',
+      'grandfather': 'الجد',
+      'grandmother': 'الجدة',
+      'me': 'أنا',
+      'other': 'أخرى',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String patientGender(String gender) {
+    String _temp0 = intl.Intl.selectLogic(gender, {
+      'female': 'أنثى',
+      'male': 'ذكر',
+      'other': 'غير محدد',
+    });
+    return '$_temp0';
+  }
 }

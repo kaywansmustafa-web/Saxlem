@@ -6,6 +6,7 @@ import '../controllers/discover_controller.dart';
 import '../discover_copy.dart';
 import '../state/discover_state.dart';
 import '../widgets/doctor_result_card.dart';
+import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
 import 'doctor_details_page.dart';
 import '../../../../core/localization/localization_extensions.dart';
 
@@ -16,6 +17,7 @@ class DiscoverPage extends StatefulWidget {
     this.openFilters = false,
     this.onOpenAppointments,
     this.guestMode = false,
+    this.profilesController,
     super.key,
   });
   final DiscoverController controller;
@@ -23,6 +25,7 @@ class DiscoverPage extends StatefulWidget {
   final bool openFilters;
   final VoidCallback? onOpenAppointments;
   final bool guestMode;
+  final PatientProfilesController? profilesController;
   @override
   State<DiscoverPage> createState() => _DiscoverPageState();
 }
@@ -263,6 +266,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
             bookingEmphasized: book,
             onOpenAppointments: widget.onOpenAppointments,
             guestMode: widget.guestMode,
+            profilesController: widget.profilesController,
           ),
         ),
       );

@@ -21,6 +21,7 @@ class BookingConfirmationAppointmentMapper {
       status: PatientAppointmentStatus.upcoming,
       feeIqd: draft.clinic.consultationFeeIqd,
       durationMinutes: draft.clinic.durationMinutes,
+      profileId: draft.profileId,
     );
   }
 }

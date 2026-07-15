@@ -8,6 +8,7 @@ import 'domain/use_cases/search_doctors.dart';
 import 'domain/use_cases/toggle_my_doctor.dart';
 import 'presentation/controllers/discover_controller.dart';
 import 'presentation/pages/discover_page.dart';
+import '../family_profiles/presentation/controllers/patient_profiles_controller.dart';
 
 class DiscoverFeature extends StatefulWidget {
   const DiscoverFeature({
@@ -16,6 +17,7 @@ class DiscoverFeature extends StatefulWidget {
     this.openFilters = false,
     this.onOpenAppointments,
     this.guestMode = false,
+    this.profilesController,
     super.key,
   });
   final DoctorSearchCriteria? initialCriteria;
@@ -23,6 +25,7 @@ class DiscoverFeature extends StatefulWidget {
   final bool openFilters;
   final VoidCallback? onOpenAppointments;
   final bool guestMode;
+  final PatientProfilesController? profilesController;
   @override
   State<DiscoverFeature> createState() => _DiscoverFeatureState();
 }
@@ -60,5 +63,6 @@ class _DiscoverFeatureState extends State<DiscoverFeature> {
     openFilters: widget.openFilters,
     onOpenAppointments: widget.onOpenAppointments,
     guestMode: widget.guestMode,
+    profilesController: widget.profilesController,
   );
 }

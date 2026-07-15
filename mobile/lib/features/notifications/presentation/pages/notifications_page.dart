@@ -6,10 +6,17 @@ import '../controllers/notifications_controller.dart';
 import '../state/notifications_state.dart';
 import '../widgets/notification_card.dart';
 import 'notification_details_page.dart';
+import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
+import '../../../family_profiles/presentation/widgets/patient_selector.dart';
 
 class NotificationsPage extends StatelessWidget {
-  const NotificationsPage({required this.controller, super.key});
+  const NotificationsPage({
+    required this.controller,
+    this.profilesController,
+    super.key,
+  });
   final NotificationsController controller;
+  final PatientProfilesController? profilesController;
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: controller,
@@ -24,15 +31,24 @@ class NotificationsPage extends StatelessWidget {
         actionLabel: context.l10n.tryAgain,
         onAction: controller.load,
       ),
-      NotificationsReady state => _Ready(controller: controller, state: state),
+      NotificationsReady state => _Ready(
+        controller: controller,
+        state: state,
+        profilesController: profilesController,
+      ),
     },
   );
 }
 
 class _Ready extends StatelessWidget {
-  const _Ready({required this.controller, required this.state});
+  const _Ready({
+    required this.controller,
+    required this.state,
+    this.profilesController,
+  });
   final NotificationsController controller;
   final NotificationsReady state;
+  final PatientProfilesController? profilesController;
   @override
   Widget build(BuildContext context) {
     if (state.groups.isEmpty) {
@@ -69,6 +85,13 @@ class _Ready extends StatelessWidget {
             context.l10n.notifications,
             style: Theme.of(context).textTheme.headlineMedium,
           ),
+          if (profilesController != null) ...[
+            const SizedBox(height: SaxlemSpacing.two),
+            PatientSelector(
+              controller: profilesController!,
+              label: context.l10n.currentPatient,
+            ),
+          ],
           const SizedBox(height: SaxlemSpacing.half),
           Text(context.l10n.unreadNotifications(state.unreadCount)),
           ..._section(context, context.l10n.unread, unread),
@@ -102,6 +125,7 @@ class _Ready extends StatelessWidget {
                   builder: (_) => NotificationDetailsPage(
                     group: group,
                     controller: controller,
+                    profilesController: profilesController,
                   ),
                 ),
               );

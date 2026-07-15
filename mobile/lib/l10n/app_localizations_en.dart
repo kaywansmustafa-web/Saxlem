@@ -90,7 +90,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get live => 'LIVE';
 
   @override
-  String get currentPatient => 'Current patient';
+  String get currentPatient => 'Current Patient';
 
   @override
   String get yourNumber => 'Your Number';
@@ -594,4 +594,57 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationTimeEarlier => 'Updated earlier';
+
+  @override
+  String get choosePatient => 'Choose Patient';
+
+  @override
+  String get bookingFor => 'Booking For';
+
+  @override
+  String get addPatient => 'Add family member';
+
+  @override
+  String get firstName => 'First name';
+
+  @override
+  String get lastName => 'Last name';
+
+  @override
+  String get relationship => 'Relationship';
+
+  @override
+  String get gender => 'Gender';
+
+  @override
+  String get dateOfBirth => 'Date of birth';
+
+  @override
+  String patientRelationship(String relationship) {
+    String _temp0 = intl.Intl.selectLogic(relationship, {
+      'mother': 'Mother',
+      'father': 'Father',
+      'wife': 'Wife',
+      'husband': 'Husband',
+      'son': 'Son',
+      'daughter': 'Daughter',
+      'brother': 'Brother',
+      'sister': 'Sister',
+      'grandfather': 'Grandfather',
+      'grandmother': 'Grandmother',
+      'me': 'Me',
+      'other': 'Other',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String patientGender(String gender) {
+    String _temp0 = intl.Intl.selectLogic(gender, {
+      'female': 'Female',
+      'male': 'Male',
+      'other': 'Not specified',
+    });
+    return '$_temp0';
+  }
 }

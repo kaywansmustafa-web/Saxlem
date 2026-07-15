@@ -152,5 +152,9 @@
   "notificationReservedWhy": "کلینیکێ هاتنا تە تۆمار کر.", "notificationReservedNext": "هیڤییە چاڤەرێی رێنماییێن پێشوازیێ بە.",
   "notificationGeneralHappened": "نووکرنەکا نوو دەربارەی چاڤدێرییا تە هەیە.", "notificationGeneralWhy": "زانیاریێن نوو بەردەست بوون.",
   "notificationGeneralNext": "نووکرنێ ببینە و رێنماییێن دیار بکە.",
-  "notificationTimeJustNow": "نوکە هاتە نووکرن", "notificationTimeMinutesAgo": "بەری {minutes} خولەکان هاتە نووکرن", "notificationTimeEarlier": "بەری نوکە هاتە نووکرن"
+  "notificationTimeJustNow": "نوکە هاتە نووکرن", "notificationTimeMinutesAgo": "بەری {minutes} خولەکان هاتە نووکرن", "notificationTimeEarlier": "بەری نوکە هاتە نووکرن",
+  "currentPatient": "نەخۆشێ نوکە", "choosePatient": "نەخۆشی هەلبژێرە", "bookingFor": "وەعدە بۆ", "addPatient": "ئەندامەکێ خێزانێ زێدە بکە",
+  "firstName": "ناڤ", "lastName": "ناڤێ خێزانێ", "relationship": "پەیوەندی", "gender": "رەگەز", "dateOfBirth": "رووژا ژ دایکبوونێ",
+  "patientRelationship": "{relationship, select, mother {دایک} father {باب} wife {ژین} husband {مێر} son {کوڕ} daughter {کچ} brother {برا} sister {خوشک} grandfather {باپیر} grandmother {داپیر} me {ئەز} other {یێ دی}}",
+  "patientGender": "{gender, select, female {مێ} male {نێر} other {نەدیار}}"
 }

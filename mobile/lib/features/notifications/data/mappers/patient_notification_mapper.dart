@@ -1,6 +1,7 @@
 import '../../domain/entities/notification_types.dart';
 import '../../domain/entities/patient_notification.dart';
 import '../dto/patient_notification_dto.dart';
+import '../../../../core/models/patient_profile.dart';
 
 class PatientNotificationMapper {
   const PatientNotificationMapper();
@@ -23,6 +24,9 @@ class PatientNotificationMapper {
         message: dto.message,
       ),
       action: NotificationAction(_destination(type), targetId: dto.targetId),
+      profileId: dto.profileId == null
+          ? null
+          : PatientProfileId(dto.profileId!),
     );
   }
 
