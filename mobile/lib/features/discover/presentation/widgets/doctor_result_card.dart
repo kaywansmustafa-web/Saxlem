@@ -3,6 +3,7 @@ import '../../domain/entities/doctor_discovery_result.dart';
 import '../../domain/entities/discovery_types.dart';
 import '../discover_copy.dart';
 import '../../../../core/localization/localization_extensions.dart';
+import '../../../../design_system/components/content/saxlem_card.dart';
 
 class DoctorResultCard extends StatelessWidget {
   const DoctorResultCard({
@@ -24,20 +25,9 @@ class DoctorResultCard extends StatelessWidget {
       container: true,
       label:
           '${doctor.doctorDisplayName}, ${copy.specialty(doctor.specialty)}, ${copy.availability(a.status)}, ${copy.fee(doctor.consultationFeeIqd)}',
-      child: Container(
+      child: SaxlemCard(
+        elevation: SaxlemCardElevation.low,
         padding: const EdgeInsetsDirectional.all(18),
-        decoration: BoxDecoration(
-          color: c.surface,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: c.outlineVariant),
-          boxShadow: [
-            BoxShadow(
-              color: c.shadow.withValues(alpha: .05),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

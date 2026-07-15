@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'app_colors.dart';
+import '../../design_system/foundations/saxlem_radii.dart';
+import '../../design_system/foundations/saxlem_sizes.dart';
+import '../../design_system/foundations/saxlem_typography.dart';
+import '../../design_system/theme/saxlem_colors.dart';
 
 abstract final class AppTheme {
   static ThemeData get light {
@@ -9,66 +13,43 @@ abstract final class AppTheme {
       useMaterial3: true,
       brightness: Brightness.light,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
-        primary: AppColors.primary,
-        secondary: AppColors.secondary,
-        error: AppColors.error,
-        surface: AppColors.white,
+        seedColor: SaxlemColors.light.brandPrimary,
+        primary: SaxlemColors.light.brandPrimary,
+        secondary: SaxlemColors.light.brandSecondary,
+        error: SaxlemColors.light.criticalContent,
+        surface: SaxlemColors.light.surfaceRaised,
       ),
       scaffoldBackgroundColor: AppColors.background,
     );
 
     return baseTheme.copyWith(
-      textTheme: GoogleFonts.notoSansTextTheme(baseTheme.textTheme).copyWith(
-        headlineLarge: GoogleFonts.notoSans(
-          fontSize: 32,
-          fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
-        ),
-        headlineMedium: GoogleFonts.notoSans(
-          fontSize: 24,
-          fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
-        ),
-        titleLarge: GoogleFonts.notoSans(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
-        ),
-        bodyLarge: GoogleFonts.notoSans(
-          fontSize: 16,
-          fontWeight: FontWeight.w400,
-          color: AppColors.textPrimary,
-        ),
-        bodyMedium: GoogleFonts.notoSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: AppColors.textSecondary,
-        ),
-        labelLarge: GoogleFonts.notoSans(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: AppColors.white,
-        ),
+      extensions: const [SaxlemColors.light],
+      textTheme: SaxlemTypography.textTheme(
+        baseTheme.textTheme,
+        SaxlemColors.light.textPrimary,
+        SaxlemColors.light.textSecondary,
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textPrimary,
+        foregroundColor: SaxlemColors.light.textPrimary,
         elevation: 0,
         centerTitle: false,
         titleTextStyle: GoogleFonts.notoSans(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
+          color: SaxlemColors.light.textPrimary,
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
+          backgroundColor: SaxlemColors.light.brandPrimary,
           foregroundColor: AppColors.white,
-          minimumSize: const Size(double.infinity, 52),
+          minimumSize: const Size(
+            double.infinity,
+            SaxlemSizes.minimumTouchTarget,
+          ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(SaxlemRadii.large),
           ),
           textStyle: GoogleFonts.notoSans(
             fontSize: 16,
@@ -78,22 +59,22 @@ abstract final class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.white,
+        fillColor: SaxlemColors.light.surfaceRaised,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 16,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(SaxlemRadii.large),
+          borderSide: BorderSide(color: SaxlemColors.light.border),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(SaxlemRadii.large),
+          borderSide: BorderSide(color: SaxlemColors.light.border),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          borderRadius: BorderRadius.circular(SaxlemRadii.large),
+          borderSide: BorderSide(color: SaxlemColors.light.focus, width: 2),
         ),
       ),
     );

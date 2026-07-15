@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../domain/entities/patient_queue_snapshot.dart';
 import '../live_queue_copy.dart';
+import '../../../../design_system/components/content/saxlem_card.dart';
+import '../../../../design_system/foundations/saxlem_typography.dart';
 
 class LiveQueuePositionCard extends StatelessWidget {
   const LiveQueuePositionCard({
@@ -21,19 +23,11 @@ class LiveQueuePositionCard extends StatelessWidget {
           '${copy.currentPatient} ${snapshot.anonymousCurrentToken ?? 'not available'}. '
           '${copy.yourNumber} ${snapshot.patientNumber}. '
           '${snapshot.patientsAhead} ${copy.patientsAhead}.',
-      child: Container(
-        padding: const EdgeInsetsDirectional.all(20),
-        decoration: BoxDecoration(
-          color: colors.primary,
-          borderRadius: BorderRadius.circular(28),
-          boxShadow: [
-            BoxShadow(
-              color: colors.primary.withValues(alpha: 0.18),
-              blurRadius: 24,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
+      child: SaxlemCard(
+        backgroundColor: colors.primary,
+        borderColor: Colors.transparent,
+        elevation: SaxlemCardElevation.medium,
+        radius: 28,
         child: Column(
           children: [
             Row(
@@ -111,11 +105,10 @@ class _Number extends StatelessWidget {
           child: Text(
             value,
             key: ValueKey(value),
-            style: TextStyle(
-              color: color,
-              fontSize: emphasized ? 38 : 34,
-              fontWeight: FontWeight.w800,
-            ),
+            style: SaxlemTypography.numeric(
+              context,
+              emphasized: emphasized,
+            ).copyWith(color: color),
           ),
         ),
       ],

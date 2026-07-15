@@ -32,6 +32,7 @@ void main() {
     await tester.tap(find.text('09:00').first);
     await tester.pump();
     expect(find.text('Review appointment'), findsOneWidget);
+    await tester.ensureVisible(find.text('Confirm appointment'));
     await tester.tap(find.text('Confirm appointment'));
     await tester.pump(const Duration(milliseconds: 700));
     expect(find.text('Appointment confirmed'), findsOneWidget);

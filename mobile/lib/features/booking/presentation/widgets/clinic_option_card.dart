@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/booking_clinic_option.dart';
 import '../booking_copy.dart';
+import '../../../../design_system/components/content/saxlem_card.dart';
 
 class ClinicOptionCard extends StatelessWidget {
   const ClinicOptionCard({
@@ -17,35 +18,32 @@ class ClinicOptionCard extends StatelessWidget {
       button: true,
       label:
           '${clinic.displayName}, ${copy.fee(clinic.consultationFeeIqd)}, ${clinic.durationMinutes} minutes',
-      child: Card(
-        margin: const EdgeInsetsDirectional.only(bottom: 12),
-        child: InkWell(
+      child: Padding(
+        padding: const EdgeInsetsDirectional.only(bottom: 12),
+        child: SaxlemCard(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(20),
-          child: Padding(
-            padding: const EdgeInsetsDirectional.all(18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  clinic.displayName,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text('${clinic.areaDisplayName}, ${clinic.cityDisplayName}'),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 14,
-                  runSpacing: 6,
-                  children: [
-                    Text(copy.fee(clinic.consultationFeeIqd)),
-                    Text('${clinic.durationMinutes} min'),
-                  ],
-                ),
-              ],
-            ),
+          padding: const EdgeInsetsDirectional.all(18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                clinic.displayName,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 5),
+              Text('${clinic.areaDisplayName}, ${clinic.cityDisplayName}'),
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 14,
+                runSpacing: 6,
+                children: [
+                  Text(copy.fee(clinic.consultationFeeIqd)),
+                  Text('${clinic.durationMinutes} min'),
+                ],
+              ),
+            ],
           ),
         ),
       ),

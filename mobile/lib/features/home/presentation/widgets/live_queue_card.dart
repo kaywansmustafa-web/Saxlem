@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../live_queue/domain/entities/patient_queue_snapshot.dart';
+import '../../../../design_system/components/content/saxlem_card.dart';
 
 class LiveQueueLabels {
   const LiveQueueLabels({
@@ -48,41 +49,38 @@ class LiveQueueCard extends StatelessWidget {
     return Semantics(
       container: true,
       label: labels.semanticSummary,
-      child: Material(
-        color: colors.primary,
-        elevation: 3,
-        shadowColor: colors.primary.withValues(alpha: 0.22),
-        borderRadius: BorderRadius.circular(28),
-        clipBehavior: Clip.antiAlias,
-        child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _QueueHeader(queue: queue, labels: labels),
-              const SizedBox(height: 20),
-              _QueueNumbers(queue: queue, labels: labels),
-              const SizedBox(height: 16),
-              _QueueMetrics(queue: queue, labels: labels),
-              const SizedBox(height: 18),
-              Semantics(
-                button: true,
-                label: labels.action,
-                child: FilledButton(
-                  onPressed: onActionPressed,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: colors.surface,
-                    foregroundColor: colors.primary,
-                    minimumSize: const Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+      child: SaxlemCard(
+        backgroundColor: colors.primary,
+        borderColor: Colors.transparent,
+        elevation: SaxlemCardElevation.medium,
+        radius: 28,
+        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _QueueHeader(queue: queue, labels: labels),
+            const SizedBox(height: 20),
+            _QueueNumbers(queue: queue, labels: labels),
+            const SizedBox(height: 16),
+            _QueueMetrics(queue: queue, labels: labels),
+            const SizedBox(height: 18),
+            Semantics(
+              button: true,
+              label: labels.action,
+              child: FilledButton(
+                onPressed: onActionPressed,
+                style: FilledButton.styleFrom(
+                  backgroundColor: colors.surface,
+                  foregroundColor: colors.primary,
+                  minimumSize: const Size.fromHeight(50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Text(labels.action),
                 ),
+                child: Text(labels.action),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

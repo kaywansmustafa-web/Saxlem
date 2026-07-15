@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../domain/entities/patient_queue_snapshot.dart';
 import '../live_queue_copy.dart';
+import '../../../../design_system/components/content/saxlem_card.dart';
+import '../../../../design_system/foundations/saxlem_motion.dart';
+import '../../../../design_system/foundations/saxlem_typography.dart';
 
 class LiveQueueEstimateCard extends StatelessWidget {
   const LiveQueueEstimateCard({
@@ -24,22 +27,21 @@ class LiveQueueEstimateCard extends StatelessWidget {
           '${snapshot.estimatedWaitUpperMinutes} minutes. '
           '${copy.estimateConfidence}: $confidence. '
           '${copy.doctorStatus}: $status.',
-      child: Container(
+      child: SaxlemCard(
         padding: const EdgeInsetsDirectional.all(18),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: theme.colorScheme.outlineVariant),
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(copy.estimatedWait, style: theme.textTheme.bodyMedium),
             const SizedBox(height: 5),
-            Text(
-              '${snapshot.estimatedWaitLowerMinutes}–${snapshot.estimatedWaitUpperMinutes} min',
-              style: theme.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.w800,
+            AnimatedSwitcher(
+              duration: SaxlemMotion.standard,
+              child: Text(
+                '${snapshot.estimatedWaitLowerMinutes}–${snapshot.estimatedWaitUpperMinutes} min',
+                key: ValueKey(
+                  '${snapshot.estimatedWaitLowerMinutes}-${snapshot.estimatedWaitUpperMinutes}',
+                ),
+                style: SaxlemTypography.numeric(context, emphasized: true),
               ),
             ),
             const SizedBox(height: 18),

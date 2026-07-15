@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../config/theme/app_colors.dart';
+import '../../../design_system/components/navigation/saxlem_navigation_bar.dart';
 
 class SaxlemBottomNavigation extends StatelessWidget {
   const SaxlemBottomNavigation({
@@ -45,111 +45,15 @@ class SaxlemBottomNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     assert(labels.length == _items.length);
-    return SafeArea(
-      top: false,
-      child: Container(
-        margin: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 12),
-        padding: const EdgeInsetsDirectional.symmetric(
-          horizontal: 8,
-          vertical: 8,
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppColors.border),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 28,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Row(
-          children: List.generate(_items.length, (index) {
-            final item = _items[index];
-            final isSelected = selectedIndex == index;
-
-            return Expanded(
-              child: _NavigationItem(
-                item: item,
-                label: labels[index],
-                isSelected: isSelected,
-                onTap: () => onItemSelected(index),
-              ),
-            );
-          }),
-        ),
-      ),
-    );
-  }
-}
-
-class _NavigationItem extends StatelessWidget {
-  const _NavigationItem({
-    required this.item,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  final _NavigationItemData item;
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      selected: isSelected,
-      label: label,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOutCubic,
-          constraints: const BoxConstraints(minHeight: 48),
-          padding: const EdgeInsetsDirectional.symmetric(
-            horizontal: 4,
-            vertical: 8,
-          ),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? AppColors.primary.withValues(alpha: 0.10)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 180),
-                child: Icon(
-                  isSelected ? item.selectedIcon : item.icon,
-                  key: ValueKey<bool>(isSelected),
-                  size: 24,
-                  color: isSelected
-                      ? AppColors.primary
-                      : AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: isSelected
-                      ? AppColors.primary
-                      : AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
+    return SaxlemNavigationBar(
+      selectedIndex: selectedIndex,
+      onSelected: onItemSelected,
+      destinations: List.generate(
+        _items.length,
+        (index) => SaxlemNavigationDestination(
+          label: labels[index],
+          icon: _items[index].icon,
+          selectedIcon: _items[index].selectedIcon,
         ),
       ),
     );

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/booking_quote.dart';
 import '../booking_copy.dart';
 import '../../../../core/localization/localization_extensions.dart';
+import '../../../../design_system/components/layout/saxlem_responsive_content.dart';
+import '../../../../design_system/foundations/saxlem_sizes.dart';
 
 class BookingReviewPage extends StatelessWidget {
   const BookingReviewPage({
@@ -18,48 +20,51 @@ class BookingReviewPage extends StatelessWidget {
     const copy = BookingCopy();
     final d = quote.draft;
     return SingleChildScrollView(
-      padding: const EdgeInsetsDirectional.fromSTEB(24, 18, 24, 36),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            context.l10n.reviewAppointment,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: 20),
-          _Summary(
-            rows: [
-              (context.l10n.viewDoctor, d.doctor.displayName),
-              (context.l10n.clinic, d.clinic.displayName),
-              (context.l10n.date, copy.date(d.slot!.start)),
-              (context.l10n.time, copy.time(d.slot!.start)),
-              ('Consultation fee', copy.fee(d.clinic.consultationFeeIqd)),
-              ('Estimated duration', '${d.clinic.durationMinutes} minutes'),
-              ('Arrival', quote.arrivalRecommendation),
-              ('Cancellation policy', d.clinic.cancellationPolicy),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Semantics(
-            button: true,
-            liveRegion: confirming,
-            label: confirming
-                ? context.l10n.confirmingAppointment
-                : context.l10n.confirmAppointment,
-            child: FilledButton(
-              onPressed: confirming ? null : onConfirm,
-              child: confirming
-                  ? const SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(context.l10n.confirmAppointment),
+      padding: const EdgeInsetsDirectional.only(top: 18, bottom: 36),
+      child: SaxlemResponsiveContent(
+        maxWidth: SaxlemSizes.formMaxWidth,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              context.l10n.reviewAppointment,
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            _Summary(
+              rows: [
+                (context.l10n.viewDoctor, d.doctor.displayName),
+                (context.l10n.clinic, d.clinic.displayName),
+                (context.l10n.date, copy.date(d.slot!.start)),
+                (context.l10n.time, copy.time(d.slot!.start)),
+                ('Consultation fee', copy.fee(d.clinic.consultationFeeIqd)),
+                ('Estimated duration', '${d.clinic.durationMinutes} minutes'),
+                ('Arrival', quote.arrivalRecommendation),
+                ('Cancellation policy', d.clinic.cancellationPolicy),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Semantics(
+              button: true,
+              liveRegion: confirming,
+              label: confirming
+                  ? context.l10n.confirmingAppointment
+                  : context.l10n.confirmAppointment,
+              child: FilledButton(
+                onPressed: confirming ? null : onConfirm,
+                child: confirming
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(context.l10n.confirmAppointment),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../config/theme/app_colors.dart';
 import '../../domain/entities/patient_appointment.dart';
 import '../../../../core/localization/localization_extensions.dart';
+import '../../../../design_system/components/content/saxlem_card.dart';
+import '../../../../design_system/theme/saxlem_colors.dart';
 
 class AppointmentCard extends StatelessWidget {
   const AppointmentCard({
@@ -23,13 +24,7 @@ class AppointmentCard extends StatelessWidget {
     return Semantics(
       container: true,
       label: '${appointment.doctor.displayName}, $date, $time',
-      child: Container(
-        padding: const EdgeInsetsDirectional.all(20),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppColors.border),
-        ),
+      child: SaxlemCard(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -131,8 +126,8 @@ class _Status extends StatelessWidget {
     },
     style: TextStyle(
       color: status == PatientAppointmentStatus.cancelled
-          ? AppColors.error
-          : AppColors.success,
+          ? context.saxlemColors.criticalContent
+          : context.saxlemColors.positiveContent,
       fontWeight: FontWeight.w700,
     ),
   );

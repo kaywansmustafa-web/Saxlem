@@ -38,6 +38,7 @@ Tokens describe product meaning, not individual screens or literal colors. Compo
 ### Brand and interaction
 
 - `brand.primary`, `brand.secondary`
+- Blue is the primary trust/interaction brand. Teal is the secondary medical and intelligence accent.
 - `interactive.primary`, `interactive.primaryHover`, `interactive.primaryPressed`
 - `interactive.secondary`, `interactive.secondaryHover`, `interactive.secondaryPressed`
 - `interactive.disabled`
@@ -52,6 +53,12 @@ Each status defines `surface`, `content`, and `border` roles:
 - `status.critical.*`
 - `status.neutral.*`
 - `status.live.*`
+
+Queue-facing aliases describe patient meaning rather than engineering color alone:
+
+- `queue.ready`: everything is on track
+- `queue.attention`: the patient should notice a change
+- `queue.actionNeeded`: the patient has a clear next step
 
 Status must never be communicated by color alone.
 
@@ -68,6 +75,8 @@ Status must never be communicated by color alone.
 - `type.button`: action labels
 - `type.status`: badges and state indicators
 - `type.numeric`: dates, times, prices, IDs, and measurements
+
+`type.numeric` is a dedicated tabular-figure role for queue numbers, prices, and important metrics.
 
 Every role defines family, size, line height, weight, letter spacing, and scaling behavior. Arabic and Kurdish may receive script-specific line-height adjustments while preserving hierarchy.
 
@@ -114,6 +123,8 @@ Each elevation level defines shadow color, opacity, blur, spread, and offset. Bo
 - `curve.enter`, `curve.exit`, `curve.press`
 
 All motion must respect the platform reduced-motion preference. Live healthcare status changes prioritize calm comprehension over decorative movement.
+
+Queue updates animate only the metric that changed; the containing card never reanimates for a routine update.
 
 ## Sizing and accessibility
 

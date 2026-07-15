@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/models/recommended_doctor.dart';
+import '../../../../design_system/components/content/saxlem_card.dart';
+import '../../../../design_system/components/content/saxlem_avatar.dart';
 
 class RecommendedDoctorCard extends StatelessWidget {
   const RecommendedDoctorCard({
@@ -26,21 +28,10 @@ class RecommendedDoctorCard extends StatelessWidget {
     return Semantics(
       container: true,
       label: semanticLabel,
-      child: Container(
+      child: SaxlemCard(
+        elevation: SaxlemCardElevation.low,
         width: 278,
         padding: const EdgeInsetsDirectional.all(16),
-        decoration: BoxDecoration(
-          color: colors.surface,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: colors.outlineVariant),
-          boxShadow: [
-            BoxShadow(
-              color: colors.shadow.withValues(alpha: 0.06),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -146,31 +137,6 @@ class _DoctorPhoto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final placeholder = Icon(
-      Icons.person_rounded,
-      size: 34,
-      color: colors.primary,
-    );
-    return Semantics(
-      image: true,
-      label: semanticLabel,
-      child: Container(
-        width: 58,
-        height: 58,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          color: colors.primaryContainer,
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: url == null
-            ? placeholder
-            : Image.network(
-                url!,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => placeholder,
-              ),
-      ),
-    );
+    return SaxlemAvatar(semanticLabel: semanticLabel, imageUrl: url, size: 58);
   }
 }

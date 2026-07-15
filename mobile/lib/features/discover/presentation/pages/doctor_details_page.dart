@@ -6,6 +6,7 @@ import '../discover_copy.dart';
 import '../../../booking/booking_feature.dart';
 import '../../../booking/domain/entities/booking_doctor_reference.dart';
 import '../../../../core/localization/localization_extensions.dart';
+import '../../../../design_system/components/layout/saxlem_responsive_content.dart';
 
 class DoctorDetailsPage extends StatelessWidget {
   const DoctorDetailsPage({
@@ -26,95 +27,100 @@ class DoctorDetailsPage extends StatelessWidget {
       body: SafeArea(
         top: false,
         child: SingleChildScrollView(
-          padding: const EdgeInsetsDirectional.fromSTEB(24, 20, 24, 36),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              CircleAvatar(
-                radius: 48,
-                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                child: Icon(
-                  Icons.person_rounded,
-                  size: 54,
-                  color: Theme.of(context).colorScheme.primary,
+          padding: const EdgeInsetsDirectional.only(top: 20, bottom: 36),
+          child: SaxlemResponsiveContent(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                CircleAvatar(
+                  radius: 48,
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.primaryContainer,
+                  child: Icon(
+                    Icons.person_rounded,
+                    size: 54,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 18),
-              Text(
-                doctor.doctorDisplayName,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
+                const SizedBox(height: 18),
+                Text(
+                  doctor.doctorDisplayName,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                '${copy.specialty(doctor.specialty)} · ${doctor.subSpecialtyDisplayName}',
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              _Panel(
-                children: [
-                  _row('Clinic', doctor.clinicDisplayName),
-                  _row(
-                    'Location',
-                    '${doctor.location.areaDisplayName}, ${doctor.location.cityDisplayName}',
-                  ),
-                  _row(
-                    'Availability',
-                    copy.availability(doctor.availability.status),
-                  ),
-                  _row('Consultation', copy.fee(doctor.consultationFeeIqd)),
-                  _row(
-                    'Patient rating',
-                    '${doctor.patientRating.toStringAsFixed(1)} from ${doctor.totalRatings} ratings',
-                  ),
-                  _row('Written reviews', '${doctor.totalReviews}'),
-                ],
-              ),
-              const SizedBox(height: 18),
-              _Panel(
-                children: [
-                  Text(
-                    'About this profile',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
+                const SizedBox(height: 5),
+                Text(
+                  '${copy.specialty(doctor.specialty)} · ${doctor.subSpecialtyDisplayName}',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                _Panel(
+                  children: [
+                    _row('Clinic', doctor.clinicDisplayName),
+                    _row(
+                      'Location',
+                      '${doctor.location.areaDisplayName}, ${doctor.location.cityDisplayName}',
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    context.l10n.findRightCareBody,
-                    style: TextStyle(height: 1.5),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              FilledButton(
-                onPressed:
-                    doctor.availability.status == AvailabilityStatus.fullyBooked
-                    ? null
-                    : () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => BookingFeature(
-                            doctor: BookingDoctorReference(
-                              id: doctor.doctorId,
-                              displayName: doctor.doctorDisplayName,
-                              specialtyDisplayName: copy.specialty(
-                                doctor.specialty,
+                    _row(
+                      'Availability',
+                      copy.availability(doctor.availability.status),
+                    ),
+                    _row('Consultation', copy.fee(doctor.consultationFeeIqd)),
+                    _row(
+                      'Patient rating',
+                      '${doctor.patientRating.toStringAsFixed(1)} from ${doctor.totalRatings} ratings',
+                    ),
+                    _row('Written reviews', '${doctor.totalReviews}'),
+                  ],
+                ),
+                const SizedBox(height: 18),
+                _Panel(
+                  children: [
+                    Text(
+                      'About this profile',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      context.l10n.findRightCareBody,
+                      style: TextStyle(height: 1.5),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                FilledButton(
+                  onPressed:
+                      doctor.availability.status ==
+                          AvailabilityStatus.fullyBooked
+                      ? null
+                      : () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => BookingFeature(
+                              doctor: BookingDoctorReference(
+                                id: doctor.doctorId,
+                                displayName: doctor.doctorDisplayName,
+                                specialtyDisplayName: copy.specialty(
+                                  doctor.specialty,
+                                ),
+                                photoUrl: doctor.photoUrl,
                               ),
-                              photoUrl: doctor.photoUrl,
+                              onOpenAppointments: onOpenAppointments,
                             ),
-                            onOpenAppointments: onOpenAppointments,
                           ),
                         ),
-                      ),
-                child: Text(
-                  bookingEmphasized
-                      ? context.l10n.chooseAppointment
-                      : context.l10n.bookAppointment,
+                  child: Text(
+                    bookingEmphasized
+                        ? context.l10n.chooseAppointment
+                        : context.l10n.bookAppointment,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
