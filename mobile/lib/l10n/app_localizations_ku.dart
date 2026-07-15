@@ -386,7 +386,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get otpLabel => 'کودا پشتڕاستکرنێ یا 6 ژمارەیی';
 
   @override
-  String get otpHint => '123456';
+  String get otpHint => '6 ژمارە بنڤێسە';
 
   @override
   String get verify => 'پشتڕاست بکە و بەردەوام بە';
@@ -412,7 +412,8 @@ class AppLocalizationsKu extends AppLocalizations {
   String get otpLimited => 'هەول زێدە بوون. کودەکا نوی بخوازە.';
 
   @override
-  String get authUnavailable => 'پشتڕاستکرن نوکە نە بەردەستە. دیسان تاقی بکە.';
+  String get authUnavailable =>
+      'پشتڕاستکرنا تەلەفونێ هێشتا د ڤێ وەشانێ دا بەردەست نینە.';
 
   @override
   String get sessionExpiredTitle => 'دەمێ دانیشتنا تە قەدیا';
@@ -422,7 +423,9 @@ class AppLocalizationsKu extends AppLocalizations {
       'بۆ بەردەوامبوونا پارێزراوی ژمارا خۆ دیسان پشتڕاست بکە.';
 
   @override
-  String get developmentCodeHint => 'کودا پەرەپێدانێ: 123456';
+  String developmentCodeHint(String code) {
+    return 'کودا پەرەپێدانێ: $code';
+  }
 
   @override
   String get logOut => 'دەرکەڤە';

@@ -64,7 +64,8 @@ class PhoneNumberPage extends StatelessWidget {
                 onChanged: controller.updatePhone,
                 onSubmitted: (_) => controller.requestOtp(),
               ),
-              if (state.errorCode == 'request') ...[
+              if (state.errorCode == 'request' ||
+                  state.errorCode == 'unavailable') ...[
                 const SizedBox(height: SaxlemSpacing.one),
                 Text(
                   strings.authUnavailable,

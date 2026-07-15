@@ -383,7 +383,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get otpLabel => 'رمز التحقق المكون من 6 أرقام';
 
   @override
-  String get otpHint => '123456';
+  String get otpHint => 'أدخل 6 أرقام';
 
   @override
   String get verify => 'تحقق وتابع';
@@ -409,7 +409,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get otpLimited => 'محاولات كثيرة. اطلب رمزاً جديداً.';
 
   @override
-  String get authUnavailable => 'التحقق غير متاح مؤقتاً. حاول مرة أخرى.';
+  String get authUnavailable =>
+      'التحقق عبر الهاتف غير متاح في هذا الإصدار بعد.';
 
   @override
   String get sessionExpiredTitle => 'انتهت صلاحية جلستك';
@@ -418,7 +419,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sessionExpiredBody => 'تحقق من رقمك مرة أخرى للمتابعة بأمان.';
 
   @override
-  String get developmentCodeHint => 'رمز التطوير: 123456';
+  String developmentCodeHint(String code) {
+    return 'رمز التطوير: $code';
+  }
 
   @override
   String get logOut => 'تسجيل الخروج';

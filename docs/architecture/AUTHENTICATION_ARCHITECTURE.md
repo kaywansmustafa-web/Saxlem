@@ -27,7 +27,11 @@ Logout is an event, not a persisted session status. It clears storage and transi
 
 The backend implementation must add opaque access/refresh credentials, rotation, revocation, reuse detection, server-authoritative retry limits, generic anti-enumeration responses, device-session management, and audited redaction. Access tokens should remain in memory where practical; refresh credentials belong in secure storage.
 
-The mock code and deterministic patient identity are development-only. Production composition must fail closed if no backend repository is configured.
+The mock code and deterministic patient identity are development-only. A single
+entry point resolves compile-time `SAXLEM_ENV` configuration. Production,
+missing, and unknown values select a fail-closed unavailable repository until a
+backend repository is configured. `SAXLEM_ALLOW_MOCK_AUTH` is ignored in
+production. See `docs/release/ENVIRONMENTS.md`.
 
 ## Extension points
 

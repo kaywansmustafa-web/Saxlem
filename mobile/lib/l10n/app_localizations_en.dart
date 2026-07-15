@@ -389,7 +389,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get otpLabel => '6-digit verification code';
 
   @override
-  String get otpHint => '123456';
+  String get otpHint => 'Enter 6 digits';
 
   @override
   String get verify => 'Verify and continue';
@@ -416,7 +416,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authUnavailable =>
-      'Verification is temporarily unavailable. Please try again.';
+      'Phone verification is not available in this build yet.';
 
   @override
   String get sessionExpiredTitle => 'Your session has expired';
@@ -426,7 +426,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Verify your number again to continue securely.';
 
   @override
-  String get developmentCodeHint => 'Development code: 123456';
+  String developmentCodeHint(String code) {
+    return 'Development code: $code';
+  }
 
   @override
   String get logOut => 'Log out';

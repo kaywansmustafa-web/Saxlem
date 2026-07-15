@@ -10,28 +10,42 @@ import 'features/home/presentation/pages/home_page.dart';
 import 'l10n/app_localizations.dart';
 import 'core/localization/badini_framework_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'features/authentication/data/repositories/mock_auth_repository.dart';
 import 'features/authentication/data/storage/secure_session_storage.dart';
 import 'features/authentication/domain/repositories/auth_repository.dart';
 import 'features/authentication/presentation/authentication_feature.dart';
+import 'app/app_dependencies.dart';
+import 'config/environment/app_configuration.dart';
 
 void main() {
-  runApp(const SaxlemApp());
+  final dependencies = AppDependencies.create(
+    configuration: AppConfiguration.fromCompileTime(),
+    sessionStorage: const SecureSessionStorage(FlutterSecureStorage()),
+  );
+  runApp(
+    SaxlemApp(
+      authRepository: dependencies.authRepository,
+      developmentOtp: dependencies.developmentOtp,
+    ),
+  );
 }
 
 class SaxlemApp extends StatelessWidget {
-  const SaxlemApp({this.localeRepository, this.authRepository, super.key});
+  const SaxlemApp({
+    this.localeRepository,
+    required this.authRepository,
+    this.developmentOtp,
+    super.key,
+  });
   final LocaleRepository? localeRepository;
-  final AuthRepository? authRepository;
+  final AuthRepository authRepository;
+  final String? developmentOtp;
 
   @override
   Widget build(BuildContext context) {
-    final authentication =
-        authRepository ??
-        MockAuthRepository(const SecureSessionStorage(FlutterSecureStorage()));
     return _AppBootstrap(
       localeRepository: localeRepository ?? SharedPreferencesLocaleRepository(),
-      authRepository: authentication,
+      authRepository: authRepository,
+      developmentOtp: developmentOtp,
     );
   }
 }
@@ -40,9 +54,11 @@ class _AppBootstrap extends StatefulWidget {
   const _AppBootstrap({
     required this.localeRepository,
     required this.authRepository,
+    this.developmentOtp,
   });
   final LocaleRepository localeRepository;
   final AuthRepository authRepository;
+  final String? developmentOtp;
   @override
   State<_AppBootstrap> createState() => _AppBootstrapState();
 }
@@ -84,12 +100,14 @@ class _AppBootstrapState extends State<_AppBootstrap> {
           repository: widget.authRepository,
           onAuthenticated: controller.authenticated,
           onGuest: controller.continueAsGuest,
+          developmentOtp: widget.developmentOtp,
         ),
         AppBootstrapStatus.sessionExpired => AuthenticationFeature(
           repository: widget.authRepository,
           sessionExpired: true,
           onAuthenticated: controller.authenticated,
           onGuest: controller.continueAsGuest,
+          developmentOtp: widget.developmentOtp,
         ),
         AppBootstrapStatus.ready => HomePage(
           guestMode: controller.guestMode,

@@ -1,12 +1,8 @@
 import '../../domain/entities/auth_session.dart';
 import '../../domain/entities/otp_challenge.dart';
 import '../../domain/entities/phone_number.dart';
+import '../../domain/errors/auth_failure.dart';
 import '../../domain/repositories/auth_repository.dart';
-
-class AuthFailure implements Exception {
-  const AuthFailure(this.code);
-  final String code;
-}
 
 class MockAuthRepository implements AuthRepository {
   MockAuthRepository(this._storage, {DateTime Function()? now})
@@ -17,6 +13,8 @@ class MockAuthRepository implements AuthRepository {
   PhoneNumber? _phone;
   OtpChallenge? _challenge;
   int _attempts = 0;
+
+  static const developmentOtp = '123456';
 
   @override
   Future<AuthSession> restoreSession() async {
@@ -70,7 +68,7 @@ class MockAuthRepository implements AuthRepository {
     }
     if (++_attempts > 5) throw const AuthFailure('limited');
     // Development-only deterministic code. A backend replaces this repository.
-    if (code != '123456') throw const AuthFailure('invalid');
+    if (code != developmentOtp) throw const AuthFailure('invalid');
     final phone = _phone!;
     final stored = StoredSession(
       userId: 'mock-patient',

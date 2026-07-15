@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 
-import '../../data/repositories/mock_auth_repository.dart';
 import '../../domain/entities/auth_session.dart';
 import '../../domain/entities/country_calling_code.dart';
 import '../../domain/entities/phone_number.dart';
+import '../../domain/errors/auth_failure.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../state/auth_state.dart';
 
@@ -72,6 +72,8 @@ class AuthController extends ChangeNotifier {
         challenge: challenge,
         phoneInput: state.phoneInput,
       );
+    } on AuthFailure catch (failure) {
+      state = state.copyWith(loading: false, errorCode: failure.code);
     } catch (_) {
       state = state.copyWith(loading: false, errorCode: 'request');
     }

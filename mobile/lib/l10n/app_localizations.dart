@@ -811,7 +811,7 @@ abstract class AppLocalizations {
   /// No description provided for @otpHint.
   ///
   /// In en, this message translates to:
-  /// **'123456'**
+  /// **'Enter 6 digits'**
   String get otpHint;
 
   /// No description provided for @verify.
@@ -859,7 +859,7 @@ abstract class AppLocalizations {
   /// No description provided for @authUnavailable.
   ///
   /// In en, this message translates to:
-  /// **'Verification is temporarily unavailable. Please try again.'**
+  /// **'Phone verification is not available in this build yet.'**
   String get authUnavailable;
 
   /// No description provided for @sessionExpiredTitle.
@@ -877,8 +877,8 @@ abstract class AppLocalizations {
   /// No description provided for @developmentCodeHint.
   ///
   /// In en, this message translates to:
-  /// **'Development code: 123456'**
-  String get developmentCodeHint;
+  /// **'Development code: {code}'**
+  String developmentCodeHint(String code);
 
   /// No description provided for @logOut.
   ///

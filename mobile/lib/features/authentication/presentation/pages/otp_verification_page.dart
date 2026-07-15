@@ -6,8 +6,13 @@ import '../../../../design_system/design_system.dart';
 import '../controllers/auth_controller.dart';
 
 class OtpVerificationPage extends StatefulWidget {
-  const OtpVerificationPage({required this.controller, super.key});
+  const OtpVerificationPage({
+    required this.controller,
+    this.developmentOtp,
+    super.key,
+  });
   final AuthController controller;
+  final String? developmentOtp;
   @override
   State<OtpVerificationPage> createState() => _OtpVerificationPageState();
 }
@@ -78,7 +83,11 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                 onSubmitted: (_) => widget.controller.verify(),
               ),
               const SizedBox(height: SaxlemSpacing.one),
-              Text(strings.developmentCodeHint, textAlign: TextAlign.center),
+              if (widget.developmentOtp case final developmentOtp?)
+                Text(
+                  strings.developmentCodeHint(developmentOtp),
+                  textAlign: TextAlign.center,
+                ),
               const SizedBox(height: SaxlemSpacing.three),
               SaxlemButton(
                 label: strings.verify,

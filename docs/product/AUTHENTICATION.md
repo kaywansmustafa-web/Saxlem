@@ -16,7 +16,12 @@ The Welcome experience introduces Saxlem as a calm healthcare companion: trusted
 
 ## Mock limitations
 
-The Sprint 8 repository does not send SMS. The development code is `123456`. The mock repository must never be registered in a production backend build. Server integration must replace OTP generation, throttling, session issuance, refresh, and revocation while preserving the domain repository contract.
+The Sprint 8 repository does not send SMS. Its deterministic code is isolated to
+explicit Development and opted-in QA composition. Production, missing, and
+unknown environment configuration fail closed and report that phone verification
+is unavailable until a backend repository is integrated. Server integration must
+replace OTP generation, throttling, session issuance, refresh, and revocation
+while preserving the domain repository contract.
 
 ## Product rules
 

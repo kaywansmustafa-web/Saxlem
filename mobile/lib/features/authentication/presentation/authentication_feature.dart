@@ -14,12 +14,14 @@ class AuthenticationFeature extends StatefulWidget {
     required this.onAuthenticated,
     required this.onGuest,
     this.sessionExpired = false,
+    this.developmentOtp,
     super.key,
   });
   final AuthRepository repository;
   final ValueChanged<AuthSession> onAuthenticated;
   final VoidCallback onGuest;
   final bool sessionExpired;
+  final String? developmentOtp;
 
   @override
   State<AuthenticationFeature> createState() => _AuthenticationFeatureState();
@@ -56,7 +58,10 @@ class _AuthenticationFeatureState extends State<AuthenticationFeature> {
           onContinueAsGuest: controller.continueAsGuest,
         ),
         AuthStep.phone => PhoneNumberPage(controller: controller),
-        AuthStep.otp => OtpVerificationPage(controller: controller),
+        AuthStep.otp => OtpVerificationPage(
+          controller: controller,
+          developmentOtp: widget.developmentOtp,
+        ),
       },
     ),
   );
