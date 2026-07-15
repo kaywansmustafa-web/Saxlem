@@ -439,4 +439,159 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get personalizedFeatureBody =>
       'Sign in with your mobile number to use appointments and other personalized care features.';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get unread => 'Unread';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get earlier => 'Earlier';
+
+  @override
+  String unreadNotifications(int count) {
+    return '$count unread';
+  }
+
+  @override
+  String notificationUpdates(int count) {
+    return '$count queue updates';
+  }
+
+  @override
+  String get notificationDetails => 'Notification details';
+
+  @override
+  String get queueUpdates => 'Queue updates';
+
+  @override
+  String get whatHappened => 'What happened';
+
+  @override
+  String get whyItHappened => 'Why';
+
+  @override
+  String get whatToDoNext => 'What to do next';
+
+  @override
+  String get viewUpdate => 'View update';
+
+  @override
+  String get deleteNotification => 'Delete notification';
+
+  @override
+  String get notificationsEmpty => 'You\'re all caught up';
+
+  @override
+  String get notificationsEmptyBody =>
+      'Appointment, clinic, and queue updates will appear here.';
+
+  @override
+  String get notificationsUnavailable => 'Notifications are unavailable';
+
+  @override
+  String get notificationsUnavailableBody =>
+      'We couldn\'t load your updates. Please try again.';
+
+  @override
+  String get notificationBookingConfirmed => 'Appointment confirmed';
+
+  @override
+  String notificationBookingHappened(String doctor) {
+    return 'Your appointment with $doctor is confirmed.';
+  }
+
+  @override
+  String get notificationBookingWhy =>
+      'The clinic accepted your booking request.';
+
+  @override
+  String get notificationBookingNext =>
+      'Review the appointment details and arrive at the recommended time.';
+
+  @override
+  String get notificationQueueOpened => 'Your queue is open';
+
+  @override
+  String notificationQueueOpenedHappened(String doctor) {
+    return 'The live queue for $doctor is now available.';
+  }
+
+  @override
+  String get notificationQueueOpenedWhy =>
+      'The clinic has started today\'s patient queue.';
+
+  @override
+  String get notificationQueueOpenedNext =>
+      'Open Live Queue when you are ready to follow your place.';
+
+  @override
+  String get notificationAlmostTurn => 'You\'re almost next';
+
+  @override
+  String notificationAlmostTurnHappened(int number) {
+    return 'Your current number is $number.';
+  }
+
+  @override
+  String get notificationAlmostTurnWhy =>
+      'The queue has moved closer to your turn.';
+
+  @override
+  String get notificationAlmostTurnNext =>
+      'Please head to reception and stay nearby.';
+
+  @override
+  String get notificationWelcome => 'Welcome to Saxlem';
+
+  @override
+  String get notificationWelcomeHappened => 'Your Saxlem experience is ready.';
+
+  @override
+  String get notificationWelcomeWhy =>
+      'You started using Saxlem on this device.';
+
+  @override
+  String get notificationWelcomeNext =>
+      'Explore trusted doctors and keep your care organized.';
+
+  @override
+  String get notificationReservedType => 'Appointment update';
+
+  @override
+  String get notificationReservedHappened =>
+      'Your appointment check-in was updated.';
+
+  @override
+  String get notificationReservedWhy => 'The clinic recorded your arrival.';
+
+  @override
+  String get notificationReservedNext =>
+      'Please wait for guidance from reception.';
+
+  @override
+  String get notificationGeneralHappened =>
+      'There is a new update about your care.';
+
+  @override
+  String get notificationGeneralWhy => 'New information became available.';
+
+  @override
+  String get notificationGeneralNext =>
+      'Review the update and follow any instructions shown.';
+
+  @override
+  String get notificationTimeJustNow => 'Updated just now';
+
+  @override
+  String notificationTimeMinutesAgo(int minutes) {
+    return 'Updated $minutes minutes ago';
+  }
+
+  @override
+  String get notificationTimeEarlier => 'Updated earlier';
 }

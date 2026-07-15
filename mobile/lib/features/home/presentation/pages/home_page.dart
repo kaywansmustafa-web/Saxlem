@@ -8,6 +8,14 @@ import '../../../discover/domain/entities/doctor_search_criteria.dart';
 import '../../../appointments/appointments_feature.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import 'informational_page.dart';
+import '../../../notifications/data/data_sources/mock_notifications_data_source.dart';
+import '../../../notifications/data/mappers/patient_notification_mapper.dart';
+import '../../../notifications/data/repositories/in_memory_notifications_repository.dart';
+import '../../../notifications/domain/entities/patient_notification.dart';
+import '../../../notifications/domain/entities/notification_types.dart';
+import '../../../notifications/notifications_feature.dart';
+import '../../../notifications/presentation/controllers/notifications_controller.dart';
+import '../../../live_queue/live_queue_feature.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({this.guestMode = false, this.onLogout, super.key});
@@ -24,6 +32,53 @@ class _HomePageState extends State<HomePage> {
   DoctorSearchCriteria? _discoverCriteria;
   bool _focusDiscover = false;
   bool _openDiscoverFilters = false;
+  late final NotificationsController _notifications;
+
+  @override
+  void initState() {
+    super.initState();
+    _notifications = NotificationsController(
+      InMemoryNotificationsRepository(
+        MockNotificationsDataSource(),
+        const PatientNotificationMapper(),
+      ),
+      onAction: _openNotificationAction,
+    )..load();
+    _notifications.addListener(_onNotificationsChanged);
+  }
+
+  void _onNotificationsChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _notifications.removeListener(_onNotificationsChanged);
+    _notifications.dispose();
+    super.dispose();
+  }
+
+  void _openQueue() => Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (_) => const LiveQueueFeature(queueEntryId: 'entry-patient-23'),
+    ),
+  );
+
+  void _openNotificationAction(NotificationAction action) {
+    switch (action.destination) {
+      case NotificationDestination.appointment:
+        setState(() => _selectedIndex = 2);
+      case NotificationDestination.doctor:
+      case NotificationDestination.booking:
+        _openDiscover();
+      case NotificationDestination.liveQueue:
+        _openQueue();
+      case NotificationDestination.settings:
+        setState(() => _selectedIndex = 4);
+      case NotificationDestination.none:
+        break;
+    }
+  }
 
   void _openDiscover({
     DoctorSearchCriteria? criteria,
@@ -74,6 +129,7 @@ class _HomePageState extends State<HomePage> {
                     onOpenAlerts: () => setState(() => _selectedIndex = 3),
                     onOpenAppointments: () =>
                         setState(() => _selectedIndex = 2),
+                    onOpenLiveQueue: _openQueue,
                   ),
                   DiscoverFeature(
                     key: ValueKey(_discoverRequest),
@@ -96,12 +152,7 @@ class _HomePageState extends State<HomePage> {
                       : AppointmentsFeature(
                           onOpenDiscover: () => _openDiscover(),
                         ),
-                  InformationalPage(
-                    title: strings.alertsTitle,
-                    message: strings.alertsBody,
-                    icon: Icons.notifications_none_rounded,
-                    semanticLabel: strings.informationalScreen,
-                  ),
+                  NotificationsFeature(controller: _notifications),
                   InformationalPage(
                     title: strings.profileTitle,
                     message: strings.profileBody,
@@ -125,9 +176,13 @@ class _HomePageState extends State<HomePage> {
           strings.home,
           strings.discover,
           strings.appointments,
-          strings.alerts,
+          strings.notifications,
           strings.profile,
         ],
+        notificationCount: _notifications.unreadCount,
+        notificationBadgeLabel: strings.unreadNotifications(
+          _notifications.unreadCount,
+        ),
       ),
     );
   }

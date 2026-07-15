@@ -7,12 +7,16 @@ class SaxlemBottomNavigation extends StatelessWidget {
     required this.selectedIndex,
     required this.onItemSelected,
     required this.labels,
+    this.notificationCount = 0,
+    this.notificationBadgeLabel,
     super.key,
   });
 
   final int selectedIndex;
   final ValueChanged<int> onItemSelected;
   final List<String> labels;
+  final int notificationCount;
+  final String? notificationBadgeLabel;
 
   static const List<_NavigationItemData> _items = [
     _NavigationItemData(
@@ -54,6 +58,8 @@ class SaxlemBottomNavigation extends StatelessWidget {
           label: labels[index],
           icon: _items[index].icon,
           selectedIcon: _items[index].selectedIcon,
+          badgeCount: index == 3 ? notificationCount : 0,
+          badgeSemanticLabel: index == 3 ? notificationBadgeLabel : null,
         ),
       ),
     );

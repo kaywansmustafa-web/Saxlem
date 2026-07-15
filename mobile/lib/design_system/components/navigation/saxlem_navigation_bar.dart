@@ -11,9 +11,13 @@ class SaxlemNavigationDestination {
     required this.label,
     required this.icon,
     required this.selectedIcon,
+    this.badgeCount = 0,
+    this.badgeSemanticLabel,
   });
   final String label;
   final IconData icon, selectedIcon;
+  final int badgeCount;
+  final String? badgeSemanticLabel;
 }
 
 class SaxlemNavigationBar extends StatelessWidget {
@@ -49,7 +53,9 @@ class SaxlemNavigationBar extends StatelessWidget {
               child: Semantics(
                 button: true,
                 selected: selected,
-                label: item.label,
+                label: item.badgeCount > 0
+                    ? '${item.label}, ${item.badgeSemanticLabel ?? item.badgeCount}'
+                    : item.label,
                 child: InkWell(
                   onTap: () => onSelected(index),
                   borderRadius: BorderRadius.circular(SaxlemRadii.large),
@@ -71,12 +77,24 @@ class SaxlemNavigationBar extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          selected ? item.selectedIcon : item.icon,
-                          size: 24,
-                          color: selected
-                              ? colors.brandPrimary
-                              : colors.textMuted,
+                        Badge(
+                          isLabelVisible: item.badgeCount > 0,
+                          label: AnimatedSwitcher(
+                            duration: SaxlemMotion.fast,
+                            child: Text(
+                              item.badgeCount > 99
+                                  ? '99+'
+                                  : '${item.badgeCount}',
+                              key: ValueKey(item.badgeCount),
+                            ),
+                          ),
+                          child: Icon(
+                            selected ? item.selectedIcon : item.icon,
+                            size: 24,
+                            color: selected
+                                ? colors.brandPrimary
+                                : colors.textMuted,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Text(

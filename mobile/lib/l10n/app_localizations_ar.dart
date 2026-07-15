@@ -432,4 +432,151 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get personalizedFeatureBody =>
       'سجل الدخول برقم هاتفك لاستخدام المواعيد وميزات الرعاية الشخصية.';
+
+  @override
+  String get notifications => 'الإشعارات';
+
+  @override
+  String get unread => 'غير مقروء';
+
+  @override
+  String get today => 'اليوم';
+
+  @override
+  String get earlier => 'سابقاً';
+
+  @override
+  String unreadNotifications(int count) {
+    return '$count غير مقروء';
+  }
+
+  @override
+  String notificationUpdates(int count) {
+    return '$count تحديثات للطابور';
+  }
+
+  @override
+  String get notificationDetails => 'تفاصيل الإشعار';
+
+  @override
+  String get queueUpdates => 'تحديثات الطابور';
+
+  @override
+  String get whatHappened => 'ماذا حدث';
+
+  @override
+  String get whyItHappened => 'لماذا';
+
+  @override
+  String get whatToDoNext => 'ماذا تفعل الآن';
+
+  @override
+  String get viewUpdate => 'عرض التحديث';
+
+  @override
+  String get deleteNotification => 'حذف الإشعار';
+
+  @override
+  String get notificationsEmpty => 'أنت على اطلاع بكل شيء';
+
+  @override
+  String get notificationsEmptyBody =>
+      'ستظهر تحديثات المواعيد والعيادة والطابور هنا.';
+
+  @override
+  String get notificationsUnavailable => 'الإشعارات غير متاحة';
+
+  @override
+  String get notificationsUnavailableBody =>
+      'تعذر تحميل تحديثاتك. حاول مرة أخرى.';
+
+  @override
+  String get notificationBookingConfirmed => 'تم تأكيد الموعد';
+
+  @override
+  String notificationBookingHappened(String doctor) {
+    return 'تم تأكيد موعدك مع $doctor.';
+  }
+
+  @override
+  String get notificationBookingWhy => 'وافقت العيادة على طلب الحجز.';
+
+  @override
+  String get notificationBookingNext =>
+      'راجع تفاصيل الموعد واحضر في الوقت الموصى به.';
+
+  @override
+  String get notificationQueueOpened => 'الطابور متاح الآن';
+
+  @override
+  String notificationQueueOpenedHappened(String doctor) {
+    return 'الطابور المباشر لـ $doctor متاح الآن.';
+  }
+
+  @override
+  String get notificationQueueOpenedWhy =>
+      'بدأت العيادة طابور المرضى لهذا اليوم.';
+
+  @override
+  String get notificationQueueOpenedNext =>
+      'افتح الطابور المباشر عندما تكون مستعداً لمتابعة دورك.';
+
+  @override
+  String get notificationAlmostTurn => 'دورك اقترب';
+
+  @override
+  String notificationAlmostTurnHappened(int number) {
+    return 'رقمك الحالي هو $number.';
+  }
+
+  @override
+  String get notificationAlmostTurnWhy => 'تقدم الطابور وأصبح دورك قريباً.';
+
+  @override
+  String get notificationAlmostTurnNext =>
+      'يرجى التوجه إلى الاستقبال والبقاء قريباً.';
+
+  @override
+  String get notificationWelcome => 'مرحباً بك في ساكسلم';
+
+  @override
+  String get notificationWelcomeHappened => 'تجربتك في ساكسلم جاهزة.';
+
+  @override
+  String get notificationWelcomeWhy => 'بدأت استخدام ساكسلم على هذا الجهاز.';
+
+  @override
+  String get notificationWelcomeNext => 'اكتشف الأطباء الموثوقين ونظم رعايتك.';
+
+  @override
+  String get notificationReservedType => 'تحديث الموعد';
+
+  @override
+  String get notificationReservedHappened => 'تم تحديث تسجيل وصولك للموعد.';
+
+  @override
+  String get notificationReservedWhy => 'سجلت العيادة وصولك.';
+
+  @override
+  String get notificationReservedNext => 'يرجى انتظار إرشادات الاستقبال.';
+
+  @override
+  String get notificationGeneralHappened => 'هناك تحديث جديد حول رعايتك.';
+
+  @override
+  String get notificationGeneralWhy => 'أصبحت معلومات جديدة متاحة.';
+
+  @override
+  String get notificationGeneralNext => 'راجع التحديث واتبع التعليمات الظاهرة.';
+
+  @override
+  String get notificationTimeJustNow => 'تم التحديث الآن';
+
+  @override
+  String notificationTimeMinutesAgo(int minutes) {
+    return 'تم التحديث قبل $minutes دقيقة';
+  }
+
+  @override
+  String get notificationTimeEarlier => 'تم التحديث سابقاً';
 }

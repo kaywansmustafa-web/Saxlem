@@ -897,6 +897,264 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign in with your mobile number to use appointments and other personalized care features.'**
   String get personalizedFeatureBody;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @unread.
+  ///
+  /// In en, this message translates to:
+  /// **'Unread'**
+  String get unread;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @earlier.
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier'**
+  String get earlier;
+
+  /// No description provided for @unreadNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} unread'**
+  String unreadNotifications(int count);
+
+  /// No description provided for @notificationUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} queue updates'**
+  String notificationUpdates(int count);
+
+  /// No description provided for @notificationDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification details'**
+  String get notificationDetails;
+
+  /// No description provided for @queueUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue updates'**
+  String get queueUpdates;
+
+  /// No description provided for @whatHappened.
+  ///
+  /// In en, this message translates to:
+  /// **'What happened'**
+  String get whatHappened;
+
+  /// No description provided for @whyItHappened.
+  ///
+  /// In en, this message translates to:
+  /// **'Why'**
+  String get whyItHappened;
+
+  /// No description provided for @whatToDoNext.
+  ///
+  /// In en, this message translates to:
+  /// **'What to do next'**
+  String get whatToDoNext;
+
+  /// No description provided for @viewUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'View update'**
+  String get viewUpdate;
+
+  /// No description provided for @deleteNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete notification'**
+  String get deleteNotification;
+
+  /// No description provided for @notificationsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all caught up'**
+  String get notificationsEmpty;
+
+  /// No description provided for @notificationsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment, clinic, and queue updates will appear here.'**
+  String get notificationsEmptyBody;
+
+  /// No description provided for @notificationsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are unavailable'**
+  String get notificationsUnavailable;
+
+  /// No description provided for @notificationsUnavailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your updates. Please try again.'**
+  String get notificationsUnavailableBody;
+
+  /// No description provided for @notificationBookingConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment confirmed'**
+  String get notificationBookingConfirmed;
+
+  /// No description provided for @notificationBookingHappened.
+  ///
+  /// In en, this message translates to:
+  /// **'Your appointment with {doctor} is confirmed.'**
+  String notificationBookingHappened(String doctor);
+
+  /// No description provided for @notificationBookingWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'The clinic accepted your booking request.'**
+  String get notificationBookingWhy;
+
+  /// No description provided for @notificationBookingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the appointment details and arrive at the recommended time.'**
+  String get notificationBookingNext;
+
+  /// No description provided for @notificationQueueOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'Your queue is open'**
+  String get notificationQueueOpened;
+
+  /// No description provided for @notificationQueueOpenedHappened.
+  ///
+  /// In en, this message translates to:
+  /// **'The live queue for {doctor} is now available.'**
+  String notificationQueueOpenedHappened(String doctor);
+
+  /// No description provided for @notificationQueueOpenedWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'The clinic has started today\'s patient queue.'**
+  String get notificationQueueOpenedWhy;
+
+  /// No description provided for @notificationQueueOpenedNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Live Queue when you are ready to follow your place.'**
+  String get notificationQueueOpenedNext;
+
+  /// No description provided for @notificationAlmostTurn.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re almost next'**
+  String get notificationAlmostTurn;
+
+  /// No description provided for @notificationAlmostTurnHappened.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current number is {number}.'**
+  String notificationAlmostTurnHappened(int number);
+
+  /// No description provided for @notificationAlmostTurnWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue has moved closer to your turn.'**
+  String get notificationAlmostTurnWhy;
+
+  /// No description provided for @notificationAlmostTurnNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Please head to reception and stay nearby.'**
+  String get notificationAlmostTurnNext;
+
+  /// No description provided for @notificationWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Saxlem'**
+  String get notificationWelcome;
+
+  /// No description provided for @notificationWelcomeHappened.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Saxlem experience is ready.'**
+  String get notificationWelcomeHappened;
+
+  /// No description provided for @notificationWelcomeWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'You started using Saxlem on this device.'**
+  String get notificationWelcomeWhy;
+
+  /// No description provided for @notificationWelcomeNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore trusted doctors and keep your care organized.'**
+  String get notificationWelcomeNext;
+
+  /// No description provided for @notificationReservedType.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment update'**
+  String get notificationReservedType;
+
+  /// No description provided for @notificationReservedHappened.
+  ///
+  /// In en, this message translates to:
+  /// **'Your appointment check-in was updated.'**
+  String get notificationReservedHappened;
+
+  /// No description provided for @notificationReservedWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'The clinic recorded your arrival.'**
+  String get notificationReservedWhy;
+
+  /// No description provided for @notificationReservedNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait for guidance from reception.'**
+  String get notificationReservedNext;
+
+  /// No description provided for @notificationGeneralHappened.
+  ///
+  /// In en, this message translates to:
+  /// **'There is a new update about your care.'**
+  String get notificationGeneralHappened;
+
+  /// No description provided for @notificationGeneralWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'New information became available.'**
+  String get notificationGeneralWhy;
+
+  /// No description provided for @notificationGeneralNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the update and follow any instructions shown.'**
+  String get notificationGeneralNext;
+
+  /// No description provided for @notificationTimeJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated just now'**
+  String get notificationTimeJustNow;
+
+  /// No description provided for @notificationTimeMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated {minutes} minutes ago'**
+  String notificationTimeMinutesAgo(int minutes);
+
+  /// No description provided for @notificationTimeEarlier.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated earlier'**
+  String get notificationTimeEarlier;
 }
 
 class _AppLocalizationsDelegate

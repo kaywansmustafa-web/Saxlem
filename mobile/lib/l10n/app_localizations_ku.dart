@@ -436,4 +436,155 @@ class AppLocalizationsKu extends AppLocalizations {
   @override
   String get personalizedFeatureBody =>
       'ب ژمارا خۆ بچە ژوور بۆ بکارئینانا وەعدە و تایبەتمەندیێن چاڤدێرییا کەسی.';
+
+  @override
+  String get notifications => 'ئاگەهداری';
+
+  @override
+  String get unread => 'نەهاتینە خواندن';
+
+  @override
+  String get today => 'ئیرۆ';
+
+  @override
+  String get earlier => 'بەری نوکە';
+
+  @override
+  String unreadNotifications(int count) {
+    return '$count نەهاتینە خواندن';
+  }
+
+  @override
+  String notificationUpdates(int count) {
+    return '$count نووکرنێن ریزێ';
+  }
+
+  @override
+  String get notificationDetails => 'وردەکاریێن ئاگەهداریێ';
+
+  @override
+  String get queueUpdates => 'نووکرنێن ریزێ';
+
+  @override
+  String get whatHappened => 'چی روویدا';
+
+  @override
+  String get whyItHappened => 'بۆچی';
+
+  @override
+  String get whatToDoNext => 'پاشی چی بکەی';
+
+  @override
+  String get viewUpdate => 'نووکرنێ ببینە';
+
+  @override
+  String get deleteNotification => 'ئاگەهداریێ ژێ ببە';
+
+  @override
+  String get notificationsEmpty => 'تو ژ هەمی تشتان ئاگەهداری';
+
+  @override
+  String get notificationsEmptyBody =>
+      'نووکرنێن وەعدە، کلینیک و ریزێ ل ڤێرێ دێ دیار بن.';
+
+  @override
+  String get notificationsUnavailable => 'ئاگەهداری بەردەست نینن';
+
+  @override
+  String get notificationsUnavailableBody =>
+      'مە نەشیا نووکرنێن تە بار بکەین. دیسان تاقی بکە.';
+
+  @override
+  String get notificationBookingConfirmed => 'وەعدە هاتە پشتڕاستکرن';
+
+  @override
+  String notificationBookingHappened(String doctor) {
+    return 'وەعدەیا تە ل گەل $doctor هاتە پشتڕاستکرن.';
+  }
+
+  @override
+  String get notificationBookingWhy => 'کلینیکێ داخوازا وەعدەیا تە قەبویل کر.';
+
+  @override
+  String get notificationBookingNext =>
+      'وردەکاریێن وەعدەیێ ببینە و د دەمێ پێشنیارکری دا بەرهەڤ بە.';
+
+  @override
+  String get notificationQueueOpened => 'ریزا تە ڤەبوو';
+
+  @override
+  String notificationQueueOpenedHappened(String doctor) {
+    return 'ریزا زیندی یا $doctor نوکە بەردەستە.';
+  }
+
+  @override
+  String get notificationQueueOpenedWhy =>
+      'کلینیکێ ریزا نەخۆشان یا ئیرۆ دەستپێکر.';
+
+  @override
+  String get notificationQueueOpenedNext =>
+      'دەمێ بەرهەڤ بی ریزا زیندی ڤەکە و جهێ خۆ ببینە.';
+
+  @override
+  String get notificationAlmostTurn => 'نۆرا تە نێزیکە';
+
+  @override
+  String notificationAlmostTurnHappened(int number) {
+    return 'ژمارا تە یا نوکە $number ـە.';
+  }
+
+  @override
+  String get notificationAlmostTurnWhy => 'ریز پێشڤەچوو و نۆرا تە نێزیک بوو.';
+
+  @override
+  String get notificationAlmostTurnNext =>
+      'هیڤییە بچە پێشوازیێ و ل نێزیک بمینە.';
+
+  @override
+  String get notificationWelcome => 'ب خێر بێی بۆ ساخله‌م';
+
+  @override
+  String get notificationWelcomeHappened => 'ئەزموونا تە یا ساخله‌مێ بەرهەڤە.';
+
+  @override
+  String get notificationWelcomeWhy =>
+      'تە ل سەر ڤێ ئامیرێ دەست ب بکارئینانا ساخله‌مێ کر.';
+
+  @override
+  String get notificationWelcomeNext =>
+      'دکتۆرێن باوەرپێکری ببینە و چاڤدێرییا خۆ رێک بخە.';
+
+  @override
+  String get notificationReservedType => 'نووکرنا وەعدەیێ';
+
+  @override
+  String get notificationReservedHappened => 'تۆمارکرنا هاتنا تە هاتە نووکرن.';
+
+  @override
+  String get notificationReservedWhy => 'کلینیکێ هاتنا تە تۆمار کر.';
+
+  @override
+  String get notificationReservedNext =>
+      'هیڤییە چاڤەرێی رێنماییێن پێشوازیێ بە.';
+
+  @override
+  String get notificationGeneralHappened =>
+      'نووکرنەکا نوو دەربارەی چاڤدێرییا تە هەیە.';
+
+  @override
+  String get notificationGeneralWhy => 'زانیاریێن نوو بەردەست بوون.';
+
+  @override
+  String get notificationGeneralNext => 'نووکرنێ ببینە و رێنماییێن دیار بکە.';
+
+  @override
+  String get notificationTimeJustNow => 'نوکە هاتە نووکرن';
+
+  @override
+  String notificationTimeMinutesAgo(int minutes) {
+    return 'بەری $minutes خولەکان هاتە نووکرن';
+  }
+
+  @override
+  String get notificationTimeEarlier => 'بەری نوکە هاتە نووکرن';
 }

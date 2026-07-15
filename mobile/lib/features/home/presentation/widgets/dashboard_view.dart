@@ -4,7 +4,6 @@ import '../../../../core/models/recommended_doctor.dart';
 import '../../../../core/models/specialty.dart';
 import '../../../live_queue/domain/entities/patient_queue_snapshot.dart';
 import '../../../live_queue/domain/entities/queue_types.dart';
-import '../../../live_queue/live_queue_feature.dart';
 import '../../../discover/domain/entities/discovery_types.dart';
 import '../../../discover/domain/entities/doctor_search_criteria.dart';
 import '../../../discover/domain/entities/doctor_discovery_result.dart';
@@ -23,6 +22,7 @@ class DashboardView extends StatelessWidget {
     required this.onOpenDiscover,
     required this.onOpenAlerts,
     required this.onOpenAppointments,
+    required this.onOpenLiveQueue,
     super.key,
   });
   final void Function({
@@ -33,6 +33,7 @@ class DashboardView extends StatelessWidget {
   onOpenDiscover;
   final VoidCallback onOpenAlerts;
   final VoidCallback onOpenAppointments;
+  final VoidCallback onOpenLiveQueue;
 
   static const _specialties = [
     Specialty(id: 'dentist', name: 'Dentist', iconKey: 'dentist'),
@@ -135,12 +136,7 @@ class DashboardView extends StatelessWidget {
                   '${strings.yourNumber} 23. ${strings.patientsAhead} 4. '
                   '${strings.estimatedWait} 21–29 ${strings.minutesShort}.',
             ),
-            onActionPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) =>
-                    const LiveQueueFeature(queueEntryId: 'entry-patient-23'),
-              ),
-            ),
+            onActionPressed: onOpenLiveQueue,
           ),
           const SizedBox(height: 30),
           PopularSpecialtiesSection(

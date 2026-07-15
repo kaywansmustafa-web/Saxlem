@@ -28,11 +28,11 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('الرئيسية'), findsOneWidget);
-    expect(find.text('التنبيهات'), findsOneWidget);
+    expect(find.text('الإشعارات'), findsOneWidget);
     expect(find.text('الملف الشخصي'), findsOneWidget);
-    await tester.tap(find.text('التنبيهات'));
-    await tester.pump();
-    expect(find.text('التنبيهات قريباً'), findsOneWidget);
+    await tester.tap(find.text('الإشعارات'));
+    await tester.pumpAndSettle();
+    expect(find.text('الإشعارات'), findsWidgets);
     expect(tester.takeException(), isNull);
     expect(
       Directionality.of(tester.element(find.byType(HomePage))),
