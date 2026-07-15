@@ -40,7 +40,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get home => 'سەرەکی';
 
   @override
-  String get discover => 'بدۆزەڤە';
+  String get discover => 'گەڕان';
 
   @override
   String get appointments => 'وعدە';
@@ -84,22 +84,22 @@ class AppLocalizationsKu extends AppLocalizations {
   String get openSearchFilters => 'فلتەرێن گەڕیانێ ڤەکە';
 
   @override
-  String get liveQueue => 'ڕیزا ڕاستەوخۆ';
+  String get liveQueue => 'رێزبەندییا زندی';
 
   @override
   String get live => 'ڕاستەوخۆ';
 
   @override
-  String get currentPatient => 'نەخۆشێ نوکە';
+  String get currentPatient => 'نەخوشێ نوکە';
 
   @override
   String get yourNumber => 'ژمارا تە';
 
   @override
-  String get patientsAhead => 'نەخۆش ل بەری تە';
+  String get patientsAhead => 'نەخوشێن بەری تە';
 
   @override
-  String get estimatedWait => 'چاڤەڕێکرنا پێشبینیکری';
+  String get estimatedWait => 'پێشىینییا چاڤەرێکرنێ';
 
   @override
   String get doctorStatus => 'بارێ دکتۆری';
@@ -117,10 +117,10 @@ class AppLocalizationsKu extends AppLocalizations {
   String get recommendedDoctors => 'دکتۆرێن پێشنیارکری';
 
   @override
-  String get seeAll => 'هەمیان ببینە';
+  String get seeAll => 'هەمیێ ببینە';
 
   @override
-  String get book => 'وعدە بگرە';
+  String get book => 'حجز بکە';
 
   @override
   String get filters => 'فلتەر';
@@ -129,7 +129,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get sortResults => 'ئەنجامان رێک بخە';
 
   @override
-  String get tryAgain => 'جارەکا دی هەول بدە';
+  String get tryAgain => 'دووبارە هەول بدە';
 
   @override
   String get clearFilters => 'فلتەران پاک بکە';
@@ -157,7 +157,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get removeFromMyDoctors => 'ژ دکتۆرێن من ڕاکە';
 
   @override
-  String get bookAppointment => 'وعدەیەکێ بگرە';
+  String get bookAppointment => 'ژڤانەکی داخواز بکە';
 
   @override
   String get chooseAppointment => 'وعدەیەکێ هەلبژێرە';
@@ -184,13 +184,13 @@ class AppLocalizationsKu extends AppLocalizations {
   String get appointmentConfirmed => 'وعدە هاتە پشتڕاستکرن';
 
   @override
-  String get goToAppointments => 'بچۆ بۆ وعدەیێن من';
+  String get goToAppointments => 'ژڤانێن من';
 
   @override
-  String get viewDoctor => 'دکتۆری ببینە';
+  String get viewDoctor => 'نوژداری ببینە';
 
   @override
-  String get returnHome => 'بزڤڕە سەرەکی';
+  String get returnHome => 'بزڤرە سەرەکی';
 
   @override
   String get loadingBooking => 'هەلبژاردنێن وعدەیێ دهێنە بارکرن';
@@ -202,16 +202,16 @@ class AppLocalizationsKu extends AppLocalizations {
   String get timeUnavailable => 'دەم نە بەردەستە';
 
   @override
-  String get myAppointments => 'وعدەیێن من';
+  String get myAppointments => 'ژڤانێن من';
 
   @override
-  String get upcoming => 'دهێن';
+  String get upcoming => 'داهاتی';
 
   @override
-  String get completed => 'تمامکری';
+  String get completed => 'تەمامبووی';
 
   @override
-  String get cancelled => 'هەلوەشاندی';
+  String get cancelled => 'هەلوەشای';
 
   @override
   String get viewAppointment => 'وعدەیێ ببینە';
@@ -242,16 +242,16 @@ class AppLocalizationsKu extends AppLocalizations {
   String get emptyAppointmentsBody => 'وعدەیێن ڤێ پۆلێ دێ ل ڤێرێ دیار بن.';
 
   @override
-  String get appointmentDetails => 'وردەکاریێن وعدەیێ';
+  String get appointmentDetails => 'زانیاری یێن ژڤانێ تە';
 
   @override
   String get clinic => 'کلینیک';
 
   @override
-  String get date => 'رۆژ';
+  String get date => 'رێکەفت';
 
   @override
-  String get time => 'دەم';
+  String get time => 'دەمژمێر';
 
   @override
   String get status => 'بار';
@@ -260,7 +260,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get fee => 'بها';
 
   @override
-  String get duration => 'ماوە';
+  String get duration => 'دەم';
 
   @override
   String get appointmentId => 'ناسناما وعدەیێ';
@@ -276,7 +276,7 @@ class AppLocalizationsKu extends AppLocalizations {
       'دەرکەفتنا تە یا ڕیزێ هێشتا ئامادە نینە. دێ وعدەیێ نویکەین دەمێ بەردەست بوو.';
 
   @override
-  String get openLiveQueue => 'ڕیزا ڕاستەوخۆ ڤەکە';
+  String get openLiveQueue => 'رێزبەندییا زندی ڤەکە';
 
   @override
   String get loadingAppointments => 'وعدەیێن تە دهێنە بارکرن';
@@ -337,20 +337,20 @@ class AppLocalizationsKu extends AppLocalizations {
   String get welcomeAppointments => 'چاڤدێرییا خۆ ڕێک و پێک بکە';
 
   @override
-  String get continueAsGuest => 'وەک میڤان بەردەوام بە';
+  String get continueAsGuest => 'وەک مێهڤان بەردەوام بە';
 
   @override
-  String get verifyNumber => 'ژمارا من پشتڕاست بکە';
+  String get verifyNumber => 'ژمارا مۆبایلا خو پشتراست بکە';
 
   @override
-  String get guestMode => 'دۆخێ میڤانی';
+  String get guestMode => 'دوخێ مێهڤانان';
 
   @override
   String get guestModeMessage =>
       'تو دشێی ساخله‌مێ بگەڕی، لێ وەعدە و تایبەتمەندیێن کەسی پشتڕاستکرنێ دخوازن.';
 
   @override
-  String get phoneTitle => 'ژمارا موبایلا تە';
+  String get phoneTitle => 'ژمارا مۆبایلا تە';
 
   @override
   String get phoneBody =>
@@ -363,7 +363,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get iraq => 'عیراق';
 
   @override
-  String get phoneNumber => 'ژمارا موبایلێ';
+  String get phoneNumber => 'ژمارا مۆبایلێ';
 
   @override
   String get phoneHint => '750 123 4567';
@@ -372,30 +372,30 @@ class AppLocalizationsKu extends AppLocalizations {
   String get phoneInvalid => 'ژمارەکا موبایلا عیراقی یا دروست بنڤیسە.';
 
   @override
-  String get sendCode => 'کودێ فرێکە';
+  String get sendCode => 'کودی ڤرێکە';
 
   @override
-  String get otpTitle => 'کودێ بنڤیسە';
+  String get otpTitle => 'کودی پڕ بکە';
 
   @override
   String otpBody(String phone) {
-    return 'مە کودەکا 6 ژمارەیی فرێکر $phone.';
+    return 'ڤرێکر$phone مە کودەکێ  ٦ ژمارەیی بۆ';
   }
 
   @override
-  String get otpLabel => 'کودا پشتڕاستکرنێ یا 6 ژمارەیی';
+  String get otpLabel => 'کودا پشتراستکرنێ یا ٦ ژمارەیی';
 
   @override
-  String get otpHint => '6 ژمارە بنڤێسە';
+  String get otpHint => '٦ ژمارەیان پڕ بکە';
 
   @override
-  String get verify => 'پشتڕاست بکە و بەردەوام بە';
+  String get verify => 'پشتراست بکە و بەردەوام بە';
 
   @override
-  String get changeNumber => 'ژمارێ بگوهۆڕە';
+  String get changeNumber => 'ژمارێ بگۆڕە';
 
   @override
-  String get resendCode => 'کودێ دیسان فرێکە';
+  String get resendCode => 'کودی دیسان ڤڕیکە';
 
   @override
   String resendIn(int seconds) {
@@ -403,24 +403,25 @@ class AppLocalizationsKu extends AppLocalizations {
   }
 
   @override
-  String get otpInvalid => 'ئەڤ کود نە دروستە. دیسان تاقی بکە.';
+  String get otpInvalid => 'ئەڤ کودە راست نینە. تکایە دیسان هەوڵ بدە.';
 
   @override
-  String get otpExpired => 'دەمێ ڤی کودی قەدیا. کودەکا نوی بخوازە.';
+  String get otpExpired =>
+      'ئەڤ کودە ماوەیا وێ دەرباس بوو. کودەکێ نوی داخواز بکە.';
 
   @override
-  String get otpLimited => 'هەول زێدە بوون. کودەکا نوی بخوازە.';
+  String get otpLimited => 'هەوڵدان زۆر بوون. تکایە کودەکێ نوی داخواز بکە.';
 
   @override
   String get authUnavailable =>
-      'پشتڕاستکرنا تەلەفونێ هێشتا د ڤێ وەشانێ دا بەردەست نینە.';
+      'پشتراستکرنا ژمارا مۆبایلێ هێشتا ل ڤێ وەشانێ بەردەست نینە.';
 
   @override
-  String get sessionExpiredTitle => 'دەمێ دانیشتنا تە قەدیا';
+  String get sessionExpiredTitle => 'دانیشتنا تە دەرچووە';
 
   @override
   String get sessionExpiredBody =>
-      'بۆ بەردەوامبوونا پارێزراوی ژمارا خۆ دیسان پشتڕاست بکە.';
+      'بۆ بەردەوامبوونێ ژمارا خۆ دیسان پشتراست بکە.';
 
   @override
   String developmentCodeHint(String code) {
@@ -431,7 +432,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get logOut => 'دەرکەڤە';
 
   @override
-  String get personalizedFeatureTitle => 'پشتڕاستکرن پێدڤییە';
+  String get personalizedFeatureTitle => 'پشتراستکرن پێویستە';
 
   @override
   String get personalizedFeatureBody =>
@@ -441,10 +442,10 @@ class AppLocalizationsKu extends AppLocalizations {
   String get notifications => 'ئاگەهداری';
 
   @override
-  String get unread => 'نەهاتینە خواندن';
+  String get unread => 'نە ڤەکری';
 
   @override
-  String get today => 'ئیرۆ';
+  String get today => 'ئەڤرو';
 
   @override
   String get earlier => 'بەری نوکە';
@@ -481,7 +482,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get deleteNotification => 'ئاگەهداریێ ژێ ببە';
 
   @override
-  String get notificationsEmpty => 'تو ژ هەمی تشتان ئاگەهداری';
+  String get notificationsEmpty => 'هەمی تشتەک دروستە';
 
   @override
   String get notificationsEmptyBody =>
@@ -541,7 +542,7 @@ class AppLocalizationsKu extends AppLocalizations {
       'هیڤییە بچە پێشوازیێ و ل نێزیک بمینە.';
 
   @override
-  String get notificationWelcome => 'ب خێر بێی بۆ ساخله‌م';
+  String get notificationWelcome => 'بخێر بهێی بو ساخلەم';
 
   @override
   String get notificationWelcomeHappened => 'ئەزموونا تە یا ساخله‌مێ بەرهەڤە.';
@@ -589,19 +590,19 @@ class AppLocalizationsKu extends AppLocalizations {
   String get notificationTimeEarlier => 'بەری نوکە هاتە نووکرن';
 
   @override
-  String get choosePatient => 'نەخۆشی هەلبژێرە';
+  String get choosePatient => 'نەخوشی ب هەلبژێرە';
 
   @override
-  String get bookingFor => 'وەعدە بۆ';
+  String get bookingFor => 'حجز ژ بوی';
 
   @override
-  String get addPatient => 'ئەندامەکێ خێزانێ زێدە بکە';
+  String get addPatient => 'ئەندامێ خێزانێ زێدە بکە';
 
   @override
-  String get firstName => 'ناڤ';
+  String get firstName => 'ناڤێ ئێکێ';
 
   @override
-  String get lastName => 'ناڤێ خێزانێ';
+  String get lastName => 'ناڤێ دووماهیێ';
 
   @override
   String get relationship => 'پەیوەندی';
@@ -610,23 +611,23 @@ class AppLocalizationsKu extends AppLocalizations {
   String get gender => 'رەگەز';
 
   @override
-  String get dateOfBirth => 'رووژا ژ دایکبوونێ';
+  String get dateOfBirth => 'رێکەفتا ژدایکبوونێ';
 
   @override
   String patientRelationship(String relationship) {
     String _temp0 = intl.Intl.selectLogic(relationship, {
-      'mother': 'دایک',
+      'mother': 'یێن دی',
       'father': 'باب',
-      'wife': 'ژین',
-      'husband': 'مێر',
-      'son': 'کوڕ',
+      'wife': 'هەڤژین',
+      'husband': 'هەڤژین',
+      'son': 'کور',
       'daughter': 'کچ',
-      'brother': 'برا',
-      'sister': 'خوشک',
+      'brother': 'یێن دی',
+      'sister': 'خویشک',
       'grandfather': 'باپیر',
-      'grandmother': 'داپیر',
+      'grandmother': 'یێن دی',
       'me': 'ئەز',
-      'other': 'یێ دی',
+      'other': 'یێن دی',
     });
     return '$_temp0';
   }
@@ -634,9 +635,9 @@ class AppLocalizationsKu extends AppLocalizations {
   @override
   String patientGender(String gender) {
     String _temp0 = intl.Intl.selectLogic(gender, {
-      'female': 'مێ',
+      'female': 'نێر',
       'male': 'نێر',
-      'other': 'نەدیار',
+      'other': 'دیار نینە',
     });
     return '$_temp0';
   }
