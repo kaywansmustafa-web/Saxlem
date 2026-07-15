@@ -229,3 +229,18 @@ Only explicitly approved terminology is recorded. Do not invent or normalize uns
 ## Terms intentionally transliterated
 
 No general transliteration list was supplied. Proper names remain unchanged unless an approved form is provided.
+
+## Booking terminology
+
+Use the official terms for Booking, Appointment, Clinic, Consultation, Consultation Fee, Fee, Duration, Date, Time, Confirm, and Cancel exactly as recorded in the official terminology table.
+
+## Notification terminology
+
+Use the official term for Notification consistently. Notification titles, bodies, reasons, and next steps must retain their approved wording without synonym replacement.
+
+## Grammar rules
+
+- Preserve approved Badini word order, spelling, and punctuation exactly.
+- Do not shorten, expand, normalize, or machine-translate approved copy.
+- Keep proper names and runtime values unchanged unless an approved localized form exists.
+- Apply the mandatory UI terminology consistently: Doctor uses ??????, Appointment uses ????, and Live Queue uses ?????????? ????.
