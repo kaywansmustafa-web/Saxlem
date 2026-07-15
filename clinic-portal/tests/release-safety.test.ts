@@ -1,0 +1,1 @@
+import{describe,it,expect}from"vitest";import{environment}from"@/infrastructure/composition";describe("release safety",()=>{it("fails closed for missing and unknown environments",()=>{expect(environment(undefined)).toBe("production");expect(environment("unknown")).toBe("production")})});

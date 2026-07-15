@@ -1,0 +1,1 @@
+import Link from"next/link";import type{Locale,Messages}from"@/i18n";export function Placeholder({locale,m,title}:{locale:Locale;m:Messages;title:string}){return <div className="state placeholder"><div><h1>{title}</h1><h2>{m.futureTitle}</h2><p>{m.futureBody}</p><Link className="primary" href={`/${locale}/dashboard`}>{m.back}</Link></div></div>}
