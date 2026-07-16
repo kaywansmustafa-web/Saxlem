@@ -1,0 +1,2 @@
+import type{DoctorAction,DoctorPatientContext,DoctorSession}from"./models";
+export interface DoctorSessionRepository{get(id:string):Promise<DoctorSession|null>;context(appointmentId:string):Promise<DoctorPatientContext|null>;wasApplied(id:string,operationId:string):Promise<boolean>;apply(input:{id:string;action:DoctorAction;expectedVersion:number;operationId:string;occurredAt:string;patientName?:string}):Promise<DoctorSession>}
