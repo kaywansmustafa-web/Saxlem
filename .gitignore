@@ -26,6 +26,13 @@ Thumbs.db
 # Environment Variables
 .env
 .env.*
+!**/.env.example
 
 # Logs
 *.log
+
+# Node.js
+node_modules/
+dist/
+coverage/
+backend/src/generated/prisma/

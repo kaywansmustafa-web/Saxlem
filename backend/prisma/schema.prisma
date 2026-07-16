@@ -1,0 +1,372 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum RecordStatus {
+  active
+  inactive
+}
+
+enum AppointmentStatus {
+  scheduled
+  checkedIn
+  completed
+  cancelled
+  noShow
+}
+
+enum QueueSessionStatus {
+  scheduled
+  open
+  paused
+  closing
+  closed
+}
+
+enum QueueEntryStatus {
+  expected
+  checkedIn
+  ready
+  called
+  inConsultation
+  completed
+  noResponse
+  removed
+}
+
+enum NotificationPriority {
+  high
+  normal
+  information
+}
+
+enum AuditOutcome {
+  succeeded
+  denied
+  failed
+}
+
+model Organization {
+  id        String       @id @default(uuid(7)) @db.Uuid
+  name      String
+  status    RecordStatus @default(active)
+  createdAt DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  clinics   Clinic[]
+  memberships ClinicMembership[]
+  appointments Appointment[]
+  queueSessions QueueSession[]
+  notifications NotificationRecord[]
+  audits AuditEvent[]
+  @@map("organizations")
+}
+
+model Clinic {
+  id             String       @id @default(uuid(7)) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  name           String
+  timezone       String
+  status         RecordStatus @default(active)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  memberships    ClinicMembership[]
+  doctorSchedules DoctorSchedule[]
+  appointments   Appointment[]
+  queueSessions  QueueSession[]
+  notifications  NotificationRecord[]
+  audits          AuditEvent[]
+  @@unique([organizationId, id])
+  @@index([organizationId, status])
+  @@map("clinics")
+}
+
+model User {
+  id                    String       @id @default(uuid(7)) @db.Uuid
+  status                RecordStatus @default(active)
+  createdAt             DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  patientAccount        PatientAccount?
+  staffAccount          StaffAccount?
+  memberships           ClinicMembership[]
+  refreshSessions       RefreshSession[]
+  notifications         NotificationRecord[]
+  audits                 AuditEvent[]
+  @@map("users")
+}
+
+model PatientAccount {
+  id                    String   @id @default(uuid(7)) @db.Uuid
+  userId                String   @unique @map("user_id") @db.Uuid
+  normalizedPhoneNumber String   @unique @map("normalized_phone_number")
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  profiles              PatientProfile[]
+  relationships         FamilyRelationship[]
+  @@map("patient_accounts")
+}
+
+model PatientProfile {
+  id               String   @id @default(uuid(7)) @db.Uuid
+  patientAccountId String   @map("patient_account_id") @db.Uuid
+  firstName        String   @map("first_name")
+  lastName         String   @map("last_name")
+  dateOfBirth      DateTime @map("date_of_birth") @db.Date
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  patientAccount   PatientAccount @relation(fields: [patientAccountId], references: [id], onDelete: Restrict)
+  relationships    FamilyRelationship[]
+  appointments     Appointment[]
+  queueEntries     QueueEntry[]
+  notifications    NotificationRecord[]
+  @@index([patientAccountId])
+  @@map("patient_profiles")
+}
+
+model FamilyRelationship {
+  id               String   @id @default(uuid(7)) @db.Uuid
+  patientAccountId String   @map("patient_account_id") @db.Uuid
+  patientProfileId String   @map("patient_profile_id") @db.Uuid
+  relationship     String
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  patientAccount   PatientAccount @relation(fields: [patientAccountId], references: [id], onDelete: Restrict)
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Restrict)
+  @@unique([patientAccountId, patientProfileId])
+  @@map("family_relationships")
+}
+
+model StaffAccount {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  userId       String   @unique @map("user_id") @db.Uuid
+  email        String   @unique
+  passwordHash String?  @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  doctor       Doctor?
+  @@map("staff_accounts")
+}
+
+model ClinicMembership {
+  id             String       @id @default(uuid(7)) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  clinicId       String       @map("clinic_id") @db.Uuid
+  userId         String       @map("user_id") @db.Uuid
+  role           String
+  status         RecordStatus @default(active)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  clinic         Clinic       @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  @@unique([organizationId, clinicId, userId, role])
+  @@index([userId, status])
+  @@map("clinic_memberships")
+}
+
+model Doctor {
+  id             String   @id @default(uuid(7)) @db.Uuid
+  staffAccountId String   @unique @map("staff_account_id") @db.Uuid
+  displayName    String   @map("display_name")
+  specialtyCode String   @map("specialty_code")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  staffAccount   StaffAccount @relation(fields: [staffAccountId], references: [id], onDelete: Restrict)
+  schedules      DoctorSchedule[]
+  appointments   Appointment[]
+  queueSessions  QueueSession[]
+  @@map("doctors")
+}
+
+model DoctorSchedule {
+  id             String   @id @default(uuid(7)) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  clinicId       String   @map("clinic_id") @db.Uuid
+  doctorId       String   @map("doctor_id") @db.Uuid
+  startsAt       DateTime @map("starts_at") @db.Timestamptz(3)
+  endsAt         DateTime @map("ends_at") @db.Timestamptz(3)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  clinic         Clinic   @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+  doctor         Doctor   @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  @@index([organizationId, clinicId, doctorId, startsAt])
+  @@map("doctor_schedules")
+}
+
+model Appointment {
+  id               String            @id @default(uuid(7)) @db.Uuid
+  organizationId   String            @map("organization_id") @db.Uuid
+  clinicId         String            @map("clinic_id") @db.Uuid
+  doctorId         String            @map("doctor_id") @db.Uuid
+  patientProfileId String            @map("patient_profile_id") @db.Uuid
+  publicReference  String            @unique @map("public_reference")
+  startsAt         DateTime          @map("starts_at") @db.Timestamptz(3)
+  durationMinutes  Int               @map("duration_minutes")
+  feeIqd           Int               @map("fee_iqd")
+  status           AppointmentStatus @default(scheduled)
+  version          Int               @default(1)
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime          @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  clinic           Clinic            @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+  doctor           Doctor            @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  patientProfile   PatientProfile    @relation(fields: [patientProfileId], references: [id], onDelete: Restrict)
+  events           AppointmentEvent[]
+  queueEntries     QueueEntry[]
+  @@index([organizationId, clinicId, startsAt])
+  @@index([organizationId, doctorId, startsAt])
+  @@index([patientProfileId, startsAt])
+  @@map("appointments")
+}
+
+model AppointmentEvent {
+  id             String   @id @default(uuid(7)) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  appointmentId  String   @map("appointment_id") @db.Uuid
+  type           String
+  payload        Json
+  occurredAt     DateTime @map("occurred_at") @db.Timestamptz(3)
+  appointment    Appointment @relation(fields: [appointmentId], references: [id], onDelete: Restrict)
+  @@index([organizationId, appointmentId, occurredAt])
+  @@map("appointment_events")
+}
+
+model QueueSession {
+  id              String             @id @default(uuid(7)) @db.Uuid
+  organizationId  String             @map("organization_id") @db.Uuid
+  clinicId        String             @map("clinic_id") @db.Uuid
+  doctorId        String             @map("doctor_id") @db.Uuid
+  operationalDate DateTime           @map("operational_date") @db.Date
+  status          QueueSessionStatus @default(scheduled)
+  version         Int                @default(1)
+  createdAt       DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization    Organization       @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  clinic          Clinic             @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+  doctor          Doctor             @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  entries         QueueEntry[]
+  @@unique([organizationId, clinicId, doctorId, operationalDate])
+  @@map("queue_sessions")
+}
+
+model QueueEntry {
+  id               String           @id @default(uuid(7)) @db.Uuid
+  organizationId   String           @map("organization_id") @db.Uuid
+  queueSessionId   String           @map("queue_session_id") @db.Uuid
+  appointmentId    String?          @map("appointment_id") @db.Uuid
+  patientProfileId String           @map("patient_profile_id") @db.Uuid
+  queueNumber      Int              @map("queue_number")
+  position         Int
+  status           QueueEntryStatus @default(expected)
+  version          Int              @default(1)
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
+  queueSession     QueueSession     @relation(fields: [queueSessionId], references: [id], onDelete: Restrict)
+  appointment      Appointment?     @relation(fields: [appointmentId], references: [id], onDelete: Restrict)
+  patientProfile   PatientProfile   @relation(fields: [patientProfileId], references: [id], onDelete: Restrict)
+  @@unique([queueSessionId, queueNumber])
+  @@unique([queueSessionId, appointmentId])
+  @@index([organizationId, queueSessionId, status, position])
+  @@map("queue_entries")
+}
+
+model NotificationRecord {
+  id               String               @id @default(uuid(7)) @db.Uuid
+  organizationId   String?              @map("organization_id") @db.Uuid
+  clinicId         String?              @map("clinic_id") @db.Uuid
+  recipientUserId  String               @map("recipient_user_id") @db.Uuid
+  patientProfileId String?              @map("patient_profile_id") @db.Uuid
+  type             String
+  priority         NotificationPriority @default(normal)
+  payload          Json
+  occurredAt       DateTime             @map("occurred_at") @db.Timestamptz(3)
+  readAt           DateTime?            @map("read_at") @db.Timestamptz(3)
+  organization     Organization?        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  clinic           Clinic?              @relation(fields: [clinicId], references: [id], onDelete: Restrict)
+  recipientUser    User                 @relation(fields: [recipientUserId], references: [id], onDelete: Restrict)
+  patientProfile   PatientProfile?      @relation(fields: [patientProfileId], references: [id], onDelete: Restrict)
+  @@index([recipientUserId, readAt, occurredAt])
+  @@index([organizationId, clinicId, occurredAt])
+  @@map("notification_records")
+}
+
+model RefreshSession {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  deviceId    String   @map("device_id")
+  tokenHash   String   @unique @map("token_hash")
+  familyId    String   @map("family_id") @db.Uuid
+  expiresAt   DateTime @map("expires_at") @db.Timestamptz(3)
+  revokedAt   DateTime? @map("revoked_at") @db.Timestamptz(3)
+  replacedById String? @map("replaced_by_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  @@index([userId, revokedAt, expiresAt])
+  @@map("refresh_sessions")
+}
+
+model OtpChallenge {
+  id                    String   @id @default(uuid(7)) @db.Uuid
+  normalizedPhoneNumber String   @map("normalized_phone_number")
+  otpHash               String   @map("otp_hash")
+  attemptCount          Int      @default(0) @map("attempt_count")
+  expiresAt             DateTime @map("expires_at") @db.Timestamptz(3)
+  consumedAt            DateTime? @map("consumed_at") @db.Timestamptz(3)
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  @@index([normalizedPhoneNumber, createdAt])
+  @@index([expiresAt])
+  @@map("otp_challenges")
+}
+
+model IdempotencyRecord {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  actorId      String   @map("actor_id") @db.Uuid
+  scope        String
+  key          String
+  requestHash  String   @map("request_hash")
+  responseCode Int?     @map("response_code")
+  responseBody Json?    @map("response_body")
+  expiresAt    DateTime @map("expires_at") @db.Timestamptz(3)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  @@unique([actorId, scope, key])
+  @@index([expiresAt])
+  @@map("idempotency_records")
+}
+
+model OutboxEvent {
+  id            String   @id @default(uuid(7)) @db.Uuid
+  aggregateType String   @map("aggregate_type")
+  aggregateId   String   @map("aggregate_id") @db.Uuid
+  eventType     String   @map("event_type")
+  payload       Json
+  occurredAt    DateTime @map("occurred_at") @db.Timestamptz(3)
+  publishedAt   DateTime? @map("published_at") @db.Timestamptz(3)
+  attempts      Int      @default(0)
+  @@index([publishedAt, occurredAt])
+  @@map("outbox_events")
+}
+
+model AuditEvent {
+  id             String       @id @default(uuid(7)) @db.Uuid
+  organizationId String?      @map("organization_id") @db.Uuid
+  clinicId       String?      @map("clinic_id") @db.Uuid
+  actorUserId    String?      @map("actor_user_id") @db.Uuid
+  action         String
+  targetType     String       @map("target_type")
+  targetId       String?      @map("target_id") @db.Uuid
+  outcome        AuditOutcome
+  requestId      String       @map("request_id")
+  metadata       Json?
+  occurredAt     DateTime     @map("occurred_at") @db.Timestamptz(3)
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  clinic         Clinic?      @relation(fields: [clinicId], references: [id], onDelete: Restrict)
+  actorUser      User?        @relation(fields: [actorUserId], references: [id], onDelete: Restrict)
+  @@index([organizationId, occurredAt])
+  @@index([actorUserId, occurredAt])
+  @@index([targetType, targetId, occurredAt])
+  @@map("audit_events")
+}
