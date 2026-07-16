@@ -1,0 +1,5 @@
+export type ScheduleItemStatus="completed"|"current"|"upcoming"|"break";
+export type ScheduleAlert="runningBehind"|"largeGap"|"lunchApproaching"|"sessionEndingSoon"|"busyAfternoon"|"noWarnings";
+export interface DoctorScheduleDefinition{id:string;doctorId:string;clinicId:string;clinicName:string;shift:string;date:string;workingStart:string;workingEnd:string;breaks:{id:string;start:string;end:string;label:string}[]}
+export interface ScheduleTimelineItem{id:string;kind:"appointment"|"break";time:string;endTime:string;patient?:{id:string;name:string};appointmentReason:string;status:ScheduleItemStatus;durationMinutes:number;appointmentId?:string}
+export interface DoctorScheduleProjection{definition:DoctorScheduleDefinition;doctorName:string;specialty:string;totalAppointments:number;completed:number;remaining:number;currentConsultation?:{appointmentId:string;patientId:string;patientName:string};nextPatient?:{appointmentId:string;patientId:string;patientName:string;time:string};timeline:ScheduleTimelineItem[];upcoming:ScheduleTimelineItem[];freeSlots:number;estimatedFinish:string;alerts:ScheduleAlert[]}
