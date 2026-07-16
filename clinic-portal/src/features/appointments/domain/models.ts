@@ -1,0 +1,6 @@
+export type AppointmentStatus="confirmed"|"waiting"|"completed";export type ArrivalState="expected"|"arrived"|"waiting"|"queueReady"|"completed"|"missed";export type AttentionType="patientLate"|"doctorDelayed"|"conflict"|"duplicate"|"missingPhone"|"notArrived";
+export interface AppointmentPatient{id:string;name:string;phone?:string;age:number;familyContext?:string}
+export interface AppointmentDoctor{id:string;name:string;specialty:string;status:"onTime"|"delayed";currentQueue:number}
+export interface AppointmentSummary{id:string;version:number;arrivalRecordedAt?:string;time:string;durationMinutes:number;status:AppointmentStatus;arrival:ArrivalState;estimatedWaitMinutes:number;queueNumber:string;patient:AppointmentPatient;doctor:AppointmentDoctor;clinic:{id:string;name:string;room:string;session:string};attention?:{type:AttentionType;urgency:number}}
+export interface AppointmentEvent{id:string;type:"created"|"reminder"|"expected"|"arrived"|"queueReady"|"checkedIn"|"started"|"completed";time?:string;complete:boolean}
+export interface AppointmentWorkspace{appointment:AppointmentSummary;timeline:AppointmentEvent[];queue:{status:"open"|"paused";currentNumber:string;estimatedWaitMinutes:number;health:"onTime"|"delayed"}}

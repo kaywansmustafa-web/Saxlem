@@ -1,0 +1,5 @@
+import { liveQueueServices } from "@/infrastructure/composition";
+import type { QueueOperation } from "@/features/live-queue/domain/models";
+import { QueueError } from "@/features/live-queue/domain/queue-rules";
+const operations: QueueOperation[] = ["open", "pause", "resume", "callNext", "recall", "noResponse", "complete"];
+export async function POST(request: Request, context: {params:Promise<{queueId:string}>}) { const services=liveQueueServices();if(!services)return Response.json({error:"unavailable"},{status:503});const{queueId}=await context.params;const body=await request.json() as{operation?:QueueOperation;expectedVersion?:number;operationId?:string};if(!body.operation||!operations.includes(body.operation)||typeof body.expectedVersion!=="number"||!body.operationId)return Response.json({error:"invalidRequest"},{status:400});try{return Response.json(await services.operate.execute({queueId,operation:body.operation,expectedVersion:body.expectedVersion,operationId:body.operationId}))}catch(error){if(error instanceof QueueError)return Response.json({error:error.kind},{status:error.kind==="stale"?409:422});return Response.json({error:"failure"},{status:500})}}
