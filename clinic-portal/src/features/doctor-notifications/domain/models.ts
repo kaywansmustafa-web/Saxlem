@@ -1,0 +1,4 @@
+export type DoctorNotificationPriority="high"|"normal"|"information";export type DoctorNotificationType="patientArrived"|"patientCheckedIn"|"appointmentCancelled"|"appointmentRescheduled"|"queuePaused"|"queueResumed"|"doctorRunningBehind"|"receptionistMessage"|"sessionReminder"|"breakReminder"|"scheduleUpdate"|"clinicAnnouncement";
+export interface DoctorNotification{id:string;version:number;type:DoctorNotificationType;priority:DoctorNotificationPriority;occurredAt:string;readAt?:string;patient?:{id:string;name:string};appointmentId?:string;content:{title:string;description:string;whatHappened:string;why:string;recommendedAction:string}}
+export interface DoctorNotificationProjection{version:number;lastUpdated:string;summary:{unread:number;today:number;highPriority:number};unread:DoctorNotification[];today:DoctorNotification[];earlier:DoctorNotification[]}
+export interface MarkNotificationReadResult{notification:DoctorNotification;idempotent:boolean}
