@@ -6,6 +6,8 @@
 - TypeScript, ESLint, unit, architecture, configuration, and security tests pass.
 - Prisma schema validates and generated migration has been reviewed.
 - Migration and rollback/recovery procedure has been tested against PostgreSQL.
+- Migration credentials are separate from the least-privileged runtime role.
+- Development and test databases are isolated; reset safety rejects unsafe targets.
 - OpenAPI generates, validates, and contains no unversioned product endpoint.
 - Production build succeeds.
 - Logs and error responses contain no credentials or patient data.

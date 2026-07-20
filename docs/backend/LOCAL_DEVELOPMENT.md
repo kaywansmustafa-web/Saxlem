@@ -1,17 +1,15 @@
 # Backend Local Development
 
-## Current constraint
+## Local database
 
-Docker and PostgreSQL are not installed on the inspected Windows environment.
-Do not install system software automatically.
+Docker Desktop with WSL 2 is now verified. Use the PostgreSQL-only Compose setup
+documented in `LOCAL_DATABASE.md`.
 
 ## Simplest recommended setup
 
-1. Install Docker Desktop for Windows manually.
-2. Enable the WSL 2 engine during Docker Desktop setup.
-3. Restart the terminal and confirm `docker version` works.
-4. In the future infrastructure sprint, use the repository's PostgreSQL-only
-   Compose service with `docker compose up -d postgres`.
+1. Start Docker Desktop and confirm `docker version` shows Client and Server.
+2. Confirm `wsl --status` reports default version 2.
+3. Run `npm run db:up`.
 5. Copy `backend/.env.example` to a local ignored `.env` and replace secrets.
 6. From `backend/`, run `npm install`, `npm run prisma:generate`, apply migrations,
    and start NestJS with `npm run start:dev`.
@@ -30,4 +28,4 @@ databases. Never connect local tests to production data.
 - `npm run openapi:validate`
 - `npm run build`
 
-Database migrations and integration tests require a reachable PostgreSQL server.
+Database commands enforce local database-name safety before destructive work.

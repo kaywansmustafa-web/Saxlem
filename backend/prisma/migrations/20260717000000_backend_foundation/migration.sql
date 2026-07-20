@@ -504,3 +504,44 @@ ALTER TABLE "queue_entries"
 CREATE UNIQUE INDEX "queue_entries_single_active_consultation"
   ON "queue_entries" ("queue_session_id")
   WHERE "status" IN ('called', 'inConsultation');
+
+-- Tenant-chain corrections discovered during Sprint 13B database verification.
+ALTER TABLE "clinics" ADD COLUMN "code" TEXT NOT NULL;
+CREATE UNIQUE INDEX "clinics_organization_id_code_key" ON "clinics"("organization_id", "code");
+
+CREATE TABLE "doctor_clinic_assignments" (
+  "organization_id" UUID NOT NULL,
+  "clinic_id" UUID NOT NULL,
+  "doctor_id" UUID NOT NULL,
+  "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "doctor_clinic_assignments_pkey" PRIMARY KEY ("organization_id", "clinic_id", "doctor_id"),
+  CONSTRAINT "doctor_clinic_assignments_organization_id_clinic_id_fkey" FOREIGN KEY ("organization_id", "clinic_id") REFERENCES "clinics"("organization_id", "id") ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT "doctor_clinic_assignments_doctor_id_fkey" FOREIGN KEY ("doctor_id") REFERENCES "doctors"("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+CREATE TABLE "organization_patient_profiles" (
+  "organization_id" UUID NOT NULL,
+  "patient_profile_id" UUID NOT NULL,
+  "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "organization_patient_profiles_pkey" PRIMARY KEY ("organization_id", "patient_profile_id"),
+  CONSTRAINT "organization_patient_profiles_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT "organization_patient_profiles_patient_profile_id_fkey" FOREIGN KEY ("patient_profile_id") REFERENCES "patient_profiles"("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+ALTER TABLE "appointments" ADD CONSTRAINT "appointments_organization_id_clinic_id_id_key" UNIQUE ("organization_id", "clinic_id", "id");
+ALTER TABLE "appointments" DROP CONSTRAINT "appointments_doctor_id_fkey";
+ALTER TABLE "appointments" DROP CONSTRAINT "appointments_patient_profile_id_fkey";
+ALTER TABLE "appointments" ADD CONSTRAINT "appointments_organization_id_clinic_id_doctor_id_fkey" FOREIGN KEY ("organization_id", "clinic_id", "doctor_id") REFERENCES "doctor_clinic_assignments"("organization_id", "clinic_id", "doctor_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "appointments" ADD CONSTRAINT "appointments_organization_id_patient_profile_id_fkey" FOREIGN KEY ("organization_id", "patient_profile_id") REFERENCES "organization_patient_profiles"("organization_id", "patient_profile_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+ALTER TABLE "queue_sessions" ADD CONSTRAINT "queue_sessions_organization_id_clinic_id_id_key" UNIQUE ("organization_id", "clinic_id", "id");
+ALTER TABLE "queue_sessions" DROP CONSTRAINT "queue_sessions_doctor_id_fkey";
+ALTER TABLE "queue_sessions" ADD CONSTRAINT "queue_sessions_organization_id_clinic_id_doctor_id_fkey" FOREIGN KEY ("organization_id", "clinic_id", "doctor_id") REFERENCES "doctor_clinic_assignments"("organization_id", "clinic_id", "doctor_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+ALTER TABLE "queue_entries" ADD COLUMN "clinic_id" UUID NOT NULL;
+ALTER TABLE "queue_entries" DROP CONSTRAINT "queue_entries_queue_session_id_fkey";
+ALTER TABLE "queue_entries" DROP CONSTRAINT "queue_entries_appointment_id_fkey";
+ALTER TABLE "queue_entries" DROP CONSTRAINT "queue_entries_patient_profile_id_fkey";
+ALTER TABLE "queue_entries" ADD CONSTRAINT "queue_entries_organization_id_clinic_id_queue_session_id_fkey" FOREIGN KEY ("organization_id", "clinic_id", "queue_session_id") REFERENCES "queue_sessions"("organization_id", "clinic_id", "id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "queue_entries" ADD CONSTRAINT "queue_entries_organization_id_clinic_id_appointment_id_fkey" FOREIGN KEY ("organization_id", "clinic_id", "appointment_id") REFERENCES "appointments"("organization_id", "clinic_id", "id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "queue_entries" ADD CONSTRAINT "queue_entries_organization_id_patient_profile_id_fkey" FOREIGN KEY ("organization_id", "patient_profile_id") REFERENCES "organization_patient_profiles"("organization_id", "patient_profile_id") ON DELETE RESTRICT ON UPDATE CASCADE;

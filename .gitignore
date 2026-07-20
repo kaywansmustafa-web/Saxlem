@@ -36,3 +36,4 @@ node_modules/
 dist/
 coverage/
 backend/src/generated/prisma/
+backend/.backups/

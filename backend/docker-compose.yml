@@ -1,0 +1,43 @@
+name: saxlem-local-database
+
+services:
+  postgres-development:
+    image: postgres:17.6-alpine
+    container_name: saxlem-postgres-development
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER in backend/.env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in backend/.env}
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB in backend/.env}
+      APP_USER: ${DEV_APP_USER:?Set DEV_APP_USER in backend/.env}
+      APP_PASSWORD: ${DEV_APP_PASSWORD:?Set DEV_APP_PASSWORD in backend/.env}
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - saxlem_postgres_development:/var/lib/postgresql/data
+      - ./docker/development-init.sh:/docker-entrypoint-initdb.d/10-development-role.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  postgres-test:
+    image: postgres:17.6-alpine
+    container_name: saxlem-postgres-test
+    environment:
+      POSTGRES_USER: ${TEST_POSTGRES_USER:?Set TEST_POSTGRES_USER in backend/.env}
+      POSTGRES_PASSWORD: ${TEST_POSTGRES_PASSWORD:?Set TEST_POSTGRES_PASSWORD in backend/.env}
+      POSTGRES_DB: saxlem_test
+    ports:
+      - "127.0.0.1:5434:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  saxlem_postgres_development:

@@ -15,3 +15,14 @@ must define and approve both before production. Those objectives determine backu
 frequency, retention, regional strategy, and operational runbooks.
 
 Sprint 13A does not provision backup infrastructure.
+
+## Sprint 13B local rehearsal
+
+`npm run db:backup:rehearse` runs `pg_dump -Fc` inside the development container,
+copies the encrypted-at-rest-by-host local artifact into ignored `.backups/`,
+restores into `saxlem_restore_rehearsal`, verifies the fictional organization,
+and drops the temporary database. The script refuses any other restore name.
+
+This proves mechanics only. It is not production backup infrastructure, does not
+establish retention, encryption guarantees, PITR, RPO, or RTO, and must never be
+used as the production recovery plan.
