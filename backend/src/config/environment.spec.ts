@@ -33,4 +33,27 @@ describe('backend configuration safety', () => {
       loadConfiguration({ SAXLEM_BACKEND_ENV: 'production' }),
     ).toThrow();
   });
+
+  it('uses documented arrival-window defaults and validates overrides', () => {
+    expect(loadConfiguration(required)).toMatchObject({
+      arrivalEarlyWindowMinutes: 60,
+      arrivalLateWindowMinutes: 120,
+    });
+    expect(
+      loadConfiguration({
+        ...required,
+        ARRIVAL_EARLY_WINDOW_MINUTES: '30',
+        ARRIVAL_LATE_WINDOW_MINUTES: '90',
+      }),
+    ).toMatchObject({
+      arrivalEarlyWindowMinutes: 30,
+      arrivalLateWindowMinutes: 90,
+    });
+    expect(() =>
+      loadConfiguration({
+        ...required,
+        ARRIVAL_EARLY_WINDOW_MINUTES: '-1',
+      }),
+    ).toThrow();
+  });
 });

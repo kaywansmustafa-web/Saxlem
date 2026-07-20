@@ -24,6 +24,12 @@ enum AppointmentType {
   followUp
 }
 
+enum ArrivalStatus {
+  expected
+  arrived
+  queueReady
+}
+
 enum QueueSessionStatus {
   scheduled
   open
@@ -127,6 +133,8 @@ model Organization {
   clinics              Clinic[]
   memberships          ClinicMembership[]
   appointments         Appointment[]
+  appointmentArrivals  AppointmentArrival[]
+  arrivalAudits        ArrivalAudit[]
   queueSessions        QueueSession[]
   notifications        NotificationRecord[]
   audits               AuditEvent[]
@@ -157,6 +165,8 @@ model Clinic {
   memberships       ClinicMembership[]
   doctorSchedules   DoctorSchedule[]
   appointments      Appointment[]
+  appointmentArrivals AppointmentArrival[]
+  arrivalAudits     ArrivalAudit[]
   queueSessions     QueueSession[]
   notifications     NotificationRecord[]
   audits            AuditEvent[]
@@ -187,6 +197,7 @@ model User {
   refreshSessions      RefreshSession[]
   notifications        NotificationRecord[]
   audits               AuditEvent[]
+  arrivalAudits        ArrivalAudit[]
   roles                IdentityRoleAssignment[]
   sessionFamilies      SessionFamily[]
   authenticationEvents AuthenticationEvent[]
@@ -241,6 +252,7 @@ model PatientProfile {
   relationships             FamilyRelationship[]
   notifications             NotificationRecord[]
   organizationRegistrations OrganizationPatientProfile[]
+  appointmentArrivals       AppointmentArrival[]
   activeForAccount          PatientAccountActiveProfile?
 
   @@unique([patientAccountId, id])
@@ -560,9 +572,11 @@ model Appointment {
   doctorAssignment    DoctorClinicAssignment     @relation(fields: [organizationId, clinicId, doctorId], references: [organizationId, clinicId, doctorId], onDelete: Restrict)
   patientRegistration OrganizationPatientProfile @relation(fields: [organizationId, patientProfileId], references: [organizationId, patientProfileId], onDelete: Restrict)
   events              AppointmentEvent[]
+  arrival             AppointmentArrival?
   queueEntries        QueueEntry[]
 
   @@unique([organizationId, clinicId, id])
+  @@unique([organizationId, clinicId, id, patientProfileId])
   @@unique([organizationId, id])
   @@index([organizationId, clinicId, startsAt])
   @@index([organizationId, doctorId, startsAt])
@@ -581,6 +595,50 @@ model AppointmentEvent {
 
   @@index([organizationId, appointmentId, occurredAt])
   @@map("appointment_events")
+}
+
+model AppointmentArrival {
+  id               String        @id @default(uuid(7)) @db.Uuid
+  organizationId   String        @map("organization_id") @db.Uuid
+  clinicId         String        @map("clinic_id") @db.Uuid
+  appointmentId    String        @unique @map("appointment_id") @db.Uuid
+  patientProfileId String        @map("patient_profile_id") @db.Uuid
+  status           ArrivalStatus @default(expected)
+  arrivedAt        DateTime?     @map("arrived_at") @db.Timestamptz(3)
+  queueReadyAt     DateTime?     @map("queue_ready_at") @db.Timestamptz(3)
+  version          Int           @default(1)
+  createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization     Organization  @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  clinic           Clinic        @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+  appointment      Appointment   @relation(fields: [organizationId, clinicId, appointmentId, patientProfileId], references: [organizationId, clinicId, id, patientProfileId], onDelete: Restrict)
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Restrict)
+  audits           ArrivalAudit[]
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, clinicId, appointmentId], map: "arrival_appointment_scope_key")
+  @@unique([organizationId, clinicId, appointmentId, patientProfileId], map: "arrival_patient_scope_key")
+  @@index([organizationId, clinicId, status, createdAt])
+  @@index([patientProfileId, status])
+  @@map("appointment_arrivals")
+}
+
+model ArrivalAudit {
+  id             String             @id @default(uuid(7)) @db.Uuid
+  organizationId String             @map("organization_id") @db.Uuid
+  clinicId       String             @map("clinic_id") @db.Uuid
+  arrivalId      String             @map("arrival_id") @db.Uuid
+  actorUserId    String             @map("actor_user_id") @db.Uuid
+  fromStatus     ArrivalStatus      @map("from_status")
+  toStatus       ArrivalStatus      @map("to_status")
+  occurredAt     DateTime           @map("occurred_at") @db.Timestamptz(3)
+  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  clinic         Clinic             @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+  arrival        AppointmentArrival @relation(fields: [organizationId, arrivalId], references: [organizationId, id], onDelete: Restrict)
+  actorUser      User               @relation(fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, arrivalId, occurredAt])
+  @@map("arrival_audits")
 }
 
 model QueueSession {

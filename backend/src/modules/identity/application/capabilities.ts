@@ -10,6 +10,8 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'appointment:update',
     'appointment:cancel',
     'appointment:reschedule',
+    'arrival:read',
+    'arrival:record',
   ],
   receptionist: [
     'clinic:operations:read',
@@ -21,6 +23,8 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'appointment:update',
     'appointment:cancel',
     'appointment:reschedule',
+    'arrival:read',
+    'arrival:record',
   ],
   doctor: [
     'doctor:workspace:read',
@@ -28,6 +32,7 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'doctor:availability:read',
     'doctor:schedule:read',
     'appointment:read',
+    'arrival:read',
   ],
   clinicManager: [
     'clinic:management:read',
@@ -40,6 +45,8 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'appointment:update',
     'appointment:cancel',
     'appointment:reschedule',
+    'arrival:read',
+    'arrival:record',
   ],
   platformAdministrator: [
     'platform:administration',
@@ -52,6 +59,8 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'appointment:update',
     'appointment:cancel',
     'appointment:reschedule',
+    'arrival:read',
+    'arrival:record',
   ],
 };
 

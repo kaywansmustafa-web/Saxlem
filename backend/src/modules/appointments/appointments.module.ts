@@ -18,5 +18,6 @@ import { AppointmentsController } from './presentation/appointments.controller';
       useExisting: PrismaAppointmentRepository,
     },
   ],
+  exports: [AppointmentService],
 })
 export class AppointmentsModule {}

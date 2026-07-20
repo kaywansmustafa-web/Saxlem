@@ -156,6 +156,14 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
         await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`patient:${input.organizationId}:${input.patientProfileId}`}, 0))`;
         await validate();
         const row = await tx.appointment.create({ data: input, include });
+        await tx.appointmentArrival.create({
+          data: {
+            organizationId: row.organizationId,
+            clinicId: row.clinicId,
+            appointmentId: row.id,
+            patientProfileId: row.patientProfileId,
+          },
+        });
         await this.events(tx, access, row, 'appointment.created', requestId);
         const result = this.map(row);
         await this.completeCommand(tx, access, command, result);

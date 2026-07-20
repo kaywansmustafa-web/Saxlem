@@ -37,3 +37,17 @@ describe('appointment capabilities', () => {
       expect(granted.has(capability)).toBe(canWrite);
   });
 });
+
+describe('arrival capabilities', () => {
+  it.each([
+    ['patient', true],
+    ['receptionist', true],
+    ['doctor', false],
+    ['clinicManager', true],
+    ['platformAdministrator', true],
+  ] as const)('keeps doctor access read-only for %s', (role, canRecord) => {
+    const granted = capabilitiesFor(role);
+    expect(granted.has('arrival:read')).toBe(true);
+    expect(granted.has('arrival:record')).toBe(canRecord);
+  });
+});

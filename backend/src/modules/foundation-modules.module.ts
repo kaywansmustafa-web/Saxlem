@@ -3,6 +3,7 @@ import { IdentityModule } from './identity/identity.module';
 import { PatientsModule } from './patients/patients.module';
 import { DoctorsModule } from './doctors/doctors.module';
 import { AppointmentsModule } from './appointments/appointments.module';
+import { ArrivalsModule } from './arrivals/arrivals.module';
 
 @Module({})
 export class OrganizationsModule {}
@@ -30,6 +31,7 @@ export class AuditModule {}
     DoctorsModule,
     PatientsModule,
     AppointmentsModule,
+    ArrivalsModule,
     DoctorAvailabilityModule,
     QueueSessionsModule,
     NotificationsModule,

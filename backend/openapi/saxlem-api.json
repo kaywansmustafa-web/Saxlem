@@ -1861,6 +1861,208 @@
           "appointments"
         ]
       }
+    },
+    "/api/v1/appointments/{id}/arrival": {
+      "get": {
+        "description": "Patients may read only their appointments; doctors only their appointments; clinic staff are tenant-scoped; platform administrators may cross tenants. Staff reads require a durable arrival.viewed audit.",
+        "operationId": "ArrivalsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArrivalResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Mandatory staff read audit is unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Read appointment arrival eligibility",
+        "tags": [
+          "patient-arrival"
+        ]
+      },
+      "post": {
+        "description": "Requires Idempotency-Key and the expected arrival version. The appointment must be active, owned and tenant-scoped, have active participants, and fall inside the configured early/late window. The state advances expected → arrived → queueReady. No queue row, number, ordering, call, consultation, notification, or realtime action occurs.",
+        "operationId": "ArrivalsController_record",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordArrivalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArrivalResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Duplicate arrival, stale version, invalid appointment lifecycle, outside arrival window, or idempotency conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Mandatory command audit is unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Record physical patient arrival",
+        "tags": [
+          "patient-arrival"
+        ]
+      }
     }
   },
   "info": {
@@ -3086,6 +3288,98 @@
         "required": [
           "startsAt",
           "durationMinutes",
+          "version"
+        ]
+      },
+      "ArrivalResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "appointmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "appointmentReference": {
+            "type": "string",
+            "example": "SX-2026-000001"
+          },
+          "clinicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clinicName": {
+            "type": "string"
+          },
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorName": {
+            "type": "string"
+          },
+          "patientProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "patientName": {
+            "type": "string"
+          },
+          "appointmentStartsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "expected",
+              "arrived",
+              "queueReady"
+            ],
+            "description": "Arrival eligibility only. queueReady does not create or order a queue entry."
+          },
+          "arrivedAt": {
+            "type": "object",
+            "format": "date-time",
+            "nullable": true
+          },
+          "queueReadyAt": {
+            "type": "object",
+            "format": "date-time",
+            "nullable": true
+          },
+          "version": {
+            "type": "number",
+            "description": "Required by the arrival record command."
+          }
+        },
+        "required": [
+          "id",
+          "appointmentId",
+          "appointmentReference",
+          "clinicId",
+          "clinicName",
+          "doctorId",
+          "doctorName",
+          "patientProfileId",
+          "patientName",
+          "appointmentStartsAt",
+          "status",
+          "version"
+        ]
+      },
+      "RecordArrivalDto": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Expected optimistic-concurrency version from the arrival resource."
+          }
+        },
+        "required": [
           "version"
         ]
       }

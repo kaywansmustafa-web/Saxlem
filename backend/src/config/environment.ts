@@ -28,6 +28,18 @@ const configurationSchema = z
       .int()
       .min(1)
       .default(25000),
+    ARRIVAL_EARLY_WINDOW_MINUTES: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(1440)
+      .default(60),
+    ARRIVAL_LATE_WINDOW_MINUTES: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(1440)
+      .default(120),
     ACCESS_TOKEN_SECRET: cryptographicSecret,
     REFRESH_TOKEN_SECRET: cryptographicSecret,
     OTP_SECRET: cryptographicSecret,
@@ -63,6 +75,8 @@ const configurationSchema = z
       openApiEnabled: input.OPENAPI_ENABLED,
       appointmentPastToleranceMinutes: input.APPOINTMENT_PAST_TOLERANCE_MINUTES,
       appointmentFoundationFeeIqd: input.APPOINTMENT_FOUNDATION_FEE_IQD,
+      arrivalEarlyWindowMinutes: input.ARRIVAL_EARLY_WINDOW_MINUTES,
+      arrivalLateWindowMinutes: input.ARRIVAL_LATE_WINDOW_MINUTES,
       accessTokenSecret: input.ACCESS_TOKEN_SECRET,
       refreshTokenSecret: input.REFRESH_TOKEN_SECRET,
       otpSecret: input.OTP_SECRET,
