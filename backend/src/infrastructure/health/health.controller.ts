@@ -32,6 +32,14 @@ export class HealthController {
     if (!(await this.database.isReady())) {
       throw new ServiceUnavailableException('Database is not ready.');
     }
-    return { status: 'ready', checks: ['database'] };
+    if (
+      this.database.invalidClinicTimezones &&
+      (await this.database.invalidClinicTimezones()).length > 0
+    ) {
+      throw new ServiceUnavailableException(
+        'Clinic timezone configuration is incompatible with this runtime.',
+      );
+    }
+    return { status: 'ready', checks: ['database', 'clinic-timezones'] };
   }
 }

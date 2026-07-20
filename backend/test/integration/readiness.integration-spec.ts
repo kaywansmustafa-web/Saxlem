@@ -31,7 +31,10 @@ describe('database-aware readiness', () => {
       .expect(200, { status: 'ok' });
     await request(app.getHttpServer())
       .get('/health/ready')
-      .expect(200, { status: 'ready', checks: ['database'] });
+      .expect(200, {
+        status: 'ready',
+        checks: ['database', 'clinic-timezones'],
+      });
     await app.close();
   });
 

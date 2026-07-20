@@ -93,6 +93,11 @@ enum DoctorAvailabilityStatus {
   unavailable
 }
 
+enum ScheduleExceptionKind {
+  working
+  closed
+}
+
 enum FamilyRelationshipType {
   self
   mother
@@ -124,6 +129,12 @@ model Organization {
   identityRoles        IdentityRoleAssignment[]
   sessionFamilies      SessionFamily[]
   doctors              Doctor[]
+  clinicWorkingHours   ClinicWorkingHours[]
+  doctorWeeklySchedules DoctorWeeklySchedule[]
+  doctorBreaks         DoctorBreak[]
+  doctorLeaves         DoctorLeave[]
+  doctorHolidays       DoctorHoliday[]
+  doctorScheduleExceptions DoctorScheduleException[]
 
   @@map("organizations")
 }
@@ -147,6 +158,12 @@ model Clinic {
   doctorAssignments DoctorClinicAssignment[]
   identityRoles     IdentityRoleAssignment[]
   sessionFamilies   SessionFamily[]
+  workingHours      ClinicWorkingHours[]
+  doctorWeeklySchedules DoctorWeeklySchedule[]
+  doctorBreaks      DoctorBreak[]
+  doctorLeaves      DoctorLeave[]
+  doctorHolidays    DoctorHoliday[]
+  doctorScheduleExceptions DoctorScheduleException[]
 
   @@unique([organizationId, id])
   @@unique([organizationId, code])
@@ -305,6 +322,11 @@ model Doctor {
   clinicAssignments   DoctorClinicAssignment[]
   specialtyAssignments DoctorSpecialtyAssignment[]
   availability        DoctorAvailabilityFoundation?
+  weeklySchedules     DoctorWeeklySchedule[]
+  breaks              DoctorBreak[]
+  leaves              DoctorLeave[]
+  holidays            DoctorHoliday[]
+  scheduleExceptions  DoctorScheduleException[]
 
   @@unique([organizationId, id])
   @@unique([organizationId, licenseNumber])
@@ -362,6 +384,123 @@ model DoctorAvailabilityFoundation {
 
   @@index([status, nextAvailableAt])
   @@map("doctor_availability_foundation")
+}
+
+model ClinicWorkingHours {
+  id             String       @id @default(uuid(7)) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  clinicId       String       @map("clinic_id") @db.Uuid
+  weekday        Int
+  opensMinute    Int          @map("opens_minute")
+  closesMinute   Int          @map("closes_minute")
+  status         RecordStatus @default(active)
+  version        Int          @default(1)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  clinic         Clinic       @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+
+  @@index([organizationId, clinicId, weekday, status])
+  @@map("clinic_working_hours")
+}
+
+model DoctorWeeklySchedule {
+  id             String         @id @default(uuid(7)) @db.Uuid
+  organizationId String         @map("organization_id") @db.Uuid
+  clinicId       String         @map("clinic_id") @db.Uuid
+  doctorId       String         @map("doctor_id") @db.Uuid
+  weekday        Int
+  startsMinute   Int            @map("starts_minute")
+  endsMinute     Int            @map("ends_minute")
+  status         RecordStatus   @default(active)
+  version        Int            @default(1)
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  clinic         Clinic         @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+  doctor         Doctor         @relation(fields: [organizationId, doctorId], references: [organizationId, id], onDelete: Restrict)
+
+  @@index([organizationId, clinicId, doctorId, weekday, status])
+  @@map("doctor_weekly_schedule")
+}
+
+model DoctorBreak {
+  id             String         @id @default(uuid(7)) @db.Uuid
+  organizationId String         @map("organization_id") @db.Uuid
+  clinicId       String         @map("clinic_id") @db.Uuid
+  doctorId       String         @map("doctor_id") @db.Uuid
+  weekday        Int
+  startsMinute   Int            @map("starts_minute")
+  endsMinute     Int            @map("ends_minute")
+  status         RecordStatus   @default(active)
+  version        Int            @default(1)
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  clinic         Clinic         @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+  doctor         Doctor         @relation(fields: [organizationId, doctorId], references: [organizationId, id], onDelete: Restrict)
+
+  @@index([organizationId, clinicId, doctorId, weekday, status])
+  @@map("doctor_breaks")
+}
+
+model DoctorLeave {
+  id             String         @id @default(uuid(7)) @db.Uuid
+  organizationId String         @map("organization_id") @db.Uuid
+  clinicId       String         @map("clinic_id") @db.Uuid
+  doctorId       String         @map("doctor_id") @db.Uuid
+  startsAt       DateTime       @map("starts_at") @db.Timestamptz(3)
+  endsAt         DateTime       @map("ends_at") @db.Timestamptz(3)
+  status         RecordStatus   @default(active)
+  version        Int            @default(1)
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  clinic         Clinic         @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+  doctor         Doctor         @relation(fields: [organizationId, doctorId], references: [organizationId, id], onDelete: Restrict)
+
+  @@index([organizationId, clinicId, doctorId, startsAt, endsAt, status])
+  @@map("doctor_leave")
+}
+
+model DoctorHoliday {
+  id             String         @id @default(uuid(7)) @db.Uuid
+  organizationId String         @map("organization_id") @db.Uuid
+  clinicId       String         @map("clinic_id") @db.Uuid
+  doctorId       String         @map("doctor_id") @db.Uuid
+  name           String
+  startsAt       DateTime       @map("starts_at") @db.Timestamptz(3)
+  endsAt         DateTime       @map("ends_at") @db.Timestamptz(3)
+  status         RecordStatus   @default(active)
+  version        Int            @default(1)
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  clinic         Clinic         @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+  doctor         Doctor         @relation(fields: [organizationId, doctorId], references: [organizationId, id], onDelete: Restrict)
+
+  @@index([organizationId, clinicId, doctorId, startsAt, endsAt, status])
+  @@map("doctor_holidays")
+}
+
+model DoctorScheduleException {
+  id             String                @id @default(uuid(7)) @db.Uuid
+  organizationId String                @map("organization_id") @db.Uuid
+  clinicId       String                @map("clinic_id") @db.Uuid
+  doctorId       String                @map("doctor_id") @db.Uuid
+  kind           ScheduleExceptionKind
+  startsAt       DateTime              @map("starts_at") @db.Timestamptz(3)
+  endsAt         DateTime              @map("ends_at") @db.Timestamptz(3)
+  status         RecordStatus          @default(active)
+  version        Int                   @default(1)
+  createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime              @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization   Organization          @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  clinic         Clinic                @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+  doctor         Doctor                @relation(fields: [organizationId, doctorId], references: [organizationId, id], onDelete: Restrict)
+
+  @@index([organizationId, clinicId, doctorId, startsAt, endsAt, status])
+  @@map("doctor_schedule_exceptions")
 }
 
 model OrganizationPatientProfile {

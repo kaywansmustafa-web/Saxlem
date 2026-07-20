@@ -141,7 +141,7 @@ describe('DoctorService', () => {
     const repo = repository();
     repo.recordView.mockRejectedValue(new Error('audit unavailable'));
     await expect(
-      new DoctorService(repo).get(staff, doctor.id, 'request', 'availability'),
+      new DoctorService(repo).get(staff, doctor.id, 'request', 'details'),
     ).rejects.toBeInstanceOf(ServiceUnavailableException);
   });
 });

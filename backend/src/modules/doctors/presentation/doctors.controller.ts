@@ -14,6 +14,7 @@ import {
   DoctorService,
   type DoctorAccessContext,
 } from '../application/doctor.service';
+import { DoctorScheduleService } from '../application/doctor-schedule.service';
 import {
   JwtAuthGuard,
   type AuthenticatedRequest,
@@ -21,7 +22,6 @@ import {
 import { RequireCapabilities } from '../../identity/presentation/require-capabilities.decorator';
 import {
   ApiErrorEnvelopeDto,
-  DoctorAvailabilityResponseDto,
   DoctorDetailResponseDto,
   DoctorPageResponseDto,
   DoctorParamsDto,
@@ -30,6 +30,12 @@ import {
   SpecialtyResponseDto,
 } from './doctor.dto';
 import { DoctorDtoMapper } from './doctor-dto.mapper';
+import {
+  DoctorScheduleResponseDto,
+  ScheduleAvailabilityResponseDto,
+  ScheduleQueryDto,
+} from './doctor-schedule.dto';
+import { DoctorScheduleDtoMapper } from './doctor-schedule-dto.mapper';
 
 @ApiTags('doctors')
 @ApiBearerAuth()
@@ -45,10 +51,6 @@ import { DoctorDtoMapper } from './doctor-dto.mapper';
   description: 'Filter, identifier, or pagination validation failed.',
   type: ApiErrorEnvelopeDto,
 })
-@ApiServiceUnavailableResponse({
-  description: 'A required security audit could not be recorded. Retry later.',
-  type: ApiErrorEnvelopeDto,
-})
 @UseGuards(JwtAuthGuard)
 @RequireCapabilities('doctor:directory:read')
 @Controller('doctors')
@@ -56,6 +58,8 @@ export class DoctorsController {
   constructor(
     private readonly doctors: DoctorService,
     private readonly mapper: DoctorDtoMapper,
+    private readonly schedules: DoctorScheduleService,
+    private readonly scheduleMapper: DoctorScheduleDtoMapper,
   ) {}
 
   @Get()
@@ -71,6 +75,11 @@ export class DoctorsController {
   }
 
   @Get(':id')
+  @ApiServiceUnavailableResponse({
+    description:
+      'A required security audit could not be recorded. Retry later.',
+    type: ApiErrorEnvelopeDto,
+  })
   @ApiOperation({ summary: 'Get one visible doctor' })
   @ApiOkResponse({ type: DoctorDetailResponseDto })
   @ApiNotFoundResponse({
@@ -85,6 +94,11 @@ export class DoctorsController {
   }
 
   @Get(':id/profile')
+  @ApiServiceUnavailableResponse({
+    description:
+      'A required security audit could not be recorded. Retry later.',
+    type: ApiErrorEnvelopeDto,
+  })
   @ApiOperation({ summary: 'Get the doctor professional profile' })
   @ApiOkResponse({ type: DoctorProfessionalProfileResponseDto })
   @ApiNotFoundResponse({
@@ -101,6 +115,11 @@ export class DoctorsController {
   }
 
   @Get(':id/specialties')
+  @ApiServiceUnavailableResponse({
+    description:
+      'A required security audit could not be recorded. Retry later.',
+    type: ApiErrorEnvelopeDto,
+  })
   @ApiOperation({ summary: 'Get canonical specialties assigned to the doctor' })
   @ApiOkResponse({ type: SpecialtyResponseDto, isArray: true })
   @ApiNotFoundResponse({
@@ -122,10 +141,13 @@ export class DoctorsController {
   }
 
   @Get(':id/availability')
+  @RequireCapabilities('doctor:availability:read')
   @ApiOperation({
-    summary: 'Get read-only availability metadata; this is not a schedule',
+    summary: 'Calculate descriptive doctor availability',
+    description:
+      'Patient-safe descriptive availability evaluated in the clinic IANA timezone. Operational breaks, leave, holidays, exceptions, and precedence metadata are never exposed. This endpoint never creates appointment slots.',
   })
-  @ApiOkResponse({ type: DoctorAvailabilityResponseDto })
+  @ApiOkResponse({ type: ScheduleAvailabilityResponseDto })
   @ApiNotFoundResponse({
     description: 'Doctor is not visible.',
     type: ApiErrorEnvelopeDto,
@@ -133,13 +155,49 @@ export class DoctorsController {
   async availability(
     @Req() request: AuthenticatedRequest,
     @Param() params: DoctorParamsDto,
+    @Query() query: ScheduleQueryDto,
   ) {
-    return this.mapper.availability(
-      await this.doctors.get(
+    return this.scheduleMapper.availability(
+      await this.schedules.availability(
         this.access(request),
         params.id,
+        query.clinicId,
+        query.at ? new Date(query.at) : new Date(),
         request.requestId,
-        'availability',
+      ),
+    );
+  }
+
+  @Get(':id/schedule')
+  @RequireCapabilities('doctor:schedule:read')
+  @ApiServiceUnavailableResponse({
+    description:
+      'A required staff-read audit could not be recorded. Retry later.',
+    type: ApiErrorEnvelopeDto,
+  })
+  @ApiOperation({
+    summary: 'Get the active read-only doctor schedule',
+    description:
+      'Staff-only operational projection. Returns every active temporal record that overlaps the closed-open window from 366 days before `at` through 366 days after `at`; there is no hidden record cap. Recurring periods are same-day local wall-clock rules in the clinic IANA timezone. Overnight work must be split at 24:00 into two weekday rows. Leave, holidays, and exceptions are UTC instants. No appointment slots are returned.',
+  })
+  @ApiOkResponse({ type: DoctorScheduleResponseDto })
+  @ApiNotFoundResponse({
+    description:
+      'Doctor is absent, inactive, archived, has no active clinic, or is outside the tenant.',
+    type: ApiErrorEnvelopeDto,
+  })
+  async schedule(
+    @Req() request: AuthenticatedRequest,
+    @Param() params: DoctorParamsDto,
+    @Query() query: ScheduleQueryDto,
+  ) {
+    return this.scheduleMapper.schedule(
+      await this.schedules.schedule(
+        this.access(request),
+        params.id,
+        query.clinicId,
+        request.requestId,
+        query.at ? new Date(query.at) : new Date(),
       ),
     );
   }
@@ -151,6 +209,7 @@ export class DoctorsController {
       actorId: request.principal.id,
       patient: request.principal.kind === 'patient',
       platformAdministrator: request.principal.kind === 'platformAdministrator',
+      doctor: request.principal.capabilities.has('doctor:workspace:read'),
       organizationId: request.tenant?.organizationId,
       clinicId: request.tenant?.clinicId,
     };

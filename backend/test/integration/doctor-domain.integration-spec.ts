@@ -383,13 +383,20 @@ describe('doctor domain API', () => {
       .get(`/api/v1/doctors/${activeA.id}/availability`)
       .set('Authorization', `Bearer ${staffToken}`)
       .expect(200)
-      .expect((response) => expect(response.body.status).toBe('available'));
+      .expect((response) =>
+        expect(response.body.clinics[0]).toMatchObject({
+          status: 'closedToday',
+        }),
+      );
     expect(
       (
         await prisma.auditEvent.findMany({
           where: {
             actorUserId: tenantA.userId,
-            action: { startsWith: 'doctor.' },
+            OR: [
+              { action: { startsWith: 'doctor.' } },
+              { action: 'availability.viewed' },
+            ],
             targetId: activeA.id,
           },
           orderBy: { occurredAt: 'asc' },
@@ -399,7 +406,7 @@ describe('doctor domain API', () => {
       'doctor.details.viewed',
       'doctor.profile.viewed',
       'doctor.specialties.viewed',
-      'doctor.availability.viewed',
+      'availability.viewed',
     ]);
     await api()
       .post('/api/v1/doctors')

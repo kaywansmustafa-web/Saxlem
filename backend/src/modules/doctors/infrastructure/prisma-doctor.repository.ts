@@ -93,8 +93,7 @@ export class PrismaDoctorRepository implements DoctorRepository {
     action:
       | 'doctor.details.viewed'
       | 'doctor.profile.viewed'
-      | 'doctor.specialties.viewed'
-      | 'doctor.availability.viewed';
+      | 'doctor.specialties.viewed';
   }): Promise<void> {
     await this.prisma.db.auditEvent.create({
       data: {

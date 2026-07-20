@@ -25,10 +25,10 @@ describe('patient domain API', () => {
   it('enforces ownership, Self, archive, active-profile, concurrency, and audit rules', async () => {
     const app = await createApplication(configuration);
     await app.init();
-    const token = await authenticate(app.getHttpServer(), '+9647500000005');
+    const token = await authenticate(app.getHttpServer(), '+9647500000205');
     const otherToken = await authenticate(
       app.getHttpServer(),
-      '+9647500000006',
+      '+9647500000206',
     );
     const api = () => request(app.getHttpServer());
     const self = await api()
@@ -133,7 +133,7 @@ describe('patient domain API', () => {
         where: {
           actorUserId: (
             await prisma.patientAccount.findUniqueOrThrow({
-              where: { normalizedPhoneNumber: '+9647500000005' },
+              where: { normalizedPhoneNumber: '+9647500000205' },
             })
           ).userId,
           action: { startsWith: 'patient.' },
@@ -149,7 +149,7 @@ describe('patient domain API', () => {
     await request(app.getHttpServer())
       .get('/api/v1/patients/profiles')
       .expect(401);
-    const token = await authenticate(app.getHttpServer(), '+9647500000007');
+    const token = await authenticate(app.getHttpServer(), '+9647500000207');
     await request(app.getHttpServer())
       .get('/api/v1/patients/profiles')
       .set('Authorization', `Bearer ${token}`)

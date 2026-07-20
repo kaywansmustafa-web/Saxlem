@@ -34,3 +34,13 @@ Tenant authorization and lifecycle visibility are separate checks. A valid role 
 tenant membership does not make an inactive organization, clinic, assignment, or
 archived resource visible. Pagination and search inputs are bounded before reaching
 the repository to prevent unsafe queries and resource-amplification requests.
+
+Scheduling records are tenant-bound through composite organization, clinic,
+doctor, and assignment foreign keys. Recurring rules use validated clinic IANA
+timezones, while concrete leave, holiday, and exception periods use UTC instants.
+Staff schedule and availability reads are mandatory-audited and fail closed when
+the audit store is unavailable. Patients have descriptive availability access only;
+operational schedules, breaks, leave, holidays, exceptions, and clinic-hours
+projections require separate staff capabilities. Multi-clinic reads create one
+minimal audit event per clinic in an atomic batch, preventing misleading tenant
+attribution or partial audit success.

@@ -14,13 +14,13 @@ import {
 import type { DoctorPageProjection, DoctorProjection } from '../domain/doctor';
 import { maximumDoctorSearchPage } from '../domain/doctor';
 
-export type DoctorViewSurface =
-  'details' | 'profile' | 'specialties' | 'availability';
+export type DoctorViewSurface = 'details' | 'profile' | 'specialties';
 
 export interface DoctorAccessContext {
   readonly actorId: string;
   readonly patient: boolean;
   readonly platformAdministrator: boolean;
+  readonly doctor?: boolean;
   readonly organizationId?: string | undefined;
   readonly clinicId?: string | undefined;
 }

@@ -31,6 +31,24 @@ export class PrismaService implements DatabaseHealth, OnModuleDestroy {
     }
   }
 
+  async invalidClinicTimezones(): Promise<readonly string[]> {
+    const zones = await this.client.clinic.findMany({
+      where: { status: 'active' },
+      distinct: ['timezone'],
+      select: { timezone: true },
+    });
+    return zones
+      .map(({ timezone }) => timezone)
+      .filter((timezone) => {
+        try {
+          new Intl.DateTimeFormat('en-US', { timeZone: timezone }).format();
+          return false;
+        } catch {
+          return true;
+        }
+      });
+  }
+
   async onModuleDestroy(): Promise<void> {
     await this.client.$disconnect();
   }

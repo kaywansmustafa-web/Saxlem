@@ -35,8 +35,7 @@ export interface DoctorRepository {
     readonly action:
       | 'doctor.details.viewed'
       | 'doctor.profile.viewed'
-      | 'doctor.specialties.viewed'
-      | 'doctor.availability.viewed';
+      | 'doctor.specialties.viewed';
   }): Promise<void>;
 }
 

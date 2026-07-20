@@ -2,6 +2,8 @@
 
 Sprint 13E makes the backend authoritative for doctors, canonical specialties, clinic assignments, professional profiles, and read-only availability metadata. It does not introduce appointment scheduling, queues, consultations, or frontend migration.
 
+Sprint 13F adds the separate authoritative read-only schedule and calculated-availability boundary documented in [DOCTOR_SCHEDULE_FOUNDATION.md](./DOCTOR_SCHEDULE_FOUNDATION.md). Sprint 13F.5 separates patient descriptive availability from staff operational schedule access. The earlier `DoctorAvailabilityFoundation` metadata remains an internal directory compatibility record; `/doctors/:id/availability` now uses schedule rules and does not produce appointment slots.
+
 ## Architecture
 
 `DoctorsController -> DoctorService -> DoctorRepository -> PrismaDoctorRepository`

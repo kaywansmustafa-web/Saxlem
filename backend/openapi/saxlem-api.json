@@ -336,16 +336,6 @@
                 }
               }
             }
-          },
-          "503": {
-            "description": "A required security audit could not be recorded. Retry later.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
-                }
-              }
-            }
           }
         },
         "security": [
@@ -625,6 +615,7 @@
     },
     "/api/v1/doctors/{id}/availability": {
       "get": {
+        "description": "Patient-safe descriptive availability evaluated in the clinic IANA timezone. Operational breaks, leave, holidays, exceptions, and precedence metadata are never exposed. This endpoint never creates appointment slots.",
         "operationId": "DoctorsController_availability",
         "parameters": [
           {
@@ -635,6 +626,26 @@
               "format": "uuid",
               "type": "string"
             }
+          },
+          {
+            "name": "clinicId",
+            "required": false,
+            "in": "query",
+            "description": "Clinic to evaluate. Staff are restricted to their authenticated clinic.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "at",
+            "required": false,
+            "in": "query",
+            "description": "UTC instant to evaluate. Defaults to the current instant. Conversion occurs in the clinic IANA timezone.",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -643,7 +654,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DoctorAvailabilityResponseDto"
+                  "$ref": "#/components/schemas/ScheduleAvailabilityResponseDto"
                 }
               }
             }
@@ -687,9 +698,107 @@
                 }
               }
             }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Calculate descriptive doctor availability",
+        "tags": [
+          "doctors"
+        ]
+      }
+    },
+    "/api/v1/doctors/{id}/schedule": {
+      "get": {
+        "description": "Staff-only operational projection. Returns every active temporal record that overlaps the closed-open window from 366 days before `at` through 366 days after `at`; there is no hidden record cap. Recurring periods are same-day local wall-clock rules in the clinic IANA timezone. Overnight work must be split at 24:00 into two weekday rows. Leave, holidays, and exceptions are UTC instants. No appointment slots are returned.",
+        "operationId": "DoctorsController_schedule",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "clinicId",
+            "required": false,
+            "in": "query",
+            "description": "Clinic to evaluate. Staff are restricted to their authenticated clinic.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "at",
+            "required": false,
+            "in": "query",
+            "description": "UTC instant to evaluate. Defaults to the current instant. Conversion occurs in the clinic IANA timezone.",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorScheduleResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Filter, identifier, or pagination validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Role, capability, visibility, or tenant policy denied access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Doctor is absent, inactive, archived, has no active clinic, or is outside the tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           },
           "503": {
-            "description": "A required security audit could not be recorded. Retry later.",
+            "description": "A required staff-read audit could not be recorded. Retry later.",
             "content": {
               "application/json": {
                 "schema": {
@@ -704,9 +813,97 @@
             "bearer": []
           }
         ],
-        "summary": "Get read-only availability metadata; this is not a schedule",
+        "summary": "Get the active read-only doctor schedule",
         "tags": [
           "doctors"
+        ]
+      }
+    },
+    "/api/v1/clinics/{id}/hours": {
+      "get": {
+        "description": "Recurring periods are interpreted in the clinic IANA timezone. No appointment slots are produced.",
+        "operationId": "ClinicHoursController_hours",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicHoursResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Clinic is absent, inactive, or outside the tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "A required staff-read audit could not be recorded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get active clinic working hours",
+        "tags": [
+          "clinic schedules"
         ]
       }
     },
@@ -1591,6 +1788,274 @@
           "languages",
           "profileImageUrl",
           "specialties"
+        ]
+      },
+      "ClinicAvailabilityResponseDto": {
+        "type": "object",
+        "properties": {
+          "clinicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clinicName": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "Asia/Baghdad"
+          },
+          "localDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-07-20"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "workingToday",
+              "closedToday",
+              "unavailable"
+            ],
+            "description": "Patient-safe descriptive availability; internal causes are not exposed."
+          },
+          "isWorkingNow": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "clinicId",
+          "clinicName",
+          "timezone",
+          "localDate",
+          "status",
+          "isWorkingNow"
+        ]
+      },
+      "ScheduleAvailabilityResponseDto": {
+        "type": "object",
+        "properties": {
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "evaluatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "clinics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClinicAvailabilityResponseDto"
+            }
+          }
+        },
+        "required": [
+          "doctorId",
+          "evaluatedAt",
+          "clinics"
+        ]
+      },
+      "LocalPeriodResponseDto": {
+        "type": "object",
+        "properties": {
+          "weekday": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 6,
+            "description": "Sunday is 0. Periods never cross midnight; split overnight work into two weekday rows."
+          },
+          "startsAt": {
+            "type": "string",
+            "example": "08:00"
+          },
+          "endsAt": {
+            "type": "string",
+            "example": "16:00",
+            "description": "Exclusive local end. 24:00 is permitted only as the end of a same-day row."
+          }
+        },
+        "required": [
+          "weekday",
+          "startsAt",
+          "endsAt"
+        ]
+      },
+      "UtcPeriodResponseDto": {
+        "type": "object",
+        "properties": {
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "startsAt",
+          "endsAt"
+        ]
+      },
+      "HolidayResponseDto": {
+        "type": "object",
+        "properties": {
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string",
+            "example": "Newroz"
+          }
+        },
+        "required": [
+          "startsAt",
+          "endsAt",
+          "name"
+        ]
+      },
+      "ScheduleExceptionResponseDto": {
+        "type": "object",
+        "properties": {
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "working",
+              "closed"
+            ]
+          }
+        },
+        "required": [
+          "startsAt",
+          "endsAt",
+          "kind"
+        ]
+      },
+      "ClinicScheduleResponseDto": {
+        "type": "object",
+        "properties": {
+          "clinicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clinicName": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "Asia/Baghdad"
+          },
+          "clinicWorkingHours": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocalPeriodResponseDto"
+            }
+          },
+          "weeklyWorkingHours": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocalPeriodResponseDto"
+            }
+          },
+          "breaks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocalPeriodResponseDto"
+            }
+          },
+          "leave": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UtcPeriodResponseDto"
+            }
+          },
+          "holidays": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HolidayResponseDto"
+            }
+          },
+          "exceptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScheduleExceptionResponseDto"
+            }
+          }
+        },
+        "required": [
+          "clinicId",
+          "clinicName",
+          "timezone",
+          "clinicWorkingHours",
+          "weeklyWorkingHours",
+          "breaks",
+          "leave",
+          "holidays",
+          "exceptions"
+        ]
+      },
+      "DoctorScheduleResponseDto": {
+        "type": "object",
+        "properties": {
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorName": {
+            "type": "string"
+          },
+          "clinics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClinicScheduleResponseDto"
+            }
+          }
+        },
+        "required": [
+          "doctorId",
+          "doctorName",
+          "clinics"
+        ]
+      },
+      "ClinicHoursResponseDto": {
+        "type": "object",
+        "properties": {
+          "clinicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clinicName": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "Asia/Baghdad"
+          },
+          "workingHours": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocalPeriodResponseDto"
+            }
+          }
+        },
+        "required": [
+          "clinicId",
+          "clinicName",
+          "timezone",
+          "workingHours"
         ]
       },
       "PatientProfileResponseDto": {
