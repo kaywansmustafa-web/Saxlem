@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Inject,
   Injectable,
@@ -93,6 +94,67 @@ export class DoctorScheduleService {
         action: 'schedule.viewed',
       });
     return hours;
+  }
+
+  async assertBookable(
+    access: DoctorAccessContext,
+    doctorId: string,
+    clinicId: string,
+    startsAt: Date,
+    endsAt: Date,
+  ): Promise<void> {
+    const schedule = await this.repository.findDoctorSchedule(
+      doctorId,
+      this.scope(access, clinicId, false),
+      { startsAt, endsAt },
+    );
+    const clinic = schedule?.clinics.find((item) => item.clinicId === clinicId);
+    if (!clinic)
+      throw new BadRequestException('Doctor is not available at this clinic.');
+    const start = this.timezones.localClock(
+      startsAt,
+      clinic.timezone.identifier,
+    );
+    const endProbe = new Date(endsAt.getTime() - 1);
+    const end = this.timezones.localClock(endProbe, clinic.timezone.identifier);
+    if (start.date !== end.date)
+      throw new BadRequestException(
+        'Appointment cannot cross a clinic-local day.',
+      );
+    const overlaps = (period: { startsAt: string; endsAt: string }) =>
+      new Date(period.startsAt) < endsAt && new Date(period.endsAt) > startsAt;
+    const exception = clinic.exceptions.find(overlaps);
+    if (exception) {
+      if (
+        exception.kind !== 'working' ||
+        new Date(exception.startsAt) > startsAt ||
+        new Date(exception.endsAt) < endsAt
+      )
+        throw new BadRequestException(
+          'Appointment is outside effective working time.',
+        );
+      return;
+    }
+    if (clinic.leave.some(overlaps) || clinic.holidays.some(overlaps))
+      throw new BadRequestException(
+        'Doctor is unavailable during this period.',
+      );
+    const working = clinic.weeklySchedule.some(
+      (period) =>
+        period.weekday === start.weekday &&
+        period.startsMinute <= start.minuteOfDay &&
+        period.endsMinute >= end.minuteOfDay + 1,
+    );
+    const breakConflict = clinic.breaks.some(
+      (period) =>
+        period.weekday === start.weekday &&
+        period.startsMinute < end.minuteOfDay + 1 &&
+        period.endsMinute > start.minuteOfDay,
+    );
+    if (!working || breakConflict)
+      throw new BadRequestException(
+        'Appointment is outside effective working time.',
+      );
   }
 
   private scope(

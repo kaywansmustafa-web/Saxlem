@@ -13,10 +13,15 @@ enum RecordStatus {
 
 enum AppointmentStatus {
   scheduled
-  checkedIn
+  confirmed
   completed
   cancelled
   noShow
+}
+
+enum AppointmentType {
+  initial
+  followUp
 }
 
 enum QueueSessionStatus {
@@ -537,11 +542,16 @@ model Appointment {
   clinicId            String                     @map("clinic_id") @db.Uuid
   doctorId            String                     @map("doctor_id") @db.Uuid
   patientProfileId    String                     @map("patient_profile_id") @db.Uuid
-  publicReference     String                     @unique @map("public_reference")
+  publicReference     String                     @unique @default(dbgenerated()) @map("public_reference")
+  type                AppointmentType            @default(initial)
+  reason              String                     @default("General consultation")
   startsAt            DateTime                   @map("starts_at") @db.Timestamptz(3)
+  endsAt              DateTime                   @default(dbgenerated()) @map("ends_at") @db.Timestamptz(3)
   durationMinutes     Int                        @map("duration_minutes")
   feeIqd              Int                        @map("fee_iqd")
   status              AppointmentStatus          @default(scheduled)
+  cancellationReason  String?                    @map("cancellation_reason")
+  cancelledAt         DateTime?                  @map("cancelled_at") @db.Timestamptz(3)
   version             Int                        @default(1)
   createdAt           DateTime                   @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt           DateTime                   @updatedAt @map("updated_at") @db.Timestamptz(3)

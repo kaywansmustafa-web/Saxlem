@@ -17,3 +17,23 @@ describe('schedule capabilities', () => {
     },
   );
 });
+
+describe('appointment capabilities', () => {
+  it.each([
+    ['patient', true],
+    ['receptionist', true],
+    ['doctor', false],
+    ['clinicManager', true],
+    ['platformAdministrator', true],
+  ] as const)('limits appointment commands for %s', (role, canWrite) => {
+    const granted = capabilitiesFor(role);
+    expect(granted.has('appointment:read')).toBe(true);
+    for (const capability of [
+      'appointment:create',
+      'appointment:update',
+      'appointment:cancel',
+      'appointment:reschedule',
+    ])
+      expect(granted.has(capability)).toBe(canWrite);
+  });
+});

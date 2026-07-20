@@ -29,6 +29,6 @@ import { ClinicHoursController } from './presentation/clinic-hours.controller';
       useExisting: PrismaDoctorScheduleRepository,
     },
   ],
-  exports: [DoctorService, DOCTOR_REPOSITORY],
+  exports: [DoctorService, DoctorScheduleService, DOCTOR_REPOSITORY],
 })
 export class DoctorsModule {}

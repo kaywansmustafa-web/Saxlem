@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { IdentityModule } from './identity/identity.module';
 import { PatientsModule } from './patients/patients.module';
 import { DoctorsModule } from './doctors/doctors.module';
+import { AppointmentsModule } from './appointments/appointments.module';
 
 @Module({})
 export class OrganizationsModule {}
@@ -11,8 +12,6 @@ export class ClinicsModule {}
 export class ClinicStaffModule {}
 @Module({})
 @Module({})
-@Module({})
-export class AppointmentsModule {}
 @Module({})
 export class DoctorAvailabilityModule {}
 @Module({})

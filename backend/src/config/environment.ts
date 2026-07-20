@@ -17,6 +17,12 @@ const configurationSchema = z
       .default('info'),
     CORS_ORIGINS: z.string().default(''),
     OPENAPI_ENABLED: truthy.default(false),
+    APPOINTMENT_PAST_TOLERANCE_MINUTES: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(60)
+      .default(2),
     ACCESS_TOKEN_SECRET: cryptographicSecret,
     REFRESH_TOKEN_SECRET: cryptographicSecret,
     OTP_SECRET: cryptographicSecret,
@@ -50,6 +56,7 @@ const configurationSchema = z
         .map((origin) => origin.trim())
         .filter(Boolean),
       openApiEnabled: input.OPENAPI_ENABLED,
+      appointmentPastToleranceMinutes: input.APPOINTMENT_PAST_TOLERANCE_MINUTES,
       accessTokenSecret: input.ACCESS_TOKEN_SECRET,
       refreshTokenSecret: input.REFRESH_TOKEN_SECRET,
       otpSecret: input.OTP_SECRET,
