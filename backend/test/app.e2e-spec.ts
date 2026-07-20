@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
+import { loadConfiguration } from './../src/config/environment';
 
 describe('Operational health (e2e)', () => {
   let app: INestApplication<App>;
@@ -14,8 +15,10 @@ describe('Operational health (e2e)', () => {
       'e2e-access-secret-at-least-32-characters';
     process.env.REFRESH_TOKEN_SECRET =
       'e2e-refresh-secret-at-least-32-characters';
+    process.env.OTP_SECRET = 'e2e-otp-secret-at-least-32-characters';
+    process.env.AUDIT_HASH_SECRET = 'e2e-audit-secret-at-least-32-characters';
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule.register(loadConfiguration())],
     }).compile();
 
     app = moduleFixture.createNestApplication();

@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from '../src/app.module';
 import { PRODUCT_API_PREFIX } from '../src/common/api/api.constants';
+import { loadConfiguration } from '../src/config/environment';
 
 export async function createOpenApiApplication(): Promise<INestApplication> {
   process.env.SAXLEM_BACKEND_ENV = 'test';
@@ -11,7 +12,13 @@ export async function createOpenApiApplication(): Promise<INestApplication> {
     'openapi-access-secret-at-least-32-characters';
   process.env.REFRESH_TOKEN_SECRET ??=
     'openapi-refresh-secret-at-least-32-characters';
-  const app = await NestFactory.create(AppModule, { logger: false });
+  process.env.OTP_SECRET ??= 'openapi-otp-secret-at-least-32-characters';
+  process.env.AUDIT_HASH_SECRET ??=
+    'openapi-audit-secret-at-least-32-characters';
+  const app = await NestFactory.create(
+    AppModule.register(loadConfiguration()),
+    { logger: false },
+  );
   app.setGlobalPrefix(PRODUCT_API_PREFIX, {
     exclude: ['health/live', 'health/ready'],
   });

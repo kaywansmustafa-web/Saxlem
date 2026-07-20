@@ -2,6 +2,10 @@ import { z } from 'zod';
 
 const environmentSchema = z.enum(['development', 'test', 'qa', 'production']);
 const truthy = z.enum(['true', 'false']).transform((value) => value === 'true');
+const cryptographicSecret = z
+  .string()
+  .min(32)
+  .refine((value) => new Set(value).size >= 8, 'Secret lacks diversity.');
 
 const configurationSchema = z
   .object({
@@ -13,8 +17,23 @@ const configurationSchema = z
       .default('info'),
     CORS_ORIGINS: z.string().default(''),
     OPENAPI_ENABLED: truthy.default(false),
-    ACCESS_TOKEN_SECRET: z.string().min(32),
-    REFRESH_TOKEN_SECRET: z.string().min(32),
+    ACCESS_TOKEN_SECRET: cryptographicSecret,
+    REFRESH_TOKEN_SECRET: cryptographicSecret,
+    OTP_SECRET: cryptographicSecret,
+    AUDIT_HASH_SECRET: cryptographicSecret,
+  })
+  .superRefine((input, context) => {
+    const secrets = [
+      input.ACCESS_TOKEN_SECRET,
+      input.REFRESH_TOKEN_SECRET,
+      input.OTP_SECRET,
+      input.AUDIT_HASH_SECRET,
+    ];
+    if (new Set(secrets).size !== secrets.length)
+      context.addIssue({
+        code: 'custom',
+        message: 'Cryptographic secrets must be independent.',
+      });
   })
   .transform((input) => {
     const parsedEnvironment = environmentSchema.safeParse(
@@ -33,6 +52,8 @@ const configurationSchema = z
       openApiEnabled: input.OPENAPI_ENABLED,
       accessTokenSecret: input.ACCESS_TOKEN_SECRET,
       refreshTokenSecret: input.REFRESH_TOKEN_SECRET,
+      otpSecret: input.OTP_SECRET,
+      auditHashSecret: input.AUDIT_HASH_SECRET,
       configurationWasExplicit: parsedEnvironment.success,
     };
   });

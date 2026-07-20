@@ -30,6 +30,995 @@
           "operations"
         ]
       }
+    },
+    "/api/v1/auth/request-otp": {
+      "post": {
+        "operationId": "AuthController_requestOtp",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestOtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": ""
+          }
+        },
+        "summary": "Request an Iraqi mobile OTP challenge",
+        "tags": [
+          "authentication"
+        ]
+      }
+    },
+    "/api/v1/auth/verify-otp": {
+      "post": {
+        "operationId": "AuthController_verifyOtp",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyOtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Verify OTP and create a patient session",
+        "tags": [
+          "authentication"
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Authenticate clinic staff with email and password",
+        "tags": [
+          "authentication"
+        ]
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "operationId": "AuthController_refresh",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Rotate an opaque refresh token",
+        "tags": [
+          "authentication"
+        ]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "summary": "Revoke one refresh session",
+        "tags": [
+          "authentication"
+        ]
+      }
+    },
+    "/api/v1/auth/logout-all": {
+      "post": {
+        "operationId": "AuthController_logoutAll",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "summary": "Revoke every session for the identity",
+        "tags": [
+          "authentication"
+        ]
+      }
+    },
+    "/api/v1/doctors": {
+      "get": {
+        "operationId": "DoctorsController_search",
+        "parameters": [
+          {
+            "name": "specialty",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "cardiology",
+              "type": "string"
+            }
+          },
+          {
+            "name": "clinicId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "badiniKurdish",
+                "soraniKurdish",
+                "arabic",
+                "english",
+                "turkish"
+              ]
+            }
+          },
+          {
+            "name": "gender",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "female",
+                "male",
+                "unspecified"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "active",
+              "type": "string",
+              "enum": [
+                "active",
+                "inactive"
+              ]
+            }
+          },
+          {
+            "name": "minimumYearsOfExperience",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 80,
+              "type": "number"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 120,
+              "example": "ژیان",
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 1,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorPageResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Filter, identifier, or pagination validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Role, capability, visibility, or tenant policy denied access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "A required security audit could not be recorded. Retry later.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Search the visible doctor directory",
+        "tags": [
+          "doctors"
+        ]
+      }
+    },
+    "/api/v1/doctors/{id}": {
+      "get": {
+        "operationId": "DoctorsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorDetailResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Filter, identifier, or pagination validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Role, capability, visibility, or tenant policy denied access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Doctor is absent, archived, inactive for a patient, or outside the tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "A required security audit could not be recorded. Retry later.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get one visible doctor",
+        "tags": [
+          "doctors"
+        ]
+      }
+    },
+    "/api/v1/doctors/{id}/profile": {
+      "get": {
+        "operationId": "DoctorsController_profile",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorProfessionalProfileResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Filter, identifier, or pagination validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Role, capability, visibility, or tenant policy denied access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Doctor is not visible.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "A required security audit could not be recorded. Retry later.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get the doctor professional profile",
+        "tags": [
+          "doctors"
+        ]
+      }
+    },
+    "/api/v1/doctors/{id}/specialties": {
+      "get": {
+        "operationId": "DoctorsController_specialties",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SpecialtyResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Filter, identifier, or pagination validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Role, capability, visibility, or tenant policy denied access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Doctor is not visible.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "A required security audit could not be recorded. Retry later.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get canonical specialties assigned to the doctor",
+        "tags": [
+          "doctors"
+        ]
+      }
+    },
+    "/api/v1/doctors/{id}/availability": {
+      "get": {
+        "operationId": "DoctorsController_availability",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorAvailabilityResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Filter, identifier, or pagination validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Role, capability, visibility, or tenant policy denied access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Doctor is not visible.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "A required security audit could not be recorded. Retry later.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get read-only availability metadata; this is not a schedule",
+        "tags": [
+          "doctors"
+        ]
+      }
+    },
+    "/api/v1/patients/me": {
+      "get": {
+        "operationId": "PatientsController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Patient account projection."
+          },
+          "400": {
+            "description": "Request validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The authenticated identity is not an eligible patient."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get the authenticated patient account and current patient",
+        "tags": [
+          "patients"
+        ]
+      }
+    },
+    "/api/v1/patients/profiles": {
+      "get": {
+        "operationId": "PatientsController_profiles",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PatientProfileResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The authenticated identity is not an eligible patient."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List patient profiles owned by the authenticated account",
+        "tags": [
+          "patients"
+        ]
+      },
+      "post": {
+        "operationId": "PatientsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePatientProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientProfileResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The authenticated identity is not an eligible patient."
+          },
+          "409": {
+            "description": "Self-profile invariant would be violated."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a self or family-member patient profile",
+        "tags": [
+          "patients"
+        ]
+      }
+    },
+    "/api/v1/patients/profiles/{id}": {
+      "get": {
+        "operationId": "PatientsController_profile",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientProfileResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The authenticated identity is not an eligible patient."
+          },
+          "404": {
+            "description": "Profile does not exist in this patient account."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get one owned patient profile",
+        "tags": [
+          "patients"
+        ]
+      },
+      "patch": {
+        "operationId": "PatientsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePatientProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientProfileResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The authenticated identity is not an eligible patient."
+          },
+          "409": {
+            "description": "Profile is archived or its version is stale."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update an owned active profile using optimistic concurrency",
+        "tags": [
+          "patients"
+        ]
+      },
+      "delete": {
+        "operationId": "PatientsController_archive",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArchivePatientProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Request validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The authenticated identity is not an eligible patient."
+          },
+          "409": {
+            "description": "Profile is active, archived, or its version is stale."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Archive a family-member profile; no physical deletion occurs",
+        "tags": [
+          "patients"
+        ]
+      }
+    },
+    "/api/v1/patients/active": {
+      "post": {
+        "operationId": "PatientsController_activate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivatePatientProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated patient account projection."
+          },
+          "400": {
+            "description": "Request validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The authenticated identity is not an eligible patient."
+          },
+          "409": {
+            "description": "Archived profiles cannot become active."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Choose the current active patient profile",
+        "tags": [
+          "patients"
+        ]
+      }
     }
   },
   "info": {
@@ -48,6 +1037,727 @@
         "type": "http"
       }
     },
-    "schemas": {}
+    "schemas": {
+      "RequestOtpDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string",
+            "example": "+9647500000000"
+          }
+        },
+        "required": [
+          "phone"
+        ]
+      },
+      "VerifyOtpDto": {
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "android",
+              "ios",
+              "web",
+              "desktop"
+            ]
+          },
+          "userAgent": {
+            "type": "string"
+          },
+          "challengeId": {
+            "type": "string"
+          },
+          "otp": {
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "deviceId",
+          "platform",
+          "challengeId",
+          "otp"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "android",
+              "ios",
+              "web",
+              "desktop"
+            ]
+          },
+          "userAgent": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "deviceId",
+          "platform",
+          "email",
+          "password"
+        ]
+      },
+      "RefreshDto": {
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "android",
+              "ios",
+              "web",
+              "desktop"
+            ]
+          },
+          "userAgent": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "deviceId",
+          "platform",
+          "refreshToken"
+        ]
+      },
+      "LogoutDto": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "refreshToken"
+        ]
+      },
+      "ApiFieldErrorDto": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "field",
+          "code",
+          "message"
+        ]
+      },
+      "ApiErrorBodyDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string"
+          },
+          "retryable": {
+            "type": "boolean"
+          },
+          "fieldErrors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiFieldErrorDto"
+            }
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "requestId",
+          "retryable",
+          "fieldErrors"
+        ]
+      },
+      "ApiErrorEnvelopeDto": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ApiErrorBodyDto"
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "Object": {
+        "type": "object",
+        "properties": {}
+      },
+      "DoctorClinicResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "example": "Saxlem Medical Center"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "DoctorAvailabilityResponseDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "unavailable"
+            ]
+          },
+          "acceptingNewPatients": {
+            "type": "boolean"
+          },
+          "nextAvailableAt": {
+            "type": "object",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "object",
+            "nullable": true,
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "status",
+          "acceptingNewPatients",
+          "nextAvailableAt",
+          "updatedAt"
+        ]
+      },
+      "DoctorListItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string",
+            "example": "Dr. Shilan Ahmed"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Dr. Shilan Ahmed",
+            "description": "Flutter-compatible alias."
+          },
+          "specialty": {
+            "type": "string",
+            "example": "Cardiology",
+            "description": "Primary specialty display name."
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "female",
+              "male",
+              "unspecified"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive"
+            ]
+          },
+          "yearsOfExperience": {
+            "type": "number",
+            "example": 12
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "badiniKurdish",
+                "soraniKurdish",
+                "arabic",
+                "english",
+                "turkish"
+              ]
+            }
+          },
+          "profileImageUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Public image URL, or null until an approved publication boundary exists."
+          },
+          "clinics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DoctorClinicResponseDto"
+            }
+          },
+          "availability": {
+            "$ref": "#/components/schemas/DoctorAvailabilityResponseDto"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "fullName",
+          "specialty",
+          "gender",
+          "status",
+          "yearsOfExperience",
+          "languages",
+          "profileImageUrl",
+          "clinics",
+          "availability"
+        ]
+      },
+      "DoctorPageResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DoctorListItemResponseDto"
+            }
+          },
+          "page": {
+            "type": "number",
+            "example": 1,
+            "maximum": 10000
+          },
+          "pageSize": {
+            "type": "number",
+            "example": 20,
+            "maximum": 100
+          },
+          "total": {
+            "type": "number",
+            "example": 42
+          },
+          "totalPages": {
+            "type": "number",
+            "example": 3
+          }
+        },
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "total",
+          "totalPages"
+        ]
+      },
+      "SpecialtyResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "example": "cardiology"
+          },
+          "displayName": {
+            "type": "string",
+            "example": "Cardiology"
+          },
+          "isPrimary": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "displayName",
+          "isPrimary"
+        ]
+      },
+      "DoctorDetailResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string",
+            "example": "Dr. Shilan Ahmed"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Dr. Shilan Ahmed",
+            "description": "Flutter-compatible alias."
+          },
+          "specialty": {
+            "type": "string",
+            "example": "Cardiology",
+            "description": "Primary specialty display name."
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "female",
+              "male",
+              "unspecified"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive"
+            ]
+          },
+          "yearsOfExperience": {
+            "type": "number",
+            "example": 12
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "badiniKurdish",
+                "soraniKurdish",
+                "arabic",
+                "english",
+                "turkish"
+              ]
+            }
+          },
+          "profileImageUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Public image URL, or null until an approved publication boundary exists."
+          },
+          "clinics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DoctorClinicResponseDto"
+            }
+          },
+          "availability": {
+            "$ref": "#/components/schemas/DoctorAvailabilityResponseDto"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "Shilan"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Ahmed"
+          },
+          "licenseNumber": {
+            "type": "string",
+            "example": "KRI-MED-12345"
+          },
+          "biography": {
+            "type": "string",
+            "example": "A licensed cardiologist with extensive clinical experience."
+          },
+          "specialties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SpecialtyResponseDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "fullName",
+          "specialty",
+          "gender",
+          "status",
+          "yearsOfExperience",
+          "languages",
+          "profileImageUrl",
+          "clinics",
+          "availability",
+          "firstName",
+          "lastName",
+          "licenseNumber",
+          "biography",
+          "specialties"
+        ]
+      },
+      "DoctorProfessionalProfileResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "specialty": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "female",
+              "male",
+              "unspecified"
+            ]
+          },
+          "licenseNumber": {
+            "type": "string"
+          },
+          "yearsOfExperience": {
+            "type": "number"
+          },
+          "biography": {
+            "type": "string"
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "badiniKurdish",
+                "soraniKurdish",
+                "arabic",
+                "english",
+                "turkish"
+              ]
+            }
+          },
+          "profileImageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "specialties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SpecialtyResponseDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "fullName",
+          "specialty",
+          "gender",
+          "licenseNumber",
+          "yearsOfExperience",
+          "biography",
+          "languages",
+          "profileImageUrl",
+          "specialties"
+        ]
+      },
+      "PatientProfileResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "female",
+              "male",
+              "unspecified"
+            ]
+          },
+          "relationship": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "firstName",
+          "lastName",
+          "dateOfBirth",
+          "gender",
+          "relationship",
+          "active",
+          "version",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "CreatePatientProfileDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "Shilan"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Ahmed"
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "example": "1995-04-21",
+            "format": "date"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "female",
+              "male",
+              "unspecified"
+            ]
+          },
+          "relationship": {
+            "type": "string",
+            "enum": [
+              "me",
+              "mother",
+              "father",
+              "son",
+              "daughter",
+              "brother",
+              "sister",
+              "grandfather",
+              "grandmother",
+              "wife",
+              "husband",
+              "other"
+            ]
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "dateOfBirth",
+          "gender",
+          "relationship"
+        ]
+      },
+      "UpdatePatientProfileDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "Shilan"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Ahmed"
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "example": "1995-04-21",
+            "format": "date"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "female",
+              "male",
+              "unspecified"
+            ]
+          },
+          "version": {
+            "type": "number",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "dateOfBirth",
+          "gender",
+          "version"
+        ]
+      },
+      "ActivatePatientProfileDto": {
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "profileId"
+        ]
+      },
+      "ArchivePatientProfileDto": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "number",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "version"
+        ]
+      }
+    }
   }
 }

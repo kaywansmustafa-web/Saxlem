@@ -19,3 +19,18 @@ audit, idempotency, and outbox contracts live under `src/common`.
 Logs redact authorization headers, cookies, OTPs, phone numbers, email addresses,
 and set-cookie responses. Request bodies must not be logged by default. Audit
 events are immutable and must never contain credentials, OTPs, or complete tokens.
+
+Sensitive read surfaces must write a purpose-specific audit event before returning
+their protected response. If the audit store is unavailable, the request fails
+closed with a retryable standard `503 Service Unavailable` response; protected data
+must not be returned without its mandatory audit record.
+
+API response DTOs are purpose-specific and minimize data by default. Persistence
+models, tenant identifiers not required by the caller, object-storage keys,
+optimistic-concurrency versions, and internal timestamps must not cross public API
+boundaries. Public image delivery uses an approved URL field, never a storage key.
+
+Tenant authorization and lifecycle visibility are separate checks. A valid role or
+tenant membership does not make an inactive organization, clinic, assignment, or
+archived resource visible. Pagination and search inputs are bounded before reaching
+the repository to prevent unsafe queries and resource-amplification requests.

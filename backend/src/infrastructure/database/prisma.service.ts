@@ -18,6 +18,10 @@ export class PrismaService implements DatabaseHealth, OnModuleDestroy {
     this.client = new PrismaClient({ adapter });
   }
 
+  get db(): PrismaClient {
+    return this.client;
+  }
+
   async isReady(): Promise<boolean> {
     try {
       await this.client.$queryRaw`SELECT 1`;

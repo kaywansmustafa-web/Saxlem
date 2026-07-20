@@ -2,8 +2,10 @@ import { loadConfiguration } from './environment';
 
 const required = {
   DATABASE_URL: 'postgresql://example.invalid/saxlem',
-  ACCESS_TOKEN_SECRET: 'a'.repeat(32),
-  REFRESH_TOKEN_SECRET: 'b'.repeat(32),
+  ACCESS_TOKEN_SECRET: 'configuration-access-secret-32-characters',
+  REFRESH_TOKEN_SECRET: 'configuration-refresh-secret-32-characters',
+  OTP_SECRET: 'configuration-otp-secret-at-least-32-characters',
+  AUDIT_HASH_SECRET: 'configuration-audit-secret-32-characters',
 };
 
 describe('backend configuration safety', () => {

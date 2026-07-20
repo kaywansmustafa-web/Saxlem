@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+import { IdentityModule } from './identity/identity.module';
+import { PatientsModule } from './patients/patients.module';
+import { DoctorsModule } from './doctors/doctors.module';
 
-@Module({})
-export class IdentityModule {}
 @Module({})
 export class OrganizationsModule {}
 @Module({})
@@ -9,11 +10,7 @@ export class ClinicsModule {}
 @Module({})
 export class ClinicStaffModule {}
 @Module({})
-export class DoctorsModule {}
 @Module({})
-export class PatientsModule {}
-@Module({})
-export class PatientProfilesModule {}
 @Module({})
 export class AppointmentsModule {}
 @Module({})
@@ -33,7 +30,6 @@ export class AuditModule {}
     ClinicStaffModule,
     DoctorsModule,
     PatientsModule,
-    PatientProfilesModule,
     AppointmentsModule,
     DoctorAvailabilityModule,
     QueueSessionsModule,

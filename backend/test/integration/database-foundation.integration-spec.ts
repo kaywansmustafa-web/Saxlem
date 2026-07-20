@@ -23,19 +23,28 @@ async function tenant(label: string) {
   const staff = await prisma.staffAccount.create({
     data: { userId: staffUser.id, email: `${label}@example.invalid` },
   });
-  const doctor = await prisma.doctor.create({
-    data: {
-      staffAccountId: staff.id,
-      displayName: `Fictional Clinician ${label}`,
-      specialtyCode: 'verification',
-    },
-  });
-  await prisma.doctorClinicAssignment.create({
-    data: {
-      organizationId: organization.id,
-      clinicId: clinic.id,
-      doctorId: doctor.id,
-    },
+  const doctor = await prisma.$transaction(async (transaction) => {
+    const created = await transaction.doctor.create({
+      data: {
+        organizationId: organization.id,
+        staffAccountId: staff.id,
+        firstName: 'Fictional',
+        lastName: `Clinician ${label}`,
+        displayName: `Fictional Clinician ${label}`,
+        gender: 'unspecified',
+        licenseNumber: `TEST-${label}`,
+        yearsOfExperience: 1,
+        languages: ['english'],
+      },
+    });
+    await transaction.doctorClinicAssignment.create({
+      data: {
+        organizationId: organization.id,
+        clinicId: clinic.id,
+        doctorId: created.id,
+      },
+    });
+    return created;
   });
   const patientUser = await prisma.user.create({ data: {} });
   const account = await prisma.patientAccount.create({
@@ -263,12 +272,20 @@ describe('real PostgreSQL foundation', () => {
 
   it('persists security, audit, and outbox foundations with uniqueness', async () => {
     const context = await tenant('foundation');
+    const family = await prisma.sessionFamily.create({
+      data: {
+        userId: context.staffUser.id,
+        role: 'platformAdministrator',
+        expiresAt: new Date('2035-01-01'),
+      },
+    });
     await prisma.refreshSession.create({
       data: {
         userId: context.staffUser.id,
         deviceId: 'fictional-device',
         tokenHash: 'fictional-hash',
-        familyId: context.organization.id,
+        familyId: family.id,
+        platform: 'test',
         expiresAt: new Date('2035-01-01'),
       },
     });
@@ -278,7 +295,8 @@ describe('real PostgreSQL foundation', () => {
           userId: context.staffUser.id,
           deviceId: 'other',
           tokenHash: 'fictional-hash',
-          familyId: context.organization.id,
+          familyId: family.id,
+          platform: 'test',
           expiresAt: new Date('2035-01-01'),
         },
       }),

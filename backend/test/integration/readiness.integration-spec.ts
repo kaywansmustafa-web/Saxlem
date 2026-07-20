@@ -8,6 +8,8 @@ const base = {
   SAXLEM_BACKEND_ENV: 'test',
   ACCESS_TOKEN_SECRET: 'integration-access-secret-at-least-32-characters',
   REFRESH_TOKEN_SECRET: 'integration-refresh-secret-at-least-32-characters',
+  OTP_SECRET: 'integration-otp-secret-at-least-32-characters',
+  AUDIT_HASH_SECRET: 'integration-audit-secret-at-least-32-characters',
 };
 
 async function appFor(databaseUrl: string): Promise<INestApplication<App>> {

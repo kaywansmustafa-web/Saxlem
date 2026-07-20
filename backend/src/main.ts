@@ -8,7 +8,9 @@ import { ApiExceptionFilter } from './common/errors/api-exception.filter';
 import { BackendConfiguration, loadConfiguration } from './config/environment';
 
 export async function createApplication(configuration = loadConfiguration()) {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = await NestFactory.create(AppModule.register(configuration), {
+    bufferLogs: true,
+  });
   app.useLogger(app.get(Logger));
   app.setGlobalPrefix(PRODUCT_API_PREFIX, {
     exclude: ['health/live', 'health/ready'],
@@ -32,11 +34,7 @@ function configureOpenApi(
   app: Awaited<ReturnType<typeof NestFactory.create>>,
   configuration: BackendConfiguration,
 ): void {
-  if (
-    !configuration.openApiEnabled &&
-    configuration.environment === 'production'
-  )
-    return;
+  if (!configuration.openApiEnabled) return;
   const document = SwaggerModule.createDocument(
     app,
     new DocumentBuilder()
