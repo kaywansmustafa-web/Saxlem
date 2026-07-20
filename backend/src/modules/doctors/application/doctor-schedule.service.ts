@@ -102,6 +102,7 @@ export class DoctorScheduleService {
     clinicId: string,
     startsAt: Date,
     endsAt: Date,
+    startsAtSource?: string,
   ): Promise<void> {
     const schedule = await this.repository.findDoctorSchedule(
       doctorId,
@@ -111,6 +112,11 @@ export class DoctorScheduleService {
     const clinic = schedule?.clinics.find((item) => item.clinicId === clinicId);
     if (!clinic)
       throw new BadRequestException('Doctor is not available at this clinic.');
+    this.assertOffsetMatchesClinicTime(
+      startsAt,
+      startsAtSource,
+      clinic.timezone.identifier,
+    );
     const start = this.timezones.localClock(
       startsAt,
       clinic.timezone.identifier,
@@ -154,6 +160,23 @@ export class DoctorScheduleService {
     if (!working || breakConflict)
       throw new BadRequestException(
         'Appointment is outside effective working time.',
+      );
+  }
+
+  private assertOffsetMatchesClinicTime(
+    instant: Date,
+    source: string | undefined,
+    timezone: string,
+  ) {
+    if (!source || source.endsWith('Z')) return;
+    const match = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})/.exec(source);
+    if (!match)
+      throw new BadRequestException('Appointment start time is invalid.');
+    const clock = this.timezones.localClock(instant, timezone);
+    const requestedMinute = Number(match[2]) * 60 + Number(match[3]);
+    if (clock.date !== match[1] || clock.minuteOfDay !== requestedMinute)
+      throw new BadRequestException(
+        'Appointment time does not exist at the clinic or uses an incorrect offset.',
       );
   }
 

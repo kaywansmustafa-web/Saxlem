@@ -67,17 +67,13 @@ async function tenant(label: string) {
   return { organization, clinic, staffUser, doctor, profile };
 }
 
-async function appointment(
-  context: Awaited<ReturnType<typeof tenant>>,
-  reference: string,
-) {
+async function appointment(context: Awaited<ReturnType<typeof tenant>>) {
   return prisma.appointment.create({
     data: {
       organizationId: context.organization.id,
       clinicId: context.clinic.id,
       doctorId: context.doctor.id,
       patientProfileId: context.profile.id,
-      publicReference: reference,
       startsAt: new Date('2030-01-01T08:00:00.000Z'),
       durationMinutes: 30,
       feeIqd: 25000,
@@ -130,8 +126,8 @@ describe('real PostgreSQL foundation', () => {
         },
       }),
     ).rejects.toThrow();
-    const first = await appointment(context, 'APT-UNIQUE');
-    await expect(appointment(context, 'APT-UNIQUE')).rejects.toThrow();
+    const first = await appointment(context);
+    await expect(appointment(context)).rejects.toThrow();
     await prisma.clinicMembership.create({
       data: {
         organizationId: context.organization.id,
@@ -227,7 +223,6 @@ describe('real PostgreSQL foundation', () => {
           clinicId: b.clinic.id,
           doctorId: a.doctor.id,
           patientProfileId: b.profile.id,
-          publicReference: 'CROSS-DOCTOR',
           startsAt: new Date(),
           durationMinutes: 30,
           feeIqd: 1,
@@ -241,7 +236,6 @@ describe('real PostgreSQL foundation', () => {
           clinicId: b.clinic.id,
           doctorId: b.doctor.id,
           patientProfileId: a.profile.id,
-          publicReference: 'CROSS-PROFILE',
           startsAt: new Date(),
           durationMinutes: 30,
           feeIqd: 1,

@@ -23,6 +23,11 @@ const configurationSchema = z
       .min(0)
       .max(60)
       .default(2),
+    APPOINTMENT_FOUNDATION_FEE_IQD: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .default(25000),
     ACCESS_TOKEN_SECRET: cryptographicSecret,
     REFRESH_TOKEN_SECRET: cryptographicSecret,
     OTP_SECRET: cryptographicSecret,
@@ -57,6 +62,7 @@ const configurationSchema = z
         .filter(Boolean),
       openApiEnabled: input.OPENAPI_ENABLED,
       appointmentPastToleranceMinutes: input.APPOINTMENT_PAST_TOLERANCE_MINUTES,
+      appointmentFoundationFeeIqd: input.APPOINTMENT_FOUNDATION_FEE_IQD,
       accessTokenSecret: input.ACCESS_TOKEN_SECRET,
       refreshTokenSecret: input.REFRESH_TOKEN_SECRET,
       otpSecret: input.OTP_SECRET,

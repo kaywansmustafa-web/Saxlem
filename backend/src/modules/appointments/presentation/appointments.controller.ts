@@ -2,14 +2,17 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   Param,
   Patch,
   Post,
   Req,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiBadRequestResponse,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
@@ -18,8 +21,10 @@ import {
   ApiOperation,
   ApiServiceUnavailableResponse,
   ApiTags,
+  ApiHeader,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { ApiErrorEnvelopeDto } from '../../doctors/presentation/doctor.dto';
 import { AppointmentService } from '../application/appointment.service';
 import type { AppointmentAccess } from '../domain/appointment';
 import {
@@ -30,6 +35,8 @@ import { RequireCapabilities } from '../../identity/presentation/require-capabil
 import { AppointmentDtoMapper } from './appointment-dto.mapper';
 import {
   AppointmentParamsDto,
+  AppointmentListQueryDto,
+  AppointmentPageResponseDto,
   AppointmentResponseDto,
   CancelAppointmentDto,
   CreateAppointmentDto,
@@ -38,8 +45,9 @@ import {
 } from './appointment.dto';
 @ApiTags('appointments')
 @ApiBearerAuth()
-@ApiUnauthorizedResponse()
-@ApiForbiddenResponse()
+@ApiUnauthorizedResponse({ type: ApiErrorEnvelopeDto })
+@ApiForbiddenResponse({ type: ApiErrorEnvelopeDto })
+@ApiBadRequestResponse({ type: ApiErrorEnvelopeDto })
 @UseGuards(JwtAuthGuard)
 @Controller('appointments')
 export class AppointmentsController {
@@ -49,20 +57,31 @@ export class AppointmentsController {
   ) {}
   @Get()
   @RequireCapabilities('appointment:read')
-  @ApiOkResponse({ type: AppointmentResponseDto, isArray: true })
+  @ApiOkResponse({ type: AppointmentPageResponseDto })
   @ApiServiceUnavailableResponse({
+    type: ApiErrorEnvelopeDto,
     description: 'Mandatory staff read audit is unavailable.',
   })
-  async list(@Req() req: AuthenticatedRequest) {
-    return (await this.service.list(this.access(req), req.requestId)).map((x) =>
-      this.mapper.map(x),
+  async list(
+    @Req() req: AuthenticatedRequest,
+    @Query() query: AppointmentListQueryDto,
+  ) {
+    const page = await this.service.list(
+      this.access(req),
+      { ...query, from: new Date(query.from), to: new Date(query.to) },
+      req.requestId,
     );
+    return {
+      items: page.items.map((x) => this.mapper.map(x)),
+      nextCursor: page.nextCursor,
+    };
   }
   @Get(':id')
   @RequireCapabilities('appointment:read')
   @ApiOkResponse({ type: AppointmentResponseDto })
-  @ApiNotFoundResponse()
+  @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
   @ApiServiceUnavailableResponse({
+    type: ApiErrorEnvelopeDto,
     description: 'Mandatory staff read audit is unavailable.',
   })
   async get(
@@ -81,15 +100,29 @@ export class AppointmentsController {
       'Validates active tenant participants, effective doctor schedule, leave, holidays, exceptions, and doctor/patient overlaps. No queue or notification behavior occurs.',
   })
   @ApiCreatedResponse({ type: AppointmentResponseDto })
-  @ApiConflictResponse({ description: 'Doctor or patient overlap.' })
+  @ApiHeader({ name: 'Idempotency-Key', required: true })
+  @ApiConflictResponse({
+    type: ApiErrorEnvelopeDto,
+    description: 'Doctor/patient overlap or idempotency conflict.',
+  })
+  @ApiServiceUnavailableResponse({
+    type: ApiErrorEnvelopeDto,
+    description: 'Mandatory command audit is unavailable.',
+  })
   async create(
     @Req() req: AuthenticatedRequest,
     @Body() body: CreateAppointmentDto,
+    @Headers('idempotency-key') idempotencyKey = '',
   ) {
     return this.mapper.map(
       await this.service.create(
         this.access(req),
-        { ...body, startsAt: new Date(body.startsAt) },
+        {
+          ...body,
+          startsAt: new Date(body.startsAt),
+          startsAtSource: body.startsAt,
+        },
+        idempotencyKey,
         req.requestId,
       ),
     );
@@ -97,13 +130,19 @@ export class AppointmentsController {
   @Patch(':id')
   @RequireCapabilities('appointment:update')
   @ApiOkResponse({ type: AppointmentResponseDto })
+  @ApiHeader({ name: 'Idempotency-Key', required: true })
   @ApiConflictResponse({
-    description: 'Optimistic-concurrency version mismatch.',
+    type: ApiErrorEnvelopeDto,
+    description:
+      'Optimistic-concurrency version mismatch or idempotency conflict.',
   })
+  @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
+  @ApiServiceUnavailableResponse({ type: ApiErrorEnvelopeDto })
   async update(
     @Req() req: AuthenticatedRequest,
     @Param() p: AppointmentParamsDto,
     @Body() body: UpdateAppointmentDto,
+    @Headers('idempotency-key') idempotencyKey = '',
   ) {
     return this.mapper.map(
       await this.service.update(
@@ -111,6 +150,7 @@ export class AppointmentsController {
         p.id,
         body.reason,
         body.version,
+        idempotencyKey,
         req.requestId,
       ),
     );
@@ -118,10 +158,18 @@ export class AppointmentsController {
   @Post(':id/cancel')
   @RequireCapabilities('appointment:cancel')
   @ApiOkResponse({ type: AppointmentResponseDto })
+  @ApiHeader({ name: 'Idempotency-Key', required: true })
+  @ApiConflictResponse({
+    type: ApiErrorEnvelopeDto,
+    description: 'Stale version or idempotency conflict.',
+  })
+  @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
+  @ApiServiceUnavailableResponse({ type: ApiErrorEnvelopeDto })
   async cancel(
     @Req() req: AuthenticatedRequest,
     @Param() p: AppointmentParamsDto,
     @Body() body: CancelAppointmentDto,
+    @Headers('idempotency-key') idempotencyKey = '',
   ) {
     return this.mapper.map(
       await this.service.cancel(
@@ -129,6 +177,7 @@ export class AppointmentsController {
         p.id,
         body.reason,
         body.version,
+        idempotencyKey,
         req.requestId,
       ),
     );
@@ -136,13 +185,18 @@ export class AppointmentsController {
   @Post(':id/reschedule')
   @RequireCapabilities('appointment:reschedule')
   @ApiOkResponse({ type: AppointmentResponseDto })
+  @ApiHeader({ name: 'Idempotency-Key', required: true })
   @ApiConflictResponse({
+    type: ApiErrorEnvelopeDto,
     description: 'Doctor/patient overlap or stale version.',
   })
+  @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
+  @ApiServiceUnavailableResponse({ type: ApiErrorEnvelopeDto })
   async reschedule(
     @Req() req: AuthenticatedRequest,
     @Param() p: AppointmentParamsDto,
     @Body() body: RescheduleAppointmentDto,
+    @Headers('idempotency-key') idempotencyKey = '',
   ) {
     return this.mapper.map(
       await this.service.reschedule(
@@ -151,7 +205,9 @@ export class AppointmentsController {
         new Date(body.startsAt),
         body.durationMinutes,
         body.version,
+        idempotencyKey,
         req.requestId,
+        body.startsAt,
       ),
     );
   }

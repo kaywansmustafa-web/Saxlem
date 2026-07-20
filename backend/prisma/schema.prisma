@@ -563,6 +563,7 @@ model Appointment {
   queueEntries        QueueEntry[]
 
   @@unique([organizationId, clinicId, id])
+  @@unique([organizationId, id])
   @@index([organizationId, clinicId, startsAt])
   @@index([organizationId, doctorId, startsAt])
   @@index([patientProfileId, startsAt])
@@ -576,7 +577,7 @@ model AppointmentEvent {
   type           String
   payload        Json
   occurredAt     DateTime    @map("occurred_at") @db.Timestamptz(3)
-  appointment    Appointment @relation(fields: [appointmentId], references: [id], onDelete: Restrict)
+  appointment    Appointment @relation(fields: [organizationId, appointmentId], references: [organizationId, id], onDelete: Restrict)
 
   @@index([organizationId, appointmentId, occurredAt])
   @@map("appointment_events")

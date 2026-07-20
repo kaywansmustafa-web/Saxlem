@@ -44,3 +44,5 @@ operational schedules, breaks, leave, holidays, exceptions, and clinic-hours
 projections require separate staff capabilities. Multi-clinic reads create one
 minimal audit event per clinic in an atomic batch, preventing misleading tenant
 attribution or partial audit success.
+
+Appointment mutations require actor-and-operation-scoped idempotency, expected-version checks, mandatory transactional audit, and a shared doctor-schedule advisory-lock protocol. Pricing is server-controlled. Database guards prohibit caller-selected references, physical deletion, invalid lifecycle transitions, unversioned protected changes, cross-tenant appointment events, invalid duration, and malformed cancellation reasons. Only known overlap constraints map to conflict; audit outages fail closed as retryable service unavailability and unexpected persistence errors retain the standard internal-error envelope.

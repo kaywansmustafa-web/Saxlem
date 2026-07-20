@@ -1,7 +1,9 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/database/prisma.service';
@@ -10,7 +12,12 @@ import type {
   AppointmentProjection,
   AppointmentWrite,
 } from '../domain/appointment';
+import { AppointmentAuditPersistenceError } from '../domain/appointment.errors';
 import type { AppointmentRepository } from '../domain/appointment.repository';
+import type {
+  AppointmentCommand,
+  AppointmentListQuery,
+} from '../domain/appointment.repository';
 
 const include = {
   clinic: { select: { name: true } },
@@ -25,13 +32,55 @@ type Row = Prisma.AppointmentGetPayload<{ include: typeof include }>;
 export class PrismaAppointmentRepository implements AppointmentRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async list(access: AppointmentAccess) {
-    const rows = await this.prisma.db.appointment.findMany({
-      where: this.scope(access),
-      include,
-      orderBy: [{ startsAt: 'asc' }, { id: 'asc' }],
+  async replay(access: AppointmentAccess, command: AppointmentCommand) {
+    const existing = await this.prisma.db.idempotencyRecord.findUnique({
+      where: {
+        actorId_scope_key: {
+          actorId: access.actorId,
+          scope: command.scope,
+          key: command.key,
+        },
+      },
     });
-    return Object.freeze(rows.map((row) => this.map(row)));
+    if (!existing) return null;
+    if (existing.requestHash !== command.hash)
+      throw new ConflictException(
+        'Idempotency key was already used for a different request.',
+      );
+    return existing.responseBody
+      ? (existing.responseBody as unknown as AppointmentProjection)
+      : null;
+  }
+
+  async list(access: AppointmentAccess, query: AppointmentListQuery) {
+    const where: Prisma.AppointmentWhereInput = {
+      ...this.scope(access),
+      startsAt: { gte: query.from, lt: query.to },
+      ...(query.status ? { status: query.status } : {}),
+    };
+    if (query.cursor) {
+      const cursor = await this.prisma.db.appointment.findFirst({
+        where: { ...where, id: query.cursor },
+        select: { id: true },
+      });
+      if (!cursor)
+        throw new BadRequestException(
+          'Appointment cursor is invalid for this query.',
+        );
+    }
+    const rows = await this.prisma.db.appointment.findMany({
+      where,
+      include,
+      orderBy: [{ status: 'asc' }, { startsAt: 'asc' }, { id: 'asc' }],
+      take: query.pageSize + 1,
+      ...(query.cursor ? { cursor: { id: query.cursor }, skip: 1 } : {}),
+    });
+    const hasNext = rows.length > query.pageSize;
+    const pageRows = hasNext ? rows.slice(0, query.pageSize) : rows;
+    return Object.freeze({
+      items: Object.freeze(pageRows.map((row) => this.map(row))),
+      nextCursor: hasNext ? pageRows.at(-1)!.id : null,
+    });
   }
   async get(access: AppointmentAccess, id: string) {
     const row = await this.prisma.db.appointment.findFirst({
@@ -44,46 +93,73 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     access: AppointmentAccess,
     input: AppointmentWrite,
   ): Promise<void> {
-    const doctor = await this.prisma.db.doctor.findFirst({
-      where: {
-        id: input.doctorId,
-        organizationId: input.organizationId,
-        status: 'active',
-        organization: { status: 'active' },
-        clinicAssignments: {
-          some: { clinicId: input.clinicId, clinic: { status: 'active' } },
-        },
-      },
-      select: { id: true },
-    });
-    const patient = await this.prisma.db.organizationPatientProfile.findFirst({
-      where: {
-        organizationId: input.organizationId,
-        patientProfileId: input.patientProfileId,
-        patientProfile: {
+    const [doctor, clinic, patient] = await Promise.all([
+      this.prisma.db.doctor.findFirst({
+        where: {
+          id: input.doctorId,
+          organizationId: input.organizationId,
           status: 'active',
-          ...(access.patient
-            ? { patientAccount: { userId: access.actorId } }
-            : {}),
+          organization: { status: 'active' },
+          clinicAssignments: { some: { clinicId: input.clinicId } },
         },
-      },
-      select: { patientProfileId: true },
-    });
-    if (!doctor || !patient)
+        select: { id: true },
+      }),
+      this.prisma.db.clinic.findFirst({
+        where: {
+          id: input.clinicId,
+          organizationId: input.organizationId,
+          status: 'active',
+        },
+        select: { id: true },
+      }),
+      this.prisma.db.organizationPatientProfile.findFirst({
+        where: {
+          organizationId: input.organizationId,
+          patientProfileId: input.patientProfileId,
+          patientProfile: {
+            status: 'active',
+            ...(access.patient
+              ? { patientAccount: { userId: access.actorId } }
+              : {}),
+          },
+        },
+        select: { patientProfileId: true },
+      }),
+    ]);
+    if (doctor && clinic && patient) return;
+    if (access.patient)
       throw new ForbiddenException(
         'Appointment participants are unavailable or outside scope.',
       );
+    if (!doctor)
+      throw new BadRequestException(
+        'Doctor is inactive or unavailable at this clinic.',
+      );
+    if (!clinic)
+      throw new BadRequestException('Clinic is inactive or unavailable.');
+    throw new BadRequestException(
+      'Patient registration is inactive or unavailable.',
+    );
   }
   async create(
     access: AppointmentAccess,
     input: AppointmentWrite,
     requestId: string,
+    command: AppointmentCommand,
+    validate: () => Promise<void>,
   ) {
     try {
       return await this.prisma.db.$transaction(async (tx) => {
+        const replay = await this.beginCommand(tx, access, command);
+        if (replay) return replay;
+        await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${input.organizationId}:${input.doctorId}`}, 0))`;
+        await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`patient:${input.organizationId}:${input.patientProfileId}`}, 0))`;
+        await validate();
         const row = await tx.appointment.create({ data: input, include });
         await this.events(tx, access, row, 'appointment.created', requestId);
-        return this.map(row);
+        const result = this.map(row);
+        await this.completeCommand(tx, access, command, result);
+        return result;
       });
     } catch (error) {
       this.conflict(error);
@@ -96,11 +172,20 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     reason: string,
     version: number,
     requestId: string,
+    command: AppointmentCommand,
   ) {
-    return this.mutate(access, id, version, requestId, 'appointment.updated', {
-      reason,
-      version: { increment: 1 },
-    });
+    return this.mutate(
+      access,
+      id,
+      version,
+      requestId,
+      command,
+      'appointment.updated',
+      {
+        reason,
+        version: { increment: 1 },
+      },
+    );
   }
   cancel(
     access: AppointmentAccess,
@@ -108,12 +193,14 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     reason: string,
     version: number,
     requestId: string,
+    command: AppointmentCommand,
   ) {
     return this.mutate(
       access,
       id,
       version,
       requestId,
+      command,
       'appointment.cancelled',
       {
         status: 'cancelled',
@@ -129,12 +216,15 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     input: AppointmentWrite,
     version: number,
     requestId: string,
+    command: AppointmentCommand,
+    validate: () => Promise<void>,
   ) {
     return this.mutate(
       access,
       id,
       version,
       requestId,
+      command,
       'appointment.rescheduled',
       {
         startsAt: input.startsAt,
@@ -144,6 +234,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
         doctorId: input.doctorId,
         version: { increment: 1 },
       },
+      validate,
     );
   }
   async auditView(
@@ -152,22 +243,30 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     requestId: string,
   ) {
     if (access.patient || appointments.length === 0) return;
+    const groups = new Map<string, AppointmentProjection[]>();
+    for (const item of appointments)
+      groups.set(`${item.organizationId}:${item.clinicId}`, [
+        ...(groups.get(`${item.organizationId}:${item.clinicId}`) ?? []),
+        item,
+      ]);
     await this.prisma.db.$transaction(
-      appointments.map((item) =>
-        this.prisma.db.auditEvent.create({
+      [...groups.values()].map((items) => {
+        const first = items[0]!;
+        return this.prisma.db.auditEvent.create({
           data: {
             actorUserId: access.actorId,
-            organizationId: item.organizationId,
-            clinicId: item.clinicId,
-            action: 'appointment.viewed',
+            organizationId: first.organizationId,
+            clinicId: first.clinicId,
+            action: 'appointment.page_viewed',
             targetType: 'Appointment',
-            targetId: item.id,
+            targetId: null,
             outcome: 'succeeded',
             requestId,
             occurredAt: new Date(),
+            metadata: { count: items.length },
           },
-        }),
-      ),
+        });
+      }),
     );
   }
   private async mutate(
@@ -175,11 +274,15 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     id: string,
     version: number,
     requestId: string,
+    command: AppointmentCommand,
     action: string,
     data: Prisma.AppointmentUncheckedUpdateManyInput,
+    validate?: () => Promise<void>,
   ) {
     try {
       return await this.prisma.db.$transaction(async (tx) => {
+        const replay = await this.beginCommand(tx, access, command);
+        if (replay) return replay;
         const current = await tx.appointment.findFirst({
           where: {
             id,
@@ -187,7 +290,14 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
             status: { in: ['scheduled', 'confirmed'] },
           },
         });
-        if (!current) return null;
+        if (!current)
+          throw new NotFoundException(
+            'Appointment was not found or is no longer mutable.',
+          );
+        if (validate) {
+          await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${current.organizationId}:${current.doctorId}`}, 0))`;
+          await validate();
+        }
         const changed = await tx.appointment.updateMany({
           where: { id, version, status: { in: ['scheduled', 'confirmed'] } },
           data,
@@ -199,7 +309,9 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
           include,
         });
         await this.events(tx, access, row, action, requestId);
-        return this.map(row);
+        const result = this.map(row);
+        await this.completeCommand(tx, access, command, result);
+        return result;
       });
     } catch (error) {
       this.conflict(error);
@@ -231,28 +343,32 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     action: string,
     requestId: string,
   ) {
-    await tx.appointmentEvent.create({
-      data: {
-        organizationId: row.organizationId,
-        appointmentId: row.id,
-        type: action,
-        payload: {},
-        occurredAt: new Date(),
-      },
-    });
-    await tx.auditEvent.create({
-      data: {
-        actorUserId: access.actorId,
-        organizationId: row.organizationId,
-        clinicId: row.clinicId,
-        action,
-        targetType: 'Appointment',
-        targetId: row.id,
-        outcome: 'succeeded',
-        requestId,
-        occurredAt: new Date(),
-      },
-    });
+    try {
+      await tx.appointmentEvent.create({
+        data: {
+          organizationId: row.organizationId,
+          appointmentId: row.id,
+          type: action,
+          payload: {},
+          occurredAt: new Date(),
+        },
+      });
+      await tx.auditEvent.create({
+        data: {
+          actorUserId: access.actorId,
+          organizationId: row.organizationId,
+          clinicId: row.clinicId,
+          action,
+          targetType: 'Appointment',
+          targetId: row.id,
+          outcome: 'succeeded',
+          requestId,
+          occurredAt: new Date(),
+        },
+      });
+    } catch {
+      throw new AppointmentAuditPersistenceError();
+    }
   }
   private map(row: Row): AppointmentProjection {
     return Object.freeze({
@@ -277,9 +393,73 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     });
   }
   private conflict(error: unknown): void {
-    if (typeof error === 'object' && error && 'code' in error)
+    const text = this.errorText(error);
+    if (
+      text.includes('appointments_doctor_no_overlap') ||
+      text.includes('appointments_patient_no_overlap')
+    )
       throw new ConflictException(
         'Appointment conflicts with an existing appointment.',
       );
+  }
+  private async beginCommand(
+    tx: Prisma.TransactionClient,
+    access: AppointmentAccess,
+    command: AppointmentCommand,
+  ) {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${access.actorId}:${command.scope}:${command.key}`}, 0))`;
+    const existing = await tx.idempotencyRecord.findUnique({
+      where: {
+        actorId_scope_key: {
+          actorId: access.actorId,
+          scope: command.scope,
+          key: command.key,
+        },
+      },
+    });
+    if (existing) {
+      if (existing.requestHash !== command.hash)
+        throw new ConflictException(
+          'Idempotency key was already used for a different request.',
+        );
+      if (existing.responseBody)
+        return existing.responseBody as unknown as AppointmentProjection;
+      throw new ConflictException('The command is already in progress.');
+    }
+    await tx.idempotencyRecord.create({
+      data: {
+        actorId: access.actorId,
+        scope: command.scope,
+        key: command.key,
+        requestHash: command.hash,
+        expiresAt: new Date(Date.now() + 86_400_000),
+      },
+    });
+    return null;
+  }
+  private async completeCommand(
+    tx: Prisma.TransactionClient,
+    access: AppointmentAccess,
+    command: AppointmentCommand,
+    response: AppointmentProjection,
+  ) {
+    await tx.idempotencyRecord.update({
+      where: {
+        actorId_scope_key: {
+          actorId: access.actorId,
+          scope: command.scope,
+          key: command.key,
+        },
+      },
+      data: {
+        responseCode: command.responseCode,
+        responseBody: response as unknown as Prisma.InputJsonValue,
+      },
+    });
+  }
+  private errorText(error: unknown): string {
+    if (error instanceof Error)
+      return `${error.name} ${error.message} ${this.errorText((error as Error & { cause?: unknown }).cause)}`;
+    return typeof error === 'string' ? error : '';
   }
 }

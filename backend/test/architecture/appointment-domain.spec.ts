@@ -55,4 +55,42 @@ describe('appointment domain architecture', () => {
     ])
       expect(document.paths).toHaveProperty(route);
   });
+  it('keeps authoritative pricing read-only and documents mutation safety contracts', () => {
+    const document = JSON.parse(source('openapi/saxlem-api.json')) as {
+      components: {
+        schemas: Record<string, { properties?: Record<string, unknown> }>;
+      };
+      paths: Record<
+        string,
+        Record<
+          string,
+          {
+            parameters?: { name?: string }[];
+            responses?: Record<string, unknown>;
+          }
+        >
+      >;
+    };
+    expect(
+      document.components.schemas.CreateAppointmentDto!.properties,
+    ).not.toHaveProperty('feeIqd');
+    expect(
+      document.components.schemas.AppointmentResponseDto!.properties,
+    ).toHaveProperty('feeIqd');
+    for (const [route, method] of [
+      ['/api/v1/appointments', 'post'],
+      ['/api/v1/appointments/{id}', 'patch'],
+      ['/api/v1/appointments/{id}/cancel', 'post'],
+      ['/api/v1/appointments/{id}/reschedule', 'post'],
+    ] as const) {
+      const operation = document.paths[route]![method]!;
+      expect(operation.parameters).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ name: 'Idempotency-Key' }),
+        ]),
+      );
+      expect(operation.responses).toHaveProperty('409');
+      expect(operation.responses).toHaveProperty('503');
+    }
+  });
 });

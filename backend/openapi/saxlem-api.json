@@ -1220,29 +1220,115 @@
     "/api/v1/appointments": {
       "get": {
         "operationId": "AppointmentsController_list",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 25,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "scheduled",
+                "confirmed",
+                "cancelled",
+                "completed",
+                "noShow"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AppointmentResponseDto"
-                  }
+                  "$ref": "#/components/schemas/AppointmentPageResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
                 }
               }
             }
           },
           "401": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           },
           "403": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           },
           "503": {
-            "description": "Mandatory staff read audit is unavailable."
+            "description": "Mandatory staff read audit is unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1257,7 +1343,16 @@
       "post": {
         "description": "Validates active tenant participants, effective doctor schedule, leave, holidays, exceptions, and doctor/patient overlaps. No queue or notification behavior occurs.",
         "operationId": "AppointmentsController_create",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1279,14 +1374,55 @@
               }
             }
           },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
           "401": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           },
           "403": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Doctor or patient overlap."
+            "description": "Doctor/patient overlap or idempotency conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Mandatory command audit is unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1325,17 +1461,55 @@
               }
             }
           },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
           "401": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           },
           "403": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           },
           "503": {
-            "description": "Mandatory staff read audit is unavailable."
+            "description": "Mandatory staff read audit is unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1356,6 +1530,14 @@
             "in": "path",
             "schema": {
               "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
               "type": "string"
             }
           }
@@ -1381,14 +1563,65 @@
               }
             }
           },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
           "401": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           },
           "403": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Optimistic-concurrency version mismatch."
+            "description": "Optimistic-concurrency version mismatch or idempotency conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1411,6 +1644,14 @@
             "in": "path",
             "schema": {
               "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
               "type": "string"
             }
           }
@@ -1436,11 +1677,65 @@
               }
             }
           },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
           "401": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           },
           "403": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale version or idempotency conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1463,6 +1758,14 @@
             "in": "path",
             "schema": {
               "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
               "type": "string"
             }
           }
@@ -1488,14 +1791,65 @@
               }
             }
           },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
           "401": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           },
           "403": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Doctor/patient overlap or stale version."
+            "description": "Doctor/patient overlap or stale version.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2609,6 +2963,25 @@
           "version"
         ]
       },
+      "AppointmentPageResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AppointmentResponseDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
       "CreateAppointmentDto": {
         "type": "object",
         "properties": {
@@ -2640,16 +3013,13 @@
           },
           "startsAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "UTC instant with Z or an explicit offset."
           },
           "durationMinutes": {
             "type": "number",
             "minimum": 5,
             "maximum": 480
-          },
-          "feeIqd": {
-            "type": "number",
-            "minimum": 0
           }
         },
         "required": [
@@ -2660,8 +3030,7 @@
           "type",
           "reason",
           "startsAt",
-          "durationMinutes",
-          "feeIqd"
+          "durationMinutes"
         ]
       },
       "UpdateAppointmentDto": {
@@ -2701,7 +3070,8 @@
         "properties": {
           "startsAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "UTC instant with Z or an explicit offset."
           },
           "durationMinutes": {
             "type": "number",
