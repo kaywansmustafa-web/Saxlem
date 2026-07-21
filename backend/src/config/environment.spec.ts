@@ -32,6 +32,12 @@ describe('backend configuration safety', () => {
     expect(() =>
       loadConfiguration({ SAXLEM_BACKEND_ENV: 'production' }),
     ).toThrow();
+    expect(() =>
+      loadConfiguration({
+        ...required,
+        ARRIVAL_LATE_WINDOW_MINUTES: '1441',
+      }),
+    ).toThrow();
   });
 
   it('uses documented arrival-window defaults and validates overrides', () => {

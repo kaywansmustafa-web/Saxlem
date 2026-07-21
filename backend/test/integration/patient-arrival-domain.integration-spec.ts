@@ -1,7 +1,7 @@
 import { ConflictException } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import type { PrismaService } from '../../src/infrastructure/database/prisma.service';
 import type { ArrivalCommand } from '../../src/modules/arrivals/domain/arrival';
 import { PrismaArrivalRepository } from '../../src/modules/arrivals/infrastructure/prisma-arrival.repository';
@@ -9,6 +9,7 @@ import { PrismaArrivalRepository } from '../../src/modules/arrivals/infrastructu
 const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.TEST_DATABASE_URL! }),
 });
+const arrivalWindow = { earlyMinutes: 60, lateMinutes: 120 } as const;
 
 describe('patient arrival database domain', () => {
   afterAll(() => prisma.$disconnect());
@@ -58,6 +59,7 @@ describe('patient arrival database domain', () => {
       occurredAt,
       'arrival-request',
       command,
+      arrivalWindow,
     );
     expect(result).toMatchObject({
       status: 'queueReady',
@@ -73,6 +75,7 @@ describe('patient arrival database domain', () => {
         occurredAt,
         'arrival-request-replay',
         command,
+        arrivalWindow,
       ),
     ).resolves.toEqual(result);
     await expect(
@@ -83,6 +86,7 @@ describe('patient arrival database domain', () => {
         occurredAt,
         'arrival-request-duplicate',
         arrivalCommand('arrival-duplicate-key', fixture.appointmentId, 1),
+        arrivalWindow,
       ),
     ).rejects.toBeInstanceOf(ConflictException);
 
@@ -134,6 +138,7 @@ describe('patient arrival database domain', () => {
         occurredAt,
         'race-a',
         arrivalCommand('arrival-race-key-a', fixture.appointmentId, 1),
+        arrivalWindow,
       ),
       repository.record(
         access,
@@ -142,6 +147,7 @@ describe('patient arrival database domain', () => {
         occurredAt,
         'race-b',
         arrivalCommand('arrival-race-key-b', fixture.appointmentId, 1),
+        arrivalWindow,
       ),
     ]);
     expect(
@@ -164,7 +170,7 @@ describe('patient arrival database domain', () => {
     ).rejects.toThrow();
   }, 30_000);
 
-  it.each(['organization', 'clinic', 'doctor'] as const)(
+  it.each(['organization', 'clinic', 'doctor', 'patient'] as const)(
     'rejects arrival when the %s is inactive',
     async (kind) => {
       const fixture = await createFixture();
@@ -183,6 +189,11 @@ describe('patient arrival database domain', () => {
           where: { id: fixture.doctorId },
           data: { status: 'inactive' },
         });
+      if (kind === 'patient')
+        await prisma.patientProfile.update({
+          where: { id: fixture.patientProfileId },
+          data: { status: 'inactive' },
+        });
       const repository = new PrismaArrivalRepository({
         db: prisma,
       } as unknown as PrismaService);
@@ -199,13 +210,285 @@ describe('patient arrival database domain', () => {
           new Date('2031-01-01T06:00:00.000Z'),
           `inactive-${kind}`,
           arrivalCommand(`arrival-inactive-${kind}`, fixture.appointmentId, 1),
+          arrivalWindow,
         ),
       ).rejects.toThrow(
-        `${kind[0]!.toUpperCase()}${kind.slice(1)} is inactive.`,
+        kind === 'patient'
+          ? 'Patient registration is inactive.'
+          : `${kind[0]!.toUpperCase()}${kind.slice(1)} is inactive.`,
       );
     },
     30_000,
   );
+
+  it('uses the appointment time locked inside the transaction after rescheduling', async () => {
+    const fixture = await createFixture();
+    let rescheduled!: () => void;
+    let release!: () => void;
+    const changed = new Promise<void>((resolve) => (rescheduled = resolve));
+    const mayCommit = new Promise<void>((resolve) => (release = resolve));
+    const reschedule = prisma.$transaction(async (tx) => {
+      await tx.appointment.update({
+        where: { id: fixture.appointmentId },
+        data: {
+          startsAt: new Date('2031-01-02T06:00:00.000Z'),
+          endsAt: new Date('2031-01-02T06:30:00.000Z'),
+          version: { increment: 1 },
+        },
+      });
+      rescheduled();
+      await mayCommit;
+    });
+    await changed;
+    const repository = new PrismaArrivalRepository({
+      db: prisma,
+    } as unknown as PrismaService);
+    let settled = false;
+    const arrival = repository
+      .record(
+        {
+          actorId: fixture.patientUserId,
+          patient: true,
+          doctor: false,
+          platformAdministrator: false,
+        },
+        fixture.appointmentId,
+        1,
+        new Date('2031-01-01T06:00:00.000Z'),
+        'rescheduled-window',
+        arrivalCommand('arrival-rescheduled-window', fixture.appointmentId, 1),
+        arrivalWindow,
+      )
+      .finally(() => (settled = true));
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(settled).toBe(false);
+    release();
+    await reschedule;
+    await expect(arrival).rejects.toBeInstanceOf(ConflictException);
+    expect(
+      await prisma.appointmentArrival.findUnique({
+        where: { id: fixture.arrivalId },
+      }),
+    ).toMatchObject({ status: 'expected', version: 1 });
+  });
+
+  it('replays simultaneous requests with the same idempotency key', async () => {
+    const fixture = await createFixture();
+    const repository = new PrismaArrivalRepository({
+      db: prisma,
+    } as unknown as PrismaService);
+    const access = {
+      actorId: fixture.patientUserId,
+      patient: true,
+      doctor: false,
+      platformAdministrator: false,
+    };
+    const command = arrivalCommand(
+      'arrival-identical-race',
+      fixture.appointmentId,
+      1,
+    );
+    const occurredAt = new Date('2031-01-01T06:00:00.000Z');
+    const results = await Promise.all([
+      repository.record(
+        access,
+        fixture.appointmentId,
+        1,
+        occurredAt,
+        'same-a',
+        command,
+        arrivalWindow,
+      ),
+      repository.record(
+        access,
+        fixture.appointmentId,
+        1,
+        occurredAt,
+        'same-b',
+        command,
+        arrivalWindow,
+      ),
+    ]);
+    expect(results[0]).toEqual(results[1]);
+    expect(results[0]).toMatchObject({ status: 'queueReady', version: 3 });
+    expect(
+      await prisma.auditEvent.count({
+        where: { action: 'arrival.recorded', targetId: fixture.arrivalId },
+      }),
+    ).toBe(1);
+  });
+
+  it('revalidates active context after a concurrent deactivation commits', async () => {
+    const fixture = await createFixture();
+    let deactivated!: () => void;
+    let release!: () => void;
+    const changed = new Promise<void>((resolve) => (deactivated = resolve));
+    const mayCommit = new Promise<void>((resolve) => (release = resolve));
+    const deactivate = prisma.$transaction(async (tx) => {
+      await tx.organization.update({
+        where: { id: fixture.organizationId },
+        data: { status: 'inactive' },
+      });
+      deactivated();
+      await mayCommit;
+    });
+    await changed;
+    const repository = new PrismaArrivalRepository({
+      db: prisma,
+    } as unknown as PrismaService);
+    let settled = false;
+    const arrival = repository
+      .record(
+        {
+          actorId: fixture.patientUserId,
+          patient: true,
+          doctor: false,
+          platformAdministrator: false,
+        },
+        fixture.appointmentId,
+        1,
+        new Date('2031-01-01T06:00:00.000Z'),
+        'deactivation-race',
+        arrivalCommand('arrival-deactivation-race', fixture.appointmentId, 1),
+        arrivalWindow,
+      )
+      .finally(() => (settled = true));
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(settled).toBe(false);
+    release();
+    await deactivate;
+    await expect(arrival).rejects.toThrow('Organization is inactive.');
+    expect(
+      await prisma.appointmentArrival.findUnique({
+        where: { id: fixture.arrivalId },
+      }),
+    ).toMatchObject({ status: 'expected', version: 1 });
+  });
+
+  it.each([
+    ['early boundary', '2031-01-01T05:00:00.000Z', true],
+    ['one millisecond early', '2031-01-01T04:59:59.999Z', false],
+    ['late boundary', '2031-01-01T08:00:00.000Z', true],
+    ['one millisecond late', '2031-01-01T08:00:00.001Z', false],
+  ] as const)(
+    'enforces the TIMESTAMPTZ(3) %s',
+    async (_label, timestamp, accepted) => {
+      const fixture = await createFixture();
+      const repository = new PrismaArrivalRepository({
+        db: prisma,
+      } as unknown as PrismaService);
+      const operation = repository.record(
+        {
+          actorId: fixture.patientUserId,
+          patient: true,
+          doctor: false,
+          platformAdministrator: false,
+        },
+        fixture.appointmentId,
+        1,
+        new Date(timestamp),
+        `boundary-${timestamp}`,
+        arrivalCommand(
+          `arrival-boundary-${timestamp}`,
+          fixture.appointmentId,
+          1,
+        ),
+        arrivalWindow,
+      );
+      if (accepted)
+        await expect(operation).resolves.toMatchObject({
+          status: 'queueReady',
+        });
+      else await expect(operation).rejects.toBeInstanceOf(ConflictException);
+    },
+  );
+
+  it('rejects ineligible direct inserts and forged lifecycle audits', async () => {
+    const ineligible = await createFixture(false);
+    await prisma.appointment.update({
+      where: { id: ineligible.appointmentId },
+      data: {
+        status: 'cancelled',
+        cancellationReason: 'Test cancellation',
+        cancelledAt: new Date(),
+        version: { increment: 1 },
+      },
+    });
+    await expect(
+      prisma.appointmentArrival.create({
+        data: {
+          organizationId: ineligible.organizationId,
+          clinicId: ineligible.clinicId,
+          appointmentId: ineligible.appointmentId,
+          patientProfileId: ineligible.patientProfileId,
+        },
+      }),
+    ).rejects.toThrow();
+
+    const fixture = await createFixture();
+    await expect(
+      prisma.arrivalAudit.create({
+        data: {
+          organizationId: fixture.organizationId,
+          clinicId: fixture.clinicId,
+          arrivalId: fixture.arrivalId,
+          actorUserId: fixture.patientUserId,
+          fromStatus: 'expected',
+          toStatus: 'queueReady',
+          occurredAt: new Date(),
+        },
+      }),
+    ).rejects.toThrow();
+  });
+
+  it('rolls back transitions and idempotency when mandatory audit persistence fails', async () => {
+    const fixture = await createFixture();
+    const repository = new PrismaArrivalRepository({
+      db: prisma,
+    } as unknown as PrismaService);
+    const actorId = randomUUID();
+    const command = arrivalCommand(
+      'arrival-audit-rollback',
+      fixture.appointmentId,
+      1,
+    );
+    await expect(
+      repository.record(
+        {
+          actorId,
+          patient: false,
+          doctor: false,
+          platformAdministrator: true,
+        },
+        fixture.appointmentId,
+        1,
+        new Date('2031-01-01T06:00:00.000Z'),
+        'audit-rollback',
+        command,
+        arrivalWindow,
+      ),
+    ).rejects.toThrow('Mandatory arrival audit persistence failed.');
+    expect(
+      await prisma.appointmentArrival.findUnique({
+        where: { id: fixture.arrivalId },
+      }),
+    ).toMatchObject({
+      status: 'expected',
+      version: 1,
+      arrivedAt: null,
+      queueReadyAt: null,
+    });
+    expect(
+      await prisma.idempotencyRecord.count({
+        where: { actorId, scope: command.scope, key: command.key },
+      }),
+    ).toBe(0);
+    expect(
+      await prisma.arrivalAudit.count({
+        where: { arrivalId: fixture.arrivalId },
+      }),
+    ).toBe(0);
+  });
 });
 
 function arrivalCommand(
@@ -222,7 +505,7 @@ function arrivalCommand(
   };
 }
 
-async function createFixture() {
+async function createFixture(createArrival = true) {
   const suffix = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   const organization = await prisma.organization.create({
     data: { name: `Arrival ${suffix}` },
@@ -306,20 +589,23 @@ async function createFixture() {
       feeIqd: 25000,
     },
   });
-  const arrival = await prisma.appointmentArrival.create({
-    data: {
-      organizationId: organization.id,
-      clinicId: clinic.id,
-      appointmentId: appointment.id,
-      patientProfileId: patientUser.profileId,
-    },
-  });
+  const arrival = createArrival
+    ? await prisma.appointmentArrival.create({
+        data: {
+          organizationId: organization.id,
+          clinicId: clinic.id,
+          appointmentId: appointment.id,
+          patientProfileId: patientUser.profileId,
+        },
+      })
+    : null;
   return {
     organizationId: organization.id,
     clinicId: clinic.id,
     doctorId: doctor.id,
     appointmentId: appointment.id,
-    arrivalId: arrival.id,
+    arrivalId: arrival?.id ?? '',
+    patientProfileId: patientUser.profileId,
     patientUserId: patientUser.userId,
     otherPatientUserId: otherPatient.userId,
     staffUserId: staff.id,

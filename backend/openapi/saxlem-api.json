@@ -1965,6 +1965,7 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
+            "description": "8-128 non-whitespace printable ASCII characters. Identical completed requests replay; reuse for different input conflicts.",
             "required": true,
             "schema": {
               "type": "string"

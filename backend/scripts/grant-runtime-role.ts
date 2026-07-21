@@ -31,6 +31,12 @@ async function grant(): Promise<void> {
   await client.query(
     `ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO ${quotedRole}`,
   );
+  await client.query(
+    `REVOKE DELETE ON TABLE public.appointment_arrivals FROM ${quotedRole}`,
+  );
+  await client.query(
+    `REVOKE UPDATE, DELETE ON TABLE public.arrival_audits FROM ${quotedRole}`,
+  );
 }
 
 void grant().finally(() => client.end());

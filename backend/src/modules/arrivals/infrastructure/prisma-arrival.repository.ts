@@ -11,6 +11,7 @@ import type {
   ArrivalAccess,
   ArrivalCommand,
   ArrivalProjection,
+  ArrivalWindowPolicy,
 } from '../domain/arrival';
 import { ArrivalAuditPersistenceError } from '../domain/arrival.errors';
 import type { ArrivalRepository } from '../domain/arrival.repository';
@@ -82,6 +83,7 @@ export class PrismaArrivalRepository implements ArrivalRepository {
     occurredAt: Date,
     requestId: string,
     command: ArrivalCommand,
+    window: ArrivalWindowPolicy,
   ) {
     return this.prisma.db.$transaction(async (tx) => {
       const replay = await this.beginCommand(tx, access, command);
@@ -94,12 +96,17 @@ export class PrismaArrivalRepository implements ArrivalRepository {
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${current.organizationId}:${current.appointment.doctorId}`}, 0))`;
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`patient:${current.organizationId}:${current.patientProfileId}`}, 0))`;
       await tx.$queryRaw`SELECT "id" FROM "appointments" WHERE "id" = ${appointmentId}::uuid FOR UPDATE`;
+      await tx.$queryRaw`SELECT "id" FROM "organizations" WHERE "id" = ${current.organizationId}::uuid FOR SHARE`;
+      await tx.$queryRaw`SELECT "id" FROM "clinics" WHERE "organization_id" = ${current.organizationId}::uuid AND "id" = ${current.clinicId}::uuid FOR SHARE`;
+      await tx.$queryRaw`SELECT "id" FROM "doctors" WHERE "organization_id" = ${current.organizationId}::uuid AND "id" = ${current.appointment.doctorId}::uuid FOR SHARE`;
+      await tx.$queryRaw`SELECT "id" FROM "patient_profiles" WHERE "id" = ${current.patientProfileId}::uuid FOR SHARE`;
       current = await tx.appointmentArrival.findFirst({
         where: { appointmentId, ...this.scope(access) },
         include,
       });
       if (!current) throw new NotFoundException('Arrival was not found.');
       this.validateContext(current);
+      this.validateWindow(current.appointment.startsAt, occurredAt, window);
       if (current.version !== expectedVersion)
         throw new ConflictException('Arrival version is stale.');
       if (current.status !== 'expected')
@@ -180,6 +187,23 @@ export class PrismaArrivalRepository implements ArrivalRepository {
       throw new BadRequestException('Doctor is inactive.');
     if (row.appointment.patientRegistration.patientProfile.status !== 'active')
       throw new BadRequestException('Patient registration is inactive.');
+  }
+
+  private validateWindow(
+    startsAt: Date,
+    occurredAt: Date,
+    window: ArrivalWindowPolicy,
+  ) {
+    const earliest = startsAt.getTime() - window.earlyMinutes * 60_000;
+    const latest = startsAt.getTime() + window.lateMinutes * 60_000;
+    if (
+      !Number.isFinite(occurredAt.getTime()) ||
+      occurredAt.getTime() < earliest ||
+      occurredAt.getTime() > latest
+    )
+      throw new ConflictException(
+        `Arrival is available from ${window.earlyMinutes} minutes before until ${window.lateMinutes} minutes after the appointment.`,
+      );
   }
 
   private scope(access: ArrivalAccess): Prisma.AppointmentArrivalWhereInput {

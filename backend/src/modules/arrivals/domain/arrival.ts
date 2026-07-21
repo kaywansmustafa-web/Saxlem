@@ -26,3 +26,8 @@ export interface ArrivalCommand {
   readonly scope: string;
   readonly hash: string;
 }
+
+export interface ArrivalWindowPolicy {
+  readonly earlyMinutes: number;
+  readonly lateMinutes: number;
+}

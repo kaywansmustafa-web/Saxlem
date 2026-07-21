@@ -79,7 +79,12 @@ export class ArrivalsController {
     description:
       'Requires Idempotency-Key and the expected arrival version. The appointment must be active, owned and tenant-scoped, have active participants, and fall inside the configured early/late window. The state advances expected → arrived → queueReady. No queue row, number, ordering, call, consultation, notification, or realtime action occurs.',
   })
-  @ApiHeader({ name: 'Idempotency-Key', required: true })
+  @ApiHeader({
+    name: 'Idempotency-Key',
+    required: true,
+    description:
+      '8-128 non-whitespace printable ASCII characters. Identical completed requests replay; reuse for different input conflicts.',
+  })
   @ApiCreatedResponse({ type: ArrivalResponseDto })
   @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
   @ApiConflictResponse({

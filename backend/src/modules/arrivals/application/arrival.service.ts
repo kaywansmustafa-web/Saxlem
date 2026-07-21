@@ -78,6 +78,10 @@ export class ArrivalService {
         now,
         requestId,
         command,
+        {
+          earlyMinutes: this.configuration.arrivalEarlyWindowMinutes,
+          lateMinutes: this.configuration.arrivalLateWindowMinutes,
+        },
       ),
     );
   }

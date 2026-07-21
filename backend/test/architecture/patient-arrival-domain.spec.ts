@@ -44,6 +44,42 @@ describe('patient arrival domain architecture', () => {
     );
     expect(migration).toContain('NEW."version" <> OLD."version" + 1');
     expect(migration).toContain('arrival_audit_append_only');
+    const hardening = source(
+      'prisma/migrations/20260721031000_patient_arrival_hardening/migration.sql',
+    );
+    expect(hardening).toContain(
+      'Arrival requires an eligible active appointment context',
+    );
+    expect(hardening).toContain('arrival_audit_transition_guard');
+    expect(hardening).toContain('arrival_audit_transition_key');
+    expect(hardening).toContain('SET search_path = pg_catalog, public');
+    const correction = source(
+      'prisma/migrations/20260721031100_patient_arrival_eligibility_correction/migration.sql',
+    );
+    expect(correction).not.toContain('assignment."status"');
+    expect(correction).not.toContain('registration."status"');
+    expect(correction).toContain(
+      'Arrival requires an eligible active appointment context',
+    );
+  });
+
+  it('revalidates the locked schedule and participants inside the command transaction', () => {
+    const repository = source(
+      'src/modules/arrivals/infrastructure/prisma-arrival.repository.ts',
+    );
+    expect(repository).toContain('FOR UPDATE');
+    expect(repository.match(/FOR SHARE/g)).toHaveLength(4);
+    expect(repository).toContain('validateWindow(current.appointment.startsAt');
+  });
+
+  it('removes unnecessary runtime mutation privileges', () => {
+    const grants = source('scripts/grant-runtime-role.ts');
+    expect(grants).toContain(
+      'REVOKE DELETE ON TABLE public.appointment_arrivals',
+    );
+    expect(grants).toContain(
+      'REVOKE UPDATE, DELETE ON TABLE public.arrival_audits',
+    );
   });
 
   it('publishes only the approved arrival route and contracts', () => {

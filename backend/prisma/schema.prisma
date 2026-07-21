@@ -616,6 +616,7 @@ model AppointmentArrival {
   audits           ArrivalAudit[]
 
   @@unique([organizationId, id])
+  @@unique([organizationId, clinicId, id], map: "arrival_tenant_clinic_key")
   @@unique([organizationId, clinicId, appointmentId], map: "arrival_appointment_scope_key")
   @@unique([organizationId, clinicId, appointmentId, patientProfileId], map: "arrival_patient_scope_key")
   @@index([organizationId, clinicId, status, createdAt])
@@ -634,10 +635,11 @@ model ArrivalAudit {
   occurredAt     DateTime           @map("occurred_at") @db.Timestamptz(3)
   organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   clinic         Clinic             @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
-  arrival        AppointmentArrival @relation(fields: [organizationId, arrivalId], references: [organizationId, id], onDelete: Restrict)
+  arrival        AppointmentArrival @relation(fields: [organizationId, clinicId, arrivalId], references: [organizationId, clinicId, id], onDelete: Restrict)
   actorUser      User               @relation(fields: [actorUserId], references: [id], onDelete: Restrict)
 
   @@index([organizationId, arrivalId, occurredAt])
+  @@unique([arrivalId, fromStatus, toStatus], map: "arrival_audit_transition_key")
   @@map("arrival_audits")
 }
 

@@ -2,6 +2,7 @@ import type {
   ArrivalAccess,
   ArrivalCommand,
   ArrivalProjection,
+  ArrivalWindowPolicy,
 } from './arrival';
 
 export interface ArrivalRepository {
@@ -21,6 +22,7 @@ export interface ArrivalRepository {
     occurredAt: Date,
     requestId: string,
     command: ArrivalCommand,
+    window: ArrivalWindowPolicy,
   ): Promise<ArrivalProjection>;
   auditView(
     access: ArrivalAccess,

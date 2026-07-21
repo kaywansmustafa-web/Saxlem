@@ -93,6 +93,29 @@ describe('ArrivalService', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
+  it.each([
+    '',
+    '       ',
+    'short',
+    'abcdefgh, ijklmnop',
+    'badini-ژ',
+    'x'.repeat(129),
+  ])('rejects malformed idempotency key %p', async (key) => {
+    const { service } = fixture();
+    await expect(
+      service.record(access, 'appointment', 1, key, 'request', startsAt),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it.each(['abcdefgh', 'x'.repeat(128)])(
+    'accepts idempotency key boundary length %p',
+    async (key) => {
+      const { service, record } = fixture();
+      await service.record(access, 'appointment', 1, key, 'request', startsAt);
+      expect(record).toHaveBeenCalled();
+    },
+  );
+
   it('replays before attempting a new transition', async () => {
     const { service, repository, record, arrival } = fixture();
     repository.replay.mockResolvedValue(arrival);
