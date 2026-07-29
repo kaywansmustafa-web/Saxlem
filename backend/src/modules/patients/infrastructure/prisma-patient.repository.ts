@@ -111,6 +111,16 @@ export class PrismaPatientRepository implements PatientRepository {
     actorId: string,
   ): Promise<ProfileRecord | null> {
     return this.prisma.db.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT "id" FROM "patient_profiles"
+        WHERE "id" = ${profileId}::uuid FOR UPDATE`;
+      const activeQueueEntry = await tx.queueEntry.findFirst({
+        where: {
+          patientProfileId: profileId,
+          status: { in: ['waiting', 'called', 'inConsultation'] },
+        },
+        select: { id: true },
+      });
+      if (activeQueueEntry) return null;
       const result = await tx.patientProfile.updateMany({
         where: {
           id: profileId,

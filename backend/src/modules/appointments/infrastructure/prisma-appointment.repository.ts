@@ -291,6 +291,8 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       return await this.prisma.db.$transaction(async (tx) => {
         const replay = await this.beginCommand(tx, access, command);
         if (replay) return replay;
+        await tx.$queryRaw`SELECT "id" FROM "appointments"
+          WHERE "id" = ${id}::uuid FOR UPDATE`;
         const current = await tx.appointment.findFirst({
           where: {
             id,
@@ -302,6 +304,19 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
           throw new NotFoundException(
             'Appointment was not found or is no longer mutable.',
           );
+        if (action === 'appointment.cancelled') {
+          const activeQueueEntry = await tx.queueEntry.findFirst({
+            where: {
+              appointmentId: id,
+              status: { in: ['waiting', 'called', 'inConsultation'] },
+            },
+            select: { id: true },
+          });
+          if (activeQueueEntry)
+            throw new ConflictException(
+              'An appointment in an active queue cannot be cancelled.',
+            );
+        }
         if (validate) {
           await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${current.organizationId}:${current.doctorId}`}, 0))`;
           await validate();

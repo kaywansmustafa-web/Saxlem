@@ -40,6 +40,30 @@ const configurationSchema = z
       .min(0)
       .max(1440)
       .default(120),
+    QUEUE_RECALL_GRACE_MINUTES: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(1440)
+      .default(5),
+    QUEUE_HEALTH_BUSY_THRESHOLD_MINUTES: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(1440)
+      .default(10),
+    QUEUE_HEALTH_DELAYED_THRESHOLD_MINUTES: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(1440)
+      .default(25),
+    QUEUE_FALLBACK_CONSULTATION_MINUTES: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(480)
+      .default(20),
     ACCESS_TOKEN_SECRET: cryptographicSecret,
     REFRESH_TOKEN_SECRET: cryptographicSecret,
     OTP_SECRET: cryptographicSecret,
@@ -56,6 +80,14 @@ const configurationSchema = z
       context.addIssue({
         code: 'custom',
         message: 'Cryptographic secrets must be independent.',
+      });
+    if (
+      input.QUEUE_HEALTH_DELAYED_THRESHOLD_MINUTES <=
+      input.QUEUE_HEALTH_BUSY_THRESHOLD_MINUTES
+    )
+      context.addIssue({
+        code: 'custom',
+        message: 'Queue delayed threshold must exceed the busy threshold.',
       });
   })
   .transform((input) => {
@@ -77,6 +109,13 @@ const configurationSchema = z
       appointmentFoundationFeeIqd: input.APPOINTMENT_FOUNDATION_FEE_IQD,
       arrivalEarlyWindowMinutes: input.ARRIVAL_EARLY_WINDOW_MINUTES,
       arrivalLateWindowMinutes: input.ARRIVAL_LATE_WINDOW_MINUTES,
+      queueRecallGraceMinutes: input.QUEUE_RECALL_GRACE_MINUTES,
+      queueHealthBusyThresholdMinutes:
+        input.QUEUE_HEALTH_BUSY_THRESHOLD_MINUTES,
+      queueHealthDelayedThresholdMinutes:
+        input.QUEUE_HEALTH_DELAYED_THRESHOLD_MINUTES,
+      queueFallbackConsultationMinutes:
+        input.QUEUE_FALLBACK_CONSULTATION_MINUTES,
       accessTokenSecret: input.ACCESS_TOKEN_SECRET,
       refreshTokenSecret: input.REFRESH_TOKEN_SECRET,
       otpSecret: input.OTP_SECRET,

@@ -154,6 +154,14 @@ describe('real PostgreSQL foundation', () => {
         operationalDate: new Date('2030-01-01'),
       },
     });
+    const arrival = await prisma.appointmentArrival.create({
+      data: {
+        organizationId: context.organization.id,
+        clinicId: context.clinic.id,
+        appointmentId: first.id,
+        patientProfileId: context.profile.id,
+      },
+    });
     await expect(
       prisma.queueSession.create({
         data: {
@@ -164,27 +172,45 @@ describe('real PostgreSQL foundation', () => {
         },
       }),
     ).rejects.toThrow();
-    await prisma.queueEntry.create({
-      data: {
-        organizationId: context.organization.id,
-        clinicId: context.clinic.id,
-        queueSessionId: session.id,
-        appointmentId: first.id,
-        patientProfileId: context.profile.id,
-        queueNumber: 1,
-        position: 0,
-        status: 'called',
-      },
-    });
+    await expect(
+      prisma.queueSession.update({
+        where: { id: session.id },
+        data: {
+          status: 'open',
+          openedAt: new Date(),
+          version: { increment: 1 },
+        },
+      }),
+    ).rejects.toThrow();
+    await expect(
+      prisma.$transaction(async (tx) => {
+        await tx.queueEntry.create({
+          data: {
+            organizationId: context.organization.id,
+            clinicId: context.clinic.id,
+            queueSessionId: session.id,
+            appointmentId: first.id,
+            arrivalId: arrival.id,
+            patientProfileId: context.profile.id,
+            ticketNumber: 1,
+          },
+        });
+        await tx.queueSession.update({
+          where: { id: session.id },
+          data: { nextTicket: { increment: 1 }, version: { increment: 1 } },
+        });
+      }),
+    ).rejects.toThrow();
     await expect(
       prisma.queueEntry.create({
         data: {
           organizationId: context.organization.id,
           clinicId: context.clinic.id,
           queueSessionId: session.id,
+          appointmentId: first.id,
+          arrivalId: arrival.id,
           patientProfileId: context.profile.id,
-          queueNumber: 1,
-          position: 1,
+          ticketNumber: 1,
         },
       }),
     ).rejects.toThrow();
@@ -194,9 +220,10 @@ describe('real PostgreSQL foundation', () => {
           organizationId: context.organization.id,
           clinicId: context.clinic.id,
           queueSessionId: session.id,
+          appointmentId: first.id,
+          arrivalId: arrival.id,
           patientProfileId: context.profile.id,
-          queueNumber: 2,
-          position: 1,
+          ticketNumber: 2,
           status: 'inConsultation',
         },
       }),
@@ -250,15 +277,25 @@ describe('real PostgreSQL foundation', () => {
         operationalDate: new Date('2031-01-01'),
       },
     });
+    const appointmentB = await appointment(b);
+    const arrivalB = await prisma.appointmentArrival.create({
+      data: {
+        organizationId: b.organization.id,
+        clinicId: b.clinic.id,
+        appointmentId: appointmentB.id,
+        patientProfileId: b.profile.id,
+      },
+    });
     await expect(
       prisma.queueEntry.create({
         data: {
           organizationId: b.organization.id,
           clinicId: b.clinic.id,
           queueSessionId: sessionA.id,
+          appointmentId: appointmentB.id,
+          arrivalId: arrivalB.id,
           patientProfileId: b.profile.id,
-          queueNumber: 1,
-          position: 0,
+          ticketNumber: 1,
         },
       }),
     ).rejects.toThrow();
@@ -352,9 +389,7 @@ describe('real PostgreSQL foundation', () => {
     >`SELECT conname FROM pg_constraint`;
     expect(Number(tables[0]?.count)).toBeGreaterThanOrEqual(20);
     expect(
-      indexes.some(
-        (item) => item.indexname === 'queue_entries_single_active_consultation',
-      ),
+      indexes.some((item) => item.indexname === 'queue_entries_single_current'),
     ).toBe(true);
     expect(
       constraints.some(

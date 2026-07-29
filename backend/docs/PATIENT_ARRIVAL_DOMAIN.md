@@ -53,3 +53,8 @@ Commands acquire an idempotency advisory lock and consistently ordered doctor/pa
 Runtime database grants are reapplied after migration. REST and database snapshots remain authoritative. Future queue work may consume `queueReady`, but must not reinterpret or mutate arrival history. Any future realtime transport should publish after authoritative commits and must not become a source of truth.
 
 The runtime role may select, insert, and update arrivals, but cannot delete them. It may insert arrival audits but cannot update or delete them. Database triggers remain a second integrity boundary rather than the sole least-privilege control.
+# Queue handoff
+
+Only an arrival in `queueReady` may be enqueued. Enqueue locks and then re-reads
+the arrival. PostgreSQL prevents an arrival from leaving `queueReady` while its
+queue entry remains waiting, called, or in consultation.

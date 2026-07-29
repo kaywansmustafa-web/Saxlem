@@ -37,6 +37,40 @@ async function grant(): Promise<void> {
   await client.query(
     `REVOKE UPDATE, DELETE ON TABLE public.arrival_audits FROM ${quotedRole}`,
   );
+  await client.query(
+    `REVOKE INSERT, UPDATE, DELETE ON TABLE
+      public.queue_sessions, public.queue_entries,
+      public.queue_activities, public.queue_audits FROM ${quotedRole}`,
+  );
+  await client.query(
+    `GRANT UPDATE (
+      status, next_ticket, opened_at, paused_at, closed_at, pause_reason,
+      version, updated_at
+    ) ON TABLE public.queue_sessions TO ${quotedRole}`,
+  );
+  await client.query(
+    `GRANT UPDATE (
+      status, called_at, recalled_at, consultation_started_at, completed_at,
+      no_response_at, recall_deadline_at, version, updated_at
+    ) ON TABLE public.queue_entries TO ${quotedRole}`,
+  );
+  await client.query(
+    `GRANT INSERT ON TABLE public.queue_activities, public.queue_audits TO ${quotedRole}`,
+  );
+  await client.query(
+    `REVOKE EXECUTE ON FUNCTION
+      public.queue_create_session(uuid,uuid,uuid,date,text)
+      FROM ${quotedRole}`,
+  );
+  await client.query(
+    `GRANT EXECUTE ON FUNCTION
+      public.queue_create_session(uuid,uuid,uuid,date,text,integer),
+      public.queue_create_entry(uuid,uuid,uuid,uuid,uuid,uuid,integer)
+      TO ${quotedRole}`,
+  );
+  await client.query(
+    `REVOKE UPDATE, DELETE ON TABLE public.audit_events FROM ${quotedRole}`,
+  );
 }
 
 void grant().finally(() => client.end());

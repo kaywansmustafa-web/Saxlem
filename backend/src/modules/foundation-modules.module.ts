@@ -4,6 +4,7 @@ import { PatientsModule } from './patients/patients.module';
 import { DoctorsModule } from './doctors/doctors.module';
 import { AppointmentsModule } from './appointments/appointments.module';
 import { ArrivalsModule } from './arrivals/arrivals.module';
+import { QueueModule } from './queue/queue.module';
 
 @Module({})
 export class OrganizationsModule {}
@@ -16,7 +17,6 @@ export class ClinicStaffModule {}
 @Module({})
 export class DoctorAvailabilityModule {}
 @Module({})
-export class QueueSessionsModule {}
 @Module({})
 export class NotificationsModule {}
 @Module({})
@@ -33,7 +33,7 @@ export class AuditModule {}
     AppointmentsModule,
     ArrivalsModule,
     DoctorAvailabilityModule,
-    QueueSessionsModule,
+    QueueModule,
     NotificationsModule,
     AuditModule,
   ],

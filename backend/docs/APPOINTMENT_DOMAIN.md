@@ -29,3 +29,12 @@ Patients are repository-scoped through their patient account; doctors through th
 All API date-times require full ISO-8601 with `Z` or an explicit offset and are persisted as UTC `timestamptz`. The offset makes repeated local hours unambiguous. For a non-UTC offset, the submitted wall-clock label must round-trip through the clinic's IANA timezone; nonexistent DST-gap times and incorrect offsets are rejected. `Z` values are treated as authoritative UTC instants. The default past tolerance is two minutes and can be configured with `APPOINTMENT_PAST_TOLERANCE_MINUTES` from zero through sixty.
 
 Tenant/clinic mismatch for authenticated staff is 403. Patient ownership failures remain non-enumerating. Properly scoped staff may receive sanitized inactive-participant diagnostics. Known overlap and stale-version errors are 409, mandatory audit outage is retryable 503, and unexpected database failures remain standard 500 responses.
+# Queue completion boundary
+
+Live Queue completion enters the Appointment Domain through
+`AppointmentQueueCompletionPort` using the queue's existing transaction.
+`scheduled` and `confirmed` appointments may transition directly to `completed`.
+The prior status is preserved in `appointment.completedFromQueue`; no synthetic
+confirmation transition is created. Version validation, the lifecycle event,
+mandatory global audit, and appointment outbox event are atomic with queue
+completion.

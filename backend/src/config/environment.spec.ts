@@ -44,6 +44,10 @@ describe('backend configuration safety', () => {
     expect(loadConfiguration(required)).toMatchObject({
       arrivalEarlyWindowMinutes: 60,
       arrivalLateWindowMinutes: 120,
+      queueRecallGraceMinutes: 5,
+      queueHealthBusyThresholdMinutes: 10,
+      queueHealthDelayedThresholdMinutes: 25,
+      queueFallbackConsultationMinutes: 20,
     });
     expect(
       loadConfiguration({
@@ -59,6 +63,13 @@ describe('backend configuration safety', () => {
       loadConfiguration({
         ...required,
         ARRIVAL_EARLY_WINDOW_MINUTES: '-1',
+      }),
+    ).toThrow();
+    expect(() =>
+      loadConfiguration({
+        ...required,
+        QUEUE_HEALTH_BUSY_THRESHOLD_MINUTES: '30',
+        QUEUE_HEALTH_DELAYED_THRESHOLD_MINUTES: '25',
       }),
     ).toThrow();
   });

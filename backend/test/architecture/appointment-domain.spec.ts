@@ -18,14 +18,10 @@ describe('appointment domain architecture', () => {
     const module = source(
       'src/modules/appointments/appointments.module.ts',
     ).toLowerCase();
-    for (const forbidden of [
-      'queue',
-      'notification',
-      'billing',
-      'payment',
-      'realtime',
-    ])
+    for (const forbidden of ['notification', 'billing', 'payment', 'realtime'])
       expect(module).not.toContain(forbidden);
+    expect(module).not.toContain('../queue/');
+    expect(module).not.toContain('/modules/queue/');
   });
   it('enforces overlap, immutable references, active context, and optimistic versions', () => {
     const migration = source(
