@@ -71,6 +71,25 @@ async function grant(): Promise<void> {
   await client.query(
     `REVOKE UPDATE, DELETE ON TABLE public.audit_events FROM ${quotedRole}`,
   );
+  await client.query(
+    `REVOKE UPDATE, DELETE ON TABLE public.notification_records FROM ${quotedRole}`,
+  );
+  await client.query(
+    `REVOKE ALL ON TABLE public.notification_record_archive FROM ${quotedRole}`,
+  );
+  await client.query(
+    `REVOKE UPDATE, DELETE ON TABLE public.outbox_events FROM ${quotedRole}`,
+  );
+  await client.query(
+    `GRANT UPDATE (
+      published_at, attempts, next_attempt_at, failed_at, last_error_code
+    ) ON TABLE public.outbox_events TO ${quotedRole}`,
+  );
+  await client.query(
+    `GRANT EXECUTE ON FUNCTION
+      public.notification_mark_read(uuid,uuid,timestamptz)
+      TO ${quotedRole}`,
+  );
 }
 
 void grant().finally(() => client.end());

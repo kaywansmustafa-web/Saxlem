@@ -13,6 +13,9 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'arrival:read',
     'arrival:record',
     'queue:patient-status:read',
+    'notifications:read',
+    'notifications:stream',
+    'notifications:mark-read',
   ],
   receptionist: [
     'clinic:operations:read',
@@ -35,6 +38,9 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'queue:call-next',
     'queue:recall',
     'queue:mark-no-response',
+    'notifications:read',
+    'notifications:stream',
+    'notifications:mark-read',
   ],
   doctor: [
     'doctor:workspace:read',
@@ -50,6 +56,9 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'queue:call-next',
     'queue:consultation:start',
     'queue:consultation:complete',
+    'notifications:read',
+    'notifications:stream',
+    'notifications:mark-read',
   ],
   clinicManager: [
     'clinic:management:read',
@@ -75,6 +84,9 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'queue:mark-no-response',
     'queue:consultation:start',
     'queue:consultation:complete',
+    'notifications:read',
+    'notifications:stream',
+    'notifications:mark-read',
   ],
   platformAdministrator: [
     'platform:administration',

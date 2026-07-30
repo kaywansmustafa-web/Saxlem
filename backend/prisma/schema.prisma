@@ -253,7 +253,6 @@ model PatientProfile {
   updatedAt                 DateTime                     @updatedAt @map("updated_at") @db.Timestamptz(3)
   patientAccount            PatientAccount               @relation(fields: [patientAccountId], references: [id], onDelete: Restrict)
   relationships             FamilyRelationship[]
-  notifications             NotificationRecord[]
   organizationRegistrations OrganizationPatientProfile[]
   appointmentArrivals       AppointmentArrival[]
   activeForAccount          PatientAccountActiveProfile?
@@ -525,14 +524,15 @@ model DoctorScheduleException {
 }
 
 model OrganizationPatientProfile {
-  organizationId   String         @map("organization_id") @db.Uuid
-  patientProfileId String         @map("patient_profile_id") @db.Uuid
-  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
-  status           RecordStatus   @default(active)
-  organization     Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Restrict)
+  organizationId   String               @map("organization_id") @db.Uuid
+  patientProfileId String               @map("patient_profile_id") @db.Uuid
+  createdAt        DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  status           RecordStatus         @default(active)
+  organization     Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  patientProfile   PatientProfile       @relation(fields: [patientProfileId], references: [id], onDelete: Restrict)
   appointments     Appointment[]
   queueEntries     QueueEntry[]
+  notifications    NotificationRecord[]
 
   @@id([organizationId, patientProfileId])
   @@map("organization_patient_profiles")
@@ -753,24 +753,48 @@ model QueueAudit {
 }
 
 model NotificationRecord {
-  id               String               @id @default(uuid(7)) @db.Uuid
+  id                  String                      @id @default(uuid(7)) @db.Uuid
+  deliverySequence    BigInt                      @unique @default(autoincrement()) @map("delivery_sequence")
+  sourceOutboxEventId String                      @map("source_outbox_event_id") @db.Uuid
+  organizationId      String                      @map("organization_id") @db.Uuid
+  clinicId            String                      @map("clinic_id") @db.Uuid
+  recipientUserId     String                      @map("recipient_user_id") @db.Uuid
+  patientProfileId    String?                     @map("patient_profile_id") @db.Uuid
+  type                String
+  priority            NotificationPriority        @default(normal)
+  payload             Json
+  occurredAt          DateTime                    @map("occurred_at") @db.Timestamptz(3)
+  createdAt           DateTime                    @default(now()) @map("created_at") @db.Timestamptz(3)
+  readAt              DateTime?                   @map("read_at") @db.Timestamptz(3)
+  organization        Organization                @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  clinic              Clinic                      @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+  recipientUser       User                        @relation(fields: [recipientUserId], references: [id], onDelete: Restrict)
+  patientRegistration OrganizationPatientProfile? @relation(fields: [organizationId, patientProfileId], references: [organizationId, patientProfileId], onDelete: Restrict)
+  sourceOutboxEvent   OutboxEvent                 @relation(fields: [sourceOutboxEventId], references: [id], onDelete: Restrict)
+
+  @@unique([sourceOutboxEventId, recipientUserId, type])
+  @@index([recipientUserId, deliverySequence])
+  @@index([recipientUserId, readAt, deliverySequence])
+  @@index([organizationId, clinicId, recipientUserId, deliverySequence])
+  @@map("notification_records")
+}
+
+/// Migration-only preservation store. Runtime SQL has no access.
+model NotificationRecordArchive {
+  id               String               @id @db.Uuid
   organizationId   String?              @map("organization_id") @db.Uuid
   clinicId         String?              @map("clinic_id") @db.Uuid
   recipientUserId  String               @map("recipient_user_id") @db.Uuid
   patientProfileId String?              @map("patient_profile_id") @db.Uuid
   type             String
-  priority         NotificationPriority @default(normal)
+  priority         NotificationPriority
   payload          Json
   occurredAt       DateTime             @map("occurred_at") @db.Timestamptz(3)
   readAt           DateTime?            @map("read_at") @db.Timestamptz(3)
-  organization     Organization?        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  clinic           Clinic?              @relation(fields: [clinicId], references: [id], onDelete: Restrict)
-  recipientUser    User                 @relation(fields: [recipientUserId], references: [id], onDelete: Restrict)
-  patientProfile   PatientProfile?      @relation(fields: [patientProfileId], references: [id], onDelete: Restrict)
+  archivedAt       DateTime             @default(now()) @map("archived_at") @db.Timestamptz(3)
+  archiveReason    String               @map("archive_reason")
 
-  @@index([recipientUserId, readAt, occurredAt])
-  @@index([organizationId, clinicId, occurredAt])
-  @@map("notification_records")
+  @@map("notification_record_archive")
 }
 
 model RefreshSession {
@@ -862,16 +886,20 @@ model IdempotencyRecord {
 }
 
 model OutboxEvent {
-  id            String    @id @default(uuid(7)) @db.Uuid
-  aggregateType String    @map("aggregate_type")
-  aggregateId   String    @map("aggregate_id") @db.Uuid
-  eventType     String    @map("event_type")
+  id            String               @id @default(uuid(7)) @db.Uuid
+  aggregateType String               @map("aggregate_type")
+  aggregateId   String               @map("aggregate_id") @db.Uuid
+  eventType     String               @map("event_type")
   payload       Json
-  occurredAt    DateTime  @map("occurred_at") @db.Timestamptz(3)
-  publishedAt   DateTime? @map("published_at") @db.Timestamptz(3)
-  attempts      Int       @default(0)
+  occurredAt    DateTime             @map("occurred_at") @db.Timestamptz(3)
+  publishedAt   DateTime?            @map("published_at") @db.Timestamptz(3)
+  attempts      Int                  @default(0)
+  nextAttemptAt DateTime?            @map("next_attempt_at") @db.Timestamptz(3)
+  failedAt      DateTime?            @map("failed_at") @db.Timestamptz(3)
+  lastErrorCode String?              @map("last_error_code")
+  notifications NotificationRecord[]
 
-  @@index([publishedAt, occurredAt])
+  @@index([publishedAt, failedAt, nextAttemptAt, occurredAt, id])
   @@map("outbox_events")
 }
 

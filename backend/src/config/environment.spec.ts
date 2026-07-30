@@ -73,4 +73,34 @@ describe('backend configuration safety', () => {
       }),
     ).toThrow();
   });
+
+  it('uses bounded notification worker and stream defaults', () => {
+    expect(loadConfiguration(required)).toMatchObject({
+      notificationWorkerEnabled: false,
+      notificationWorkerPollIntervalMs: 1000,
+      notificationWorkerTickLimit: 20,
+      notificationWorkerMaxAttempts: 8,
+      notificationWorkerRetryBaseMs: 1000,
+      notificationWorkerRetryMaxMs: 300000,
+      notificationSsePollIntervalMs: 1000,
+      notificationSseHeartbeatIntervalMs: 15000,
+      notificationSseMaxConnectionMs: 300000,
+      notificationSsePageSize: 50,
+      notificationSseMaxReconnectBacklog: 1000,
+    });
+    expect(() =>
+      loadConfiguration({
+        ...required,
+        NOTIFICATION_WORKER_RETRY_BASE_MS: '2000',
+        NOTIFICATION_WORKER_RETRY_MAX_MS: '1000',
+      }),
+    ).toThrow();
+    expect(() =>
+      loadConfiguration({
+        ...required,
+        NOTIFICATION_SSE_HEARTBEAT_INTERVAL_MS: '30000',
+        NOTIFICATION_SSE_MAX_CONNECTION_MS: '30000',
+      }),
+    ).toThrow();
+  });
 });

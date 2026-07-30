@@ -64,6 +64,67 @@ const configurationSchema = z
       .min(1)
       .max(480)
       .default(20),
+    NOTIFICATION_WORKER_ENABLED: truthy.default(false),
+    NOTIFICATION_WORKER_POLL_INTERVAL_MS: z.coerce
+      .number()
+      .int()
+      .min(100)
+      .max(60000)
+      .default(1000),
+    NOTIFICATION_WORKER_TICK_LIMIT: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(100)
+      .default(20),
+    NOTIFICATION_WORKER_MAX_ATTEMPTS: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(20)
+      .default(8),
+    NOTIFICATION_WORKER_RETRY_BASE_MS: z.coerce
+      .number()
+      .int()
+      .min(100)
+      .max(60000)
+      .default(1000),
+    NOTIFICATION_WORKER_RETRY_MAX_MS: z.coerce
+      .number()
+      .int()
+      .min(1000)
+      .max(3600000)
+      .default(300000),
+    NOTIFICATION_SSE_POLL_INTERVAL_MS: z.coerce
+      .number()
+      .int()
+      .min(250)
+      .max(30000)
+      .default(1000),
+    NOTIFICATION_SSE_HEARTBEAT_INTERVAL_MS: z.coerce
+      .number()
+      .int()
+      .min(5000)
+      .max(60000)
+      .default(15000),
+    NOTIFICATION_SSE_MAX_CONNECTION_MS: z.coerce
+      .number()
+      .int()
+      .min(30000)
+      .max(900000)
+      .default(300000),
+    NOTIFICATION_SSE_PAGE_SIZE: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(100)
+      .default(50),
+    NOTIFICATION_SSE_MAX_RECONNECT_BACKLOG: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(10000)
+      .default(1000),
     ACCESS_TOKEN_SECRET: cryptographicSecret,
     REFRESH_TOKEN_SECRET: cryptographicSecret,
     OTP_SECRET: cryptographicSecret,
@@ -88,6 +149,23 @@ const configurationSchema = z
       context.addIssue({
         code: 'custom',
         message: 'Queue delayed threshold must exceed the busy threshold.',
+      });
+    if (
+      input.NOTIFICATION_WORKER_RETRY_BASE_MS >
+      input.NOTIFICATION_WORKER_RETRY_MAX_MS
+    )
+      context.addIssue({
+        code: 'custom',
+        message: 'Notification retry base must not exceed its maximum.',
+      });
+    if (
+      input.NOTIFICATION_SSE_HEARTBEAT_INTERVAL_MS >=
+      input.NOTIFICATION_SSE_MAX_CONNECTION_MS
+    )
+      context.addIssue({
+        code: 'custom',
+        message:
+          'Notification heartbeat must be shorter than the connection lifetime.',
       });
   })
   .transform((input) => {
@@ -116,6 +194,20 @@ const configurationSchema = z
         input.QUEUE_HEALTH_DELAYED_THRESHOLD_MINUTES,
       queueFallbackConsultationMinutes:
         input.QUEUE_FALLBACK_CONSULTATION_MINUTES,
+      notificationWorkerEnabled: input.NOTIFICATION_WORKER_ENABLED,
+      notificationWorkerPollIntervalMs:
+        input.NOTIFICATION_WORKER_POLL_INTERVAL_MS,
+      notificationWorkerTickLimit: input.NOTIFICATION_WORKER_TICK_LIMIT,
+      notificationWorkerMaxAttempts: input.NOTIFICATION_WORKER_MAX_ATTEMPTS,
+      notificationWorkerRetryBaseMs: input.NOTIFICATION_WORKER_RETRY_BASE_MS,
+      notificationWorkerRetryMaxMs: input.NOTIFICATION_WORKER_RETRY_MAX_MS,
+      notificationSsePollIntervalMs: input.NOTIFICATION_SSE_POLL_INTERVAL_MS,
+      notificationSseHeartbeatIntervalMs:
+        input.NOTIFICATION_SSE_HEARTBEAT_INTERVAL_MS,
+      notificationSseMaxConnectionMs: input.NOTIFICATION_SSE_MAX_CONNECTION_MS,
+      notificationSsePageSize: input.NOTIFICATION_SSE_PAGE_SIZE,
+      notificationSseMaxReconnectBacklog:
+        input.NOTIFICATION_SSE_MAX_RECONNECT_BACKLOG,
       accessTokenSecret: input.ACCESS_TOKEN_SECRET,
       refreshTokenSecret: input.REFRESH_TOKEN_SECRET,
       otpSecret: input.OTP_SECRET,
