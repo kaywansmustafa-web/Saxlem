@@ -1,4 +1,20 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Saxlem Clinic Portal
+
+## Environment safety
+
+The portal fails closed when its environment is missing or unknown. Only the
+exact `development` value selects the legacy mock composition; every other
+value selects the production-safe composition.
+
+`SAXLEM_PORTAL_SESSION_SECRET` must be base64 or base64url encoding of at least
+32 random bytes. Generate a local value without committing it:
+
+```powershell
+node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))"
+```
+
+The value in `.env.example` is intentionally invalid. Development also fails
+closed until a valid generated value and backend origin are configured.
 
 ## Getting Started
 

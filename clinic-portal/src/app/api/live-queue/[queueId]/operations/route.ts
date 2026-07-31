@@ -1,4 +1,4 @@
-import { liveQueueServices } from "@/infrastructure/composition";
+import { liveQueueServices } from "@portal-composition";
 import type { QueueOperation } from "@/features/live-queue/domain/models";
 import { QueueError } from "@/features/live-queue/domain/queue-rules";
 const operations: QueueOperation[] = ["open", "pause", "resume", "callNext", "recall", "noResponse", "complete"];

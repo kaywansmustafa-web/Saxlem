@@ -1,0 +1,1 @@
+"use client";import{LocalizedRouteState}from"@/features/portal-foundation/presentation/localized-route-state";export default function Error({reset}:{error:Error&{digest?:string};reset:()=>void}){return <LocalizedRouteState kind="failure" retry={reset}/>}
