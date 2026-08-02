@@ -907,6 +907,131 @@
         ]
       }
     },
+    "/api/v1/patients/directory": {
+      "get": {
+        "operationId": "PatientsController_directory",
+        "parameters": [
+          {
+            "name": "q",
+            "required": true,
+            "in": "query",
+            "description": "Trimmed search term for patient name, phone number, or profile identifier prefix.",
+            "schema": {
+              "minLength": 2,
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 25,
+              "format": "int32",
+              "default": 10,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Opaque signed cursor.",
+            "schema": {
+              "maxLength": 2048,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientDirectoryPageResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The authenticated identity lacks the required capability or tenant context."
+          },
+          "503": {
+            "description": "A required staff-read audit could not be recorded."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Search the clinic-scoped patient directory",
+        "tags": [
+          "patients"
+        ]
+      }
+    },
+    "/api/v1/patients/directory/{patientProfileId}": {
+      "get": {
+        "operationId": "PatientsController_directoryProfile",
+        "parameters": [
+          {
+            "name": "patientProfileId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientDirectoryProfileDetailResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The authenticated identity lacks the required capability or tenant context."
+          },
+          "404": {
+            "description": "No active patient is visible in the authenticated clinic."
+          },
+          "503": {
+            "description": "A required staff-read audit could not be recorded."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get one clinic-scoped patient profile view",
+        "tags": [
+          "patients"
+        ]
+      }
+    },
     "/api/v1/patients/me": {
       "get": {
         "operationId": "PatientsController_me",
@@ -922,7 +1047,7 @@
             "description": "Bearer token is missing, invalid, or expired."
           },
           "403": {
-            "description": "The authenticated identity is not an eligible patient."
+            "description": "The authenticated identity lacks the required capability or tenant context."
           }
         },
         "security": [
@@ -961,7 +1086,7 @@
             "description": "Bearer token is missing, invalid, or expired."
           },
           "403": {
-            "description": "The authenticated identity is not an eligible patient."
+            "description": "The authenticated identity lacks the required capability or tenant context."
           }
         },
         "security": [
@@ -1005,7 +1130,7 @@
             "description": "Bearer token is missing, invalid, or expired."
           },
           "403": {
-            "description": "The authenticated identity is not an eligible patient."
+            "description": "The authenticated identity lacks the required capability or tenant context."
           },
           "409": {
             "description": "Self-profile invariant would be violated."
@@ -1054,7 +1179,7 @@
             "description": "Bearer token is missing, invalid, or expired."
           },
           "403": {
-            "description": "The authenticated identity is not an eligible patient."
+            "description": "The authenticated identity lacks the required capability or tenant context."
           },
           "404": {
             "description": "Profile does not exist in this patient account."
@@ -1111,7 +1236,7 @@
             "description": "Bearer token is missing, invalid, or expired."
           },
           "403": {
-            "description": "The authenticated identity is not an eligible patient."
+            "description": "The authenticated identity lacks the required capability or tenant context."
           },
           "409": {
             "description": "Profile is archived or its version is stale."
@@ -1158,7 +1283,7 @@
             "description": "Bearer token is missing, invalid, or expired."
           },
           "403": {
-            "description": "The authenticated identity is not an eligible patient."
+            "description": "The authenticated identity lacks the required capability or tenant context."
           },
           "409": {
             "description": "Profile is active, archived, or its version is stale."
@@ -1200,7 +1325,7 @@
             "description": "Bearer token is missing, invalid, or expired."
           },
           "403": {
-            "description": "The authenticated identity is not an eligible patient."
+            "description": "The authenticated identity lacks the required capability or tenant context."
           },
           "409": {
             "description": "Archived profiles cannot become active."
@@ -5215,6 +5340,152 @@
           "clinicName",
           "timezone",
           "workingHours"
+        ]
+      },
+      "PatientDirectoryListItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "patientProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "lastAppointmentAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "nextAppointmentAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "patientProfileId",
+          "displayName",
+          "active",
+          "lastAppointmentAt",
+          "nextAppointmentAt"
+        ]
+      },
+      "PatientDirectoryPageResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PatientDirectoryListItemResponseDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true,
+            "description": "Opaque signed cursor."
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "PatientDirectoryAppointmentResponseDto": {
+        "type": "object",
+        "properties": {
+          "appointmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorName": {
+            "type": "string",
+            "nullable": true
+          },
+          "scheduledStartAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scheduledEndAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "scheduled",
+              "confirmed",
+              "completed",
+              "cancelled",
+              "noShow"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "appointmentId",
+          "doctorId",
+          "doctorName",
+          "scheduledStartAt",
+          "scheduledEndAt",
+          "status",
+          "version"
+        ]
+      },
+      "PatientDirectoryAppointmentsResponseDto": {
+        "type": "object",
+        "properties": {
+          "upcoming": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PatientDirectoryAppointmentResponseDto"
+            }
+          },
+          "recent": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PatientDirectoryAppointmentResponseDto"
+            }
+          }
+        },
+        "required": [
+          "upcoming",
+          "recent"
+        ]
+      },
+      "PatientDirectoryProfileDetailResponseDto": {
+        "type": "object",
+        "properties": {
+          "patientProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "appointments": {
+            "$ref": "#/components/schemas/PatientDirectoryAppointmentsResponseDto"
+          }
+        },
+        "required": [
+          "patientProfileId",
+          "displayName",
+          "active",
+          "appointments"
         ]
       },
       "PatientProfileResponseDto": {

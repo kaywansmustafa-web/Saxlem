@@ -41,6 +41,9 @@ export class AppModule implements NestModule {
             },
             genReqId: (request) =>
               request.headers['x-request-id']?.toString() ?? randomUUID(),
+            serializers: {
+              req: sanitizeLoggedRequest,
+            },
           },
         }),
         HealthModule,
@@ -51,4 +54,19 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
     consumer.apply(RequestIdMiddleware).forRoutes('*');
   }
+}
+
+interface LoggedRequest {
+  readonly [key: string]: unknown;
+  readonly url?: string;
+}
+
+export function sanitizeLoggedRequest(request: LoggedRequest): LoggedRequest {
+  const url = request.url?.split('?', 1)[0];
+  const { query: _query, ...safe } = request;
+  void _query;
+  return Object.freeze({
+    ...safe,
+    ...(url ? { url } : {}),
+  });
 }

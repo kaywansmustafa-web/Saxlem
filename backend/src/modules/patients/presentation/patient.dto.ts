@@ -1,7 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsIn,
   IsInt,
+  IsOptional,
   IsString,
   IsUUID,
   Matches,
@@ -101,4 +103,96 @@ export class PatientProfileResponseDto {
   @ApiProperty() version!: number;
   @ApiProperty() createdAt!: string;
   @ApiProperty() updatedAt!: string;
+}
+
+export class PatientDirectorySearchQueryDto {
+  @ApiProperty({
+    minLength: 2,
+    maxLength: 100,
+    description:
+      'Trimmed search term for patient name, phone number, or profile identifier prefix.',
+  })
+  @IsString()
+  @MinLength(2)
+  @MaxLength(100)
+  q!: string;
+
+  @ApiPropertyOptional({
+    type: 'integer',
+    format: 'int32',
+    minimum: 1,
+    maximum: 25,
+    default: 10,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(25)
+  pageSize?: number = 10;
+
+  @ApiPropertyOptional({
+    type: String,
+    maxLength: 2048,
+    description: 'Opaque signed cursor.',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(2048)
+  cursor?: string;
+}
+
+export class PatientDirectoryProfileParamsDto {
+  @ApiProperty({ format: 'uuid' }) @IsUUID() patientProfileId!: string;
+}
+
+export class PatientDirectoryListItemResponseDto {
+  @ApiProperty({ format: 'uuid' }) patientProfileId!: string;
+  @ApiProperty({ type: String }) displayName!: string;
+  @ApiProperty({ type: Boolean }) active!: boolean;
+  @ApiProperty({ type: String, format: 'date-time', nullable: true })
+  lastAppointmentAt!: string | null;
+  @ApiProperty({ type: String, format: 'date-time', nullable: true })
+  nextAppointmentAt!: string | null;
+}
+
+export class PatientDirectoryPageResponseDto {
+  @ApiProperty({ type: PatientDirectoryListItemResponseDto, isArray: true })
+  items!: PatientDirectoryListItemResponseDto[];
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'Opaque signed cursor.',
+  })
+  nextCursor!: string | null;
+}
+
+export class PatientDirectoryAppointmentResponseDto {
+  @ApiProperty({ format: 'uuid' }) appointmentId!: string;
+  @ApiProperty({ format: 'uuid' }) doctorId!: string;
+  @ApiProperty({ type: String, nullable: true }) doctorName!: string | null;
+  @ApiProperty({ type: String, format: 'date-time' }) scheduledStartAt!: string;
+  @ApiProperty({ type: String, format: 'date-time' }) scheduledEndAt!: string;
+  @ApiProperty({
+    enum: ['scheduled', 'confirmed', 'completed', 'cancelled', 'noShow'],
+  })
+  status!: string;
+  @ApiProperty({ type: 'integer', format: 'int32', minimum: 1 })
+  version!: number;
+}
+
+export class PatientDirectoryAppointmentsResponseDto {
+  @ApiProperty({ type: PatientDirectoryAppointmentResponseDto, isArray: true })
+  upcoming!: PatientDirectoryAppointmentResponseDto[];
+
+  @ApiProperty({ type: PatientDirectoryAppointmentResponseDto, isArray: true })
+  recent!: PatientDirectoryAppointmentResponseDto[];
+}
+
+export class PatientDirectoryProfileDetailResponseDto {
+  @ApiProperty({ format: 'uuid' }) patientProfileId!: string;
+  @ApiProperty({ type: String }) displayName!: string;
+  @ApiProperty({ type: Boolean }) active!: boolean;
+  @ApiProperty({ type: PatientDirectoryAppointmentsResponseDto })
+  appointments!: PatientDirectoryAppointmentsResponseDto;
 }

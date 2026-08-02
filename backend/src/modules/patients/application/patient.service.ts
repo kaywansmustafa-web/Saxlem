@@ -5,12 +5,22 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
+import { BACKEND_CONFIGURATION } from '../../../config/configuration.module';
+import type { BackendConfiguration } from '../../../config/environment';
+import { keyedHash, safeEqualHex } from '../../identity/domain/security';
 import {
   PATIENT_REPOSITORY,
+  type PatientDirectoryAccess,
+  type PatientDirectoryCursorProjection,
+  type PatientDirectoryDetailProjection,
+  type PatientDirectoryQuery,
+  type PatientDirectorySearchPage,
   type PatientRepository,
   type ProfileRecord,
 } from '../domain/patient.repository';
+import { PatientAuditPersistenceError } from '../domain/patient.errors';
 import {
   apiRelationship,
   type PatientAccountProjection,
@@ -28,6 +38,8 @@ export interface PatientMutationInput {
 export class PatientService {
   constructor(
     @Inject(PATIENT_REPOSITORY) private readonly repository: PatientRepository,
+    @Inject(BACKEND_CONFIGURATION)
+    private readonly configuration: BackendConfiguration,
   ) {}
 
   async me(userId: string): Promise<PatientAccountProjection> {
@@ -63,6 +75,81 @@ export class PatientService {
     const profile = await this.repository.profile(account.id, profileId);
     if (!profile) throw new NotFoundException('Patient profile was not found.');
     return this.project(profile);
+  }
+
+  async searchDirectory(
+    access: PatientDirectoryAccess,
+    input: PatientDirectoryQuery,
+    requestId: string,
+  ): Promise<PatientDirectorySearchPage> {
+    this.requireStaffAccess(access);
+    const q = input.q.trim();
+    if (q.length < 2 || q.length > 100)
+      throw new BadRequestException(
+        'Patient directory search query must be between 2 and 100 characters.',
+      );
+    if (
+      !Number.isInteger(input.pageSize) ||
+      input.pageSize < 1 ||
+      input.pageSize > 25
+    )
+      throw new BadRequestException(
+        'Patient directory page size must be between 1 and 25.',
+      );
+    let cursor: PatientDirectoryCursorProjection | undefined;
+    if (input.cursor) {
+      cursor = this.decodeCursor(input.cursor, access, q, input.pageSize);
+    }
+    try {
+      const page = await this.repository.searchDirectory(
+        access,
+        {
+          q,
+          pageSize: input.pageSize,
+        },
+        cursor,
+        requestId,
+      );
+      return Object.freeze({
+        items: Object.freeze(page.items),
+        nextCursor: page.nextCursor
+          ? this.encodeCursor(page.nextCursor, access)
+          : null,
+      });
+    } catch (error) {
+      if (error instanceof BadRequestException) throw error;
+      if (error instanceof NotFoundException) throw error;
+      if (error instanceof PatientAuditPersistenceError)
+        throw new ServiceUnavailableException(
+          'Security audit is temporarily unavailable.',
+        );
+      throw error;
+    }
+  }
+
+  async getDirectoryProfile(
+    access: PatientDirectoryAccess,
+    profileId: string,
+    requestId: string,
+  ): Promise<PatientDirectoryDetailProjection> {
+    this.requireStaffAccess(access);
+    try {
+      const profile = await this.repository.getDirectoryProfile(
+        access,
+        profileId,
+        requestId,
+      );
+      if (!profile)
+        throw new NotFoundException('Patient profile was not found.');
+      return profile;
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+      if (error instanceof PatientAuditPersistenceError)
+        throw new ServiceUnavailableException(
+          'Security audit is temporarily unavailable.',
+        );
+      throw error;
+    }
   }
 
   async create(
@@ -168,6 +255,12 @@ export class PatientService {
     return this.me(userId);
   }
 
+  private requireStaffAccess(access: PatientDirectoryAccess): void {
+    if (!access.organizationId || !access.clinicId) {
+      throw new ForbiddenException('Staff tenant context is required.');
+    }
+  }
+
   private async account(userId: string) {
     const account = await this.repository.accountForUser(userId);
     if (!account)
@@ -188,6 +281,89 @@ export class PatientService {
       active: profile.status === 'active',
       version: profile.version,
     });
+  }
+
+  private encodeCursor(
+    cursor: PatientDirectoryCursorProjection,
+    access: PatientDirectoryAccess,
+  ): string {
+    const payload = Buffer.from(
+      JSON.stringify({
+        organizationId: access.organizationId,
+        clinicId: access.clinicId,
+        query: cursor.query,
+        pageSize: cursor.pageSize,
+        lastName: cursor.lastName,
+        firstName: cursor.firstName,
+        profileId: cursor.profileId,
+      }),
+    ).toString('base64url');
+    return `${payload}.${this.sign(payload)}`;
+  }
+
+  private decodeCursor(
+    cursor: string,
+    access: PatientDirectoryAccess,
+    query: string,
+    pageSize: number,
+  ): PatientDirectoryCursorProjection {
+    try {
+      if (cursor.length > 2048) throw new Error('invalid');
+      const [payload, signature, extra] = cursor.split('.');
+      if (!payload || !signature || extra) throw new Error('invalid');
+      if (!safeEqualHex(signature, this.sign(payload)))
+        throw new Error('invalid');
+      const parsed = JSON.parse(
+        Buffer.from(payload, 'base64url').toString('utf8'),
+      ) as {
+        organizationId?: unknown;
+        clinicId?: unknown;
+        query?: unknown;
+        pageSize?: unknown;
+        lastName?: unknown;
+        firstName?: unknown;
+        profileId?: unknown;
+      };
+      if (
+        parsed.organizationId !== access.organizationId ||
+        parsed.clinicId !== access.clinicId ||
+        typeof parsed.query !== 'string' ||
+        parsed.query !== query ||
+        typeof parsed.pageSize !== 'number' ||
+        !Number.isInteger(parsed.pageSize) ||
+        parsed.pageSize !== pageSize ||
+        parsed.pageSize < 1 ||
+        parsed.pageSize > 25 ||
+        typeof parsed.lastName !== 'string' ||
+        typeof parsed.firstName !== 'string' ||
+        typeof parsed.profileId !== 'string' ||
+        !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(
+          parsed.profileId,
+        ) ||
+        parsed.lastName.length > 100 ||
+        parsed.firstName.length > 100
+      )
+        throw new Error('invalid');
+      return {
+        organizationId: access.organizationId,
+        clinicId: access.clinicId,
+        query: parsed.query,
+        pageSize: parsed.pageSize,
+        lastName: parsed.lastName,
+        firstName: parsed.firstName,
+        profileId: parsed.profileId,
+      };
+    } catch {
+      throw new BadRequestException('Patient directory cursor is invalid.');
+    }
+  }
+
+  private sign(payload: string): string {
+    return keyedHash(
+      'patient-directory-pagination-cursor',
+      payload,
+      this.configuration.auditHashSecret,
+    );
   }
 
   private dateOfBirth(value: string): Date {

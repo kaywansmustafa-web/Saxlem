@@ -2,23 +2,26 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiServiceUnavailableResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -32,6 +35,10 @@ import {
   ActivatePatientProfileDto,
   ArchivePatientProfileDto,
   CreatePatientProfileDto,
+  PatientDirectoryPageResponseDto,
+  PatientDirectoryProfileDetailResponseDto,
+  PatientDirectoryProfileParamsDto,
+  PatientDirectorySearchQueryDto,
   PatientProfileParamsDto,
   PatientProfileResponseDto,
   UpdatePatientProfileDto,
@@ -44,15 +51,59 @@ import {
 })
 @ApiBadRequestResponse({ description: 'Request validation failed.' })
 @ApiForbiddenResponse({
-  description: 'The authenticated identity is not an eligible patient.',
+  description:
+    'The authenticated identity lacks the required capability or tenant context.',
 })
 @UseGuards(JwtAuthGuard)
-@RequireCapabilities('patient:self')
 @Controller('patients')
 export class PatientsController {
   constructor(private readonly patients: PatientService) {}
 
+  @Get('directory')
+  @RequireCapabilities('patient:directory:read')
+  @ApiOperation({ summary: 'Search the clinic-scoped patient directory' })
+  @ApiOkResponse({ type: PatientDirectoryPageResponseDto })
+  @ApiServiceUnavailableResponse({
+    description: 'A required staff-read audit could not be recorded.',
+  })
+  directory(
+    @Req() request: AuthenticatedRequest,
+    @Query() query: PatientDirectorySearchQueryDto,
+  ) {
+    return this.patients.searchDirectory(
+      this.directoryAccess(request),
+      {
+        q: query.q,
+        pageSize: query.pageSize ?? 10,
+        ...(query.cursor ? { cursor: query.cursor } : {}),
+      },
+      request.requestId,
+    );
+  }
+
+  @Get('directory/:patientProfileId')
+  @RequireCapabilities('patient:directory:read')
+  @ApiOperation({ summary: 'Get one clinic-scoped patient profile view' })
+  @ApiOkResponse({ type: PatientDirectoryProfileDetailResponseDto })
+  @ApiNotFoundResponse({
+    description: 'No active patient is visible in the authenticated clinic.',
+  })
+  @ApiServiceUnavailableResponse({
+    description: 'A required staff-read audit could not be recorded.',
+  })
+  directoryProfile(
+    @Req() request: AuthenticatedRequest,
+    @Param() params: PatientDirectoryProfileParamsDto,
+  ) {
+    return this.patients.getDirectoryProfile(
+      this.directoryAccess(request),
+      params.patientProfileId,
+      request.requestId,
+    );
+  }
+
   @Get('me')
+  @RequireCapabilities('patient:self')
   @ApiOperation({
     summary: 'Get the authenticated patient account and current patient',
   })
@@ -62,6 +113,7 @@ export class PatientsController {
   }
 
   @Get('profiles')
+  @RequireCapabilities('patient:self')
   @ApiOperation({
     summary: 'List patient profiles owned by the authenticated account',
   })
@@ -71,6 +123,7 @@ export class PatientsController {
   }
 
   @Get('profiles/:id')
+  @RequireCapabilities('patient:self')
   @ApiOperation({ summary: 'Get one owned patient profile' })
   @ApiOkResponse({ type: PatientProfileResponseDto })
   @ApiNotFoundResponse({
@@ -84,6 +137,7 @@ export class PatientsController {
   }
 
   @Post('profiles')
+  @RequireCapabilities('patient:self')
   @ApiOperation({ summary: 'Create a self or family-member patient profile' })
   @ApiCreatedResponse({ type: PatientProfileResponseDto })
   @ApiConflictResponse({
@@ -97,6 +151,7 @@ export class PatientsController {
   }
 
   @Patch('profiles/:id')
+  @RequireCapabilities('patient:self')
   @ApiOperation({
     summary: 'Update an owned active profile using optimistic concurrency',
   })
@@ -118,6 +173,7 @@ export class PatientsController {
   }
 
   @Post('active')
+  @RequireCapabilities('patient:self')
   @HttpCode(200)
   @ApiOperation({ summary: 'Choose the current active patient profile' })
   @ApiOkResponse({ description: 'Updated patient account projection.' })
@@ -136,6 +192,7 @@ export class PatientsController {
   }
 
   @Delete('profiles/:id')
+  @RequireCapabilities('patient:self')
   @HttpCode(204)
   @ApiOperation({
     summary: 'Archive a family-member profile; no physical deletion occurs',
@@ -154,6 +211,22 @@ export class PatientsController {
       body.version,
       request.requestId,
     );
+  }
+
+  private directoryAccess(request: AuthenticatedRequest) {
+    if (!request.principal) {
+      throw new Error('Authentication guard invariant is broken.');
+    }
+    const organizationId = request.tenant?.organizationId;
+    const clinicId = request.tenant?.clinicId;
+    if (!organizationId || !clinicId) {
+      throw new ForbiddenException('Staff tenant context is required.');
+    }
+    return {
+      actorId: request.principal.id,
+      organizationId,
+      clinicId,
+    };
   }
 
   private userId(request: AuthenticatedRequest): string {

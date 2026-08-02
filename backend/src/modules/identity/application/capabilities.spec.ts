@@ -51,3 +51,18 @@ describe('arrival capabilities', () => {
     expect(granted.has('arrival:record')).toBe(canRecord);
   });
 });
+
+describe('patient directory capabilities', () => {
+  it.each([
+    ['receptionist', true],
+    ['clinicManager', true],
+    ['doctor', false],
+    ['patient', false],
+    ['platformAdministrator', false],
+  ] as const)(
+    'grants the directory capability only to staff roles',
+    (role, granted) => {
+      expect(capabilitiesFor(role).has('patient:directory:read')).toBe(granted);
+    },
+  );
+});
