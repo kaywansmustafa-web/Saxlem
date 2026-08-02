@@ -15,8 +15,9 @@ export function safeJson(
 
 export function safeRouteError(error: unknown): NextResponse {
   if (error instanceof PortalApiError) {
-    const status =
-      error.detail.kind === "unauthorized"
+    const status = error.detail.status === 404 || error.detail.status === 409
+      ? error.detail.status
+      : error.detail.kind === "unauthorized"
         ? 401
         : error.detail.kind === "forbidden"
           ? 403

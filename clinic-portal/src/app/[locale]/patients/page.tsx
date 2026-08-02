@@ -1,1 +1,18 @@
-import{notFound}from"next/navigation";import{isLocale,patientMessages}from"@/i18n";import{patientServices,appointmentServices}from"@portal-composition";import{PatientsPage}from"@/features/patients/presentation/patients-page";export default async function Page({params}:{params:Promise<{locale:string}>}){const{locale}=await params;if(!isLocale(locale))notFound();const services=patientServices();if(!services)notFound();const patients=await services.list.execute();const appointments=await appointmentServices()?.list.execute();if(appointments)for(const patient of patients){const appointment=appointments.find(x=>x.patient.id===patient.id);if(appointment&&patient.today)patient.today={...patient.today,status:appointment.arrival}}return <PatientsPage patients={patients} locale={locale} m={patientMessages(locale)}/>}
+import { notFound } from "next/navigation";
+import { isLocale } from "@/i18n";
+import { PatientDirectoryPageView } from "@/features/patients/presentation/patient-directory-page";
+import { clinicalMessages } from "@/features/clinical-presentation/messages";
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+  void searchParams;
+  return (
+    <PatientDirectoryPageView locale={locale} m={clinicalMessages(locale)} />
+  );
+}

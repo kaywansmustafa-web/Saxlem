@@ -1,3 +1,141 @@
-"use client";import Link from"next/link";import{useMemo,useState}from"react";import type{KeyboardEvent}from"react";import type{Locale,AppointmentMessages}from"@/i18n";import type{AppointmentSummary}from"../domain/models";import{filterAppointments,needsAttention,orderedToday,upcoming}from"../application/appointment-services";
-export function AppointmentsPage({items,locale,m}:{items:AppointmentSummary[];locale:Locale;m:AppointmentMessages}){const[q,setQ]=useState("");const[active,setActive]=useState(0);const results=useMemo(()=>filterAppointments(items,q),[items,q]);const attention=needsAttention(items),next=upcoming(items);const key=(e:KeyboardEvent<HTMLInputElement>)=>{if(!q)return;if(e.key==="ArrowDown"){e.preventDefault();setActive(x=>Math.min(x+1,results.length-1))}if(e.key==="ArrowUp"){e.preventDefault();setActive(x=>Math.max(0,x-1))}if(e.key==="Escape"){setQ("");setActive(0)}if(e.key==="Enter"&&results[active])window.location.assign(`/${locale}/appointments/${results[active].id}`)};const issue=(a:AppointmentSummary)=>a.attention?.type==="patientLate"?m.patientLate:a.attention?.type==="doctorDelayed"?m.doctorDelayed:a.attention?.type==="conflict"?m.conflict:a.attention?.type==="duplicate"?m.duplicate:a.attention?.type==="missingPhone"?m.missingPhone:m.notArrived;return <><header className="heading"><p className="eyebrow">{m.appointmentWorkspace}</p><h1>{m.title}</h1><p>{m.subtitle}</p></header><section className="patient-search"><label htmlFor="appointment-search">{m.searchLabel}</label><div className="search-field"><input id="appointment-search" type="search" value={q} placeholder={m.searchHint} onChange={e=>{setQ(e.target.value);setActive(0)}} onKeyDown={key} aria-controls="appointment-results"/>{q&&<button aria-label={m.clearSearch} onClick={()=>setQ("")}>×</button>}</div>{q&&<div id="appointment-results" className="search-results" role="listbox">{results.length?results.map((a,i)=><Link role="option" aria-selected={i===active} className={i===active?"active":undefined} key={a.id} href={`/${locale}/appointments/${a.id}`}><span className="patient-avatar">{a.time}</span><span><strong>{a.patient.name}</strong><small>{a.doctor.name} · {a.id}</small></span></Link>):<State title={m.noResults} body={m.noResultsBody}/>}</div>}</section><Section title={m.todaySchedule}><div className="metrics">{[[m.todaySchedule,items.length],[m.checkedIn,items.filter(x=>x.arrival==="arrived").length],[m.waitingArrivals,items.filter(x=>x.arrival==="expected").length],[m.completed,items.filter(x=>x.status==="completed").length]].map(([label,n])=><div className="metric" key={label}><strong>{n}</strong><span>{label}</span></div>)}</div></Section><Section title={m.needsAttention} help={m.attentionHelp}>{attention.length?<div className="attention-list">{attention.map((a,i)=><article key={a.id} className="attention-item"><span className="attention-rank">{i+1}</span><div><strong>{issue(a)}</strong><p>{a.time} · {a.patient.name} · {a.doctor.name}</p></div><span className="pill warning">{a.attention!.urgency>=90?m.delayed:m.pending}</span><div className="row-actions"><Link className="link" href={`/${locale}/appointments/${a.id}`}>{m.openAppointment}</Link>{a.arrival==="expected"&&<Link className="arrival-link" href={`/${locale}/appointments/${a.id}/arrival`}>{m.markArrived}</Link>}</div></article>)}</div>:<State title={m.nothingAttention} body={m.nothingAttentionBody}/>}</Section><Section title={m.upcoming} help={m.upcomingHelp}>{next.length?<div className="appointment-timeline">{next.slice(0,4).map(a=><article key={a.id}><time>{a.time}</time><div><strong>{a.patient.name}</strong><p>{a.doctor.name} · {a.clinic.name}</p></div><span className="pill info">{a.status==="confirmed"?m.confirmed:m.waiting}</span><div className="row-actions"><Link className="link" href={`/${locale}/appointments/${a.id}`}>{m.openAppointment}</Link>{a.arrival==="expected"&&<Link className="arrival-link" href={`/${locale}/appointments/${a.id}/arrival`}>{m.markArrived}</Link>}</div></article>)}</div>:<State title={m.noUpcoming} body={m.noUpcomingBody}/>}</Section><Section title={m.allToday}>{items.length?<div className="table-wrap"><table><thead><tr>{[m.time,m.patient,m.doctor,m.clinic,m.status,m.arrival,m.workspace].map(h=><th key={h}>{h}</th>)}</tr></thead><tbody>{orderedToday(items).map(a=><tr key={a.id}><td><strong>{a.time}</strong></td><td><strong>{a.patient.name}</strong><small className="row-id">{a.id}</small></td><td>{a.doctor.name}</td><td>{a.clinic.name}</td><td><span className="pill info">{a.status==="confirmed"?m.confirmed:a.status==="completed"?m.completed:m.waiting}</span></td><td>{a.arrival==="arrived"?m.arrived:a.arrival==="queueReady"?m.arrived:m.expected}</td><td><div className="row-actions"><Link className="link" href={`/${locale}/appointments/${a.id}`}>{m.openWorkspace}</Link>{a.arrival==="expected"&&<Link className="arrival-link" href={`/${locale}/appointments/${a.id}/arrival`}>{m.markArrived}</Link>}</div></td></tr>)}</tbody></table></div>:<State title={m.noAppointments} body={m.noAppointmentsBody}/>}</Section></>}
-function Section({title,help,children}:{title:string;help?:string;children:React.ReactNode}){return <section className="section"><div className="section-head"><div><h2>{title}</h2>{help&&<p>{help}</p>}</div></div>{children}</section>}function State({title,body}:{title:string;body:string}){return <div className="compact-state"><strong>{title}</strong><p>{body}</p></div>}
+import Link from "next/link";
+import type { Locale } from "@/i18n";
+import type {
+  AppointmentPage,
+  BackendAppointmentStatus,
+} from "../data/backend-appointment-repository";
+import type { ClinicalMessages } from "@/features/clinical-presentation/messages";
+
+const statuses: readonly BackendAppointmentStatus[] = [
+  "scheduled",
+  "confirmed",
+  "cancelled",
+  "completed",
+  "noShow",
+];
+export function AppointmentsPage({
+  page,
+  locale,
+  m,
+  filters,
+  validationMessage,
+}: {
+  page: AppointmentPage;
+  locale: Locale;
+  m: ClinicalMessages;
+  filters: {
+    from: string;
+    to: string;
+    status?: BackendAppointmentStatus;
+    cursor?: string;
+    trail: readonly string[];
+  };
+  validationMessage?: string;
+}) {
+  const link = (cursor?: string, trail: readonly string[] = []) => {
+    const q = new URLSearchParams({ from: filters.from, to: filters.to });
+    if (filters.status) q.set("status", filters.status);
+    if (cursor) q.set("cursor", cursor);
+    if (trail.length) q.set("trail", JSON.stringify(trail));
+    return `/${locale}/appointments?${q}`;
+  };
+  return (
+    <>
+      <header className="heading">
+        <p className="eyebrow">{m.appointments}</p>
+        <h1>{m.appointments}</h1>
+        <p>{m.appointmentHelp}</p>
+      </header>
+      <form className="clinical-filters" method="get">
+        <label>
+          {m.from}
+          <input name="from" type="date" defaultValue={filters.from} />
+        </label>
+        <label>
+          {m.to}
+          <input name="to" type="date" defaultValue={filters.to} />
+        </label>
+        <label>
+          {m.status}
+          <select name="status" defaultValue={filters.status ?? ""}>
+            <option value="">{m.allStatuses}</option>
+            {statuses.map((s) => (
+              <option key={s} value={s}>
+                {m[s]}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button type="submit">{m.apply}</button>
+      </form>
+      {validationMessage && <p role="alert">{validationMessage}</p>}
+      {page.items.length ? (
+        <div className="table-wrap">
+          <table>
+            <caption className="visually-hidden">{m.appointments}</caption>
+            <thead>
+              <tr>
+                <th>{m.date}</th>
+                <th>{m.patient}</th>
+                <th>{m.doctor}</th>
+                <th>{m.status}</th>
+                <th>{m.reference}</th>
+                <th>{m.actions}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {page.items.map((a) => (
+                <tr key={a.id}>
+                  <td>
+                    <time dateTime={a.startsAt}>
+                      {new Date(a.startsAt).toLocaleString(locale)}
+                    </time>
+                  </td>
+                  <td>{a.patientName}</td>
+                  <td>{a.doctorName}</td>
+                  <td>
+                    <span className="pill info">{m[a.status]}</span>
+                  </td>
+                  <td>
+                    <bdi>{a.reference}</bdi>
+                  </td>
+                  <td>
+                    <Link
+                      className="link"
+                      href={`/${locale}/appointments/${a.id}`}
+                    >
+                      {m.view}
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="compact-state" role="status">
+          {m.noAppointments}
+        </div>
+      )}
+      <nav className="pagination" aria-label={m.appointments}>
+        {filters.cursor && (
+          <Link href={link(filters.trail.at(-1), filters.trail.slice(0, -1))}>
+            {m.previous}
+          </Link>
+        )}
+        {page.nextCursor && (
+          <Link
+            href={link(
+              page.nextCursor,
+              filters.cursor
+                ? [...filters.trail, filters.cursor]
+                : filters.trail,
+            )}
+          >
+            {m.next}
+          </Link>
+        )}
+      </nav>
+    </>
+  );
+}

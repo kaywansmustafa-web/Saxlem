@@ -31,6 +31,7 @@ export interface ApiRequest<T> {
   readonly body?: unknown;
   readonly schema?: ZodType<T>;
   readonly session?: AuthenticatedSession;
+  readonly idempotencyKey?: string;
 }
 
 export class BackendApiClient {
@@ -64,6 +65,9 @@ export class BackendApiClient {
           );
           headers.set("x-clinic-id", input.session.context.clinicId);
         }
+      }
+      if (input.idempotencyKey) {
+        headers.set("idempotency-key", input.idempotencyKey);
       }
 
       const response = await this.transport(

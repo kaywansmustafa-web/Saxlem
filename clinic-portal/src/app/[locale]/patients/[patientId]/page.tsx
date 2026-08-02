@@ -1,1 +1,35 @@
-import{notFound}from"next/navigation";import{isLocale,patientMessages}from"@/i18n";import{patientServices,appointmentServices}from"@portal-composition";import{PatientWorkspace}from"@/features/patients/presentation/patient-workspace";export default async function Page({params}:{params:Promise<{locale:string;patientId:string}>}){const{locale,patientId}=await params;if(!isLocale(locale))notFound();const services=patientServices();if(!services)notFound();const workspace=await services.workspace.execute(patientId);if(!workspace)notFound();const appointment=(await appointmentServices()?.list.execute())?.find(x=>x.patient.id===patientId);if(appointment&&workspace.today)workspace.today={...workspace.today,status:appointment.arrival};return <PatientWorkspace workspace={workspace} locale={locale} m={patientMessages(locale)}/>}
+import { notFound } from "next/navigation";
+import { isLocale } from "@/i18n";
+import { clinicalComposition } from "@/infrastructure/clinical-composition";
+import { PortalApiError } from "@/infrastructure/api/api-error";
+import { PatientDirectoryDetailView } from "@/features/patients/presentation/patient-directory-detail";
+import { ClinicalState } from "@/features/clinical-presentation/clinical-state";
+import { clinicalMessages } from "@/features/clinical-presentation/messages";
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ locale: string; patientId: string }>;
+}) {
+  const { locale, patientId } = await params;
+  if (!isLocale(locale)) notFound();
+  const m = clinicalMessages(locale);
+  let patient;
+  try {
+    patient=await(await clinicalComposition(locale)).patients.get(patientId);
+  } catch (error) {
+    const kind =
+      error instanceof PortalApiError
+        ? error.detail.status === 404
+          ? "notFound"
+          : error.detail.kind === "offline" || error.detail.kind === "timeout"
+            ? "offline"
+            : error.detail.kind === "unauthorized"
+              ? "unauthorized"
+              : error.detail.kind === "forbidden"
+                ? "forbidden"
+                : "backendError"
+        : "backendError";
+    return <ClinicalState kind={kind} m={m} />;
+  }
+  return <PatientDirectoryDetailView patient={patient} locale={locale} m={m}/>;
+}
