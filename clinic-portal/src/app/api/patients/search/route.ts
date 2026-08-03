@@ -2,6 +2,10 @@ import { z } from "zod";
 import { isSameOriginMutation } from "@/infrastructure/auth/request-security";
 import { clinicalComposition } from "@/infrastructure/clinical-composition";
 import { safeJson, safeRouteError } from "@/app/api/auth/route-response";
+import {
+  invalidClinicalRequest,
+  readClinicalJson,
+} from "@/app/api/clinical-request";
 const schema = z
   .object({
     query: z.string().trim().min(2).max(100),
@@ -21,18 +25,10 @@ export async function POST(request: Request) {
       403,
     );
   try {
-    const body = schema.safeParse(await request.json());
-    if (!body.success)
-      return safeJson(
-        {
-          ok: false,
-          error: {
-            code: "PORTAL_VALIDATION_FAILED",
-            message: "Check the information and try again.",
-          },
-        },
-        400,
-      );
+    const json = await readClinicalJson(request);
+    if (!json.ok) return invalidClinicalRequest();
+    const body = schema.safeParse(json.value);
+    if (!body.success) return invalidClinicalRequest();
     const page = await (
       await clinicalComposition()
     ).patients.search(body.data.query, body.data.cursor);

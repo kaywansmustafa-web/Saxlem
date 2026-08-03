@@ -1372,19 +1372,18 @@
               "minimum": 1,
               "maximum": 50,
               "default": 25,
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/Object"
-                }
-              ]
+              "type": "integer"
             }
           },
           {
             "name": "cursor",
             "required": false,
             "in": "query",
+            "description": "Opaque pagination cursor containing printable ASCII only.",
             "schema": {
-              "format": "uuid",
+              "minLength": 1,
+              "maxLength": 1024,
+              "pattern": "^[\\x21-\\x7e]+$",
               "type": "string"
             }
           },
@@ -5704,10 +5703,10 @@
             "format": "date-time"
           },
           "durationMinutes": {
-            "type": "number"
+            "type": "integer"
           },
           "feeIqd": {
-            "type": "number"
+            "type": "integer"
           },
           "status": {
             "type": "string",
@@ -5721,11 +5720,11 @@
             "description": "Foundation lifecycle. Transitions are explicit; no automatic transitions occur."
           },
           "cancellationReason": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "version": {
-            "type": "number",
+            "type": "integer",
             "description": "Required for optimistic-concurrency commands."
           }
         },
@@ -5745,6 +5744,7 @@
           "durationMinutes",
           "feeIqd",
           "status",
+          "cancellationReason",
           "version"
         ]
       },
@@ -5758,13 +5758,13 @@
             }
           },
           "nextCursor": {
-            "type": "object",
-            "format": "uuid",
+            "type": "string",
             "nullable": true
           }
         },
         "required": [
-          "items"
+          "items",
+          "nextCursor"
         ]
       },
       "CreateAppointmentDto": {
@@ -5802,7 +5802,7 @@
             "description": "UTC instant with Z or an explicit offset."
           },
           "durationMinutes": {
-            "type": "number",
+            "type": "integer",
             "minimum": 5,
             "maximum": 480
           }
@@ -5825,7 +5825,7 @@
             "type": "string"
           },
           "version": {
-            "type": "number",
+            "type": "integer",
             "minimum": 1
           }
         },
@@ -5841,7 +5841,7 @@
             "type": "string"
           },
           "version": {
-            "type": "number",
+            "type": "integer",
             "minimum": 1
           }
         },
@@ -5859,12 +5859,12 @@
             "description": "UTC instant with Z or an explicit offset."
           },
           "durationMinutes": {
-            "type": "number",
+            "type": "integer",
             "minimum": 5,
             "maximum": 480
           },
           "version": {
-            "type": "number",
+            "type": "integer",
             "minimum": 1
           }
         },

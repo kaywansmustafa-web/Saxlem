@@ -143,4 +143,51 @@ describe("clinical BFF routes", () => {
     expect(response.status).toBe(200);
     expect(search).toHaveBeenCalledWith("Ava", undefined);
   });
+  it("rejects invalid patient-search requests without repository access", async () => {
+    const candidates = [
+      new Request(`${origin}/api/patients/search`, {
+        method: "POST",
+        headers: { origin },
+        body: JSON.stringify({ query: "Ava" }),
+      }),
+      new Request(`${origin}/api/patients/search`, {
+        method: "POST",
+        headers: { origin, "content-type": "text/plain" },
+        body: JSON.stringify({ query: "Ava" }),
+      }),
+      new Request(`${origin}/api/patients/search`, {
+        method: "POST",
+        headers: { origin, "content-type": "application/json" },
+        body: "{",
+      }),
+      request("/api/patients/search", { query: "x", unexpected: true }),
+    ];
+    for (const candidate of candidates) {
+      const response = await patientRoute(candidate);
+      expect(response.status).toBe(400);
+      expect(await response.json()).toEqual({
+        ok: false,
+        error: {
+          code: "PORTAL_VALIDATION_FAILED",
+          message: "Check the information and try again.",
+        },
+      });
+    }
+    expect(search).not.toHaveBeenCalled();
+  });
+  it("rejects cross-origin patient search before repository access", async () => {
+    const response = await patientRoute(
+      request(
+        "/api/patients/search",
+        { query: "Ava" },
+        { origin: "https://evil.example" },
+      ),
+    );
+    expect(response.status).toBe(403);
+    expect(await response.json()).toMatchObject({
+      ok: false,
+      error: { code: "PORTAL_ORIGIN_REJECTED" },
+    });
+    expect(search).not.toHaveBeenCalled();
+  });
 });

@@ -1,5 +1,8 @@
 import { validate } from 'class-validator';
-import { CreateAppointmentDto } from './appointment.dto';
+import {
+  AppointmentListQueryDto,
+  CreateAppointmentDto,
+} from './appointment.dto';
 
 describe('CreateAppointmentDto', () => {
   const base = {
@@ -37,5 +40,32 @@ describe('CreateAppointmentDto', () => {
 
   it('does not expose a client-writable fee field', () => {
     expect('feeIqd' in new CreateAppointmentDto()).toBe(false);
+  });
+});
+
+describe('AppointmentListQueryDto', () => {
+  const query = (cursor: string) =>
+    Object.assign(new AppointmentListQueryDto(), {
+      from: '2030-07-22T00:00:00+03:00',
+      to: '2030-07-22T23:59:59+03:00',
+      cursor,
+    });
+
+  it.each([
+    '0190a3e2-7b5c-7000-8000-000000000001',
+    'eyJpZCI6IjEifQ.signature_-~',
+  ])('accepts a bounded opaque cursor: %s', async (cursor) => {
+    expect(await validate(query(cursor))).toHaveLength(0);
+  });
+
+  it.each(['', 'contains space', 'contains\ttab', 'contains\nnewline'])(
+    'rejects an empty or non-printable cursor: %j',
+    async (cursor) => {
+      expect(await validate(query(cursor))).not.toHaveLength(0);
+    },
+  );
+
+  it('rejects an oversized cursor', async () => {
+    expect(await validate(query('a'.repeat(1025)))).not.toHaveLength(0);
   });
 });

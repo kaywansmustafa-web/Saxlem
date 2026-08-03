@@ -18,15 +18,27 @@ export class AppointmentParamsDto {
 export class AppointmentListQueryDto {
   @ApiProperty({ format: 'date-time' }) @IsDateString() from!: string;
   @ApiProperty({ format: 'date-time' }) @IsDateString() to!: string;
-  @ApiPropertyOptional({ minimum: 1, maximum: 50, default: 25 })
+  @ApiPropertyOptional({
+    type: 'integer',
+    minimum: 1,
+    maximum: 50,
+    default: 25,
+  })
   @Type(() => Number)
   @IsInt()
   @Min(1)
   @Max(50)
   pageSize = 25;
-  @ApiPropertyOptional({ format: 'uuid' })
+  @ApiPropertyOptional({
+    type: 'string',
+    minLength: 1,
+    maxLength: 1024,
+    pattern: '^[\\x21-\\x7e]+$',
+    description: 'Opaque pagination cursor containing printable ASCII only.',
+  })
   @IsOptional()
-  @IsUUID()
+  @Length(1, 1024)
+  @Matches(/^[\x21-\x7e]+$/)
   cursor?: string;
   @ApiPropertyOptional({
     enum: ['scheduled', 'confirmed', 'cancelled', 'completed', 'noShow'],
@@ -53,7 +65,7 @@ export class CreateAppointmentDto {
     /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/,
   )
   startsAt!: string;
-  @ApiProperty({ minimum: 5, maximum: 480 })
+  @ApiProperty({ type: 'integer', minimum: 5, maximum: 480 })
   @IsInt()
   @Min(5)
   @Max(480)
@@ -61,11 +73,17 @@ export class CreateAppointmentDto {
 }
 export class UpdateAppointmentDto {
   @ApiProperty() @IsString() @Length(1, 500) reason!: string;
-  @ApiProperty({ minimum: 1 }) @IsInt() @Min(1) version!: number;
+  @ApiProperty({ type: 'integer', minimum: 1 })
+  @IsInt()
+  @Min(1)
+  version!: number;
 }
 export class CancelAppointmentDto {
   @ApiProperty() @IsString() @Length(1, 500) reason!: string;
-  @ApiProperty({ minimum: 1 }) @IsInt() @Min(1) version!: number;
+  @ApiProperty({ type: 'integer', minimum: 1 })
+  @IsInt()
+  @Min(1)
+  version!: number;
 }
 export class RescheduleAppointmentDto {
   @ApiProperty({
@@ -77,12 +95,15 @@ export class RescheduleAppointmentDto {
     /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/,
   )
   startsAt!: string;
-  @ApiProperty({ minimum: 5, maximum: 480 })
+  @ApiProperty({ type: 'integer', minimum: 5, maximum: 480 })
   @IsInt()
   @Min(5)
   @Max(480)
   durationMinutes!: number;
-  @ApiProperty({ minimum: 1 }) @IsInt() @Min(1) version!: number;
+  @ApiProperty({ type: 'integer', minimum: 1 })
+  @IsInt()
+  @Min(1)
+  version!: number;
 }
 export class AppointmentResponseDto {
   @ApiProperty({ format: 'uuid' }) id!: string;
@@ -97,21 +118,24 @@ export class AppointmentResponseDto {
   @ApiProperty() reason!: string;
   @ApiProperty({ format: 'date-time' }) startsAt!: string;
   @ApiProperty({ format: 'date-time' }) endsAt!: string;
-  @ApiProperty() durationMinutes!: number;
-  @ApiProperty() feeIqd!: number;
+  @ApiProperty({ type: 'integer' }) durationMinutes!: number;
+  @ApiProperty({ type: 'integer' }) feeIqd!: number;
   @ApiProperty({
     enum: ['scheduled', 'confirmed', 'cancelled', 'completed', 'noShow'],
     description:
       'Foundation lifecycle. Transitions are explicit; no automatic transitions occur.',
   })
   status!: 'scheduled' | 'confirmed' | 'cancelled' | 'completed' | 'noShow';
-  @ApiPropertyOptional({ nullable: true }) cancellationReason!: string | null;
-  @ApiProperty({ description: 'Required for optimistic-concurrency commands.' })
+  @ApiProperty({ type: 'string', nullable: true })
+  cancellationReason!: string | null;
+  @ApiProperty({
+    type: 'integer',
+    description: 'Required for optimistic-concurrency commands.',
+  })
   version!: number;
 }
 export class AppointmentPageResponseDto {
   @ApiProperty({ type: AppointmentResponseDto, isArray: true })
   items!: AppointmentResponseDto[];
-  @ApiPropertyOptional({ format: 'uuid', nullable: true }) nextCursor!:
-    string | null;
+  @ApiProperty({ type: 'string', nullable: true }) nextCursor!: string | null;
 }
