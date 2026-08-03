@@ -62,16 +62,35 @@ export class EntryCommandDto {
   @Min(1)
   entryVersion!: number;
 }
-export class QueueEntryResponseDto {
-  @ApiProperty()
-  appointmentReference!: string;
-  @ApiProperty({ minimum: 1 })
+export class StaffQueueEntryResponseDto {
+  @ApiProperty({ format: 'uuid' }) entryId!: string;
+  @ApiProperty({ format: 'uuid' }) queueSessionId!: string;
+  @ApiProperty({ format: 'uuid' }) appointmentId!: string;
+  @ApiProperty({ format: 'uuid' }) patientProfileId!: string;
+  @ApiProperty() patientDisplayName!: string;
+  @ApiProperty({ type: 'integer', minimum: 1 })
   ticketNumber!: number;
   @ApiProperty({
-    enum: ['waiting', 'called', 'inConsultation', 'completed', 'noResponse'],
+    enum: [
+      'waiting',
+      'called',
+      'inConsultation',
+      'completed',
+      'noResponse',
+      'removed',
+    ],
   })
   status!: string;
-  @ApiProperty({ minimum: 1 })
+  @ApiProperty({ format: 'date-time' }) enqueuedAt!: string;
+  @ApiProperty({ type: 'string', format: 'date-time', nullable: true })
+  calledAt!: string | null;
+  @ApiProperty({ type: 'string', format: 'date-time', nullable: true })
+  consultationStartedAt!: string | null;
+  @ApiProperty({ type: 'string', format: 'date-time', nullable: true })
+  completedAt!: string | null;
+  @ApiProperty({ type: 'string', format: 'date-time', nullable: true })
+  noResponseAt!: string | null;
+  @ApiProperty({ type: 'integer', minimum: 1 })
   version!: number;
 }
 export class QueueDoctorReferenceResponseDto {
@@ -91,14 +110,20 @@ export class QueueResponseDto {
   id!: string;
   @ApiProperty({ enum: ['notStarted', 'open', 'paused', 'closed'] })
   status!: string;
-  @ApiProperty({ minimum: 1 })
+  @ApiProperty({ type: 'integer', minimum: 1 })
   version!: number;
-  @ApiProperty({ minimum: 0, maximum: 50 })
+  @ApiProperty({ type: 'integer', minimum: 0, maximum: 50 })
   waitingCount!: number;
-  @ApiProperty({ type: () => QueueEntryResponseDto, nullable: true })
-  currentPatient!: QueueEntryResponseDto | null;
-  @ApiProperty()
+  @ApiProperty({ type: () => StaffQueueEntryResponseDto, nullable: true })
+  currentPatient!: StaffQueueEntryResponseDto | null;
+  @ApiProperty({ format: 'date-time' })
   updatedAt!: string;
+}
+export class QueueEnqueueResponseDto {
+  @ApiProperty({ type: () => StaffQueueEntryResponseDto })
+  entry!: StaffQueueEntryResponseDto;
+  @ApiProperty({ type: () => QueueResponseDto })
+  queue!: QueueResponseDto;
 }
 export class QueueEntriesQueryDto {
   @ApiPropertyOptional({
@@ -131,8 +156,8 @@ export class QueueEntriesQueryDto {
   includeTerminal: boolean = false;
 }
 export class QueueEntriesPageResponseDto {
-  @ApiProperty({ type: [QueueEntryResponseDto] })
-  items!: QueueEntryResponseDto[];
+  @ApiProperty({ type: [StaffQueueEntryResponseDto] })
+  items!: StaffQueueEntryResponseDto[];
   @ApiProperty({ type: String, nullable: true })
   nextCursor!: string | null;
 }

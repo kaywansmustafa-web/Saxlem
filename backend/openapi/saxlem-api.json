@@ -2881,7 +2881,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/QueueResponseDto"
+                  "$ref": "#/components/schemas/QueueEnqueueResponseDto"
                 }
               }
             }
@@ -5966,14 +5966,30 @@
           "version"
         ]
       },
-      "QueueEntryResponseDto": {
+      "StaffQueueEntryResponseDto": {
         "type": "object",
         "properties": {
-          "appointmentReference": {
+          "entryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "queueSessionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "appointmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "patientProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "patientDisplayName": {
             "type": "string"
           },
           "ticketNumber": {
-            "type": "number",
+            "type": "integer",
             "minimum": 1
           },
           "status": {
@@ -5983,18 +5999,52 @@
               "called",
               "inConsultation",
               "completed",
-              "noResponse"
+              "noResponse",
+              "removed"
             ]
           },
+          "enqueuedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "calledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "consultationStartedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "noResponseAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "version": {
-            "type": "number",
+            "type": "integer",
             "minimum": 1
           }
         },
         "required": [
-          "appointmentReference",
+          "entryId",
+          "queueSessionId",
+          "appointmentId",
+          "patientProfileId",
+          "patientDisplayName",
           "ticketNumber",
           "status",
+          "enqueuedAt",
+          "calledAt",
+          "consultationStartedAt",
+          "completedAt",
+          "noResponseAt",
           "version"
         ]
       },
@@ -6015,11 +6065,11 @@
             ]
           },
           "version": {
-            "type": "number",
+            "type": "integer",
             "minimum": 1
           },
           "waitingCount": {
-            "type": "number",
+            "type": "integer",
             "minimum": 0,
             "maximum": 50
           },
@@ -6028,12 +6078,13 @@
             "type": "object",
             "allOf": [
               {
-                "$ref": "#/components/schemas/QueueEntryResponseDto"
+                "$ref": "#/components/schemas/StaffQueueEntryResponseDto"
               }
             ]
           },
           "updatedAt": {
-            "type": "string"
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
@@ -6051,7 +6102,7 @@
           "items": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/QueueEntryResponseDto"
+              "$ref": "#/components/schemas/StaffQueueEntryResponseDto"
             }
           },
           "nextCursor": {
@@ -6209,6 +6260,21 @@
         "required": [
           "version",
           "appointmentId"
+        ]
+      },
+      "QueueEnqueueResponseDto": {
+        "type": "object",
+        "properties": {
+          "entry": {
+            "$ref": "#/components/schemas/StaffQueueEntryResponseDto"
+          },
+          "queue": {
+            "$ref": "#/components/schemas/QueueResponseDto"
+          }
+        },
+        "required": [
+          "entry",
+          "queue"
         ]
       },
       "PauseQueueDto": {

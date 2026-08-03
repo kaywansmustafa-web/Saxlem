@@ -1,8 +1,17 @@
-import type { PatientQueueStatus, QueueSnapshot } from '../domain/queue';
-import { mapPatientQueue, mapStaffQueue } from './queue-dto.mapper';
+import type {
+  PatientQueueStatus,
+  QueueEnqueueResult,
+  QueueSnapshot,
+} from '../domain/queue';
+import {
+  mapEnqueueResult,
+  mapPatientQueue,
+  mapQueueEntries,
+  mapStaffQueue,
+} from './queue-dto.mapper';
 
 describe('queue presentation privacy allowlists', () => {
-  it('does not leak persistence or patient identity fields in staff summaries', () => {
+  it('maps the explicit safe staff entry allowlist', () => {
     const response = mapStaffQueue(snapshot());
     expect(Object.keys(response).sort()).toEqual(
       [
@@ -14,9 +23,33 @@ describe('queue presentation privacy allowlists', () => {
         'waitingCount',
       ].sort(),
     );
-    expect(JSON.stringify(response)).not.toMatch(
-      /organizationId|patientProfileId|patientName|appointmentId/,
+    expect(Object.keys(response.currentPatient!).sort()).toEqual(
+      staffEntryKeys,
     );
+    expect(response.currentPatient).toMatchObject({
+      entryId: 'entry-storage-id',
+      queueSessionId: 'session-storage-id',
+      appointmentId: 'appointment-storage-id',
+      patientProfileId: 'patient-storage-id',
+      patientDisplayName: 'Private Patient',
+    });
+    expect(JSON.stringify(response)).not.toMatch(
+      /phone|dateOfBirth|reason|clinical|address|patientName/,
+    );
+  });
+
+  it('uses the staff DTO for entry pages and enqueue results', () => {
+    const value = snapshot();
+    const page = mapQueueEntries({ items: [value.current!], nextCursor: null });
+    expect(Object.keys(page.items[0]!).sort()).toEqual(staffEntryKeys);
+    const enqueue = mapEnqueueResult({
+      ...value,
+      enqueuedEntry: value.current!,
+    } satisfies QueueEnqueueResult);
+    expect(Object.keys(enqueue)).toEqual(['entry', 'queue']);
+    expect(enqueue.entry.entryId).toBe('entry-storage-id');
+    expect(enqueue.entry.ticketNumber).toBe(1);
+    expect(enqueue.queue.id).toBe('session-storage-id');
   });
 
   it('maps exactly the approved patient contract', () => {
@@ -68,6 +101,7 @@ function snapshot(): QueueSnapshot {
     waitingCount: 1,
     current: {
       id: 'entry-storage-id',
+      queueSessionId: 'session-storage-id',
       appointmentId: 'appointment-storage-id',
       appointmentReference: 'SAX-TEST',
       patientProfileId: 'patient-storage-id',
@@ -75,6 +109,7 @@ function snapshot(): QueueSnapshot {
       ticketNumber: 1,
       status: 'called',
       version: 2,
+      enqueuedAt: '2031-01-01T00:00:00.000Z',
       calledAt: null,
       consultationStartedAt: null,
       completedAt: null,
@@ -89,3 +124,19 @@ function snapshot(): QueueSnapshot {
     updatedAt: '2031-01-01T00:00:00.000Z',
   };
 }
+
+const staffEntryKeys = [
+  'appointmentId',
+  'calledAt',
+  'completedAt',
+  'consultationStartedAt',
+  'enqueuedAt',
+  'entryId',
+  'noResponseAt',
+  'patientDisplayName',
+  'patientProfileId',
+  'queueSessionId',
+  'status',
+  'ticketNumber',
+  'version',
+].sort();

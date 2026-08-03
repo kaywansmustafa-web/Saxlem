@@ -3,6 +3,7 @@ import type {
   QueueAccess,
   QueueCommand,
   QueueEntryPage,
+  QueueEnqueueResult,
   QueuePolicy,
   QueueSnapshot,
 } from './queue';
@@ -47,7 +48,7 @@ export interface QueueRepository {
     now: Date,
     requestId: string,
     command: QueueCommand,
-  ): Promise<QueueSnapshot>;
+  ): Promise<QueueEnqueueResult>;
   transitionSession(
     access: QueueAccess,
     id: string,

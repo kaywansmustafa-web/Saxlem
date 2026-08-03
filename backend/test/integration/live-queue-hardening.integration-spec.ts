@@ -9,6 +9,7 @@ import { PrismaAppointmentRepository } from '../../src/modules/appointments/infr
 import type {
   QueueAccess,
   QueueCommand,
+  QueueSnapshot,
 } from '../../src/modules/queue/domain/queue';
 import { PrismaQueueRepository } from '../../src/modules/queue/infrastructure/prisma-queue.repository';
 import { mapStaffQueue } from '../../src/modules/queue/presentation/queue-dto.mapper';
@@ -52,6 +53,17 @@ describe('live queue structural hardening', () => {
       ),
     );
     expect(results.every((result) => result.status === 'fulfilled')).toBe(true);
+    const enqueueResults = results.flatMap((result) =>
+      result.status === 'fulfilled' ? [result.value] : [],
+    );
+    expect(
+      enqueueResults
+        .map((result) => result.enqueuedEntry.ticketNumber)
+        .sort((left, right) => left - right),
+    ).toEqual([1, 2]);
+    expect(
+      new Set(enqueueResults.map((result) => result.enqueuedEntry.id)).size,
+    ).toBe(2);
     const session = await prisma.queueSession.findUniqueOrThrow({
       where: { id: opened.id },
       include: { entries: { orderBy: { ticketNumber: 'asc' } } },
@@ -70,6 +82,92 @@ describe('live queue structural hardening', () => {
       /patientName|patientProfileId|appointmentId|waiting":\[\{/,
     );
   }, 30_000);
+
+  it('uses the authoritative enqueue entry ID for no-response and recall transitions', async () => {
+    const setup = await openFixture(1);
+    const enqueued = await setup.repository.enqueue(
+      setup.access,
+      setup.snapshot.id,
+      setup.fixture.appointments[0]!.id,
+      setup.snapshot.version,
+      new Date('2031-01-01T05:45:00Z'),
+      'returned-entry-enqueue-request',
+      command(
+        'returned-entry-enqueue-key',
+        `queue.enqueue:${setup.snapshot.id}`,
+        setup.fixture.appointments[0]!,
+      ),
+    );
+    const now = new Date();
+    const called = await setup.repository.callNext(
+      setup.access,
+      setup.snapshot.id,
+      enqueued.version,
+      now,
+      'returned-entry-call-request',
+      command(
+        'returned-entry-call-key',
+        `queue.call-next:${setup.snapshot.id}`,
+        { version: enqueued.version },
+      ),
+    );
+    expect(called.current?.id).toBe(enqueued.enqueuedEntry.id);
+    const noResponse = await setup.repository.transitionEntry(
+      setup.access,
+      setup.snapshot.id,
+      enqueued.enqueuedEntry.id,
+      'no-response',
+      called.version,
+      called.current!.version,
+      {
+        recallGraceMinutes: 5,
+        busyThresholdMinutes: 10,
+        delayedThresholdMinutes: 25,
+        fallbackConsultationMinutes: 20,
+      },
+      new Date(now.getTime() + 1000),
+      'returned-entry-no-response-request',
+      command(
+        'returned-entry-no-response-key',
+        `queue.no-response:${setup.snapshot.id}:${enqueued.enqueuedEntry.id}`,
+        {},
+      ),
+    );
+    const page = await setup.repository.listEntries(
+      setup.access,
+      setup.snapshot.id,
+      100,
+      undefined,
+      true,
+    );
+    const noResponseEntry = page!.items.find(
+      (entry) => entry.id === enqueued.enqueuedEntry.id,
+    )!;
+    expect(noResponseEntry.status).toBe('noResponse');
+    const recalled = await setup.repository.transitionEntry(
+      setup.access,
+      setup.snapshot.id,
+      enqueued.enqueuedEntry.id,
+      'recall',
+      noResponse.version,
+      noResponseEntry.version,
+      {
+        recallGraceMinutes: 5,
+        busyThresholdMinutes: 10,
+        delayedThresholdMinutes: 25,
+        fallbackConsultationMinutes: 20,
+      },
+      new Date(now.getTime() + 2000),
+      'returned-entry-recall-request',
+      command(
+        'returned-entry-recall-key',
+        `queue.recall:${setup.snapshot.id}:${enqueued.enqueuedEntry.id}`,
+        {},
+      ),
+    );
+    expect(recalled.current?.id).toBe(enqueued.enqueuedEntry.id);
+    expect(recalled.current?.status).toBe('called');
+  });
 
   it('enforces doctor organization and clinic scope for every repository resource query', async () => {
     const fixture = await createFixture(1);
@@ -752,7 +850,7 @@ describe('live queue structural hardening', () => {
     expect(await certificationState(openSetup.snapshot.id)).toEqual(openBefore);
 
     const resumeSetup = await openFixture(2);
-    let resumeSnapshot = await resumeSetup.repository.enqueue(
+    let resumeSnapshot: QueueSnapshot = await resumeSetup.repository.enqueue(
       resumeSetup.access,
       resumeSetup.snapshot.id,
       resumeSetup.fixture.appointments[0]!.id,
@@ -976,6 +1074,9 @@ describe('live queue structural hardening', () => {
     ]);
     expect(mapStaffQueue(enqueueResults[1])).toEqual(
       mapStaffQueue(enqueueResults[0]),
+    );
+    expect(enqueueResults[1].enqueuedEntry).toEqual(
+      enqueueResults[0].enqueuedEntry,
     );
     const enqueueState = await certificationState(enqueueSetup.snapshot.id);
     expect(enqueueState.entryCount).toBe(1);

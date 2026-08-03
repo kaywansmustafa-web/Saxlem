@@ -26,6 +26,7 @@ import {
   type QueueCommand,
   type QueueEntryProjection,
   type QueueEntryPage,
+  type QueueEnqueueResult,
   type QueuePolicy,
   type QueueSnapshot,
 } from '../domain/queue';
@@ -309,8 +310,12 @@ export class PrismaQueueRepository implements QueueRepository {
   ) {
     const organizationId = this.tenant(access, clinicId);
     return this.transaction(async (tx) => {
-      const replay = await this.begin(tx, access, command);
-      if (replay) return replay;
+      const replay = await this.begin<QueueSnapshot | QueueReplay>(
+        tx,
+        access,
+        command,
+      );
+      if (replay) return this.replayedSnapshot(tx, access, replay);
       await this.lock(
         tx,
         `${organizationId}:${clinicId}:${doctorId}:${operationalDate.toISOString()}`,
@@ -388,9 +393,18 @@ export class PrismaQueueRepository implements QueueRepository {
     requestId: string,
     command: QueueCommand,
   ) {
-    return this.transaction(async (tx) => {
-      const replay = await this.begin(tx, access, command);
-      if (replay) return replay;
+    return this.transaction(async (tx): Promise<QueueEnqueueResult> => {
+      const replay = await this.begin<QueueSnapshot | EnqueueReplay>(
+        tx,
+        access,
+        command,
+      );
+      if (replay && 'enqueuedEntryId' in replay) {
+        const authorized = await this.session(tx, access, id);
+        return this.enqueueResult(authorized, replay.enqueuedEntryId);
+      }
+      if (replay)
+        throw new ConflictException('Stored enqueue result is invalid.');
       await this.lock(tx, id);
       let session = await this.session(tx, access, id);
       if (!['open', 'paused'].includes(session.status))
@@ -502,7 +516,9 @@ export class PrismaQueueRepository implements QueueRepository {
         requestId,
         now,
       );
-      return this.finish(tx, access, command, this.map(session));
+      const result = this.enqueueResult(session, entry.id);
+      await this.finishEnqueue(tx, access, command, result);
+      return result;
     });
   }
 
@@ -517,8 +533,12 @@ export class PrismaQueueRepository implements QueueRepository {
     command: QueueCommand,
   ) {
     return this.transaction(async (tx) => {
-      const replay = await this.begin(tx, access, command);
-      if (replay) return replay;
+      const replay = await this.begin<QueueSnapshot | QueueReplay>(
+        tx,
+        access,
+        command,
+      );
+      if (replay) return this.replayedSnapshot(tx, access, replay);
       await this.lock(tx, id);
       let session = await this.session(tx, access, id);
       if (session.version !== expectedVersion)
@@ -582,8 +602,12 @@ export class PrismaQueueRepository implements QueueRepository {
     command: QueueCommand,
   ) {
     return this.transaction(async (tx) => {
-      const replay = await this.begin(tx, access, command);
-      if (replay) return replay;
+      const replay = await this.begin<QueueSnapshot | QueueReplay>(
+        tx,
+        access,
+        command,
+      );
+      if (replay) return this.replayedSnapshot(tx, access, replay);
       await this.lock(tx, id);
       let session = await this.session(tx, access, id);
       if (session.status !== 'open' || session.version !== expectedVersion)
@@ -633,8 +657,12 @@ export class PrismaQueueRepository implements QueueRepository {
     command: QueueCommand,
   ) {
     return this.transaction(async (tx) => {
-      const replay = await this.begin(tx, access, command);
-      if (replay) return replay;
+      const replay = await this.begin<QueueSnapshot | QueueReplay>(
+        tx,
+        access,
+        command,
+      );
+      if (replay) return this.replayedSnapshot(tx, access, replay);
       await this.lock(tx, id);
       let session = await this.session(tx, access, id);
       const entry = session.entries.find(
@@ -827,11 +855,11 @@ export class PrismaQueueRepository implements QueueRepository {
   private async lock(tx: Prisma.TransactionClient, scope: string) {
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`queue:${scope}`}, 0))`;
   }
-  private async begin(
+  private async begin<T = QueueSnapshot>(
     tx: Prisma.TransactionClient,
     access: QueueAccess,
     command: QueueCommand,
-  ): Promise<QueueSnapshot | null> {
+  ): Promise<T | null> {
     await this.lock(tx, `${access.actorId}:${command.scope}:${command.key}`);
     const existing = await tx.idempotencyRecord.findUnique({
       where: {
@@ -847,8 +875,7 @@ export class PrismaQueueRepository implements QueueRepository {
         throw new ConflictException(
           'Idempotency key conflicts with another request.',
         );
-      if (existing.responseBody)
-        return existing.responseBody as unknown as QueueSnapshot;
+      if (existing.responseBody) return existing.responseBody as unknown as T;
       throw new ConflictException('Queue command is already in progress.');
     }
     await tx.idempotencyRecord.create({
@@ -861,6 +888,28 @@ export class PrismaQueueRepository implements QueueRepository {
       },
     });
     return null;
+  }
+  private async finishEnqueue(
+    tx: Prisma.TransactionClient,
+    access: QueueAccess,
+    command: QueueCommand,
+    result: QueueEnqueueResult,
+  ): Promise<void> {
+    await tx.idempotencyRecord.update({
+      where: {
+        actorId_scope_key: {
+          actorId: access.actorId,
+          scope: command.scope,
+          key: command.key,
+        },
+      },
+      data: {
+        responseCode: 200,
+        responseBody: {
+          enqueuedEntryId: result.enqueuedEntry.id,
+        },
+      },
+    });
   }
   private async finish(
     tx: Prisma.TransactionClient,
@@ -878,9 +927,7 @@ export class PrismaQueueRepository implements QueueRepository {
       },
       data: {
         responseCode: 200,
-        responseBody: this.replaySnapshot(
-          snapshot,
-        ) as unknown as Prisma.InputJsonValue,
+        responseBody: { queueSessionId: snapshot.id },
       },
     });
     return snapshot;
@@ -956,6 +1003,7 @@ export class PrismaQueueRepository implements QueueRepository {
   private mapEntry(entry: SessionRow['entries'][number]): QueueEntryProjection {
     return Object.freeze({
       id: entry.id,
+      queueSessionId: entry.queueSessionId,
       appointmentId: entry.appointmentId,
       appointmentReference: entry.appointment.publicReference,
       patientProfileId: entry.patientProfileId,
@@ -963,10 +1011,23 @@ export class PrismaQueueRepository implements QueueRepository {
       ticketNumber: entry.ticketNumber,
       status: entry.status,
       version: entry.version,
+      enqueuedAt: entry.createdAt.toISOString(),
       calledAt: entry.calledAt?.toISOString() ?? null,
       consultationStartedAt: entry.consultationStartedAt?.toISOString() ?? null,
       completedAt: entry.completedAt?.toISOString() ?? null,
       noResponseAt: entry.noResponseAt?.toISOString() ?? null,
+    });
+  }
+  private enqueueResult(
+    session: SessionRow,
+    entryId: string,
+  ): QueueEnqueueResult {
+    const entry = session.entries.find((candidate) => candidate.id === entryId);
+    if (!entry)
+      throw new ConflictException('Stored enqueue result is invalid.');
+    return Object.freeze({
+      ...this.map(session),
+      enqueuedEntry: this.mapEntry(entry),
     });
   }
   private map(row: SessionRow): QueueSnapshot {
@@ -1005,21 +1066,14 @@ export class PrismaQueueRepository implements QueueRepository {
     });
   }
 
-  private replaySnapshot(snapshot: QueueSnapshot): QueueSnapshot {
-    const redact = (entry: QueueEntryProjection): QueueEntryProjection => ({
-      ...entry,
-      id: '',
-      appointmentId: '',
-      patientProfileId: '',
-      patientName: '',
-    });
-    return {
-      ...snapshot,
-      organizationId: '',
-      current: snapshot.current ? redact(snapshot.current) : null,
-      waiting: [],
-      recentActivity: [],
-    };
+  private async replayedSnapshot(
+    tx: Prisma.TransactionClient,
+    access: QueueAccess,
+    replay: QueueSnapshot | QueueReplay,
+  ): Promise<QueueSnapshot> {
+    const queueSessionId =
+      'queueSessionId' in replay ? replay.queueSessionId : replay.id;
+    return this.map(await this.session(tx, access, queueSessionId));
   }
 
   private async transaction<T>(
@@ -1125,3 +1179,6 @@ export class PrismaQueueRepository implements QueueRepository {
     );
   }
 }
+
+type EnqueueReplay = Readonly<{ enqueuedEntryId: string }>;
+type QueueReplay = Readonly<{ queueSessionId: string }>;
