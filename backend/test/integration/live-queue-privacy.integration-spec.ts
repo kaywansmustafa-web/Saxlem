@@ -68,7 +68,9 @@ describe('live queue DTO and persisted metadata privacy certification', () => {
     expect(Object.keys(session.body).sort()).toEqual(
       [
         'currentPatient',
+        'effectiveTimezone',
         'id',
+        'operationalDate',
         'status',
         'updatedAt',
         'version',
@@ -84,6 +86,7 @@ describe('live queue DTO and persisted metadata privacy certification', () => {
       expect(Object.keys(entry).sort()).toEqual(
         [
           'appointmentId',
+          'appointmentReference',
           'calledAt',
           'completedAt',
           'consultationStartedAt',
@@ -101,8 +104,9 @@ describe('live queue DTO and persisted metadata privacy certification', () => {
       expect(entry.patientDisplayName).toBe('Private Patient');
       expect(entry.patientProfileId).toBe(fixture.profile.id);
       expect(entry.queueSessionId).toBe(fixture.session.id);
+      expect(entry.appointmentReference).toBeTruthy();
       expect(JSON.stringify(entry)).not.toMatch(
-        /phone|dateOfBirth|reason|clinical|address|appointmentReference/,
+        /phone|dateOfBirth|reason|clinical|address/,
       );
     }
   });

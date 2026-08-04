@@ -11,6 +11,7 @@ export function mapStaffQueueEntry(entry: QueueEntryProjection) {
     entryId: entry.id,
     queueSessionId: entry.queueSessionId,
     appointmentId: entry.appointmentId,
+    appointmentReference: entry.appointmentReference,
     patientProfileId: entry.patientProfileId,
     patientDisplayName: entry.patientName,
     ticketNumber: entry.ticketNumber,
@@ -30,6 +31,8 @@ export function mapStaffQueue(snapshot: QueueSnapshot) {
     status: snapshot.status,
     version: snapshot.version,
     waitingCount: snapshot.waitingCount,
+    operationalDate: snapshot.operationalDate,
+    effectiveTimezone: snapshot.effectiveTimezone,
     currentPatient: snapshot.current
       ? mapStaffQueueEntry(snapshot.current)
       : null,

@@ -16,7 +16,9 @@ describe('queue presentation privacy allowlists', () => {
     expect(Object.keys(response).sort()).toEqual(
       [
         'currentPatient',
+        'effectiveTimezone',
         'id',
+        'operationalDate',
         'status',
         'updatedAt',
         'version',
@@ -30,6 +32,7 @@ describe('queue presentation privacy allowlists', () => {
       entryId: 'entry-storage-id',
       queueSessionId: 'session-storage-id',
       appointmentId: 'appointment-storage-id',
+      appointmentReference: 'SAX-TEST',
       patientProfileId: 'patient-storage-id',
       patientDisplayName: 'Private Patient',
     });
@@ -127,6 +130,7 @@ function snapshot(): QueueSnapshot {
 
 const staffEntryKeys = [
   'appointmentId',
+  'appointmentReference',
   'calledAt',
   'completedAt',
   'consultationStartedAt',

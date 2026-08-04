@@ -133,6 +133,14 @@ export function ArrivalWorkspace({
           )}
         </dl>
         <p>{m.queueSeparate}</p>
+        {arrival.status === "queueReady" && (
+          <Link
+            className="primary"
+            href={`/${locale}/live-queue?doctorId=${appointment.doctorId}&appointmentId=${appointment.id}`}
+          >
+            {m.queueReady}
+          </Link>
+        )}
         {arrival.status === "expected" &&
           !["cancelled", "completed", "noShow"].includes(
             appointment.status,

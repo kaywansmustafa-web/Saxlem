@@ -66,6 +66,7 @@ export class StaffQueueEntryResponseDto {
   @ApiProperty({ format: 'uuid' }) entryId!: string;
   @ApiProperty({ format: 'uuid' }) queueSessionId!: string;
   @ApiProperty({ format: 'uuid' }) appointmentId!: string;
+  @ApiProperty({ example: 'SX-2026-000001' }) appointmentReference!: string;
   @ApiProperty({ format: 'uuid' }) patientProfileId!: string;
   @ApiProperty() patientDisplayName!: string;
   @ApiProperty({ type: 'integer', minimum: 1 })
@@ -114,6 +115,10 @@ export class QueueResponseDto {
   version!: number;
   @ApiProperty({ type: 'integer', minimum: 0, maximum: 50 })
   waitingCount!: number;
+  @ApiProperty({ type: 'string', format: 'date' })
+  operationalDate!: string;
+  @ApiProperty({ example: 'Asia/Baghdad' })
+  effectiveTimezone!: string;
   @ApiProperty({ type: () => StaffQueueEntryResponseDto, nullable: true })
   currentPatient!: StaffQueueEntryResponseDto | null;
   @ApiProperty({ format: 'date-time' })

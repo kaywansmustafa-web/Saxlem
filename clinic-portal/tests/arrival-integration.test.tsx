@@ -215,6 +215,6 @@ describe("arrival workspace", () => {
         arrivalMessages("ar").success,
       ),
     );
-    expect(screen.getByRole("status")).toHaveFocus();
+    await waitFor(() => expect(screen.getByRole("status")).toHaveFocus());
   });
 });

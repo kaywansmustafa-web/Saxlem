@@ -183,6 +183,7 @@ describe('live queue OpenAPI certification manifest', () => {
     expect(Object.keys(staffEntry.properties ?? {}).sort()).toEqual(
       [
         'appointmentId',
+        'appointmentReference',
         'calledAt',
         'completedAt',
         'consultationStartedAt',
@@ -197,6 +198,13 @@ describe('live queue OpenAPI certification manifest', () => {
         'version',
       ].sort(),
     );
+    expect(staff.properties?.operationalDate).toMatchObject({
+      type: 'string',
+      format: 'date',
+    });
+    expect(staff.properties?.effectiveTimezone).toMatchObject({
+      type: 'string',
+    });
     for (const identifier of [
       'entryId',
       'queueSessionId',

@@ -5981,6 +5981,10 @@
             "type": "string",
             "format": "uuid"
           },
+          "appointmentReference": {
+            "type": "string",
+            "example": "SX-2026-000001"
+          },
           "patientProfileId": {
             "type": "string",
             "format": "uuid"
@@ -6036,6 +6040,7 @@
           "entryId",
           "queueSessionId",
           "appointmentId",
+          "appointmentReference",
           "patientProfileId",
           "patientDisplayName",
           "ticketNumber",
@@ -6073,6 +6078,14 @@
             "minimum": 0,
             "maximum": 50
           },
+          "operationalDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "effectiveTimezone": {
+            "type": "string",
+            "example": "Asia/Baghdad"
+          },
           "currentPatient": {
             "nullable": true,
             "type": "object",
@@ -6092,6 +6105,8 @@
           "status",
           "version",
           "waitingCount",
+          "operationalDate",
+          "effectiveTimezone",
           "currentPatient",
           "updatedAt"
         ]
