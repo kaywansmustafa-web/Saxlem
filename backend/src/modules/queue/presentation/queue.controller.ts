@@ -44,6 +44,7 @@ import {
   QueueEntryParamsDto,
   QueueEntriesPageResponseDto,
   QueueEntriesQueryDto,
+  QueueEnqueueResponseDto,
   QueueIdParamsDto,
   QueueResponseDto,
   QueueVersionDto,
@@ -51,6 +52,7 @@ import {
 import {
   mapPatientQueue,
   mapQueueEntries,
+  mapEnqueueResult,
   mapStaffQueue,
 } from './queue-dto.mapper';
 
@@ -161,7 +163,7 @@ export class QueueController {
   @HttpCode(HttpStatus.OK)
   @ApiHeader(idempotencyHeader)
   @RequireCapabilities('queue:enqueue')
-  @ApiOkResponse({ type: QueueResponseDto })
+  @ApiOkResponse({ type: QueueEnqueueResponseDto })
   enqueue(
     @Req() req: AuthenticatedRequest,
     @Param() params: QueueIdParamsDto,
@@ -177,7 +179,7 @@ export class QueueController {
         key,
         req.requestId,
       )
-      .then(mapStaffQueue);
+      .then(mapEnqueueResult);
   }
 
   @Post('queue-sessions/:id/pause')

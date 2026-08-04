@@ -5,6 +5,7 @@ import { PortalApiError } from "@/infrastructure/api/api-error";
 import { AppointmentWorkspace } from "@/features/appointments/presentation/appointment-workspace";
 import { ClinicalState } from "@/features/clinical-presentation/clinical-state";
 import { clinicalMessages } from "@/features/clinical-presentation/messages";
+import { arrivalMessages } from "@/features/arrivals/presentation/messages";
 export default async function Page({
   params,
 }: {
@@ -15,7 +16,9 @@ export default async function Page({
   const m = clinicalMessages(locale);
   let appointment;
   try {
-    appointment=await(await clinicalComposition(locale)).appointments.get(appointmentId);
+    appointment = await (
+      await clinicalComposition(locale)
+    ).appointments.get(appointmentId);
   } catch (error) {
     const kind =
       error instanceof PortalApiError
@@ -32,5 +35,23 @@ export default async function Page({
         : "backendError";
     return <ClinicalState kind={kind} m={m} />;
   }
-  return <AppointmentWorkspace appointment={appointment} locale={locale} m={m}/>;
+  let arrival,
+    arrivalError = false;
+  try {
+    arrival = await (
+      await clinicalComposition(locale)
+    ).arrivals.get(appointmentId);
+  } catch {
+    arrivalError = true;
+  }
+  return (
+    <AppointmentWorkspace
+      appointment={appointment}
+      locale={locale}
+      m={m}
+      arrival={arrival}
+      arrivalError={arrivalError}
+      arrivalMessages={arrivalMessages(locale)}
+    />
+  );
 }

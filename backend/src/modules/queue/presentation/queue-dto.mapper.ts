@@ -1,15 +1,26 @@
 import type {
   PatientQueueStatus,
+  QueueEnqueueResult,
   QueueEntryPage,
   QueueEntryProjection,
   QueueSnapshot,
 } from '../domain/queue';
 
-export function mapQueueEntry(entry: QueueEntryProjection) {
+export function mapStaffQueueEntry(entry: QueueEntryProjection) {
   return Object.freeze({
+    entryId: entry.id,
+    queueSessionId: entry.queueSessionId,
+    appointmentId: entry.appointmentId,
     appointmentReference: entry.appointmentReference,
+    patientProfileId: entry.patientProfileId,
+    patientDisplayName: entry.patientName,
     ticketNumber: entry.ticketNumber,
     status: entry.status,
+    enqueuedAt: entry.enqueuedAt,
+    calledAt: entry.calledAt,
+    consultationStartedAt: entry.consultationStartedAt,
+    completedAt: entry.completedAt,
+    noResponseAt: entry.noResponseAt,
     version: entry.version,
   });
 }
@@ -20,15 +31,26 @@ export function mapStaffQueue(snapshot: QueueSnapshot) {
     status: snapshot.status,
     version: snapshot.version,
     waitingCount: snapshot.waitingCount,
-    currentPatient: snapshot.current ? mapQueueEntry(snapshot.current) : null,
+    operationalDate: snapshot.operationalDate,
+    effectiveTimezone: snapshot.effectiveTimezone,
+    currentPatient: snapshot.current
+      ? mapStaffQueueEntry(snapshot.current)
+      : null,
     updatedAt: snapshot.updatedAt,
   });
 }
 
 export function mapQueueEntries(page: QueueEntryPage) {
   return Object.freeze({
-    items: Object.freeze(page.items.map(mapQueueEntry)),
+    items: Object.freeze(page.items.map(mapStaffQueueEntry)),
     nextCursor: page.nextCursor,
+  });
+}
+
+export function mapEnqueueResult(result: QueueEnqueueResult) {
+  return Object.freeze({
+    entry: mapStaffQueueEntry(result.enqueuedEntry),
+    queue: mapStaffQueue(result),
   });
 }
 

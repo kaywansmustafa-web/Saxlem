@@ -89,7 +89,8 @@ describe('live queue OpenAPI certification manifest', () => {
     for (const name of [
       'PatientQueueStatusResponseDto',
       'QueueResponseDto',
-      'QueueEntryResponseDto',
+      'StaffQueueEntryResponseDto',
+      'QueueEnqueueResponseDto',
       'QueueEntriesPageResponseDto',
       'ApiErrorEnvelopeDto',
     ])
@@ -126,8 +127,39 @@ describe('live queue OpenAPI certification manifest', () => {
     const page = schemas.QueueEntriesPageResponseDto!;
     const patient = schemas.PatientQueueStatusResponseDto!;
     const staff = schemas.QueueResponseDto!;
+    const staffEntry = schemas.StaffQueueEntryResponseDto!;
+    const enqueue = schemas.QueueEnqueueResponseDto!;
     const doctor = schemas.QueueDoctorReferenceResponseDto!;
     const clinic = schemas.QueueClinicReferenceResponseDto!;
+
+    expect(
+      document.paths['/api/v1/queue-sessions/{id}/entries']?.get?.responses?.[
+        '200'
+      ],
+    ).toMatchObject({
+      content: {
+        'application/json': {
+          schema: {
+            $ref: '#/components/schemas/QueueEntriesPageResponseDto',
+          },
+        },
+      },
+    });
+    expect(
+      document.paths['/api/v1/queue-sessions/{id}/enqueue']?.post?.responses?.[
+        '200'
+      ],
+    ).toMatchObject({
+      content: {
+        'application/json': {
+          schema: { $ref: '#/components/schemas/QueueEnqueueResponseDto' },
+        },
+      },
+    });
+    expect(page.properties?.items).toMatchObject({
+      type: 'array',
+      items: { $ref: '#/components/schemas/StaffQueueEntryResponseDto' },
+    });
 
     expect(page.properties?.nextCursor).toMatchObject({
       type: 'string',
@@ -140,8 +172,68 @@ describe('live queue OpenAPI certification manifest', () => {
     });
     expect(staff.properties?.currentPatient).toMatchObject({
       nullable: true,
-      allOf: [{ $ref: '#/components/schemas/QueueEntryResponseDto' }],
+      allOf: [{ $ref: '#/components/schemas/StaffQueueEntryResponseDto' }],
     });
+    expect(enqueue.properties?.entry).toMatchObject({
+      $ref: '#/components/schemas/StaffQueueEntryResponseDto',
+    });
+    expect(enqueue.properties?.queue).toMatchObject({
+      $ref: '#/components/schemas/QueueResponseDto',
+    });
+    expect(Object.keys(staffEntry.properties ?? {}).sort()).toEqual(
+      [
+        'appointmentId',
+        'appointmentReference',
+        'calledAt',
+        'completedAt',
+        'consultationStartedAt',
+        'enqueuedAt',
+        'entryId',
+        'noResponseAt',
+        'patientDisplayName',
+        'patientProfileId',
+        'queueSessionId',
+        'status',
+        'ticketNumber',
+        'version',
+      ].sort(),
+    );
+    expect(staff.properties?.operationalDate).toMatchObject({
+      type: 'string',
+      format: 'date',
+    });
+    expect(staff.properties?.effectiveTimezone).toMatchObject({
+      type: 'string',
+    });
+    for (const identifier of [
+      'entryId',
+      'queueSessionId',
+      'appointmentId',
+      'patientProfileId',
+    ])
+      expect(staffEntry.properties?.[identifier]).toMatchObject({
+        type: 'string',
+        format: 'uuid',
+      });
+    for (const scalar of ['ticketNumber', 'version'])
+      expect(staffEntry.properties?.[scalar]).toMatchObject({
+        type: 'integer',
+        minimum: 1,
+      });
+    for (const timestamp of [
+      'calledAt',
+      'consultationStartedAt',
+      'completedAt',
+      'noResponseAt',
+    ])
+      expect(staffEntry.properties?.[timestamp]).toMatchObject({
+        type: 'string',
+        format: 'date-time',
+        nullable: true,
+      });
+    expect(JSON.stringify(staffEntry)).not.toMatch(
+      /phone|dateOfBirth|reason|clinical|address|#\/components\/schemas\/Object/,
+    );
     expect(patient.properties?.doctor).toMatchObject({
       $ref: '#/components/schemas/QueueDoctorReferenceResponseDto',
     });

@@ -20,6 +20,7 @@ export interface QueueCommand {
 }
 export interface QueueEntryProjection {
   readonly id: string;
+  readonly queueSessionId: string;
   readonly appointmentId: string;
   readonly appointmentReference: string;
   readonly patientProfileId: string;
@@ -27,10 +28,14 @@ export interface QueueEntryProjection {
   readonly ticketNumber: number;
   readonly status: QueueEntryState;
   readonly version: number;
+  readonly enqueuedAt: string;
   readonly calledAt: string | null;
   readonly consultationStartedAt: string | null;
   readonly completedAt: string | null;
   readonly noResponseAt: string | null;
+}
+export interface QueueEnqueueResult extends QueueSnapshot {
+  readonly enqueuedEntry: QueueEntryProjection;
 }
 export interface QueueSnapshot {
   readonly id: string;

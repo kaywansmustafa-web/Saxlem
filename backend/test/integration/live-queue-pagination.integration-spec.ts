@@ -48,7 +48,7 @@ describe('live queue HTTP pagination certification', () => {
   it('walks all 151 entries in stable ticket order without duplicates or omissions', async () => {
     const entries: Array<{
       ticketNumber: number;
-      appointmentReference: string;
+      entryId: string;
     }> = [];
     let cursor: string | undefined;
     do {
@@ -61,9 +61,7 @@ describe('live queue HTTP pagination certification', () => {
       cursor = response.body.nextCursor ?? undefined;
     } while (cursor);
     expect(entries).toHaveLength(151);
-    expect(
-      new Set(entries.map((entry) => entry.appointmentReference)).size,
-    ).toBe(151);
+    expect(new Set(entries.map((entry) => entry.entryId)).size).toBe(151);
     expect(entries.map((entry) => entry.ticketNumber)).toEqual(
       Array.from({ length: 151 }, (_, index) => index + 1),
     );
