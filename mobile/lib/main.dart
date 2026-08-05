@@ -10,6 +10,8 @@ import 'features/home/presentation/pages/home_page.dart';
 import 'l10n/app_localizations.dart';
 import 'core/localization/badini_framework_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'core/device/device_identity.dart';
+import 'core/storage/secure_key_value_store.dart';
 import 'features/authentication/data/storage/secure_session_storage.dart';
 import 'features/authentication/domain/repositories/auth_repository.dart';
 import 'features/authentication/presentation/authentication_feature.dart';
@@ -19,9 +21,12 @@ import 'features/family_profiles/data/repositories/in_memory_patient_profiles_re
 import 'features/family_profiles/presentation/controllers/patient_profiles_controller.dart';
 
 void main() {
+  const secureStorage = FlutterSecureStorage();
+  const secureStore = FlutterSecureKeyValueStore(secureStorage);
   final dependencies = AppDependencies.create(
     configuration: AppConfiguration.fromCompileTime(),
-    sessionStorage: const SecureSessionStorage(FlutterSecureStorage()),
+    sessionStorage: const SecureSessionStorage(secureStore),
+    deviceIdentity: SecureDeviceIdentity(secureStore),
   );
   runApp(
     SaxlemApp(
@@ -113,6 +118,13 @@ class _AppBootstrapState extends State<_AppBootstrap> {
         AppBootstrapStatus.sessionExpired => AuthenticationFeature(
           repository: widget.authRepository,
           sessionExpired: true,
+          onAuthenticated: controller.authenticated,
+          onGuest: controller.continueAsGuest,
+          developmentOtp: widget.developmentOtp,
+        ),
+        AppBootstrapStatus.authenticationUnavailable ||
+        AppBootstrapStatus.malformedLocalSession => AuthenticationFeature(
+          repository: widget.authRepository,
           onAuthenticated: controller.authenticated,
           onGuest: controller.continueAsGuest,
           developmentOtp: widget.developmentOtp,

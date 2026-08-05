@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:saxlem_app/app/app_dependencies.dart';
 import 'package:saxlem_app/config/environment/app_configuration.dart';
 import 'package:saxlem_app/config/environment/app_environment.dart';
+import 'package:saxlem_app/core/device/device_identity.dart';
+import 'package:saxlem_app/core/network/api_client.dart';
+import 'package:saxlem_app/features/authentication/data/repositories/backend_auth_repository.dart';
 import 'package:saxlem_app/features/authentication/data/repositories/mock_auth_repository.dart';
 import 'package:saxlem_app/features/authentication/data/repositories/unavailable_auth_repository.dart';
 import 'package:saxlem_app/features/authentication/domain/repositories/auth_repository.dart';
@@ -46,6 +51,26 @@ void main() {
         _create(configuration).authRepository,
         isA<UnavailableAuthRepository>(),
       );
+    });
+
+    test('production with valid API configuration uses backend repository', () {
+      final configuration = AppConfiguration.fromValues(
+        environment: 'production',
+        apiBaseUrl: 'https://api.saxlem.test',
+      );
+      final dependencies = AppDependencies.create(
+        configuration: configuration,
+        sessionStorage: _MemorySessionStorage(),
+        deviceIdentity: const _FakeDeviceIdentity(),
+        apiClient: ApiClient(
+          configuration: configuration,
+          client: MockClient((_) async => http.Response('{}', 500)),
+        ),
+      );
+
+      expect(dependencies.authRepository, isA<BackendAuthRepository>());
+      expect(dependencies.authRepository, isNot(isA<MockAuthRepository>()));
+      expect(dependencies.developmentOtp, isNull);
     });
 
     test('development explicitly enables the mock repository', () {
@@ -121,4 +146,14 @@ class _MemorySessionStorage implements SessionStorage {
 
   @override
   Future<void> write(StoredSession session) async => value = session;
+}
+
+class _FakeDeviceIdentity implements DeviceIdentity {
+  const _FakeDeviceIdentity();
+
+  @override
+  Future<String> identifier() async => '00000000-0000-4000-8000-000000000001';
+
+  @override
+  String get platform => 'android';
 }

@@ -12,6 +12,7 @@ abstract interface class AuthRepository {
   Future<OtpChallenge> resendOtp(String challengeId);
   Future<void> continueAsGuest();
   Future<void> logout();
+  Future<void> logoutAll();
 }
 
 abstract interface class SessionStorage {
@@ -22,11 +23,20 @@ abstract interface class SessionStorage {
 
 class StoredSession {
   const StoredSession({
-    required this.userId,
+    this.userId,
     required this.phoneNumber,
     required this.expiresAt,
+    this.accessToken,
+    this.refreshToken,
+    this.deviceId,
   });
-  final String userId;
+  final String? userId;
   final String phoneNumber;
   final DateTime expiresAt;
+  final String? accessToken;
+  final String? refreshToken;
+  final String? deviceId;
+
+  bool get isBackendSession =>
+      accessToken != null && refreshToken != null && deviceId != null;
 }
