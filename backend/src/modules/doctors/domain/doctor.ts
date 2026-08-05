@@ -23,6 +23,23 @@ export interface DoctorClinicProjection {
   readonly organizationId: string;
 }
 
+export interface DoctorDiscoveryOptionsProjection {
+  readonly specialties: readonly {
+    readonly code: string;
+    readonly displayName: string;
+  }[];
+  readonly clinics: readonly {
+    readonly id: string;
+    readonly name: string;
+  }[];
+  readonly languages: readonly DoctorLanguage[];
+  readonly genders: readonly DoctorGender[];
+  readonly experience: Readonly<{
+    readonly minimum: number | null;
+    readonly maximum: number | null;
+  }>;
+}
+
 export interface DoctorAvailabilityProjection {
   readonly status: 'available' | 'unavailable';
   readonly acceptingNewPatients: boolean;

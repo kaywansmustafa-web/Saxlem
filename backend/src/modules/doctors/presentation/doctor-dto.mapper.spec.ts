@@ -60,4 +60,29 @@ describe('DoctorDtoMapper', () => {
     }
     expect(mapper.detail(doctor).profileImageUrl).toBeNull();
   });
+
+  it('maps discovery options through an explicit patient-safe allowlist', () => {
+    const value = new DoctorDtoMapper().discoveryOptions({
+      specialties: [{ code: 'cardiology', displayName: 'Cardiology' }],
+      clinics: [{ id: 'clinic', name: 'Clinic' }],
+      languages: ['badiniKurdish'],
+      genders: ['female'],
+      experience: { minimum: 4, maximum: 18 },
+    });
+    expect(value).toEqual({
+      specialties: [{ code: 'cardiology', displayName: 'Cardiology' }],
+      clinics: [{ id: 'clinic', name: 'Clinic' }],
+      languages: ['badiniKurdish'],
+      genders: ['female'],
+      experience: { minimum: 4, maximum: 18 },
+    });
+    for (const forbidden of [
+      'organizationId',
+      'profilePhotoKey',
+      'licenseNumber',
+      'version',
+      'createdAt',
+    ])
+      expect(JSON.stringify(value)).not.toContain(forbidden);
+  });
 });

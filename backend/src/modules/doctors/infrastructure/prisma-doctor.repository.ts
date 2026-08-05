@@ -2,33 +2,43 @@ import { Injectable } from '@nestjs/common';
 import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/database/prisma.service';
 import type {
+  DoctorClinicAssignmentVisibility,
   DoctorRepository,
   DoctorSearchCriteria,
 } from '../domain/doctor.repository';
-import type { DoctorProjection } from '../domain/doctor';
+import {
+  doctorLanguages,
+  type DoctorGender,
+  type DoctorProjection,
+} from '../domain/doctor';
 
-const doctorInclude = {
-  specialtyAssignments: {
-    where: { specialty: { status: 'active' as const } },
-    include: { specialty: true },
-    orderBy: [
-      { isPrimary: 'desc' as const },
-      { specialty: { displayName: 'asc' as const } },
-      { specialtyId: 'asc' as const },
-    ],
-  },
-  clinicAssignments: {
-    where: { clinic: { status: 'active' as const } },
-    include: { clinic: true },
-    orderBy: [
-      { clinic: { name: 'asc' as const } },
-      { clinicId: 'asc' as const },
-    ],
-  },
-  availability: true,
-} satisfies Prisma.DoctorInclude;
+function doctorInclude(visibility: DoctorClinicAssignmentVisibility) {
+  return {
+    specialtyAssignments: {
+      where: { specialty: { status: 'active' as const } },
+      include: { specialty: true },
+      orderBy: [
+        { isPrimary: 'desc' as const },
+        { specialty: { displayName: 'asc' as const } },
+        { specialtyId: 'asc' as const },
+      ],
+    },
+    clinicAssignments: {
+      where: {
+        ...(visibility === 'active' ? { status: 'active' as const } : {}),
+        clinic: { status: 'active' as const },
+      },
+      include: { clinic: true },
+      orderBy: [
+        { clinic: { name: 'asc' as const } },
+        { clinicId: 'asc' as const },
+      ],
+    },
+    availability: true,
+  } as const satisfies Prisma.DoctorInclude;
+}
 type PersistedDoctor = Prisma.DoctorGetPayload<{
-  include: typeof doctorInclude;
+  include: ReturnType<typeof doctorInclude>;
 }>;
 
 @Injectable()
@@ -37,17 +47,114 @@ export class PrismaDoctorRepository implements DoctorRepository {
 
   async search(criteria: DoctorSearchCriteria) {
     const where = this.where(criteria);
+    const include = doctorInclude(criteria.clinicAssignmentVisibility);
     const [doctors, total] = await this.prisma.db.$transaction([
       this.prisma.db.doctor.findMany({
         where,
-        include: doctorInclude,
+        include,
         orderBy: [{ displayName: 'asc' }, { id: 'asc' }],
         skip: (criteria.page - 1) * criteria.pageSize,
         take: criteria.pageSize,
       }),
       this.prisma.db.doctor.count({ where }),
     ]);
-    return { items: doctors.map((doctor) => this.map(doctor)), total };
+    return {
+      items: doctors.map((doctor) =>
+        this.map(doctor, criteria.clinicAssignmentVisibility),
+      ),
+      total,
+    };
+  }
+
+  async discoveryOptions(
+    criteria: Pick<
+      DoctorSearchCriteria,
+      'organizationId' | 'clinicId' | 'clinicAssignmentVisibility'
+    >,
+  ) {
+    const visibleDoctor = this.visibilityWhere(criteria);
+    const [doctors, specialties, clinics] = await this.prisma.db.$transaction([
+      this.prisma.db.doctor.findMany({
+        where: visibleDoctor,
+        select: { gender: true, languages: true, yearsOfExperience: true },
+      }),
+      this.prisma.db.specialty.findMany({
+        where: {
+          status: 'active',
+          doctors: { some: { doctor: visibleDoctor } },
+        },
+        select: { code: true, displayName: true },
+      }),
+      this.prisma.db.clinic.findMany({
+        where: {
+          status: 'active',
+          ...(criteria.organizationId
+            ? { organizationId: criteria.organizationId }
+            : {}),
+          ...(criteria.clinicId ? { id: criteria.clinicId } : {}),
+          doctorAssignments: {
+            some: {
+              status: 'active',
+              doctor: visibleDoctor,
+            },
+          },
+        },
+        select: { id: true, name: true },
+      }),
+    ]);
+    const compare = (left: string, right: string) =>
+      left < right ? -1 : left > right ? 1 : 0;
+    const years = doctors.map(({ yearsOfExperience }) => yearsOfExperience);
+    const uniqueSpecialties = [
+      ...new Map(
+        specialties.map((option) => [option.code, option] as const),
+      ).values(),
+    ];
+    const uniqueClinics = [
+      ...new Map(
+        clinics.map((option) => [option.id, option] as const),
+      ).values(),
+    ];
+    const representedLanguages = new Set(
+      doctors.flatMap(({ languages }) => languages),
+    );
+    const representedGenders = new Set(doctors.map(({ gender }) => gender));
+    const genderOrder: readonly DoctorGender[] = [
+      'female',
+      'male',
+      'unspecified',
+    ];
+    return Object.freeze({
+      specialties: Object.freeze(
+        uniqueSpecialties
+          .map((option) => Object.freeze(option))
+          .sort(
+            (left, right) =>
+              compare(left.displayName, right.displayName) ||
+              compare(left.code, right.code),
+          ),
+      ),
+      clinics: Object.freeze(
+        uniqueClinics
+          .map((option) => Object.freeze(option))
+          .sort(
+            (left, right) =>
+              compare(left.name, right.name) || compare(left.id, right.id),
+          ),
+      ),
+      languages: Object.freeze(
+        doctorLanguages
+          .filter((language) => representedLanguages.has(language))
+          .sort(compare),
+      ),
+      genders: Object.freeze(
+        genderOrder.filter((gender) => representedGenders.has(gender)),
+      ),
+      experience: Object.freeze({
+        minimum: years.length === 0 ? null : Math.min(...years),
+        maximum: years.length === 0 ? null : Math.max(...years),
+      }),
+    });
   }
 
   async find(
@@ -56,6 +163,7 @@ export class PrismaDoctorRepository implements DoctorRepository {
       organizationId?: string | undefined;
       clinicId?: string | undefined;
       visibility: 'active' | 'activeOrInactive';
+      clinicAssignmentVisibility: DoctorClinicAssignmentVisibility;
     },
   ) {
     const doctor = await this.prisma.db.doctor.findFirst({
@@ -72,16 +180,28 @@ export class PrismaDoctorRepository implements DoctorRepository {
           ? {
               some: {
                 clinicId: criteria.clinicId,
+                ...(criteria.clinicAssignmentVisibility === 'active'
+                  ? { status: 'active' }
+                  : {}),
                 clinic: { status: 'active' },
               },
             }
-          : { some: { clinic: { status: 'active' } } },
+          : {
+              some: {
+                ...(criteria.clinicAssignmentVisibility === 'active'
+                  ? { status: 'active' }
+                  : {}),
+                clinic: { status: 'active' },
+              },
+            },
         organization: { status: 'active' },
         specialtyAssignments: { some: { specialty: { status: 'active' } } },
       },
-      include: doctorInclude,
+      include: doctorInclude(criteria.clinicAssignmentVisibility),
     });
-    return doctor ? this.map(doctor) : null;
+    return doctor
+      ? this.map(doctor, criteria.clinicAssignmentVisibility)
+      : null;
   }
 
   async recordView(input: {
@@ -126,13 +246,23 @@ export class PrismaDoctorRepository implements DoctorRepository {
         ? {
             some: {
               clinicId: criteria.clinicId,
+              ...(criteria.clinicAssignmentVisibility === 'active'
+                ? { status: 'active' }
+                : {}),
               ...(criteria.organizationId
                 ? { organizationId: criteria.organizationId }
                 : {}),
               clinic: { status: 'active' },
             },
           }
-        : { some: { clinic: { status: 'active' } } },
+        : {
+            some: {
+              ...(criteria.clinicAssignmentVisibility === 'active'
+                ? { status: 'active' }
+                : {}),
+              clinic: { status: 'active' },
+            },
+          },
       specialtyAssignments: criteria.specialty
         ? {
             some: { specialty: { code: criteria.specialty, status: 'active' } },
@@ -165,7 +295,50 @@ export class PrismaDoctorRepository implements DoctorRepository {
     };
   }
 
-  private map(doctor: PersistedDoctor): DoctorProjection {
+  private visibilityWhere(
+    criteria: Pick<
+      DoctorSearchCriteria,
+      'organizationId' | 'clinicId' | 'clinicAssignmentVisibility'
+    >,
+  ): Prisma.DoctorWhereInput {
+    return {
+      ...(criteria.organizationId
+        ? { organizationId: criteria.organizationId }
+        : {}),
+      status: 'active',
+      organization: { status: 'active' },
+      clinicAssignments: criteria.clinicId
+        ? {
+            some: {
+              clinicId: criteria.clinicId,
+              status: 'active',
+              clinic: { status: 'active' },
+            },
+          }
+        : {
+            some: {
+              status: 'active',
+              clinic: { status: 'active' },
+            },
+          },
+      specialtyAssignments: { some: { specialty: { status: 'active' } } },
+    };
+  }
+
+  private map(
+    doctor: PersistedDoctor,
+    clinicAssignmentVisibility: DoctorClinicAssignmentVisibility,
+  ): DoctorProjection {
+    const visibleClinicAssignments = doctor.clinicAssignments.filter(
+      (assignment) =>
+        clinicAssignmentVisibility === 'activeOrInactive' ||
+        assignment.status === 'active',
+    );
+    if (
+      clinicAssignmentVisibility === 'active' &&
+      visibleClinicAssignments.length === 0
+    )
+      throw new Error('Doctor clinic visibility invariant is broken.');
     const selectedPrimary = doctor.specialtyAssignments[0]?.specialtyId;
     const specialties = doctor.specialtyAssignments.map((assignment) =>
       Object.freeze({
@@ -199,7 +372,7 @@ export class PrismaDoctorRepository implements DoctorRepository {
       specialty: primary?.displayName ?? '',
       specialties: Object.freeze(specialties),
       clinics: Object.freeze(
-        doctor.clinicAssignments.map((assignment) =>
+        visibleClinicAssignments.map((assignment) =>
           Object.freeze({
             id: assignment.clinic.id,
             name: assignment.clinic.name,

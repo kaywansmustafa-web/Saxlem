@@ -40,6 +40,9 @@ export class PrismaDoctorScheduleRepository implements DoctorScheduleRepository 
         clinicAssignments: {
           some: {
             ...(scope.clinicId ? { clinicId: scope.clinicId } : {}),
+            ...(scope.clinicAssignmentVisibility === 'active'
+              ? { status: 'active' }
+              : {}),
             clinic: { status: 'active' },
           },
         },
@@ -51,6 +54,9 @@ export class PrismaDoctorScheduleRepository implements DoctorScheduleRepository 
         clinicAssignments: {
           where: {
             ...(scope.clinicId ? { clinicId: scope.clinicId } : {}),
+            ...(scope.clinicAssignmentVisibility === 'active'
+              ? { status: 'active' }
+              : {}),
             clinic: { status: 'active' },
           },
           select: {

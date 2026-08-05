@@ -195,12 +195,18 @@ export class DoctorScheduleService {
       return {
         organizationId: access.organizationId,
         clinicId: access.clinicId,
+        clinicAssignmentVisibility: 'activeOrInactive',
         ...(access.doctor && ownDoctorOnly
           ? { doctorActorId: access.actorId }
           : {}),
       };
     }
-    return { clinicId: requestedClinicId };
+    return {
+      clinicId: requestedClinicId,
+      clinicAssignmentVisibility: access.patient
+        ? 'active'
+        : 'activeOrInactive',
+    };
   }
 
   private evaluate(

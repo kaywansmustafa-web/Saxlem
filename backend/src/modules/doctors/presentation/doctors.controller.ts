@@ -23,6 +23,8 @@ import { RequireCapabilities } from '../../identity/presentation/require-capabil
 import {
   ApiErrorEnvelopeDto,
   DoctorDetailResponseDto,
+  DoctorDiscoveryOptionsResponseDto,
+  DoctorDiscoveryOptionsQueryDto,
   DoctorPageResponseDto,
   DoctorParamsDto,
   DoctorProfessionalProfileResponseDto,
@@ -72,6 +74,23 @@ export class DoctorsController {
     return this.doctors
       .search(this.access(request), query)
       .then((page) => this.mapper.page(page));
+  }
+
+  @Get('discovery-options')
+  @ApiOperation({
+    summary: 'Get authoritative doctor discovery filter options',
+    description:
+      'Returns only options represented by active doctors, active specialties, active clinics, and active doctor-clinic assignments visible to the authenticated directory scope.',
+  })
+  @ApiOkResponse({ type: DoctorDiscoveryOptionsResponseDto })
+  discoveryOptions(
+    @Req() request: AuthenticatedRequest,
+    @Query() query: DoctorDiscoveryOptionsQueryDto,
+  ) {
+    void query;
+    return this.doctors
+      .discoveryOptions(this.access(request))
+      .then((options) => this.mapper.discoveryOptions(options));
   }
 
   @Get(':id')

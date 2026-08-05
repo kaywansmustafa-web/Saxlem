@@ -1,4 +1,9 @@
-import type { DoctorProjection } from './doctor';
+import type {
+  DoctorDiscoveryOptionsProjection,
+  DoctorProjection,
+} from './doctor';
+
+export type DoctorClinicAssignmentVisibility = 'active' | 'activeOrInactive';
 
 export interface DoctorSearchCriteria {
   readonly organizationId?: string | undefined;
@@ -11,6 +16,7 @@ export interface DoctorSearchCriteria {
   readonly name?: string | undefined;
   readonly page: number;
   readonly pageSize: number;
+  readonly clinicAssignmentVisibility: DoctorClinicAssignmentVisibility;
 }
 
 export interface DoctorRepository {
@@ -18,12 +24,19 @@ export interface DoctorRepository {
     readonly items: readonly DoctorProjection[];
     readonly total: number;
   }>;
+  discoveryOptions(
+    criteria: Pick<
+      DoctorSearchCriteria,
+      'organizationId' | 'clinicId' | 'clinicAssignmentVisibility'
+    >,
+  ): Promise<DoctorDiscoveryOptionsProjection>;
   find(
     id: string,
     criteria: {
       readonly organizationId?: string | undefined;
       readonly clinicId?: string | undefined;
       readonly visibility: 'active' | 'activeOrInactive';
+      readonly clinicAssignmentVisibility: DoctorClinicAssignmentVisibility;
     },
   ): Promise<DoctorProjection | null>;
   recordView(input: {

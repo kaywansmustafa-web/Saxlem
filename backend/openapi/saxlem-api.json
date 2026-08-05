@@ -272,7 +272,7 @@
             "schema": {
               "minimum": 0,
               "maximum": 80,
-              "type": "number"
+              "type": "integer"
             }
           },
           {
@@ -294,11 +294,7 @@
               "minimum": 1,
               "maximum": 10000,
               "default": 1,
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/Object"
-                }
-              ]
+              "type": "integer"
             }
           },
           {
@@ -309,11 +305,7 @@
               "minimum": 1,
               "maximum": 100,
               "default": 20,
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/Object"
-                }
-              ]
+              "type": "integer"
             }
           }
         ],
@@ -365,6 +357,64 @@
           }
         ],
         "summary": "Search the visible doctor directory",
+        "tags": [
+          "doctors"
+        ]
+      }
+    },
+    "/api/v1/doctors/discovery-options": {
+      "get": {
+        "description": "Returns only options represented by active doctors, active specialties, active clinics, and active doctor-clinic assignments visible to the authenticated directory scope.",
+        "operationId": "DoctorsController_discoveryOptions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorDiscoveryOptionsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Filter, identifier, or pagination validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Role, capability, visibility, or tenant policy denied access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get authoritative doctor discovery filter options",
         "tags": [
           "doctors"
         ]
@@ -4780,10 +4830,6 @@
           "error"
         ]
       },
-      "Object": {
-        "type": "object",
-        "properties": {}
-      },
       "DoctorClinicResponseDto": {
         "type": "object",
         "properties": {
@@ -4869,8 +4915,9 @@
             ]
           },
           "yearsOfExperience": {
-            "type": "number",
-            "example": 12
+            "type": "integer",
+            "example": 12,
+            "minimum": 0
           },
           "languages": {
             "type": "array",
@@ -4924,22 +4971,26 @@
             }
           },
           "page": {
-            "type": "number",
+            "type": "integer",
             "example": 1,
+            "minimum": 1,
             "maximum": 10000
           },
           "pageSize": {
-            "type": "number",
+            "type": "integer",
             "example": 20,
+            "minimum": 1,
             "maximum": 100
           },
           "total": {
-            "type": "number",
-            "example": 42
+            "type": "integer",
+            "example": 42,
+            "minimum": 0
           },
           "totalPages": {
-            "type": "number",
-            "example": 3
+            "type": "integer",
+            "example": 3,
+            "minimum": 0
           }
         },
         "required": [
@@ -4948,6 +4999,110 @@
           "pageSize",
           "total",
           "totalPages"
+        ]
+      },
+      "DoctorDiscoverySpecialtyOptionResponseDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "cardiology"
+          },
+          "displayName": {
+            "type": "string",
+            "example": "Cardiology"
+          }
+        },
+        "required": [
+          "code",
+          "displayName"
+        ]
+      },
+      "DoctorDiscoveryClinicOptionResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "example": "Saxlem Medical Center"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "DoctorDiscoveryExperienceOptionResponseDto": {
+        "type": "object",
+        "properties": {
+          "minimum": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "maximum": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          }
+        },
+        "required": [
+          "minimum",
+          "maximum"
+        ]
+      },
+      "DoctorDiscoveryOptionsResponseDto": {
+        "type": "object",
+        "properties": {
+          "specialties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DoctorDiscoverySpecialtyOptionResponseDto"
+            }
+          },
+          "clinics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DoctorDiscoveryClinicOptionResponseDto"
+            }
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "badiniKurdish",
+                "soraniKurdish",
+                "arabic",
+                "english",
+                "turkish"
+              ]
+            }
+          },
+          "genders": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "female",
+                "male",
+                "unspecified"
+              ]
+            }
+          },
+          "experience": {
+            "$ref": "#/components/schemas/DoctorDiscoveryExperienceOptionResponseDto"
+          }
+        },
+        "required": [
+          "specialties",
+          "clinics",
+          "languages",
+          "genders",
+          "experience"
         ]
       },
       "SpecialtyResponseDto": {
@@ -5013,8 +5168,9 @@
             ]
           },
           "yearsOfExperience": {
-            "type": "number",
-            "example": 12
+            "type": "integer",
+            "example": 12,
+            "minimum": 0
           },
           "languages": {
             "type": "array",
@@ -5113,7 +5269,8 @@
             "type": "string"
           },
           "yearsOfExperience": {
-            "type": "number"
+            "type": "integer",
+            "minimum": 0
           },
           "biography": {
             "type": "string"

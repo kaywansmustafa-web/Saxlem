@@ -20,6 +20,7 @@ describe('doctor domain architecture', () => {
     const source = controller();
     for (const route of [
       '@Get()',
+      "@Get('discovery-options')",
       "@Get(':id')",
       "@Get(':id/profile')",
       "@Get(':id/specialties')",
@@ -41,6 +42,11 @@ describe('doctor domain architecture', () => {
       'DoctorPageResponseDto',
     ])
       expect(source).toContain(contract);
+    expect(source.indexOf("@Get('discovery-options')")).toBeLessThan(
+      source.indexOf("@Get(':id')"),
+    );
+    expect(source).toContain("@RequireCapabilities('doctor:directory:read')");
+    expect(source).toContain('@UseGuards(JwtAuthGuard)');
   });
 
   it('keeps internal doctor fields out of public DTO definitions', () => {
@@ -90,7 +96,110 @@ describe('doctor domain architecture', () => {
       document.paths['/api/v1/doctors']?.get?.parameters?.find(
         ({ name }) => name === 'page',
       )?.schema,
-    ).toMatchObject({ maximum: 10000 });
+    ).toMatchObject({
+      type: 'integer',
+      minimum: 1,
+      maximum: 10000,
+      default: 1,
+    });
+    expect(
+      document.paths['/api/v1/doctors']?.get?.parameters?.find(
+        ({ name }) => name === 'pageSize',
+      )?.schema,
+    ).toMatchObject({
+      type: 'integer',
+      minimum: 1,
+      maximum: 100,
+      default: 20,
+    });
+    expect(
+      document.paths['/api/v1/doctors']?.get?.parameters?.find(
+        ({ name }) => name === 'minimumYearsOfExperience',
+      )?.schema,
+    ).toMatchObject({ type: 'integer', minimum: 0, maximum: 80 });
+    expect(
+      document.paths['/api/v1/doctors']?.get?.parameters?.find(
+        ({ name }) => name === 'clinicId',
+      )?.schema,
+    ).toMatchObject({ type: 'string', format: 'uuid' });
+    expect(
+      document.paths['/api/v1/doctors']?.get?.parameters?.find(
+        ({ name }) => name === 'gender',
+      )?.schema,
+    ).toMatchObject({
+      type: 'string',
+      enum: ['female', 'male', 'unspecified'],
+    });
+    const options =
+      document.components.schemas.DoctorDiscoveryOptionsResponseDto;
+    expect(options?.properties).toEqual({
+      specialties: {
+        type: 'array',
+        items: {
+          $ref: '#/components/schemas/DoctorDiscoverySpecialtyOptionResponseDto',
+        },
+      },
+      clinics: {
+        type: 'array',
+        items: {
+          $ref: '#/components/schemas/DoctorDiscoveryClinicOptionResponseDto',
+        },
+      },
+      languages: {
+        type: 'array',
+        items: {
+          type: 'string',
+          enum: [
+            'badiniKurdish',
+            'soraniKurdish',
+            'arabic',
+            'english',
+            'turkish',
+          ],
+        },
+      },
+      genders: {
+        type: 'array',
+        items: {
+          type: 'string',
+          enum: ['female', 'male', 'unspecified'],
+        },
+      },
+      experience: {
+        $ref: '#/components/schemas/DoctorDiscoveryExperienceOptionResponseDto',
+      },
+    });
+    expect(
+      document.components.schemas.DoctorDiscoveryExperienceOptionResponseDto
+        ?.properties,
+    ).toEqual({
+      minimum: { type: 'integer', nullable: true, minimum: 0 },
+      maximum: { type: 'integer', nullable: true, minimum: 0 },
+    });
+    expect(
+      document.paths['/api/v1/doctors/discovery-options']?.get?.responses,
+    ).toHaveProperty('200');
+    expect(
+      Object.keys(
+        document.components.schemas.DoctorDiscoverySpecialtyOptionResponseDto
+          ?.properties ?? {},
+      ),
+    ).toEqual(['code', 'displayName']);
+    expect(
+      Object.keys(
+        document.components.schemas.DoctorDiscoveryClinicOptionResponseDto
+          ?.properties ?? {},
+      ),
+    ).toEqual(['id', 'name']);
+    for (const forbidden of [
+      'organizationId',
+      'profilePhotoKey',
+      'address',
+      'licenseNumber',
+      'version',
+      'createdAt',
+    ])
+      expect(JSON.stringify(options)).not.toContain(forbidden);
     expect(document.components.schemas).toHaveProperty('ApiErrorEnvelopeDto');
     expect(
       document.paths['/api/v1/doctors/{id}/specialties']?.get?.responses,

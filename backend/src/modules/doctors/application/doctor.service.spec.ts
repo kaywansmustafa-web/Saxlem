@@ -52,6 +52,13 @@ const staff: DoctorAccessContext = {
 function repository(): jest.Mocked<DoctorRepository> {
   return {
     search: jest.fn().mockResolvedValue({ items: [doctor], total: 1 }),
+    discoveryOptions: jest.fn().mockResolvedValue({
+      specialties: [],
+      clinics: [],
+      languages: [],
+      genders: [],
+      experience: { minimum: null, maximum: null },
+    }),
     find: jest.fn().mockResolvedValue(doctor),
     recordView: jest.fn().mockResolvedValue(undefined),
   };
@@ -65,7 +72,11 @@ describe('DoctorService', () => {
       pageSize: 10,
     });
     expect(repo.search.mock.calls[0]?.[0]).toEqual(
-      expect.objectContaining({ status: 'active', organizationId: undefined }),
+      expect.objectContaining({
+        status: 'active',
+        organizationId: undefined,
+        clinicAssignmentVisibility: 'active',
+      }),
     );
     expect(page).toMatchObject({
       page: 2,
@@ -92,6 +103,9 @@ describe('DoctorService', () => {
       service.search(staff, { page: 1, pageSize: 20, clinicId: 'other' }),
     ).rejects.toBeInstanceOf(ForbiddenException);
     await service.get(staff, doctor.id, 'request', 'details');
+    expect(repo.find.mock.calls[0]?.[1]).toMatchObject({
+      clinicAssignmentVisibility: 'activeOrInactive',
+    });
     expect(repo.recordView.mock.calls[0]?.[0]).toEqual(
       expect.objectContaining({
         actorId: 'staff',
@@ -101,6 +115,23 @@ describe('DoctorService', () => {
         action: 'doctor.details.viewed',
       }),
     );
+  });
+
+  it('derives discovery options from the established directory scope with active assignments only', async () => {
+    const repo = repository();
+    const service = new DoctorService(repo);
+    await service.discoveryOptions(patient);
+    expect(repo.discoveryOptions.mock.calls.at(-1)?.[0]).toEqual({
+      organizationId: undefined,
+      clinicId: undefined,
+      clinicAssignmentVisibility: 'active',
+    });
+    await service.discoveryOptions(staff);
+    expect(repo.discoveryOptions.mock.calls.at(-1)?.[0]).toEqual({
+      organizationId: 'org',
+      clinicId: 'clinic',
+      clinicAssignmentVisibility: 'active',
+    });
   });
 
   it('does not audit patient views and hides invisible doctors as not found', async () => {
