@@ -89,20 +89,32 @@ class _AddPatientPageState extends State<AddPatientPage> {
             ),
           ),
           const SizedBox(height: SaxlemSpacing.three),
+          if (widget.controller.failure != null) ...[
+            Semantics(
+              liveRegion: true,
+              child: Text(context.l10n.profileCreationFailed),
+            ),
+            const SizedBox(height: SaxlemSpacing.two),
+          ],
           SaxlemButton(
-            label: context.l10n.addPatient,
+            label: widget.controller.status == PatientProfilesStatus.submitting
+                ? context.l10n.creatingPatientProfile
+                : context.l10n.addPatient,
             expand: true,
-            onPressed: first.trim().isEmpty || last.trim().isEmpty
+            onPressed:
+                first.trim().isEmpty ||
+                    last.trim().isEmpty ||
+                    widget.controller.status == PatientProfilesStatus.submitting
                 ? null
                 : () async {
-                    await widget.controller.add(
+                    final success = await widget.controller.add(
                       relationship: relationship,
                       firstName: first,
                       lastName: last,
                       gender: gender,
                       dateOfBirth: birth,
                     );
-                    if (context.mounted) Navigator.pop(context);
+                    if (context.mounted && success) Navigator.pop(context);
                   },
           ),
         ],

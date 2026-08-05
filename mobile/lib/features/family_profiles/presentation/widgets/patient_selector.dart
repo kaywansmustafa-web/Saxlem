@@ -75,46 +75,55 @@ class PatientChooserPage extends StatelessWidget {
           padding: const EdgeInsetsDirectional.symmetric(
             vertical: SaxlemSpacing.three,
           ),
-          children: controller.profiles
-              .map(
-                (profile) => Padding(
-                  padding: const EdgeInsetsDirectional.only(
-                    bottom: SaxlemSpacing.one,
-                  ),
-                  child: SaxlemCard(
-                    onTap: () async {
-                      await controller.select(profile.id);
-                      if (context.mounted) Navigator.pop(context);
-                    },
-                    semanticLabel: profile.displayName,
-                    child: Row(
-                      children: [
-                        SaxlemAvatar(
-                          semanticLabel: profile.displayName,
-                          initials: profile.initials,
-                        ),
-                        const SizedBox(width: SaxlemSpacing.two),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(profile.displayName),
-                              Text(
-                                context.l10n.patientRelationship(
-                                  profile.relationship.name,
-                                ),
+          children: [
+            if (controller.failure != null)
+              Semantics(
+                liveRegion: true,
+                child: Text(context.l10n.profileSelectionFailed),
+              ),
+            ...controller.profiles.map(
+              (profile) => Padding(
+                padding: const EdgeInsetsDirectional.only(
+                  bottom: SaxlemSpacing.one,
+                ),
+                child: SaxlemCard(
+                  onTap: controller.status == PatientProfilesStatus.selecting
+                      ? null
+                      : () async {
+                          final success = await controller.select(profile.id);
+                          if (context.mounted && success) {
+                            Navigator.pop(context);
+                          }
+                        },
+                  semanticLabel: profile.displayName,
+                  child: Row(
+                    children: [
+                      SaxlemAvatar(
+                        semanticLabel: profile.displayName,
+                        initials: profile.initials,
+                      ),
+                      const SizedBox(width: SaxlemSpacing.two),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(profile.displayName),
+                            Text(
+                              context.l10n.patientRelationship(
+                                profile.relationship.name,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        if (profile.id == controller.activeProfileId)
-                          const Icon(Icons.check_circle_rounded),
-                      ],
-                    ),
+                      ),
+                      if (profile.id == controller.activeProfileId)
+                        const Icon(Icons.check_circle_rounded),
+                    ],
                   ),
                 ),
-              )
-              .toList(),
+              ),
+            ),
+          ],
         ),
       ),
     ),

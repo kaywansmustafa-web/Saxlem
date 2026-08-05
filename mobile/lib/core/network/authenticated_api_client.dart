@@ -32,6 +32,25 @@ class AuthenticatedApiClient {
     }
   }
 
+  Future<ApiListResponse> getJsonList(String path) async {
+    final session = await _requiredSession();
+    try {
+      return await _api.getJsonList(path, bearerToken: session.accessToken);
+    } on ApiFailure catch (failure) {
+      if (failure.type != ApiFailureType.unauthenticated) rethrow;
+      final refreshed = await _refreshCoordinator.run(_refresh);
+      return _api.getJsonList(path, bearerToken: refreshed.accessToken);
+    }
+  }
+
+  Future<ApiResponse> postJson(
+    String path, {
+    required Map<String, Object?> body,
+  }) async {
+    final session = await _requiredSession();
+    return _api.postJson(path, body: body, bearerToken: session.accessToken);
+  }
+
   Future<StoredSession> _requiredSession() async {
     final session = await _storage.read();
     if (session == null || !session.isBackendSession) {

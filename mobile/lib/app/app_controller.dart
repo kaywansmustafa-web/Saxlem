@@ -92,6 +92,18 @@ class AppController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void patientAccountResolved(String accountId) {
+    if (session.status != AuthSessionStatus.authenticated ||
+        accountId.isEmpty) {
+      return;
+    }
+    session = AuthSession.authenticated(
+      userId: accountId,
+      phoneNumber: session.phoneNumber ?? '',
+    );
+    notifyListeners();
+  }
+
   void continueAsGuest() {
     session = const AuthSession.guest();
     guestMode = true;

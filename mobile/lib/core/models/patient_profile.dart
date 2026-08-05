@@ -34,12 +34,22 @@ class PatientProfile {
     required this.lastName,
     required this.gender,
     required this.dateOfBirth,
+    this.active = true,
+    this.version,
+    this.createdAt,
+    this.updatedAt,
+    this.authoritative = false,
   });
   final PatientProfileId id;
   final PatientRelationship relationship;
   final String firstName, lastName;
   final PatientGender gender;
   final DateTime dateOfBirth;
+  final bool active;
+  final int? version;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final bool authoritative;
   String get displayName => '$firstName $lastName'.trim();
   String get initials =>
       '${firstName.isEmpty ? '' : firstName[0]}${lastName.isEmpty ? '' : lastName[0]}'
@@ -52,4 +62,20 @@ class PatientProfile {
     }
     return age;
   }
+}
+
+class PatientProfileDraft {
+  const PatientProfileDraft({
+    required this.relationship,
+    required this.firstName,
+    required this.lastName,
+    required this.gender,
+    required this.dateOfBirth,
+  });
+
+  final PatientRelationship relationship;
+  final String firstName;
+  final String lastName;
+  final PatientGender gender;
+  final DateTime dateOfBirth;
 }

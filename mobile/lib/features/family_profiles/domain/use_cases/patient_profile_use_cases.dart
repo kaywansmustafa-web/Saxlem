@@ -17,11 +17,13 @@ class WatchPatientProfiles {
 class AddPatientProfile {
   const AddPatientProfile(this.repository);
   final PatientProfilesRepository repository;
-  Future<void> call(PatientProfile profile) => repository.add(profile);
+  Future<PatientProfilesSnapshot> call(PatientProfileDraft profile) =>
+      repository.add(profile);
 }
 
 class SelectPatientProfile {
   const SelectPatientProfile(this.repository);
   final PatientProfilesRepository repository;
-  Future<void> call(PatientProfileId id) => repository.select(id);
+  Future<PatientProfilesSnapshot> call(PatientProfileId id) =>
+      repository.select(id);
 }

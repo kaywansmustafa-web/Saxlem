@@ -12,6 +12,8 @@ import 'package:saxlem_app/features/authentication/data/repositories/mock_auth_r
 import 'package:saxlem_app/features/authentication/data/repositories/unavailable_auth_repository.dart';
 import 'package:saxlem_app/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:saxlem_app/features/authentication/presentation/authentication_feature.dart';
+import 'package:saxlem_app/features/family_profiles/data/repositories/backend_patient_profiles_repository.dart';
+import 'package:saxlem_app/features/family_profiles/data/repositories/in_memory_patient_profiles_repository.dart';
 import 'package:saxlem_app/l10n/app_localizations.dart';
 
 void main() {
@@ -69,6 +71,14 @@ void main() {
       );
 
       expect(dependencies.authRepository, isA<BackendAuthRepository>());
+      expect(
+        dependencies.patientProfilesRepository,
+        isA<BackendPatientProfilesRepository>(),
+      );
+      expect(
+        dependencies.patientProfilesRepository,
+        isNot(isA<InMemoryPatientProfilesRepository>()),
+      );
       expect(dependencies.authRepository, isNot(isA<MockAuthRepository>()));
       expect(dependencies.developmentOtp, isNull);
     });

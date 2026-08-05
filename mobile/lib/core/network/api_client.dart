@@ -16,6 +16,12 @@ class ApiResponse {
   final String? requestId;
 }
 
+class ApiListResponse {
+  const ApiListResponse({required this.body, this.requestId});
+  final List<Object?> body;
+  final String? requestId;
+}
+
 class ApiClient {
   ApiClient({
     required AppConfiguration configuration,
@@ -35,6 +41,59 @@ class ApiClient {
 
   Future<ApiResponse> getJson(String path, {String? bearerToken}) =>
       _send('GET', path, bearerToken: bearerToken);
+
+  Future<ApiListResponse> getJsonList(
+    String path, {
+    String? bearerToken,
+  }) async {
+    final request = http.Request('GET', _configuration.apiEndpoint(path));
+    request.followRedirects = false;
+    request.maxRedirects = 0;
+    request.headers['accept'] = 'application/json';
+    if (bearerToken != null) {
+      request.headers['authorization'] = 'Bearer $bearerToken';
+    }
+    try {
+      final response = await _performRaw(
+        request,
+      ).timeout(_configuration.apiTimeout);
+      final requestId = _safeRequestId(response.headers['x-request-id']);
+      final Object? decoded;
+      try {
+        decoded = jsonDecode(
+          utf8.decode(response.bodyBytes, allowMalformed: false),
+        );
+      } catch (_) {
+        throw ApiFailure(
+          type: ApiFailureType.malformedResponse,
+          statusCode: response.statusCode,
+          requestId: requestId,
+        );
+      }
+      if (response.statusCode >= 200 &&
+          response.statusCode < 300 &&
+          decoded is List<Object?>) {
+        return ApiListResponse(body: decoded, requestId: requestId);
+      }
+      if (decoded is Map<String, dynamic> &&
+          (response.statusCode < 200 || response.statusCode >= 300)) {
+        throw _error(response.statusCode, decoded, requestId);
+      }
+      throw ApiFailure(
+        type: ApiFailureType.malformedResponse,
+        statusCode: response.statusCode,
+        requestId: requestId,
+      );
+    } on TimeoutException {
+      throw const ApiFailure(type: ApiFailureType.timeout, retryable: true);
+    } on http.ClientException {
+      throw const ApiFailure(type: ApiFailureType.offline, retryable: true);
+    } on ApiFailure {
+      rethrow;
+    } catch (_) {
+      throw const ApiFailure(type: ApiFailureType.offline, retryable: true);
+    }
+  }
 
   Future<ApiResponse> _send(
     String method,
@@ -67,6 +126,10 @@ class ApiClient {
   }
 
   Future<ApiResponse> _perform(http.Request request) async {
+    return _decode(await _performRaw(request));
+  }
+
+  Future<http.Response> _performRaw(http.Request request) async {
     final streamed = await _client.send(request);
     final bytes = BytesBuilder(copy: false);
     await for (final chunk in streamed.stream) {
@@ -79,13 +142,11 @@ class ApiClient {
       }
       bytes.add(chunk);
     }
-    return _decode(
-      http.Response.bytes(
-        bytes.takeBytes(),
-        streamed.statusCode,
-        headers: streamed.headers,
-        request: request,
-      ),
+    return http.Response.bytes(
+      bytes.takeBytes(),
+      streamed.statusCode,
+      headers: streamed.headers,
+      request: request,
     );
   }
 

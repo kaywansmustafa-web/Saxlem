@@ -185,5 +185,15 @@
   "gender": "رەگەز",
   "dateOfBirth": "رێکەفتا ژدایکبوونێ",
   "patientRelationship": "{relationship, select, mother {یێن دی} father {باب} wife {هەڤژین} husband {هەڤژین} son {کور} daughter {کچ} brother {یێن دی} sister {خویشک} grandfather {باپیر} grandmother {یێن دی} me {ئەز} other {یێن دی}}",
-  "patientGender": "{gender, select, female {نێر} male {نێر} other {دیار نینە}}"
+  "patientGender": "{gender, select, female {نێر} male {نێر} other {دیار نینە}}",
+  "loadingPatientAccount": "هەژمارێ نەخۆشی دهێتە بارکرن",
+  "profileSetupTitle": "دەربارەی نەخۆشی بێژە مە",
+  "profileSetupBody": "زانیاریێن پێویست بۆ چاڤدێریا تایبەت تۆمار بکە.",
+  "creatingPatientProfile": "پڕۆفایلێ نەخۆشی دهێتە دروستکرن",
+  "profileCreationFailed": "پڕۆفایل نەهاتە دروستکرن. زانیاریێن تە پاراستینە، دیسان هەوڵ بدە.",
+  "profileSelectionFailed": "گوهۆڕینا نەخۆشی سەرنەکەفت. دیسان هەوڵ بدە.",
+  "patientAccountUnavailable": "هەژمارێ نەخۆشی نوکە بەردەست نینە.",
+  "patientAccountInvalid": "مە نەشیا هەژمارێ نەخۆشی ب پارێزراوی بخوینین. دیسان هەوڵ بدە.",
+  "patientAccountOffline": "تو ئۆفلاینی. زانیاریێن دوماهیێ یێن نەخۆشی نیشان ددەین.",
+  "emptyPatientProfiles": "هێشتا چ پڕۆفایلێن نەخۆشان نینن."
 }
