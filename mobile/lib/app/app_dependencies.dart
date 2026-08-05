@@ -54,7 +54,6 @@ class AppDependencies {
         AuthenticatedApiClient(
           api: api,
           storage: sessionStorage,
-          refreshCoordinator: refreshCoordinator,
           refresh: auth.refreshSession,
         ),
       ),

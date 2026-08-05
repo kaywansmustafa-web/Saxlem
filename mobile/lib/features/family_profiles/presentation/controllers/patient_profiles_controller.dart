@@ -30,7 +30,11 @@ class PatientProfilesController extends ChangeNotifier {
   PatientProfile? get activeProfile => snapshot?.activeProfile;
   PatientProfileId get activeProfileId =>
       activeProfile?.id ?? PatientProfileId.me;
-  List<PatientProfile> get profiles => snapshot?.profiles ?? const [];
+  List<PatientProfile> get profiles =>
+      snapshot?.profiles
+          .where((profile) => profile.active)
+          .toList(growable: false) ??
+      const [];
   Future<bool> load() async {
     status = PatientProfilesStatus.loading;
     failure = null;
@@ -48,6 +52,7 @@ class PatientProfilesController extends ChangeNotifier {
   Future<bool> select(PatientProfileId id) async {
     if (status == PatientProfilesStatus.selecting) return false;
     status = PatientProfilesStatus.selecting;
+    failure = null;
     notifyListeners();
     try {
       _setSnapshot(await _repository.select(id));
@@ -68,6 +73,7 @@ class PatientProfilesController extends ChangeNotifier {
     if (guest) throw StateError('authenticationRequired');
     if (status == PatientProfilesStatus.submitting) return false;
     status = PatientProfilesStatus.submitting;
+    failure = null;
     notifyListeners();
     try {
       _setSnapshot(

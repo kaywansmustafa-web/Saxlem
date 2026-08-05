@@ -41,4 +41,39 @@ void main() {
     );
     controller.dispose();
   });
+
+  test(
+    'inactive authoritative profiles are not exposed for selection',
+    () async {
+      final controller = PatientProfilesController(
+        InMemoryPatientProfilesRepository(
+          profiles: [
+            PatientProfile(
+              id: PatientProfileId.me,
+              relationship: PatientRelationship.me,
+              firstName: 'Ari',
+              lastName: 'Ahmed',
+              gender: PatientGender.male,
+              dateOfBirth: DateTime(2000),
+            ),
+            PatientProfile(
+              id: const PatientProfileId('archived'),
+              relationship: PatientRelationship.other,
+              firstName: 'Old',
+              lastName: 'Profile',
+              gender: PatientGender.unspecified,
+              dateOfBirth: DateTime(1990),
+              active: false,
+            ),
+          ],
+        ),
+        guest: false,
+      );
+      await controller.load();
+      expect(controller.profiles.map((profile) => profile.id), [
+        PatientProfileId.me,
+      ]);
+      controller.dispose();
+    },
+  );
 }

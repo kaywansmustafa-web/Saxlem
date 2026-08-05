@@ -7,7 +7,6 @@ import 'package:saxlem_app/config/environment/app_configuration.dart';
 import 'package:saxlem_app/core/models/patient_profile.dart';
 import 'package:saxlem_app/core/network/api_client.dart';
 import 'package:saxlem_app/core/network/authenticated_api_client.dart';
-import 'package:saxlem_app/core/network/refresh_coordinator.dart';
 import 'package:saxlem_app/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:saxlem_app/features/family_profiles/data/repositories/backend_patient_profiles_repository.dart';
 
@@ -114,7 +113,6 @@ BackendPatientProfilesRepository _repository(
     AuthenticatedApiClient(
       api: api,
       storage: storage,
-      refreshCoordinator: RefreshCoordinator<StoredSession>(),
       refresh: () async => (await storage.read())!,
     ),
   );
