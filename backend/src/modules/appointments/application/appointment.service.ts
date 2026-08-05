@@ -11,12 +11,15 @@ import { createHash } from 'node:crypto';
 import { BACKEND_CONFIGURATION } from '../../../config/configuration.module';
 import type { BackendConfiguration } from '../../../config/environment';
 import { DoctorScheduleService } from '../../doctors/application/doctor-schedule.service';
+import { TimezoneService } from '../../doctors/application/timezone.service';
 import type { DoctorAccessContext } from '../../doctors/application/doctor.service';
 import type {
   AppointmentAccess,
   AppointmentProjection,
   AppointmentType,
   AppointmentWrite,
+  BookingDayProjection,
+  BookingOptionsProjection,
 } from '../domain/appointment';
 import { AppointmentAuditPersistenceError } from '../domain/appointment.errors';
 import {
@@ -42,9 +45,158 @@ export class AppointmentService {
     @Inject(APPOINTMENT_REPOSITORY)
     private readonly repository: AppointmentRepository,
     private readonly schedules: DoctorScheduleService,
+    private readonly timezones: TimezoneService,
     @Inject(BACKEND_CONFIGURATION)
     private readonly configuration: BackendConfiguration,
   ) {}
+  async bookingOptions(
+    access: AppointmentAccess,
+    doctorId: string,
+    clinicId: string,
+    patientProfileId: string,
+    appointmentType: AppointmentType,
+    dateFrom: string,
+    dateTo: string,
+    requestId: string,
+  ): Promise<BookingOptionsProjection> {
+    if (!access.patient)
+      throw new ForbiddenException('Booking options are patient-only.');
+    this.dateWindow(dateFrom, dateTo);
+    const generatedAt = new Date();
+    const scheduleAt = new Date(`${dateFrom}T12:00:00.000Z`);
+    const schedule = await this.schedules.schedule(
+      this.doctorAccess(access),
+      doctorId,
+      clinicId,
+      requestId,
+      scheduleAt,
+    );
+    const clinic = schedule.clinics.find((item) => item.clinicId === clinicId);
+    if (!clinic) throw new NotFoundException('Booking options were not found.');
+    const durationMinutes =
+      this.configuration.appointmentFoundationDurationMinutes;
+    const rangeStart = this.timezones.instantForLocalDateMinute(
+      dateFrom,
+      0,
+      clinic.timezone.identifier,
+    );
+    const afterEnd = this.timezones.instantForLocalDateMinute(
+      this.addDate(dateTo, 1),
+      0,
+      clinic.timezone.identifier,
+    );
+    if (!rangeStart || !afterEnd)
+      throw new BadRequestException('Booking date window is invalid.');
+    await this.repository.validateContext(access, {
+      organizationId: schedule.organizationId,
+      clinicId,
+      doctorId,
+      patientProfileId,
+      type: appointmentType,
+      reason: 'Booking availability validation',
+      startsAt: rangeStart,
+      endsAt: new Date(rangeStart.getTime() + durationMinutes * 60_000),
+      durationMinutes,
+      feeIqd: this.configuration.appointmentFoundationFeeIqd,
+    });
+    const conflicts = await this.repository.findBookingConflicts({
+      organizationId: schedule.organizationId,
+      doctorId,
+      patientProfileId,
+      startsAt: rangeStart,
+      endsAt: afterEnd,
+    });
+    const days: BookingDayProjection[] = [];
+    for (let date = dateFrom; date <= dateTo; date = this.addDate(date, 1)) {
+      const noon = this.timezones.instantForLocalDateMinute(
+        date,
+        12 * 60,
+        clinic.timezone.identifier,
+      );
+      const weekday = noon
+        ? this.timezones.localClock(noon, clinic.timezone.identifier).weekday
+        : 0;
+      const periods: { startsMinute: number; endsMinute: number }[] = [
+        ...clinic.weeklySchedule.filter((item) => item.weekday === weekday),
+      ];
+      for (const exception of clinic.exceptions.filter(
+        (item) => item.kind === 'working',
+      )) {
+        const startClock = this.timezones.localClock(
+          new Date(exception.startsAt),
+          clinic.timezone.identifier,
+        );
+        const endClock = this.timezones.localClock(
+          new Date(new Date(exception.endsAt).getTime() - 1),
+          clinic.timezone.identifier,
+        );
+        if (startClock.date === date && endClock.date === date)
+          periods.push({
+            startsMinute: startClock.minuteOfDay,
+            endsMinute: endClock.minuteOfDay + 1,
+          });
+      }
+      const slots = [];
+      const seen = new Set<string>();
+      for (const period of periods.sort(
+        (left, right) => left.startsMinute - right.startsMinute,
+      )) {
+        for (
+          let minute = period.startsMinute;
+          minute + durationMinutes <= period.endsMinute;
+          minute += durationMinutes
+        ) {
+          const start = this.timezones.instantForLocalDateMinute(
+            date,
+            minute,
+            clinic.timezone.identifier,
+          );
+          const end = start
+            ? new Date(start.getTime() + durationMinutes * 60_000)
+            : null;
+          if (
+            !start ||
+            !end ||
+            start <= generatedAt ||
+            !this.scheduleAllows(clinic, weekday, minute, start, end) ||
+            conflicts.some(
+              (item) =>
+                new Date(item.startsAt) < end && new Date(item.endsAt) > start,
+            )
+          )
+            continue;
+          const key = start.toISOString();
+          if (seen.has(key)) continue;
+          seen.add(key);
+          slots.push(
+            Object.freeze({
+              startsAt: start.toISOString(),
+              endsAt: end.toISOString(),
+              durationMinutes,
+            }),
+          );
+        }
+      }
+      slots.sort((left, right) => left.startsAt.localeCompare(right.startsAt));
+      days.push(Object.freeze({ date, slots: Object.freeze(slots) }));
+    }
+    return Object.freeze({
+      doctorId: schedule.doctorId,
+      doctorName: schedule.doctorName,
+      organizationId: schedule.organizationId,
+      clinicId: clinic.clinicId,
+      clinicName: clinic.clinicName,
+      clinicTimezone: clinic.timezone.identifier,
+      appointmentType,
+      durationMinutes,
+      feeIqd: this.configuration.appointmentFoundationFeeIqd,
+      currency: 'IQD',
+      dateFrom,
+      dateTo,
+      days: Object.freeze(days),
+      generatedAt: generatedAt.toISOString(),
+    });
+  }
   async list(
     access: AppointmentAccess,
     query: AppointmentListQuery,
@@ -234,6 +386,14 @@ export class AppointmentService {
       throw new BadRequestException(
         'Appointment duration must be between 5 and 480 minutes.',
       );
+    if (
+      access.patient &&
+      input.durationMinutes !==
+        this.configuration.appointmentFoundationDurationMinutes
+    )
+      throw new BadRequestException(
+        'Appointment duration does not match booking configuration.',
+      );
     this.reason(input.reason);
     if (
       !access.patient &&
@@ -304,6 +464,60 @@ export class AppointmentService {
   }
   private doctorAccess(access: AppointmentAccess): DoctorAccessContext {
     return { ...access };
+  }
+  private dateWindow(dateFrom: string, dateTo: string) {
+    const valid = (value: string) => {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+      const parsed = new Date(`${value}T00:00:00.000Z`);
+      return (
+        !Number.isNaN(parsed.getTime()) &&
+        parsed.toISOString().startsWith(value)
+      );
+    };
+    if (!valid(dateFrom) || !valid(dateTo) || dateTo < dateFrom)
+      throw new BadRequestException('Booking date window is invalid.');
+    const days =
+      (new Date(`${dateTo}T00:00:00.000Z`).getTime() -
+        new Date(`${dateFrom}T00:00:00.000Z`).getTime()) /
+        86_400_000 +
+      1;
+    if (days > 31)
+      throw new BadRequestException(
+        'Booking date window must not exceed 31 days.',
+      );
+  }
+  private addDate(value: string, days: number) {
+    const date = new Date(`${value}T00:00:00.000Z`);
+    date.setUTCDate(date.getUTCDate() + days);
+    return date.toISOString().slice(0, 10);
+  }
+  private scheduleAllows(
+    clinic: Awaited<
+      ReturnType<DoctorScheduleService['schedule']>
+    >['clinics'][number],
+    weekday: number,
+    minute: number,
+    startsAt: Date,
+    endsAt: Date,
+  ) {
+    const overlaps = (period: { startsAt: string; endsAt: string }) =>
+      new Date(period.startsAt) < endsAt && new Date(period.endsAt) > startsAt;
+    const exception = clinic.exceptions.find(overlaps);
+    if (exception)
+      return (
+        exception.kind === 'working' &&
+        new Date(exception.startsAt) <= startsAt &&
+        new Date(exception.endsAt) >= endsAt
+      );
+    if (clinic.leave.some(overlaps) || clinic.holidays.some(overlaps))
+      return false;
+    return !clinic.breaks.some(
+      (period) =>
+        period.weekday === weekday &&
+        period.startsMinute <
+          minute + this.configuration.appointmentFoundationDurationMinutes &&
+        period.endsMinute > minute,
+    );
   }
   private reason(value: string) {
     if (!value?.trim() || value.trim().length > 500)

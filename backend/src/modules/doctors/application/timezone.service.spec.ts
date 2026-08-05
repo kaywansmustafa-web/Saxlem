@@ -36,4 +36,26 @@ describe('TimezoneService', () => {
       ).minuteOfDay,
     ).toBe(210);
   });
+
+  it('converts Iraq local booking time to one deterministic UTC instant', () => {
+    expect(
+      service
+        .instantForLocalDateMinute('2030-07-22', 9 * 60, 'Asia/Baghdad')
+        ?.toISOString(),
+    ).toBe('2030-07-22T06:00:00.000Z');
+  });
+
+  it('supports 24:00 as the next local midnight and rejects invalid input', () => {
+    expect(
+      service
+        .instantForLocalDateMinute('2030-07-22', 1440, 'Asia/Baghdad')
+        ?.toISOString(),
+    ).toBe('2030-07-22T21:00:00.000Z');
+    expect(
+      service.instantForLocalDateMinute('2030-02-31', 60, 'Asia/Baghdad'),
+    ).toBeNull();
+    expect(
+      service.instantForLocalDateMinute('2030-07-22', 1441, 'Asia/Baghdad'),
+    ).toBeNull();
+  });
 });

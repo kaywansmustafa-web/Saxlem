@@ -100,7 +100,16 @@ export class AppointmentsController {
       'Validates active tenant participants, effective doctor schedule, leave, holidays, exceptions, and doctor/patient overlaps. No queue or notification behavior occurs.',
   })
   @ApiCreatedResponse({ type: AppointmentResponseDto })
-  @ApiHeader({ name: 'Idempotency-Key', required: true })
+  @ApiHeader({
+    name: 'Idempotency-Key',
+    required: true,
+    schema: {
+      type: 'string',
+      minLength: 8,
+      maxLength: 128,
+      pattern: '^[\\x21-\\x7e]+$',
+    },
+  })
   @ApiConflictResponse({
     type: ApiErrorEnvelopeDto,
     description: 'Doctor/patient overlap or idempotency conflict.',
@@ -130,7 +139,16 @@ export class AppointmentsController {
   @Patch(':id')
   @RequireCapabilities('appointment:update')
   @ApiOkResponse({ type: AppointmentResponseDto })
-  @ApiHeader({ name: 'Idempotency-Key', required: true })
+  @ApiHeader({
+    name: 'Idempotency-Key',
+    required: true,
+    schema: {
+      type: 'string',
+      minLength: 8,
+      maxLength: 128,
+      pattern: '^[\\x21-\\x7e]+$',
+    },
+  })
   @ApiConflictResponse({
     type: ApiErrorEnvelopeDto,
     description:
@@ -158,7 +176,16 @@ export class AppointmentsController {
   @Post(':id/cancel')
   @RequireCapabilities('appointment:cancel')
   @ApiOkResponse({ type: AppointmentResponseDto })
-  @ApiHeader({ name: 'Idempotency-Key', required: true })
+  @ApiHeader({
+    name: 'Idempotency-Key',
+    required: true,
+    schema: {
+      type: 'string',
+      minLength: 8,
+      maxLength: 128,
+      pattern: '^[\\x21-\\x7e]+$',
+    },
+  })
   @ApiConflictResponse({
     type: ApiErrorEnvelopeDto,
     description: 'Stale version or idempotency conflict.',
@@ -185,7 +212,16 @@ export class AppointmentsController {
   @Post(':id/reschedule')
   @RequireCapabilities('appointment:reschedule')
   @ApiOkResponse({ type: AppointmentResponseDto })
-  @ApiHeader({ name: 'Idempotency-Key', required: true })
+  @ApiHeader({
+    name: 'Idempotency-Key',
+    required: true,
+    schema: {
+      type: 'string',
+      minLength: 8,
+      maxLength: 128,
+      pattern: '^[\\x21-\\x7e]+$',
+    },
+  })
   @ApiConflictResponse({
     type: ApiErrorEnvelopeDto,
     description: 'Doctor/patient overlap or stale version.',
