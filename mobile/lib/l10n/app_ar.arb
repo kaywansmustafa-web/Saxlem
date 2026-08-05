@@ -156,5 +156,15 @@
   "currentPatient": "المريض الحالي", "choosePatient": "اختر المريض", "bookingFor": "الحجز لـ", "addPatient": "إضافة فرد من العائلة",
   "firstName": "الاسم الأول", "lastName": "اسم العائلة", "relationship": "صلة القرابة", "gender": "الجنس", "dateOfBirth": "تاريخ الميلاد",
   "patientRelationship": "{relationship, select, mother {الأم} father {الأب} wife {الزوجة} husband {الزوج} son {الابن} daughter {الابنة} brother {الأخ} sister {الأخت} grandfather {الجد} grandmother {الجدة} me {أنا} other {أخرى}}",
-  "patientGender": "{gender, select, female {أنثى} male {ذكر} other {غير محدد}}"
+  "patientGender": "{gender, select, female {أنثى} male {ذكر} other {غير محدد}}",
+  "loadingPatientAccount": "جارٍ تحميل حساب المريض",
+  "profileSetupTitle": "أخبرنا عن المريض",
+  "profileSetupBody": "أضف المعلومات الأساسية اللازمة لتخصيص الرعاية.",
+  "creatingPatientProfile": "جارٍ إنشاء ملف المريض",
+  "profileCreationFailed": "تعذر إنشاء ملف المريض. بقيت معلوماتك محفوظة، حاول مرة أخرى.",
+  "profileSelectionFailed": "تعذر تبديل المريض. حاول مرة أخرى.",
+  "patientAccountUnavailable": "حساب المريض غير متاح مؤقتًا.",
+  "patientAccountInvalid": "تعذر قراءة حساب المريض بأمان. حاول مرة أخرى.",
+  "patientAccountOffline": "أنت غير متصل. نعرض آخر معلومات متاحة للمريض.",
+  "emptyPatientProfiles": "لا توجد ملفات مرضى بعد."
 }

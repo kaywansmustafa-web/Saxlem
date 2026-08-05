@@ -4,7 +4,7 @@ import '../entities/patient_profiles_snapshot.dart';
 abstract interface class PatientProfilesRepository {
   Future<PatientProfilesSnapshot> load();
   Stream<PatientProfilesSnapshot> watch();
-  Future<void> add(PatientProfile profile);
-  Future<void> select(PatientProfileId id);
+  Future<PatientProfilesSnapshot> add(PatientProfileDraft profile);
+  Future<PatientProfilesSnapshot> select(PatientProfileId id);
   Future<void> dispose();
 }

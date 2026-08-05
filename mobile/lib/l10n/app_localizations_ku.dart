@@ -641,4 +641,39 @@ class AppLocalizationsKu extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get loadingPatientAccount => 'هەژمارێ نەخۆشی دهێتە بارکرن';
+
+  @override
+  String get profileSetupTitle => 'دەربارەی نەخۆشی بێژە مە';
+
+  @override
+  String get profileSetupBody =>
+      'زانیاریێن پێویست بۆ چاڤدێریا تایبەت تۆمار بکە.';
+
+  @override
+  String get creatingPatientProfile => 'پڕۆفایلێ نەخۆشی دهێتە دروستکرن';
+
+  @override
+  String get profileCreationFailed =>
+      'پڕۆفایل نەهاتە دروستکرن. زانیاریێن تە پاراستینە، دیسان هەوڵ بدە.';
+
+  @override
+  String get profileSelectionFailed =>
+      'گوهۆڕینا نەخۆشی سەرنەکەفت. دیسان هەوڵ بدە.';
+
+  @override
+  String get patientAccountUnavailable => 'هەژمارێ نەخۆشی نوکە بەردەست نینە.';
+
+  @override
+  String get patientAccountInvalid =>
+      'مە نەشیا هەژمارێ نەخۆشی ب پارێزراوی بخوینین. دیسان هەوڵ بدە.';
+
+  @override
+  String get patientAccountOffline =>
+      'تو ئۆفلاینی. زانیاریێن دوماهیێ یێن نەخۆشی نیشان ددەین.';
+
+  @override
+  String get emptyPatientProfiles => 'هێشتا چ پڕۆفایلێن نەخۆشان نینن.';
 }

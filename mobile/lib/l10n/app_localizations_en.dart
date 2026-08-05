@@ -647,4 +647,40 @@ class AppLocalizationsEn extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get loadingPatientAccount => 'Loading your patient account';
+
+  @override
+  String get profileSetupTitle => 'Tell us about the patient';
+
+  @override
+  String get profileSetupBody =>
+      'Add the essential details needed to personalize your care.';
+
+  @override
+  String get creatingPatientProfile => 'Creating patient profile';
+
+  @override
+  String get profileCreationFailed =>
+      'We couldn\'t create this patient profile. Your details are still here—please try again.';
+
+  @override
+  String get profileSelectionFailed =>
+      'We couldn\'t switch patients. Please try again.';
+
+  @override
+  String get patientAccountUnavailable =>
+      'Your patient account is temporarily unavailable.';
+
+  @override
+  String get patientAccountInvalid =>
+      'We couldn\'t safely read your patient account. Please try again.';
+
+  @override
+  String get patientAccountOffline =>
+      'You\'re offline. Showing your last available patient information.';
+
+  @override
+  String get emptyPatientProfiles => 'No patient profiles are available yet.';
 }

@@ -1,6 +1,12 @@
 import { Body, Controller, HttpCode, Post, Req } from '@nestjs/common';
 import type { Request } from 'express';
-import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
+import {
+  ApiAcceptedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiProperty,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   IsEmail,
   IsIn,
@@ -12,6 +18,10 @@ import {
   MinLength,
 } from 'class-validator';
 import { AuthenticationService } from '../application/authentication.service';
+import {
+  AuthenticationTokensResponseDto,
+  OtpChallengeResponseDto,
+} from './auth.dto';
 
 class DeviceDto {
   @ApiProperty() @IsString() @MinLength(3) @MaxLength(128) deviceId!: string;
@@ -65,12 +75,14 @@ export class AuthController {
   @Post('request-otp')
   @HttpCode(202)
   @ApiOperation({ summary: 'Request an Iraqi mobile OTP challenge' })
+  @ApiAcceptedResponse({ type: OtpChallengeResponseDto })
   requestOtp(@Body() dto: RequestOtpDto, @Req() request: Request) {
     return this.auth.requestOtp(dto.phone, request.ip);
   }
   @Post('verify-otp')
   @HttpCode(200)
   @ApiOperation({ summary: 'Verify OTP and create a patient session' })
+  @ApiOkResponse({ type: AuthenticationTokensResponseDto })
   verifyOtp(@Body() dto: VerifyOtpDto, @Req() request: Request) {
     return this.auth.verifyOtp(
       dto.challengeId,
@@ -95,6 +107,7 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(200)
   @ApiOperation({ summary: 'Rotate an opaque refresh token' })
+  @ApiOkResponse({ type: AuthenticationTokensResponseDto })
   refresh(@Body() dto: RefreshDto, @Req() request: Request) {
     return this.auth.refresh(
       dto.refreshToken,

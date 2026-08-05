@@ -29,4 +29,7 @@ class UnavailableAuthRepository implements AuthRepository {
 
   @override
   Future<void> logout() async {}
+
+  @override
+  Future<void> logoutAll() async {}
 }

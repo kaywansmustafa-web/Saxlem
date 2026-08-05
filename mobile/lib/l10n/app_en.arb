@@ -194,5 +194,15 @@
   "currentPatient": "Current Patient", "choosePatient": "Choose Patient", "bookingFor": "Booking For", "addPatient": "Add family member",
   "firstName": "First name", "lastName": "Last name", "relationship": "Relationship", "gender": "Gender", "dateOfBirth": "Date of birth",
   "patientRelationship": "{relationship, select, mother {Mother} father {Father} wife {Wife} husband {Husband} son {Son} daughter {Daughter} brother {Brother} sister {Sister} grandfather {Grandfather} grandmother {Grandmother} me {Me} other {Other}}",
-  "patientGender": "{gender, select, female {Female} male {Male} other {Not specified}}"
+  "patientGender": "{gender, select, female {Female} male {Male} other {Not specified}}",
+  "loadingPatientAccount": "Loading your patient account",
+  "profileSetupTitle": "Tell us about the patient",
+  "profileSetupBody": "Add the essential details needed to personalize your care.",
+  "creatingPatientProfile": "Creating patient profile",
+  "profileCreationFailed": "We couldn't create this patient profile. Your details are still here—please try again.",
+  "profileSelectionFailed": "We couldn't switch patients. Please try again.",
+  "patientAccountUnavailable": "Your patient account is temporarily unavailable.",
+  "patientAccountInvalid": "We couldn't safely read your patient account. Please try again.",
+  "patientAccountOffline": "You're offline. Showing your last available patient information.",
+  "emptyPatientProfiles": "No patient profiles are available yet."
 }

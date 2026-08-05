@@ -39,6 +39,7 @@ import {
   PatientDirectoryProfileDetailResponseDto,
   PatientDirectoryProfileParamsDto,
   PatientDirectorySearchQueryDto,
+  PatientAccountResponseDto,
   PatientProfileParamsDto,
   PatientProfileResponseDto,
   UpdatePatientProfileDto,
@@ -107,7 +108,7 @@ export class PatientsController {
   @ApiOperation({
     summary: 'Get the authenticated patient account and current patient',
   })
-  @ApiOkResponse({ description: 'Patient account projection.' })
+  @ApiOkResponse({ type: PatientAccountResponseDto })
   me(@Req() request: AuthenticatedRequest) {
     return this.patients.me(this.userId(request));
   }
@@ -176,7 +177,7 @@ export class PatientsController {
   @RequireCapabilities('patient:self')
   @HttpCode(200)
   @ApiOperation({ summary: 'Choose the current active patient profile' })
-  @ApiOkResponse({ description: 'Updated patient account projection.' })
+  @ApiOkResponse({ type: PatientAccountResponseDto })
   @ApiConflictResponse({
     description: 'Archived profiles cannot become active.',
   })

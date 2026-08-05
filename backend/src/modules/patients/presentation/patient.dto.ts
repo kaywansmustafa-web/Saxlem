@@ -98,11 +98,40 @@ export class PatientProfileResponseDto {
   @ApiProperty() lastName!: string;
   @ApiProperty({ format: 'date' }) dateOfBirth!: string;
   @ApiProperty({ enum: ['female', 'male', 'unspecified'] }) gender!: string;
-  @ApiProperty() relationship!: string;
-  @ApiProperty() active!: boolean;
-  @ApiProperty() version!: number;
-  @ApiProperty() createdAt!: string;
-  @ApiProperty() updatedAt!: string;
+  @ApiProperty({
+    enum: [
+      'me',
+      'mother',
+      'father',
+      'son',
+      'daughter',
+      'brother',
+      'sister',
+      'grandfather',
+      'grandmother',
+      'wife',
+      'husband',
+      'other',
+    ],
+  })
+  relationship!: string;
+  @ApiProperty({ type: Boolean }) active!: boolean;
+  @ApiProperty({ type: 'integer', format: 'int32', minimum: 1 })
+  version!: number;
+  @ApiProperty({ type: String, format: 'date-time' }) createdAt!: string;
+  @ApiProperty({ type: String, format: 'date-time' }) updatedAt!: string;
+}
+
+export class PatientAccountResponseDto {
+  @ApiProperty({ type: String, format: 'uuid' }) id!: string;
+  @ApiProperty({ type: String, format: 'uuid', nullable: true })
+  activeProfileId!: string | null;
+  @ApiProperty({ type: PatientProfileResponseDto, nullable: true })
+  activeProfile!: PatientProfileResponseDto | null;
+  @ApiProperty({ type: 'integer', format: 'int32', minimum: 0 })
+  profileCount!: number;
+  @ApiProperty({ type: String, format: 'date-time' }) createdAt!: string;
+  @ApiProperty({ type: String, format: 'date-time' }) updatedAt!: string;
 }
 
 export class PatientDirectorySearchQueryDto {

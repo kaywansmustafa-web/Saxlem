@@ -47,7 +47,14 @@
         },
         "responses": {
           "202": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OtpChallengeResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Request an Iraqi mobile OTP challenge",
@@ -72,7 +79,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationTokensResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Verify OTP and create a patient session",
@@ -122,7 +136,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationTokensResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Rotate an opaque refresh token",
@@ -1038,7 +1059,14 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Patient account projection."
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientAccountResponseDto"
+                }
+              }
+            }
           },
           "400": {
             "description": "Request validation failed."
@@ -1316,7 +1344,14 @@
         },
         "responses": {
           "200": {
-            "description": "Updated patient account projection."
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientAccountResponseDto"
+                }
+              }
+            }
           },
           "400": {
             "description": "Request validation failed."
@@ -4530,6 +4565,30 @@
           "phone"
         ]
       },
+      "OtpChallengeResponseDto": {
+        "type": "object",
+        "properties": {
+          "challengeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "developmentOtp": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 6,
+            "pattern": "^\\d{6}$",
+            "description": "Present only in the development environment."
+          }
+        },
+        "required": [
+          "challengeId",
+          "expiresAt"
+        ]
+      },
       "VerifyOtpDto": {
         "type": "object",
         "properties": {
@@ -4561,6 +4620,30 @@
           "platform",
           "challengeId",
           "otp"
+        ]
+      },
+      "AuthenticationTokensResponseDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "description": "Short-lived bearer access token."
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Opaque rotating refresh token."
+          },
+          "expiresInSeconds": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1,
+            "example": 600
+          }
+        },
+        "required": [
+          "accessToken",
+          "refreshToken",
+          "expiresInSeconds"
         ]
       },
       "LoginDto": {
@@ -5513,19 +5596,37 @@
             ]
           },
           "relationship": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "me",
+              "mother",
+              "father",
+              "son",
+              "daughter",
+              "brother",
+              "sister",
+              "grandfather",
+              "grandmother",
+              "wife",
+              "husband",
+              "other"
+            ]
           },
           "active": {
             "type": "boolean"
           },
           "version": {
-            "type": "number"
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1
           },
           "createdAt": {
-            "type": "string"
+            "type": "string",
+            "format": "date-time"
           },
           "updatedAt": {
-            "type": "string"
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
@@ -5537,6 +5638,50 @@
           "relationship",
           "active",
           "version",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "PatientAccountResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "activeProfileId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "activeProfile": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PatientProfileResponseDto"
+              }
+            ]
+          },
+          "profileCount": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "activeProfileId",
+          "activeProfile",
+          "profileCount",
           "createdAt",
           "updatedAt"
         ]

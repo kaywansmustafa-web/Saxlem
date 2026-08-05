@@ -9,6 +9,8 @@ enum AppBootstrapStatus {
   needsLocale,
   needsAuthentication,
   sessionExpired,
+  authenticationUnavailable,
+  malformedLocalSession,
   ready,
 }
 
@@ -65,12 +67,20 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> _restoreSession() async {
-    session = await _authRepository.restoreSession();
+    try {
+      session = await _authRepository.restoreSession();
+    } catch (_) {
+      session = const AuthSession.restorationUnavailable();
+    }
     status = switch (session.status) {
       AuthSessionStatus.initializing => AppBootstrapStatus.loading,
       AuthSessionStatus.guest => AppBootstrapStatus.needsAuthentication,
       AuthSessionStatus.authenticated => AppBootstrapStatus.ready,
       AuthSessionStatus.sessionExpired => AppBootstrapStatus.sessionExpired,
+      AuthSessionStatus.restorationUnavailable =>
+        AppBootstrapStatus.authenticationUnavailable,
+      AuthSessionStatus.malformedLocalSession =>
+        AppBootstrapStatus.malformedLocalSession,
     };
     guestMode = false;
   }
@@ -79,6 +89,18 @@ class AppController extends ChangeNotifier {
     session = value;
     guestMode = false;
     status = AppBootstrapStatus.ready;
+    notifyListeners();
+  }
+
+  void patientAccountResolved(String accountId) {
+    if (session.status != AuthSessionStatus.authenticated ||
+        accountId.isEmpty) {
+      return;
+    }
+    session = AuthSession.authenticated(
+      userId: accountId,
+      phoneNumber: session.phoneNumber ?? '',
+    );
     notifyListeners();
   }
 

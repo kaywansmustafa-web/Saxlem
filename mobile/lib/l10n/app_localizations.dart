@@ -1215,6 +1215,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{gender, select, female {Female} male {Male} other {Not specified}}'**
   String patientGender(String gender);
+
+  /// No description provided for @loadingPatientAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading your patient account'**
+  String get loadingPatientAccount;
+
+  /// No description provided for @profileSetupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about the patient'**
+  String get profileSetupTitle;
+
+  /// No description provided for @profileSetupBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the essential details needed to personalize your care.'**
+  String get profileSetupBody;
+
+  /// No description provided for @creatingPatientProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating patient profile'**
+  String get creatingPatientProfile;
+
+  /// No description provided for @profileCreationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t create this patient profile. Your details are still here—please try again.'**
+  String get profileCreationFailed;
+
+  /// No description provided for @profileSelectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t switch patients. Please try again.'**
+  String get profileSelectionFailed;
+
+  /// No description provided for @patientAccountUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Your patient account is temporarily unavailable.'**
+  String get patientAccountUnavailable;
+
+  /// No description provided for @patientAccountInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t safely read your patient account. Please try again.'**
+  String get patientAccountInvalid;
+
+  /// No description provided for @patientAccountOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline. Showing your last available patient information.'**
+  String get patientAccountOffline;
+
+  /// No description provided for @emptyPatientProfiles.
+  ///
+  /// In en, this message translates to:
+  /// **'No patient profiles are available yet.'**
+  String get emptyPatientProfiles;
 }
 
 class _AppLocalizationsDelegate

@@ -632,4 +632,38 @@ class AppLocalizationsAr extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get loadingPatientAccount => 'جارٍ تحميل حساب المريض';
+
+  @override
+  String get profileSetupTitle => 'أخبرنا عن المريض';
+
+  @override
+  String get profileSetupBody =>
+      'أضف المعلومات الأساسية اللازمة لتخصيص الرعاية.';
+
+  @override
+  String get creatingPatientProfile => 'جارٍ إنشاء ملف المريض';
+
+  @override
+  String get profileCreationFailed =>
+      'تعذر إنشاء ملف المريض. بقيت معلوماتك محفوظة، حاول مرة أخرى.';
+
+  @override
+  String get profileSelectionFailed => 'تعذر تبديل المريض. حاول مرة أخرى.';
+
+  @override
+  String get patientAccountUnavailable => 'حساب المريض غير متاح مؤقتًا.';
+
+  @override
+  String get patientAccountInvalid =>
+      'تعذر قراءة حساب المريض بأمان. حاول مرة أخرى.';
+
+  @override
+  String get patientAccountOffline =>
+      'أنت غير متصل. نعرض آخر معلومات متاحة للمريض.';
+
+  @override
+  String get emptyPatientProfiles => 'لا توجد ملفات مرضى بعد.';
 }

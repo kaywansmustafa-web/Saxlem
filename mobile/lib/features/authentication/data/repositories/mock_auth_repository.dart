@@ -88,4 +88,7 @@ class MockAuthRepository implements AuthRepository {
 
   @override
   Future<void> logout() => _storage.clear();
+
+  @override
+  Future<void> logoutAll() => _storage.clear();
 }

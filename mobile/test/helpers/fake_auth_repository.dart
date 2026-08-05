@@ -15,6 +15,8 @@ class FakeAuthRepository implements AuthRepository {
   @override
   Future<void> logout() async => session = const AuthSession.guest();
   @override
+  Future<void> logoutAll() async => session = const AuthSession.guest();
+  @override
   Future<OtpChallenge> requestOtp(PhoneNumber phoneNumber) async {
     requestedPhone = phoneNumber;
     final now = DateTime.now();

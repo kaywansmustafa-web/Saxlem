@@ -27,17 +27,27 @@ class InMemoryPatientProfilesRepository implements PatientProfilesRepository {
   @override
   Stream<PatientProfilesSnapshot> watch() => _changes.stream;
   @override
-  Future<void> add(PatientProfile profile) async {
-    if (_profiles.any((p) => p.id == profile.id)) throw StateError('duplicate');
+  Future<PatientProfilesSnapshot> add(PatientProfileDraft draft) async {
+    final profile = PatientProfile(
+      id: PatientProfileId('profile-${DateTime.now().microsecondsSinceEpoch}'),
+      relationship: draft.relationship,
+      firstName: draft.firstName,
+      lastName: draft.lastName,
+      gender: draft.gender,
+      dateOfBirth: draft.dateOfBirth,
+    );
     _profiles.add(profile);
+    _active = profile.id;
     _changes.add(_snapshot);
+    return _snapshot;
   }
 
   @override
-  Future<void> select(PatientProfileId id) async {
+  Future<PatientProfilesSnapshot> select(PatientProfileId id) async {
     if (!_profiles.any((p) => p.id == id)) throw StateError('missing');
     _active = id;
     _changes.add(_snapshot);
+    return _snapshot;
   }
 
   @override
