@@ -676,4 +676,180 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get emptyPatientProfiles => 'هێشتا چ پڕۆفایلێن نەخۆشان نینن.';
+
+  @override
+  String get doctorDiscoveryTitle => 'نوژداران بدۆزەڤە';
+
+  @override
+  String get doctorDiscoveryInstruction =>
+      'ل نوژدارێن باوەرپێکری بگەڕە و ئەنجامان ب فلتەرێن بەردەست کورت بکە.';
+
+  @override
+  String get searchDoctorsLabel => 'ل نوژداران بگەڕە';
+
+  @override
+  String get searchDoctorsHint => 'ناڤێ نوژداری';
+
+  @override
+  String get clearSearch => 'گەڕیانێ پاک بکە';
+
+  @override
+  String get applyFilters => 'فلتەران جێبەجێ بکە';
+
+  @override
+  String get specialtyLabel => 'پسپۆڕی';
+
+  @override
+  String get languageLabel => 'زمان';
+
+  @override
+  String get soraniKurdish => 'کوردی سۆرانی';
+
+  @override
+  String get turkish => 'تورکی';
+
+  @override
+  String get experienceLabel => 'ئەزموون';
+
+  @override
+  String get minimumExperienceLabel => 'کێمترین ئەزموون';
+
+  @override
+  String get anyOption => 'هەمی';
+
+  @override
+  String get appliedFilters => 'فلتەرێن جێبەجێکری';
+
+  @override
+  String doctorResults(int count) {
+    return '$count نوژدار';
+  }
+
+  @override
+  String get noDoctorsTitle => 'چ نوژدار نەهاتنە دیتن';
+
+  @override
+  String get noDoctorsBody => 'ناڤێ نوژدارەکێ دی تاقی بکە.';
+
+  @override
+  String get noDoctorsFilteredBody => 'فلتەرەک یان ژ پتر پاک بکە.';
+
+  @override
+  String get loadingDoctors => 'نوژدار دهێنە بارکرن';
+
+  @override
+  String get loadingMoreDoctors => 'نوژدارێن پتر دهێنە بارکرن';
+
+  @override
+  String get loadMoreFailed =>
+      'بارکرنا نوژدارێن پتر سەرنەکەفت. ئەنجامێن نوکە هێشتا دیارن.';
+
+  @override
+  String get offlineTitle => 'تو ئۆفلاینی';
+
+  @override
+  String get offlineBody => 'پەیوەندییا خۆ بپشکنە و دیسان هەول بدە.';
+
+  @override
+  String get discoveryUnavailableTitle => 'گەڕیان ل نوژداران بەردەست نینە';
+
+  @override
+  String get discoveryUnavailableBody =>
+      'خزمەتگوزاری نوکە بەردەست نینە. دیسان هەول بدە.';
+
+  @override
+  String get discoveryForbiddenTitle => 'گەڕیان ل نوژداران سنووردارە';
+
+  @override
+  String get discoveryForbiddenBody => 'هەژمارا تە ناتوانیت دەست بگەهینیت.';
+
+  @override
+  String get malformedDoctorDataTitle => 'زانیاریێن نوژداری بەردەست نینن';
+
+  @override
+  String get malformedDoctorDataBody =>
+      'مە نەشیا زانیاریێن نوژداری ب پارێزراوی بخوینین. دیسان هەول بدە.';
+
+  @override
+  String get discoveryErrorTitle => 'تشتەک خەلەت چوو';
+
+  @override
+  String get discoveryErrorBody => 'دیسان هەول بدە.';
+
+  @override
+  String get discoveryAuthTitle => 'بچۆ ژوور بۆ دیتنا نوژداران';
+
+  @override
+  String get discoveryAuthBody =>
+      'ژمارا موبایلا خۆ پشتڕاست بکە بۆ دیتنا زانیاریێن نوژداران.';
+
+  @override
+  String get doctorNotFound => 'نوژدار نەهاتە دیتن';
+
+  @override
+  String get doctorNotFoundBody => 'پڕۆفایلا ڤی نوژداری ئێدی بەردەست نینە.';
+
+  @override
+  String yearsExperience(int years) {
+    return '$years سال ئەزموون';
+  }
+
+  @override
+  String get genderFemale => 'مێ';
+
+  @override
+  String get genderMale => 'نێر';
+
+  @override
+  String get genderUnspecified => 'دیار نەکری';
+
+  @override
+  String get languagesLabel => 'زمان';
+
+  @override
+  String get clinicsLabel => 'کلینیک';
+
+  @override
+  String get specialtiesLabel => 'پسپۆڕی';
+
+  @override
+  String get biographyLabel => 'دەربارە';
+
+  @override
+  String get availabilityLabel => 'بەردەستبوون';
+
+  @override
+  String get doctorAvailable => 'بەردەستە';
+
+  @override
+  String get doctorUnavailable => 'بەردەست نینە';
+
+  @override
+  String get acceptingNewPatients => 'نەخۆشێن نوی وەردگریت';
+
+  @override
+  String get notAcceptingNewPatients => 'نەخۆشێن نوی وەرناگریت';
+
+  @override
+  String profileImageLabel(String name) {
+    return 'وێنێ پڕۆفایلا $name';
+  }
+
+  @override
+  String profileImageFallback(String name) {
+    return 'وێنێ پڕۆفایلا $name نینە';
+  }
+
+  @override
+  String viewDoctorProfile(String name) {
+    return 'پڕۆفایلا $name ببینە';
+  }
+
+  @override
+  String removeAppliedFilter(String label) {
+    return 'فلتەرا $label پاک بکە';
+  }
+
+  @override
+  String get bookingComingSoon => 'حجزکرن د وەشانێ داهاتی دا بەردەست دبیت.';
 }

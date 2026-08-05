@@ -7,6 +7,7 @@ class SearchDoctors {
   final DoctorDiscoveryRepository _repository;
   Future<DoctorSearchPage> call(
     DoctorSearchCriteria criteria, {
-    int offset = 0,
-  }) => _repository.search(criteria, offset: offset);
+    int page = 1,
+    int pageSize = 20,
+  }) => _repository.search(criteria, page: page, pageSize: pageSize);
 }

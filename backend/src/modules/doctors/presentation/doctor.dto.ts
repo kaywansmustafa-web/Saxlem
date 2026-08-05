@@ -18,6 +18,8 @@ export class DoctorParamsDto {
   @ApiProperty({ format: 'uuid' }) @IsUUID() id!: string;
 }
 
+export class DoctorDiscoveryOptionsQueryDto {}
+
 export class DoctorSearchDto {
   @ApiPropertyOptional({ example: 'cardiology' })
   @IsOptional()
@@ -39,7 +41,7 @@ export class DoctorSearchDto {
   @IsOptional()
   @IsIn(['active', 'inactive'])
   status?: 'active' | 'inactive';
-  @ApiPropertyOptional({ minimum: 0, maximum: 80 })
+  @ApiPropertyOptional({ type: 'integer', minimum: 0, maximum: 80 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
@@ -56,6 +58,7 @@ export class DoctorSearchDto {
   @MaxLength(120)
   name?: string;
   @ApiPropertyOptional({
+    type: 'integer',
     default: 1,
     minimum: 1,
     maximum: maximumDoctorSearchPage,
@@ -66,7 +69,12 @@ export class DoctorSearchDto {
   @Min(1)
   @Max(maximumDoctorSearchPage)
   page = 1;
-  @ApiPropertyOptional({ default: 20, minimum: 1, maximum: 100 })
+  @ApiPropertyOptional({
+    type: 'integer',
+    default: 20,
+    minimum: 1,
+    maximum: 100,
+  })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
@@ -94,6 +102,45 @@ export class DoctorAvailabilityResponseDto {
 export class DoctorClinicResponseDto {
   @ApiProperty({ format: 'uuid' }) id!: string;
   @ApiProperty({ example: 'Saxlem Medical Center' }) name!: string;
+}
+
+export class DoctorDiscoverySpecialtyOptionResponseDto {
+  @ApiProperty({ example: 'cardiology' }) code!: string;
+  @ApiProperty({ example: 'Cardiology' }) displayName!: string;
+}
+
+export class DoctorDiscoveryClinicOptionResponseDto {
+  @ApiProperty({ format: 'uuid' }) id!: string;
+  @ApiProperty({ example: 'Saxlem Medical Center' }) name!: string;
+}
+
+export class DoctorDiscoveryExperienceOptionResponseDto {
+  @ApiProperty({ type: 'integer', nullable: true, minimum: 0 })
+  minimum!: number | null;
+  @ApiProperty({ type: 'integer', nullable: true, minimum: 0 })
+  maximum!: number | null;
+}
+
+export class DoctorDiscoveryOptionsResponseDto {
+  @ApiProperty({
+    type: DoctorDiscoverySpecialtyOptionResponseDto,
+    isArray: true,
+  })
+  specialties!: DoctorDiscoverySpecialtyOptionResponseDto[];
+  @ApiProperty({
+    type: DoctorDiscoveryClinicOptionResponseDto,
+    isArray: true,
+  })
+  clinics!: DoctorDiscoveryClinicOptionResponseDto[];
+  @ApiProperty({ enum: doctorLanguages, isArray: true })
+  languages!: string[];
+  @ApiProperty({
+    enum: ['female', 'male', 'unspecified'],
+    isArray: true,
+  })
+  genders!: string[];
+  @ApiProperty({ type: DoctorDiscoveryExperienceOptionResponseDto })
+  experience!: DoctorDiscoveryExperienceOptionResponseDto;
 }
 
 export class ApiFieldErrorDto {
@@ -130,7 +177,8 @@ export class DoctorListItemResponseDto {
   specialty!: string;
   @ApiProperty({ enum: ['female', 'male', 'unspecified'] }) gender!: string;
   @ApiProperty({ enum: ['active', 'inactive'] }) status!: string;
-  @ApiProperty({ example: 12 }) yearsOfExperience!: number;
+  @ApiProperty({ type: 'integer', example: 12, minimum: 0 })
+  yearsOfExperience!: number;
   @ApiProperty({ enum: doctorLanguages, isArray: true }) languages!: string[];
   @ApiProperty({
     type: String,
@@ -164,7 +212,7 @@ export class DoctorProfessionalProfileResponseDto {
   @ApiProperty() specialty!: string;
   @ApiProperty({ enum: ['female', 'male', 'unspecified'] }) gender!: string;
   @ApiProperty() licenseNumber!: string;
-  @ApiProperty() yearsOfExperience!: number;
+  @ApiProperty({ type: 'integer', minimum: 0 }) yearsOfExperience!: number;
   @ApiProperty() biography!: string;
   @ApiProperty({ enum: doctorLanguages, isArray: true }) languages!: string[];
   @ApiProperty({ type: String, nullable: true }) profileImageUrl!:
@@ -176,8 +224,16 @@ export class DoctorProfessionalProfileResponseDto {
 export class DoctorPageResponseDto {
   @ApiProperty({ type: DoctorListItemResponseDto, isArray: true })
   items!: DoctorListItemResponseDto[];
-  @ApiProperty({ example: 1, maximum: maximumDoctorSearchPage }) page!: number;
-  @ApiProperty({ example: 20, maximum: 100 }) pageSize!: number;
-  @ApiProperty({ example: 42 }) total!: number;
-  @ApiProperty({ example: 3 }) totalPages!: number;
+  @ApiProperty({
+    type: 'integer',
+    example: 1,
+    minimum: 1,
+    maximum: maximumDoctorSearchPage,
+  })
+  page!: number;
+  @ApiProperty({ type: 'integer', example: 20, minimum: 1, maximum: 100 })
+  pageSize!: number;
+  @ApiProperty({ type: 'integer', example: 42, minimum: 0 }) total!: number;
+  @ApiProperty({ type: 'integer', example: 3, minimum: 0 })
+  totalPages!: number;
 }

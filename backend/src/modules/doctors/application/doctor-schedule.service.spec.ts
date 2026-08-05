@@ -281,6 +281,7 @@ describe('DoctorScheduleService', () => {
     );
     expect(findDoctorSchedule.mock.calls[0]?.[1]).toMatchObject({
       doctorActorId: 'doctor-user',
+      clinicAssignmentVisibility: 'activeOrInactive',
     });
     await service.availability(
       doctorAccess,
@@ -292,6 +293,32 @@ describe('DoctorScheduleService', () => {
     expect(findDoctorSchedule.mock.calls[1]?.[1]).not.toHaveProperty(
       'doctorActorId',
     );
+    expect(findDoctorSchedule.mock.calls[1]?.[1]).toMatchObject({
+      clinicAssignmentVisibility: 'activeOrInactive',
+    });
+  });
+
+  it('requires active clinic assignments for patient availability', async () => {
+    const repository = repositoryFor(baseSchedule);
+    const service = new DoctorScheduleService(
+      repository,
+      new TimezoneService(),
+    );
+    await service.availability(
+      {
+        actorId: 'patient',
+        patient: true,
+        platformAdministrator: false,
+      },
+      'doctor',
+      'clinic',
+      new Date('2026-07-20T06:00:00.000Z'),
+      'availability-request',
+    );
+    expect(repository.findDoctorSchedule.mock.calls[0]?.[1]).toMatchObject({
+      clinicId: 'clinic',
+      clinicAssignmentVisibility: 'active',
+    });
   });
 
   it('enforces staff clinic scope and fails closed when auditing fails', async () => {

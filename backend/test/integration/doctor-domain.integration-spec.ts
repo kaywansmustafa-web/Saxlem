@@ -112,6 +112,42 @@ describe('doctor domain API', () => {
         doctorId: activeA.id,
       },
     });
+    const inactiveAssignmentClinic = await prisma.clinic.create({
+      data: {
+        organizationId: tenantA.organizationId,
+        name: 'Inactive Assignment Clinic',
+        code: `inactive-assignment-${suffix}`,
+        timezone: 'Asia/Baghdad',
+      },
+    });
+    await prisma.doctorClinicAssignment.create({
+      data: {
+        organizationId: tenantA.organizationId,
+        clinicId: inactiveAssignmentClinic.id,
+        doctorId: activeA.id,
+        status: 'inactive',
+      },
+    });
+    const inactiveAssignmentOnly = await createDoctor(
+      tenantA,
+      specialty.id,
+      'InactiveAssignmentOnly',
+      'unspecified',
+      'active',
+      ['turkish'],
+      30,
+      true,
+    );
+    await prisma.doctorClinicAssignment.update({
+      where: {
+        organizationId_clinicId_doctorId: {
+          organizationId: tenantA.organizationId,
+          clinicId: tenantA.clinicId,
+          doctorId: inactiveAssignmentOnly.id,
+        },
+      },
+      data: { status: 'inactive' },
+    });
     const inactiveClinicTenant = await createTenant('inactive-clinic-only');
     await prisma.clinic.update({
       where: { id: inactiveClinicTenant.clinicId },
@@ -165,6 +201,7 @@ describe('doctor domain API', () => {
     const doctorCredentials = await enableDoctorLogin(activeA.id, tenantA);
     const managerCredentials = await createStaffRole(tenantA, 'clinicManager');
     const administratorCredentials = await createPlatformAdministrator(tenantA);
+    const emptyTenant = await createTenant('empty-options');
     const app = await createApplication(configuration);
     await app.init();
     const patientToken = await authenticatePatient(
@@ -190,6 +227,11 @@ describe('doctor domain API', () => {
       app.getHttpServer(),
       administratorCredentials.email,
       administratorCredentials.password,
+    );
+    const emptyTenantToken = await authenticateReceptionist(
+      app.getHttpServer(),
+      emptyTenant.email,
+      emptyTenant.password,
     );
     const api = () => request(app.getHttpServer());
 
@@ -219,6 +261,12 @@ describe('doctor domain API', () => {
     expect(publicPage.body.items[0]).not.toHaveProperty('organizationId');
     expect(publicPage.body.items[0]).not.toHaveProperty('version');
     expect(publicPage.body.items[0]).not.toHaveProperty('createdAt');
+    expect(
+      publicPage.body.items.flatMap(
+        (item: { clinics: Array<{ id: string }> }) =>
+          item.clinics.map(({ id }) => id),
+      ),
+    ).not.toContain(inactiveAssignmentClinic.id);
     await api()
       .get(`/api/v1/doctors/${activeA.id}`)
       .set('Authorization', `Bearer ${patientToken}`)
@@ -228,6 +276,25 @@ describe('doctor domain API', () => {
           { id: tenantA.clinicId, name: 'Clinic a' },
         ]),
       );
+    await api()
+      .get('/api/v1/doctors')
+      .set('Authorization', `Bearer ${patientToken}`)
+      .query({ clinicId: inactiveAssignmentClinic.id })
+      .expect(200)
+      .expect((response) => expect(response.body.total).toBe(0));
+    await api()
+      .get(`/api/v1/doctors/${inactiveAssignmentOnly.id}`)
+      .set('Authorization', `Bearer ${patientToken}`)
+      .expect(404);
+    await api()
+      .get(`/api/v1/doctors/${activeA.id}/availability`)
+      .set('Authorization', `Bearer ${patientToken}`)
+      .query({ clinicId: inactiveAssignmentClinic.id })
+      .expect(404);
+    await api()
+      .get(`/api/v1/doctors/${inactiveAssignmentOnly.id}/availability`)
+      .set('Authorization', `Bearer ${patientToken}`)
+      .expect(404);
     for (const name of [' ', '   '])
       await api()
         .get('/api/v1/doctors')
@@ -323,6 +390,70 @@ describe('doctor domain API', () => {
       }),
     ).toBe(publicAuditBefore);
 
+    await api().get('/api/v1/doctors/discovery-options').expect(401);
+    await api()
+      .get('/api/v1/doctors/discovery-options')
+      .set('Authorization', `Bearer ${patientToken}`)
+      .query({ organizationId: tenantA.organizationId })
+      .expect(400);
+    const patientOptions = await api()
+      .get('/api/v1/doctors/discovery-options')
+      .set('Authorization', `Bearer ${patientToken}`)
+      .expect(200);
+    expect(patientOptions.body.specialties).not.toContainEqual(
+      expect.objectContaining({ code: otherSpecialty.code }),
+    );
+    expect(patientOptions.body.specialties).not.toContainEqual(
+      expect.objectContaining({ code: retiredOnlySpecialty.code }),
+    );
+    expect(patientOptions.body.clinics).not.toContainEqual(
+      expect.objectContaining({ id: inactiveAssignmentClinic.id }),
+    );
+    expect(new Set(patientOptions.body.languages).size).toBe(
+      patientOptions.body.languages.length,
+    );
+    expect(patientOptions.body.languages).toEqual(
+      [...patientOptions.body.languages].sort(),
+    );
+    expect(patientOptions.body.genders).toEqual(
+      ['female', 'male', 'unspecified'].filter((gender) =>
+        patientOptions.body.genders.includes(gender),
+      ),
+    );
+    expect(patientOptions.body.experience).toEqual({
+      minimum: expect.any(Number),
+      maximum: expect.any(Number),
+    });
+
+    await api()
+      .get('/api/v1/doctors/discovery-options')
+      .set('Authorization', `Bearer ${staffToken}`)
+      .expect(200)
+      .expect((response) =>
+        expect(response.body).toEqual({
+          specialties: [
+            { code: specialty.code, displayName: specialty.displayName },
+          ],
+          clinics: [{ id: tenantA.clinicId, name: 'Clinic a' }],
+          languages: ['badiniKurdish', 'english'],
+          genders: ['female'],
+          experience: { minimum: 12, maximum: 12 },
+        }),
+      );
+    await api()
+      .get('/api/v1/doctors/discovery-options')
+      .set('Authorization', `Bearer ${emptyTenantToken}`)
+      .expect(200)
+      .expect((response) =>
+        expect(response.body).toEqual({
+          specialties: [],
+          clinics: [],
+          languages: [],
+          genders: [],
+          experience: { minimum: null, maximum: null },
+        }),
+      );
+
     const tenantPage = await api()
       .get('/api/v1/doctors')
       .set('Authorization', `Bearer ${staffToken}`)
@@ -333,6 +464,10 @@ describe('doctor domain API', () => {
     ).toEqual([activeA.id]);
     expect(tenantPage.body.items[0].clinics).toEqual([
       { id: tenantA.clinicId, name: 'Clinic a' },
+      {
+        id: inactiveAssignmentClinic.id,
+        name: 'Inactive Assignment Clinic',
+      },
     ]);
     await api()
       .get('/api/v1/doctors')
@@ -422,7 +557,7 @@ describe('doctor domain API', () => {
         .expect((response) =>
           expect(
             response.body.items.map((item: { id: string }) => item.id),
-          ).toEqual([activeA.id]),
+          ).toEqual([inactiveAssignmentOnly.id, activeA.id]),
         );
       await api()
         .get(`/api/v1/doctors/${activeB.id}`)

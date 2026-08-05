@@ -1,90 +1,71 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/doctor_discovery_result.dart';
-import '../../domain/entities/discovery_types.dart';
-import '../discover_copy.dart';
+
 import '../../../../core/localization/localization_extensions.dart';
+import '../../../../design_system/components/content/saxlem_avatar.dart';
 import '../../../../design_system/components/content/saxlem_card.dart';
+import '../../domain/entities/doctor_discovery_result.dart';
+import 'applied_doctor_filters.dart';
 
 class DoctorResultCard extends StatelessWidget {
   const DoctorResultCard({
     required this.doctor,
-    required this.copy,
-    required this.onFavorite,
     required this.onProfile,
-    required this.onBook,
     super.key,
   });
+
   final DoctorDiscoveryResult doctor;
-  final DiscoverCopy copy;
-  final VoidCallback onFavorite, onProfile, onBook;
+  final VoidCallback onProfile;
+
   @override
   Widget build(BuildContext context) {
-    final c = Theme.of(context).colorScheme;
-    final a = doctor.availability;
-    return Semantics(
-      container: true,
-      label:
-          '${doctor.doctorDisplayName}, ${copy.specialty(doctor.specialty)}, ${copy.availability(a.status)}, ${copy.fee(doctor.consultationFeeIqd)}',
-      child: SaxlemCard(
-        elevation: SaxlemCardElevation.low,
-        padding: const EdgeInsetsDirectional.all(18),
+    final strings = context.l10n;
+    final semanticParts = <String>[
+      doctor.doctorDisplayName,
+      doctor.primarySpecialtyDisplayName,
+      strings.yearsExperience(doctor.yearsOfExperience),
+      if (doctor.clinics.isNotEmpty)
+        '${strings.clinicsLabel}: ${doctor.clinics.map((item) => item.name).join(', ')}',
+      if (doctor.languages.isNotEmpty)
+        '${strings.languagesLabel}: ${doctor.languages.map((item) => localizedDoctorLanguage(context, item)).join(', ')}',
+      doctor.photoUrl == null
+          ? strings.profileImageFallback(doctor.doctorDisplayName)
+          : strings.profileImageLabel(doctor.doctorDisplayName),
+    ];
+    return SaxlemCard(
+      elevation: SaxlemCardElevation.low,
+      onTap: onProfile,
+      semanticLabel:
+          '${semanticParts.join('. ')}. ${strings.viewDoctorProfile(doctor.doctorDisplayName)}',
+      padding: const EdgeInsetsDirectional.all(18),
+      child: ExcludeSemantics(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: c.primaryContainer,
-                  child: Icon(Icons.person_rounded, color: c.primary, size: 34),
+                SaxlemAvatar(
+                  size: 60,
+                  imageUrl: doctor.photoUrl,
+                  semanticLabel: doctor.photoUrl == null
+                      ? strings.profileImageFallback(doctor.doctorDisplayName)
+                      : strings.profileImageLabel(doctor.doctorDisplayName),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              doctor.doctorDisplayName,
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                          if (doctor.verified) ...[
-                            const SizedBox(width: 5),
-                            Icon(
-                              Icons.verified_rounded,
-                              size: 18,
-                              color: c.primary,
-                            ),
-                          ],
-                        ],
-                      ),
                       Text(
-                        '${copy.specialty(doctor.specialty)} · ${doctor.subSpecialtyDisplayName}',
-                        style: Theme.of(context).textTheme.bodySmall,
+                        doctor.doctorDisplayName,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w700),
                       ),
-                      const SizedBox(height: 5),
-                      Text(
-                        '${doctor.clinicDisplayName} · ${doctor.location.areaDisplayName}',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
+                      const SizedBox(height: 2),
+                      Text(doctor.primarySpecialtyDisplayName),
                     ],
-                  ),
-                ),
-                IconButton(
-                  onPressed: onFavorite,
-                  tooltip: doctor.isInMyDoctors
-                      ? context.l10n.removeFromMyDoctors
-                      : context.l10n.addToMyDoctors,
-                  icon: Icon(
-                    doctor.isInMyDoctors
-                        ? Icons.favorite_rounded
-                        : Icons.favorite_border_rounded,
-                    color: doctor.isInMyDoctors ? c.error : c.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -92,51 +73,40 @@ class DoctorResultCard extends StatelessWidget {
             const SizedBox(height: 14),
             Wrap(
               spacing: 12,
-              runSpacing: 8,
+              runSpacing: 10,
               children: [
                 _Info(
-                  Icons.star_rounded,
-                  '${doctor.patientRating.toStringAsFixed(1)} · ${doctor.totalRatings} ratings',
+                  icon: Icons.work_history_outlined,
+                  text: strings.yearsExperience(doctor.yearsOfExperience),
                 ),
-                _Info(
-                  Icons.chat_bubble_outline_rounded,
-                  '${doctor.totalReviews} reviews',
-                ),
-                _Info(
-                  Icons.payments_outlined,
-                  copy.fee(doctor.consultationFeeIqd),
-                ),
-                _Info(Icons.schedule_rounded, copy.availability(a.status)),
-                if (a.expectedWaitMinutes != null)
+                if (doctor.languages.isNotEmpty)
                   _Info(
-                    Icons.hourglass_bottom_rounded,
-                    '${a.expectedWaitMinutes} min wait',
+                    icon: Icons.language_rounded,
+                    text: doctor.languages
+                        .map((item) => localizedDoctorLanguage(context, item))
+                        .join(', '),
+                  ),
+                if (doctor.clinics.isNotEmpty)
+                  _Info(
+                    icon: Icons.local_hospital_outlined,
+                    text: doctor.clinics.map((item) => item.name).join(', '),
                   ),
               ],
             ),
-            const SizedBox(height: 12),
-            Text(
-              doctor.languages.map(copy.language).join(' · '),
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
             const SizedBox(height: 14),
             Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: onProfile,
-                    child: Text(context.l10n.viewProfile),
+                Flexible(
+                  child: Text(
+                    strings.viewProfile,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: FilledButton(
-                    onPressed: a.status == AvailabilityStatus.fullyBooked
-                        ? null
-                        : onBook,
-                    child: Text(context.l10n.book),
-                  ),
-                ),
+                const SizedBox(width: 6),
+                const Icon(Icons.arrow_forward_rounded, size: 20),
               ],
             ),
           ],
@@ -147,18 +117,23 @@ class DoctorResultCard extends StatelessWidget {
 }
 
 class _Info extends StatelessWidget {
-  const _Info(this.icon, this.text);
+  const _Info({required this.icon, required this.text});
+
   final IconData icon;
   final String text;
+
   @override
-  Widget build(BuildContext context) => Semantics(
-    label: text,
+  Widget build(BuildContext context) => ConstrainedBox(
+    constraints: const BoxConstraints(maxWidth: 280),
     child: Row(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 17, color: Theme.of(context).colorScheme.primary),
-        const SizedBox(width: 4),
-        Text(text, style: Theme.of(context).textTheme.bodySmall),
+        Icon(icon, size: 17),
+        const SizedBox(width: 5),
+        Flexible(
+          child: Text(text, style: Theme.of(context).textTheme.bodySmall),
+        ),
       ],
     ),
   );

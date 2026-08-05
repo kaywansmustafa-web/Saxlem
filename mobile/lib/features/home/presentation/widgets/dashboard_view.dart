@@ -4,12 +4,7 @@ import '../../../../core/models/recommended_doctor.dart';
 import '../../../../core/models/specialty.dart';
 import '../../../live_queue/domain/entities/patient_queue_snapshot.dart';
 import '../../../live_queue/domain/entities/queue_types.dart';
-import '../../../discover/domain/entities/discovery_types.dart';
 import '../../../discover/domain/entities/doctor_search_criteria.dart';
-import '../../../discover/domain/entities/doctor_discovery_result.dart';
-import '../../../discover/domain/entities/discovery_location.dart';
-import '../../../discover/domain/entities/doctor_availability_summary.dart';
-import '../../../discover/presentation/pages/doctor_details_page.dart';
 import 'dashboard_header.dart';
 import 'dashboard_search_bar.dart';
 import 'live_queue_card.dart';
@@ -156,12 +151,7 @@ class DashboardView extends StatelessWidget {
             semanticLabelBuilder: (item) => 'Browse ${item.name} doctors',
             onSpecialtySelected: (item) => onOpenDiscover(
               criteria: DoctorSearchCriteria(
-                specialty: MedicalSpecialty.values.firstWhere(
-                  (value) =>
-                      value.name ==
-                      (item.id == 'eye' ? 'ophthalmology' : item.id),
-                  orElse: () => MedicalSpecialty.internalMedicine,
-                ),
+                specialtyCode: item.id == 'eye' ? 'ophthalmology' : item.id,
               ),
               focus: false,
               openFilters: false,
@@ -179,15 +169,10 @@ class DashboardView extends StatelessWidget {
                 '${doctor.rating} rating, ${doctor.availability}',
             onActionPressed: () =>
                 onOpenDiscover(focus: false, openFilters: false),
-            onBookPressed: (doctor) => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => DoctorDetailsPage(
-                  doctor: _discoveryDoctor(doctor),
-                  bookingEmphasized: true,
-                  onOpenAppointments: onOpenAppointments,
-                  profilesController: profilesController,
-                ),
-              ),
+            onBookPressed: (doctor) => onOpenDiscover(
+              criteria: DoctorSearchCriteria(query: doctor.name),
+              focus: false,
+              openFilters: false,
             ),
           ),
         ],
@@ -200,40 +185,4 @@ class DashboardView extends StatelessWidget {
     if (hour < 17) return context.l10n.goodAfternoon;
     return context.l10n.goodEvening;
   }
-
-  DoctorDiscoveryResult _discoveryDoctor(RecommendedDoctor doctor) =>
-      DoctorDiscoveryResult(
-        doctorId: doctor.id,
-        clinicId: 'demo-clinic-dashboard',
-        doctorDisplayName: doctor.name,
-        clinicDisplayName: 'Saxlem Demo Clinic',
-        specialty: doctor.specialty == 'Dentist'
-            ? MedicalSpecialty.dentistry
-            : doctor.specialty == 'Pediatrician'
-            ? MedicalSpecialty.pediatrics
-            : MedicalSpecialty.cardiology,
-        subSpecialtyDisplayName: 'General consultation',
-        location: const DiscoveryLocation(
-          cityId: 'duhok',
-          cityDisplayName: 'Duhok',
-          areaId: 'city-center',
-          areaDisplayName: 'City Center',
-          distanceMeters: 1200,
-        ),
-        gender: DoctorGender.female,
-        languages: const {SpokenLanguage.badiniKurdish, SpokenLanguage.arabic},
-        verified: true,
-        consultationFeeIqd: doctor.price,
-        patientRating: doctor.rating,
-        totalRatings: 126,
-        totalReviews: 48,
-        availability: DoctorAvailabilitySummary(
-          status: doctor.availability.contains('today')
-              ? AvailabilityStatus.availableToday
-              : AvailabilityStatus.tomorrow,
-        ),
-        recommendationScore: 90,
-        isInMyDoctors: false,
-        photoUrl: doctor.photoUrl,
-      );
 }

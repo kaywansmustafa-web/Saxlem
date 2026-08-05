@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import type { DoctorPageProjection, DoctorProjection } from '../domain/doctor';
+import type {
+  DoctorDiscoveryOptionsProjection,
+  DoctorPageProjection,
+  DoctorProjection,
+} from '../domain/doctor';
 import type {
   DoctorAvailabilityResponseDto,
   DoctorDetailResponseDto,
+  DoctorDiscoveryOptionsResponseDto,
   DoctorListItemResponseDto,
   DoctorPageResponseDto,
   DoctorProfessionalProfileResponseDto,
@@ -11,6 +16,20 @@ import type {
 
 @Injectable()
 export class DoctorDtoMapper {
+  discoveryOptions(
+    source: DoctorDiscoveryOptionsProjection,
+  ): DoctorDiscoveryOptionsResponseDto {
+    return {
+      specialties: source.specialties.map(({ code, displayName }) => ({
+        code,
+        displayName,
+      })),
+      clinics: source.clinics.map(({ id, name }) => ({ id, name })),
+      languages: [...source.languages],
+      genders: [...source.genders],
+      experience: { ...source.experience },
+    };
+  }
   page(source: DoctorPageProjection): DoctorPageResponseDto {
     return {
       items: source.items.map((doctor) => this.listItem(doctor)),

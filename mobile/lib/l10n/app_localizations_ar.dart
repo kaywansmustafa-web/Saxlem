@@ -666,4 +666,181 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get emptyPatientProfiles => 'لا توجد ملفات مرضى بعد.';
+
+  @override
+  String get doctorDiscoveryTitle => 'ابحث عن طبيب';
+
+  @override
+  String get doctorDiscoveryInstruction =>
+      'ابحث عن أطباء موثوقين وحدد النتائج باستخدام المرشحات المتاحة.';
+
+  @override
+  String get searchDoctorsLabel => 'البحث عن الأطباء';
+
+  @override
+  String get searchDoctorsHint => 'اسم الطبيب';
+
+  @override
+  String get clearSearch => 'مسح البحث';
+
+  @override
+  String get applyFilters => 'تطبيق المرشحات';
+
+  @override
+  String get specialtyLabel => 'الاختصاص';
+
+  @override
+  String get languageLabel => 'اللغة';
+
+  @override
+  String get soraniKurdish => 'الكردية السورانية';
+
+  @override
+  String get turkish => 'التركية';
+
+  @override
+  String get experienceLabel => 'الخبرة';
+
+  @override
+  String get minimumExperienceLabel => 'الحد الأدنى للخبرة';
+
+  @override
+  String get anyOption => 'الكل';
+
+  @override
+  String get appliedFilters => 'المرشحات المطبقة';
+
+  @override
+  String doctorResults(int count) {
+    return 'عدد الأطباء: $count';
+  }
+
+  @override
+  String get noDoctorsTitle => 'لم يتم العثور على أطباء';
+
+  @override
+  String get noDoctorsBody => 'جرّب اسم طبيب آخر.';
+
+  @override
+  String get noDoctorsFilteredBody => 'جرّب إزالة مرشح واحد أو أكثر.';
+
+  @override
+  String get loadingDoctors => 'جارٍ تحميل الأطباء';
+
+  @override
+  String get loadingMoreDoctors => 'جارٍ تحميل المزيد من الأطباء';
+
+  @override
+  String get loadMoreFailed =>
+      'تعذر تحميل المزيد من الأطباء. ما زالت النتائج الحالية معروضة.';
+
+  @override
+  String get offlineTitle => 'أنت غير متصل';
+
+  @override
+  String get offlineBody => 'تحقق من اتصالك وحاول مجدداً.';
+
+  @override
+  String get discoveryUnavailableTitle => 'البحث عن الأطباء غير متاح';
+
+  @override
+  String get discoveryUnavailableBody =>
+      'الخدمة غير متاحة مؤقتاً. حاول مجدداً.';
+
+  @override
+  String get discoveryForbiddenTitle => 'البحث عن الأطباء مقيّد';
+
+  @override
+  String get discoveryForbiddenBody =>
+      'لا يمكن لحسابك الوصول إلى البحث عن الأطباء.';
+
+  @override
+  String get malformedDoctorDataTitle => 'معلومات الطبيب غير متاحة';
+
+  @override
+  String get malformedDoctorDataBody =>
+      'تعذر قراءة معلومات الطبيب بأمان. حاول مجدداً.';
+
+  @override
+  String get discoveryErrorTitle => 'حدث خطأ ما';
+
+  @override
+  String get discoveryErrorBody => 'يرجى المحاولة مجدداً.';
+
+  @override
+  String get discoveryAuthTitle => 'سجّل الدخول للبحث عن الأطباء';
+
+  @override
+  String get discoveryAuthBody =>
+      'تحقق من رقم هاتفك لتصفح معلومات الأطباء الموثوقة.';
+
+  @override
+  String get doctorNotFound => 'لم يتم العثور على الطبيب';
+
+  @override
+  String get doctorNotFoundBody => 'ملف هذا الطبيب لم يعد متاحاً.';
+
+  @override
+  String yearsExperience(int years) {
+    return 'سنوات الخبرة: $years';
+  }
+
+  @override
+  String get genderFemale => 'أنثى';
+
+  @override
+  String get genderMale => 'ذكر';
+
+  @override
+  String get genderUnspecified => 'غير محدد';
+
+  @override
+  String get languagesLabel => 'اللغات';
+
+  @override
+  String get clinicsLabel => 'العيادات';
+
+  @override
+  String get specialtiesLabel => 'الاختصاصات';
+
+  @override
+  String get biographyLabel => 'نبذة';
+
+  @override
+  String get availabilityLabel => 'التوفر';
+
+  @override
+  String get doctorAvailable => 'متاح';
+
+  @override
+  String get doctorUnavailable => 'غير متاح';
+
+  @override
+  String get acceptingNewPatients => 'يستقبل مرضى جدد';
+
+  @override
+  String get notAcceptingNewPatients => 'لا يستقبل مرضى جدداً';
+
+  @override
+  String profileImageLabel(String name) {
+    return 'صورة الملف الشخصي لـ $name';
+  }
+
+  @override
+  String profileImageFallback(String name) {
+    return 'لا توجد صورة ملف شخصي لـ $name';
+  }
+
+  @override
+  String viewDoctorProfile(String name) {
+    return 'عرض ملف $name';
+  }
+
+  @override
+  String removeAppliedFilter(String label) {
+    return 'إزالة مرشح $label';
+  }
+
+  @override
+  String get bookingComingSoon => 'سيصبح الحجز متاحاً في الإصدار القادم.';
 }

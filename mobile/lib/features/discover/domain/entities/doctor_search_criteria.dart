@@ -1,78 +1,65 @@
-import 'discovery_types.dart';
+import 'doctor_discovery_result.dart';
 
 class DoctorSearchCriteria {
   const DoctorSearchCriteria({
     this.query = '',
-    this.specialty,
-    this.cityId,
-    this.areaIds = const {},
+    this.specialtyCode,
+    this.clinicId,
+    this.language,
     this.gender,
-    this.minimumFeeIqd = 0,
-    this.maximumFeeIqd = 100000,
-    this.availableToday = false,
-    this.availableNow = false,
-    this.shortestWaitOnly = false,
-    this.languages = const {},
-    this.verifiedOnly = false,
-    this.sort = DiscoverySort.recommended,
-  }) : assert(minimumFeeIqd >= 0),
-       assert(maximumFeeIqd >= minimumFeeIqd);
+    this.minimumYearsOfExperience,
+  });
   final String query;
-  final MedicalSpecialty? specialty;
-  final String? cityId;
-  final Set<String> areaIds;
-  final DoctorGender? gender;
-  final int minimumFeeIqd;
-  final int maximumFeeIqd;
-  final bool availableToday;
-  final bool availableNow;
-  final bool shortestWaitOnly;
-  final Set<SpokenLanguage> languages;
-  final bool verifiedOnly;
-  final DiscoverySort sort;
-
+  final String? specialtyCode;
+  final String? clinicId;
+  final String? language;
+  final BackendDoctorGender? gender;
+  final int? minimumYearsOfExperience;
   bool get hasFilters =>
-      specialty != null ||
-      cityId != null ||
-      areaIds.isNotEmpty ||
+      specialtyCode != null ||
+      clinicId != null ||
+      language != null ||
       gender != null ||
-      minimumFeeIqd > 0 ||
-      maximumFeeIqd < 100000 ||
-      availableToday ||
-      availableNow ||
-      shortestWaitOnly ||
-      languages.isNotEmpty ||
-      verifiedOnly;
+      minimumYearsOfExperience != null;
   DoctorSearchCriteria copyWith({
     String? query,
-    MedicalSpecialty? specialty,
+    String? specialtyCode,
     bool clearSpecialty = false,
-    String? cityId,
-    Set<String>? areaIds,
-    DoctorGender? gender,
-    int? minimumFeeIqd,
-    int? maximumFeeIqd,
-    bool? availableToday,
-    bool? availableNow,
-    bool? shortestWaitOnly,
-    Set<SpokenLanguage>? languages,
-    bool? verifiedOnly,
-    DiscoverySort? sort,
+    String? clinicId,
+    bool clearClinic = false,
+    String? language,
+    bool clearLanguage = false,
+    BackendDoctorGender? gender,
+    bool clearGender = false,
+    int? minimumYearsOfExperience,
+    bool clearExperience = false,
   }) => DoctorSearchCriteria(
     query: query ?? this.query,
-    specialty: clearSpecialty ? null : specialty ?? this.specialty,
-    cityId: cityId ?? this.cityId,
-    areaIds: areaIds ?? this.areaIds,
-    gender: gender ?? this.gender,
-    minimumFeeIqd: minimumFeeIqd ?? this.minimumFeeIqd,
-    maximumFeeIqd: maximumFeeIqd ?? this.maximumFeeIqd,
-    availableToday: availableToday ?? this.availableToday,
-    availableNow: availableNow ?? this.availableNow,
-    shortestWaitOnly: shortestWaitOnly ?? this.shortestWaitOnly,
-    languages: languages ?? this.languages,
-    verifiedOnly: verifiedOnly ?? this.verifiedOnly,
-    sort: sort ?? this.sort,
+    specialtyCode: clearSpecialty ? null : specialtyCode ?? this.specialtyCode,
+    clinicId: clearClinic ? null : clinicId ?? this.clinicId,
+    language: clearLanguage ? null : language ?? this.language,
+    gender: clearGender ? null : gender ?? this.gender,
+    minimumYearsOfExperience: clearExperience
+        ? null
+        : minimumYearsOfExperience ?? this.minimumYearsOfExperience,
   );
-  DoctorSearchCriteria clearFilters() =>
-      DoctorSearchCriteria(query: query, sort: sort);
+  DoctorSearchCriteria clearFilters() => DoctorSearchCriteria(query: query);
+  @override
+  bool operator ==(Object other) =>
+      other is DoctorSearchCriteria &&
+      query.trim() == other.query.trim() &&
+      specialtyCode == other.specialtyCode &&
+      clinicId == other.clinicId &&
+      language == other.language &&
+      gender == other.gender &&
+      minimumYearsOfExperience == other.minimumYearsOfExperience;
+  @override
+  int get hashCode => Object.hash(
+    query.trim(),
+    specialtyCode,
+    clinicId,
+    language,
+    gender,
+    minimumYearsOfExperience,
+  );
 }

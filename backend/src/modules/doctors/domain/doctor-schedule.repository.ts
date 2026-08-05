@@ -7,6 +7,7 @@ export interface ScheduleReadScope {
   readonly organizationId?: string | undefined;
   readonly clinicId?: string | undefined;
   readonly doctorActorId?: string | undefined;
+  readonly clinicAssignmentVisibility: 'active' | 'activeOrInactive';
 }
 
 export interface ScheduleReadWindow {

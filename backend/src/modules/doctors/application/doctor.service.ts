@@ -11,7 +11,11 @@ import {
   type DoctorRepository,
   type DoctorSearchCriteria,
 } from '../domain/doctor.repository';
-import type { DoctorPageProjection, DoctorProjection } from '../domain/doctor';
+import type {
+  DoctorDiscoveryOptionsProjection,
+  DoctorPageProjection,
+  DoctorProjection,
+} from '../domain/doctor';
 import { maximumDoctorSearchPage } from '../domain/doctor';
 
 export type DoctorViewSurface = 'details' | 'profile' | 'specialties';
@@ -27,7 +31,7 @@ export interface DoctorAccessContext {
 
 export interface DoctorSearchInput extends Omit<
   DoctorSearchCriteria,
-  'organizationId' | 'status'
+  'organizationId' | 'status' | 'clinicAssignmentVisibility'
 > {
   readonly status?: 'active' | 'inactive';
 }
@@ -86,6 +90,9 @@ export class DoctorService {
       organizationId: criteria.organizationId,
       clinicId: criteria.clinicId,
       visibility: access.patient ? 'active' : 'activeOrInactive',
+      clinicAssignmentVisibility: access.patient
+        ? 'active'
+        : 'activeOrInactive',
     });
     if (!doctor) throw new NotFoundException('Doctor was not found.');
     if (!access.patient)
@@ -104,6 +111,21 @@ export class DoctorService {
         );
       }
     return doctor;
+  }
+
+  discoveryOptions(
+    access: DoctorAccessContext,
+  ): Promise<DoctorDiscoveryOptionsProjection> {
+    const criteria = this.criteria(access, {
+      page: 1,
+      pageSize: 1,
+      status: 'active',
+    });
+    return this.repository.discoveryOptions({
+      organizationId: criteria.organizationId,
+      clinicId: criteria.clinicId,
+      clinicAssignmentVisibility: 'active',
+    });
   }
 
   private criteria(
@@ -131,6 +153,9 @@ export class DoctorService {
           ? input.clinicId
           : access.clinicId,
       status: access.patient ? 'active' : (input.status ?? 'active'),
+      clinicAssignmentVisibility: access.patient
+        ? 'active'
+        : 'activeOrInactive',
     };
   }
 
