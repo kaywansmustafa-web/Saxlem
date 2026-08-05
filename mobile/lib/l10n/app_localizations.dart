@@ -1275,6 +1275,324 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No patient profiles are available yet.'**
   String get emptyPatientProfiles;
+
+  /// No description provided for @doctorDiscoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a doctor'**
+  String get doctorDiscoveryTitle;
+
+  /// No description provided for @doctorDiscoveryInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Search trusted doctors and narrow the results with the available filters.'**
+  String get doctorDiscoveryInstruction;
+
+  /// No description provided for @searchDoctorsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Search doctors'**
+  String get searchDoctorsLabel;
+
+  /// No description provided for @searchDoctorsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor name'**
+  String get searchDoctorsHint;
+
+  /// No description provided for @clearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get clearSearch;
+
+  /// No description provided for @applyFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply filters'**
+  String get applyFilters;
+
+  /// No description provided for @specialtyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialty'**
+  String get specialtyLabel;
+
+  /// No description provided for @languageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageLabel;
+
+  /// No description provided for @soraniKurdish.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorani Kurdish'**
+  String get soraniKurdish;
+
+  /// No description provided for @turkish.
+  ///
+  /// In en, this message translates to:
+  /// **'Turkish'**
+  String get turkish;
+
+  /// No description provided for @experienceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Experience'**
+  String get experienceLabel;
+
+  /// No description provided for @minimumExperienceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum experience'**
+  String get minimumExperienceLabel;
+
+  /// No description provided for @anyOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Any'**
+  String get anyOption;
+
+  /// No description provided for @appliedFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied filters'**
+  String get appliedFilters;
+
+  /// No description provided for @doctorResults.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0 {No doctors} =1 {1 doctor} other {{count} doctors}}'**
+  String doctorResults(int count);
+
+  /// No description provided for @noDoctorsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No doctors found'**
+  String get noDoctorsTitle;
+
+  /// No description provided for @noDoctorsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another doctor name.'**
+  String get noDoctorsBody;
+
+  /// No description provided for @noDoctorsFilteredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Try removing one or more filters.'**
+  String get noDoctorsFilteredBody;
+
+  /// No description provided for @loadingDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading doctors'**
+  String get loadingDoctors;
+
+  /// No description provided for @loadingMoreDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading more doctors'**
+  String get loadingMoreDoctors;
+
+  /// No description provided for @loadMoreFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'More doctors could not be loaded. Your current results are still shown.'**
+  String get loadMoreFailed;
+
+  /// No description provided for @offlineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline'**
+  String get offlineTitle;
+
+  /// No description provided for @offlineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and try again.'**
+  String get offlineBody;
+
+  /// No description provided for @discoveryUnavailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor discovery is unavailable'**
+  String get discoveryUnavailableTitle;
+
+  /// No description provided for @discoveryUnavailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The service is temporarily unavailable. Please try again.'**
+  String get discoveryUnavailableBody;
+
+  /// No description provided for @discoveryForbiddenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor discovery is restricted'**
+  String get discoveryForbiddenTitle;
+
+  /// No description provided for @discoveryForbiddenBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account cannot access doctor discovery.'**
+  String get discoveryForbiddenBody;
+
+  /// No description provided for @malformedDoctorDataTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor information is unavailable'**
+  String get malformedDoctorDataTitle;
+
+  /// No description provided for @malformedDoctorDataBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not safely read the doctor information. Please try again.'**
+  String get malformedDoctorDataBody;
+
+  /// No description provided for @discoveryErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get discoveryErrorTitle;
+
+  /// No description provided for @discoveryErrorBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Please try again.'**
+  String get discoveryErrorBody;
+
+  /// No description provided for @discoveryAuthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to find doctors'**
+  String get discoveryAuthTitle;
+
+  /// No description provided for @discoveryAuthBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your mobile number to browse authoritative doctor information.'**
+  String get discoveryAuthBody;
+
+  /// No description provided for @doctorNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor not found'**
+  String get doctorNotFound;
+
+  /// No description provided for @doctorNotFoundBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This doctor profile is no longer available.'**
+  String get doctorNotFoundBody;
+
+  /// No description provided for @yearsExperience.
+  ///
+  /// In en, this message translates to:
+  /// **'{years, plural, =0 {New to practice} =1 {1 year of experience} other {{years} years of experience}}'**
+  String yearsExperience(int years);
+
+  /// No description provided for @genderFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get genderFemale;
+
+  /// No description provided for @genderMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get genderMale;
+
+  /// No description provided for @genderUnspecified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not specified'**
+  String get genderUnspecified;
+
+  /// No description provided for @languagesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages'**
+  String get languagesLabel;
+
+  /// No description provided for @clinicsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinics'**
+  String get clinicsLabel;
+
+  /// No description provided for @specialtiesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialties'**
+  String get specialtiesLabel;
+
+  /// No description provided for @biographyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get biographyLabel;
+
+  /// No description provided for @availabilityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability'**
+  String get availabilityLabel;
+
+  /// No description provided for @doctorAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get doctorAvailable;
+
+  /// No description provided for @doctorUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get doctorUnavailable;
+
+  /// No description provided for @acceptingNewPatients.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepting new patients'**
+  String get acceptingNewPatients;
+
+  /// No description provided for @notAcceptingNewPatients.
+  ///
+  /// In en, this message translates to:
+  /// **'Not accepting new patients'**
+  String get notAcceptingNewPatients;
+
+  /// No description provided for @profileImageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile image for {name}'**
+  String profileImageLabel(String name);
+
+  /// No description provided for @profileImageFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'No profile image for {name}'**
+  String profileImageFallback(String name);
+
+  /// No description provided for @viewDoctorProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'View profile for {name}'**
+  String viewDoctorProfile(String name);
+
+  /// No description provided for @removeAppliedFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {label} filter'**
+  String removeAppliedFilter(String label);
+
+  /// No description provided for @bookingComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking will be available in the next release.'**
+  String get bookingComingSoon;
 }
 
 class _AppLocalizationsDelegate

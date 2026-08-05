@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+
+import '../../../../core/localization/localization_extensions.dart';
+import '../../../../design_system/components/content/saxlem_avatar.dart';
 import '../../../../design_system/components/content/saxlem_card.dart';
 import '../../domain/entities/doctor_discovery_result.dart';
+import 'applied_doctor_filters.dart';
 
 class DoctorResultCard extends StatelessWidget {
   const DoctorResultCard({
@@ -8,96 +12,129 @@ class DoctorResultCard extends StatelessWidget {
     required this.onProfile,
     super.key,
   });
+
   final DoctorDiscoveryResult doctor;
   final VoidCallback onProfile;
+
   @override
-  Widget build(BuildContext context) => Semantics(
-    container: true,
-    button: true,
-    label: '${doctor.doctorDisplayName}, ${doctor.primarySpecialtyDisplayName}',
-    child: SaxlemCard(
+  Widget build(BuildContext context) {
+    final strings = context.l10n;
+    final semanticParts = <String>[
+      doctor.doctorDisplayName,
+      doctor.primarySpecialtyDisplayName,
+      strings.yearsExperience(doctor.yearsOfExperience),
+      if (doctor.clinics.isNotEmpty)
+        '${strings.clinicsLabel}: ${doctor.clinics.map((item) => item.name).join(', ')}',
+      if (doctor.languages.isNotEmpty)
+        '${strings.languagesLabel}: ${doctor.languages.map((item) => localizedDoctorLanguage(context, item)).join(', ')}',
+      doctor.photoUrl == null
+          ? strings.profileImageFallback(doctor.doctorDisplayName)
+          : strings.profileImageLabel(doctor.doctorDisplayName),
+    ];
+    return SaxlemCard(
       elevation: SaxlemCardElevation.low,
+      onTap: onProfile,
+      semanticLabel:
+          '${semanticParts.join('. ')}. ${strings.viewDoctorProfile(doctor.doctorDisplayName)}',
       padding: const EdgeInsetsDirectional.all(18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundImage: doctor.photoUrl == null
-                    ? null
-                    : NetworkImage(doctor.photoUrl!),
-                child: doctor.photoUrl == null
-                    ? const Icon(Icons.person_rounded, size: 34)
-                    : null,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      doctor.doctorDisplayName,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Text(doctor.primarySpecialtyDisplayName),
-                    if (doctor.clinics.isNotEmpty)
-                      Text(
-                        doctor.clinics.map((clinic) => clinic.name).join(', '),
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                  ],
+      child: ExcludeSemantics(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SaxlemAvatar(
+                  size: 60,
+                  imageUrl: doctor.photoUrl,
+                  semanticLabel: doctor.photoUrl == null
+                      ? strings.profileImageFallback(doctor.doctorDisplayName)
+                      : strings.profileImageLabel(doctor.doctorDisplayName),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 12,
-            runSpacing: 8,
-            children: [
-              _Info(
-                Icons.work_history_outlined,
-                '${doctor.yearsOfExperience} years experience',
-              ),
-              if (doctor.languages.isNotEmpty)
-                _Info(Icons.language_rounded, doctor.languages.join(', ')),
-              _Info(
-                Icons.event_available_outlined,
-                doctor.availability.acceptingNewPatients
-                    ? 'Accepting new patients'
-                    : 'Not accepting new patients',
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: onProfile,
-              child: const Text('View profile'),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        doctor.doctorDisplayName,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(doctor.primarySpecialtyDisplayName),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+            const SizedBox(height: 14),
+            Wrap(
+              spacing: 12,
+              runSpacing: 10,
+              children: [
+                _Info(
+                  icon: Icons.work_history_outlined,
+                  text: strings.yearsExperience(doctor.yearsOfExperience),
+                ),
+                if (doctor.languages.isNotEmpty)
+                  _Info(
+                    icon: Icons.language_rounded,
+                    text: doctor.languages
+                        .map((item) => localizedDoctorLanguage(context, item))
+                        .join(', '),
+                  ),
+                if (doctor.clinics.isNotEmpty)
+                  _Info(
+                    icon: Icons.local_hospital_outlined,
+                    text: doctor.clinics.map((item) => item.name).join(', '),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Flexible(
+                  child: Text(
+                    strings.viewProfile,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                const Icon(Icons.arrow_forward_rounded, size: 20),
+              ],
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _Info extends StatelessWidget {
-  const _Info(this.icon, this.text);
+  const _Info({required this.icon, required this.text});
+
   final IconData icon;
   final String text;
+
   @override
-  Widget build(BuildContext context) => Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Icon(icon, size: 17),
-      const SizedBox(width: 4),
-      Text(text, style: Theme.of(context).textTheme.bodySmall),
-    ],
+  Widget build(BuildContext context) => ConstrainedBox(
+    constraints: const BoxConstraints(maxWidth: 280),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 17),
+        const SizedBox(width: 5),
+        Flexible(
+          child: Text(text, style: Theme.of(context).textTheme.bodySmall),
+        ),
+      ],
+    ),
   );
 }

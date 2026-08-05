@@ -15,6 +15,7 @@ class DiscoverFeature extends StatefulWidget {
     this.onOpenAppointments,
     this.guestMode = false,
     this.profilesController,
+    this.onAuthenticationRequired,
     super.key,
   });
   final DoctorDiscoveryRepository repository;
@@ -24,6 +25,7 @@ class DiscoverFeature extends StatefulWidget {
   final VoidCallback? onOpenAppointments;
   final bool guestMode;
   final PatientProfilesController? profilesController;
+  final Future<void> Function()? onAuthenticationRequired;
   @override
   State<DiscoverFeature> createState() => _DiscoverFeatureState();
 }
@@ -51,5 +53,6 @@ class _DiscoverFeatureState extends State<DiscoverFeature> {
     onOpenAppointments: widget.onOpenAppointments,
     guestMode: widget.guestMode,
     profilesController: widget.profilesController,
+    onAuthenticationRequired: widget.onAuthenticationRequired,
   );
 }

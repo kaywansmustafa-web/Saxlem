@@ -683,4 +683,197 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emptyPatientProfiles => 'No patient profiles are available yet.';
+
+  @override
+  String get doctorDiscoveryTitle => 'Find a doctor';
+
+  @override
+  String get doctorDiscoveryInstruction =>
+      'Search trusted doctors and narrow the results with the available filters.';
+
+  @override
+  String get searchDoctorsLabel => 'Search doctors';
+
+  @override
+  String get searchDoctorsHint => 'Doctor name';
+
+  @override
+  String get clearSearch => 'Clear search';
+
+  @override
+  String get applyFilters => 'Apply filters';
+
+  @override
+  String get specialtyLabel => 'Specialty';
+
+  @override
+  String get languageLabel => 'Language';
+
+  @override
+  String get soraniKurdish => 'Sorani Kurdish';
+
+  @override
+  String get turkish => 'Turkish';
+
+  @override
+  String get experienceLabel => 'Experience';
+
+  @override
+  String get minimumExperienceLabel => 'Minimum experience';
+
+  @override
+  String get anyOption => 'Any';
+
+  @override
+  String get appliedFilters => 'Applied filters';
+
+  @override
+  String doctorResults(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count doctors',
+      one: '1 doctor',
+      zero: 'No doctors',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noDoctorsTitle => 'No doctors found';
+
+  @override
+  String get noDoctorsBody => 'Try another doctor name.';
+
+  @override
+  String get noDoctorsFilteredBody => 'Try removing one or more filters.';
+
+  @override
+  String get loadingDoctors => 'Loading doctors';
+
+  @override
+  String get loadingMoreDoctors => 'Loading more doctors';
+
+  @override
+  String get loadMoreFailed =>
+      'More doctors could not be loaded. Your current results are still shown.';
+
+  @override
+  String get offlineTitle => 'You are offline';
+
+  @override
+  String get offlineBody => 'Check your connection and try again.';
+
+  @override
+  String get discoveryUnavailableTitle => 'Doctor discovery is unavailable';
+
+  @override
+  String get discoveryUnavailableBody =>
+      'The service is temporarily unavailable. Please try again.';
+
+  @override
+  String get discoveryForbiddenTitle => 'Doctor discovery is restricted';
+
+  @override
+  String get discoveryForbiddenBody =>
+      'Your account cannot access doctor discovery.';
+
+  @override
+  String get malformedDoctorDataTitle => 'Doctor information is unavailable';
+
+  @override
+  String get malformedDoctorDataBody =>
+      'We could not safely read the doctor information. Please try again.';
+
+  @override
+  String get discoveryErrorTitle => 'Something went wrong';
+
+  @override
+  String get discoveryErrorBody => 'Please try again.';
+
+  @override
+  String get discoveryAuthTitle => 'Sign in to find doctors';
+
+  @override
+  String get discoveryAuthBody =>
+      'Verify your mobile number to browse authoritative doctor information.';
+
+  @override
+  String get doctorNotFound => 'Doctor not found';
+
+  @override
+  String get doctorNotFoundBody =>
+      'This doctor profile is no longer available.';
+
+  @override
+  String yearsExperience(int years) {
+    String _temp0 = intl.Intl.pluralLogic(
+      years,
+      locale: localeName,
+      other: '$years years of experience',
+      one: '1 year of experience',
+      zero: 'New to practice',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get genderFemale => 'Female';
+
+  @override
+  String get genderMale => 'Male';
+
+  @override
+  String get genderUnspecified => 'Not specified';
+
+  @override
+  String get languagesLabel => 'Languages';
+
+  @override
+  String get clinicsLabel => 'Clinics';
+
+  @override
+  String get specialtiesLabel => 'Specialties';
+
+  @override
+  String get biographyLabel => 'About';
+
+  @override
+  String get availabilityLabel => 'Availability';
+
+  @override
+  String get doctorAvailable => 'Available';
+
+  @override
+  String get doctorUnavailable => 'Unavailable';
+
+  @override
+  String get acceptingNewPatients => 'Accepting new patients';
+
+  @override
+  String get notAcceptingNewPatients => 'Not accepting new patients';
+
+  @override
+  String profileImageLabel(String name) {
+    return 'Profile image for $name';
+  }
+
+  @override
+  String profileImageFallback(String name) {
+    return 'No profile image for $name';
+  }
+
+  @override
+  String viewDoctorProfile(String name) {
+    return 'View profile for $name';
+  }
+
+  @override
+  String removeAppliedFilter(String label) {
+    return 'Remove $label filter';
+  }
+
+  @override
+  String get bookingComingSoon =>
+      'Booking will be available in the next release.';
 }

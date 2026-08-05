@@ -134,6 +134,63 @@ void main() {
     await load;
     expect(controller.state, isA<DiscoverInitial>());
   });
+
+  test('invalid detail UUID is rejected before repository access', () async {
+    final repository = _FakeRepository();
+    final controller = DiscoverController(repository, guest: false);
+
+    await controller.loadDoctor('not-a-doctor-id');
+
+    expect(controller.detailState, isA<DoctorDetailNotFound>());
+    expect(repository.detailCalls, 0);
+  });
+
+  test('stale doctor detail cannot replace a newer selection', () async {
+    final first = Completer<DoctorDiscoveryResult>();
+    final second = Completer<DoctorDiscoveryResult>();
+    final repository = _FakeRepository(detailCompleters: [first, second]);
+    final controller = DiscoverController(repository, guest: false);
+
+    final older = controller.loadDoctor('00000000-0000-4000-8000-000000000001');
+    final newer = controller.loadDoctor('00000000-0000-4000-8000-000000000002');
+    second.complete(_doctor('00000000-0000-4000-8000-000000000002'));
+    await newer;
+    first.complete(_doctor('00000000-0000-4000-8000-000000000001'));
+    await older;
+
+    expect(
+      (controller.detailState as DoctorDetailReady).doctor.doctorId,
+      endsWith('2'),
+    );
+  });
+
+  test('unsupported and out-of-range initial filters are removed', () async {
+    final repository = _FakeRepository(
+      options: const DoctorDiscoveryOptions(
+        specialties: [
+          DoctorSpecialtyOption(code: 'cardiology', displayName: 'Cardiology'),
+        ],
+        clinics: [],
+        languages: ['english'],
+        genders: [BackendDoctorGender.female],
+        minimumExperience: 3,
+        maximumExperience: 15,
+      ),
+    );
+    final controller = DiscoverController(repository, guest: false);
+
+    await controller.load(
+      withCriteria: const DoctorSearchCriteria(
+        specialtyCode: 'unsupported',
+        clinicId: '00000000-0000-4000-8000-000000000099',
+        language: 'arabic',
+        gender: BackendDoctorGender.male,
+        minimumYearsOfExperience: 20,
+      ),
+    );
+
+    expect(controller.criteria.hasFilters, isFalse);
+  });
 }
 
 class _FakeRepository implements DoctorDiscoveryRepository {
@@ -141,17 +198,24 @@ class _FakeRepository implements DoctorDiscoveryRepository {
     Map<int, DoctorSearchPage>? pages,
     this.failPageOnce,
     List<Completer<DoctorSearchPage>>? searchCompleters,
+    List<Completer<DoctorDiscoveryResult>>? detailCompleters,
+    this.options = _options,
   }) : pages = pages ?? {},
-       searchCompleters = searchCompleters ?? [];
+       searchCompleters = searchCompleters ?? [],
+       detailCompleters = detailCompleters ?? [];
   final Map<int, DoctorSearchPage> pages;
   int? failPageOnce;
   final List<Completer<DoctorSearchPage>> searchCompleters;
+  final List<Completer<DoctorDiscoveryResult>> detailCompleters;
+  final DoctorDiscoveryOptions options;
   int calls = 0;
+  int detailCalls = 0;
   int _searchIndex = 0;
+  int _detailIndex = 0;
   @override
   Future<DoctorDiscoveryOptions> loadOptions() async {
     calls++;
-    return _options;
+    return options;
   }
 
   @override
@@ -172,8 +236,13 @@ class _FakeRepository implements DoctorDiscoveryRepository {
   }
 
   @override
-  Future<DoctorDiscoveryResult> loadDoctor(String doctorId) async =>
-      _doctor(doctorId);
+  Future<DoctorDiscoveryResult> loadDoctor(String doctorId) async {
+    detailCalls++;
+    if (_detailIndex < detailCompleters.length) {
+      return detailCompleters[_detailIndex++].future;
+    }
+    return _doctor(doctorId);
+  }
 }
 
 const _options = DoctorDiscoveryOptions(

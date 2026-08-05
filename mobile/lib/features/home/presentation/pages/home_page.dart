@@ -156,6 +156,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   DiscoverFeature(
                     repository: widget.doctorDiscoveryRepository,
+                    onAuthenticationRequired: widget.onLogout,
                     key: ValueKey(_discoverRequest),
                     initialCriteria: _discoverCriteria,
                     focusSearch: _focusDiscover,
@@ -179,6 +180,7 @@ class _HomePageState extends State<HomePage> {
                           profilesController: widget.profilesController,
                           doctorDiscoveryRepository:
                               widget.doctorDiscoveryRepository,
+                          onAuthenticationRequired: widget.onLogout,
                         ),
                   NotificationsFeature(
                     controller: _notifications,

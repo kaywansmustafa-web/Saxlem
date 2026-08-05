@@ -16,12 +16,14 @@ class AppointmentsFeature extends StatefulWidget {
     this.profilesController,
     this.doctorDiscoveryRepository =
         const UnavailableDoctorDiscoveryRepository(),
+    this.onAuthenticationRequired,
     super.key,
   });
   final PatientAppointmentsRepository? repository;
   final VoidCallback? onOpenDiscover;
   final PatientProfilesController? profilesController;
   final DoctorDiscoveryRepository doctorDiscoveryRepository;
+  final Future<void> Function()? onAuthenticationRequired;
   @override
   State<AppointmentsFeature> createState() => _AppointmentsFeatureState();
 }
@@ -60,6 +62,7 @@ class _AppointmentsFeatureState extends State<AppointmentsFeature> {
               body: SafeArea(
                 child: DiscoverFeature(
                   repository: widget.doctorDiscoveryRepository,
+                  onAuthenticationRequired: widget.onAuthenticationRequired,
                 ),
               ),
             ),

@@ -21,6 +21,7 @@ class DiscoverController extends ChangeNotifier {
   DoctorDiscoveryOptions? _options;
   Timer? _debounce;
   int _generation = 0;
+  int _detailGeneration = 0;
   bool _disposed = false;
   bool _loadingMore = false;
 
@@ -38,6 +39,7 @@ class DiscoverController extends ChangeNotifier {
       final options = await _repository.loadOptions();
       if (!_current(token)) return;
       _options = options;
+      criteria = _criteriaSupportedBy(options);
       await _firstPage(token);
     } on DoctorDiscoveryFailure catch (failure) {
       _setFailure(failure, token);
@@ -50,6 +52,8 @@ class DiscoverController extends ChangeNotifier {
     final token = ++_generation;
     _debounce = Timer(debounceDuration, () => _firstPage(token));
   }
+
+  Future<void> clearQuery() => applyCriteria(criteria.copyWith(query: ''));
 
   Future<void> applyCriteria(DoctorSearchCriteria value) async {
     if (value == criteria) return;
@@ -135,14 +139,21 @@ class DiscoverController extends ChangeNotifier {
 
   Future<void> retryLoadMore() => loadMore();
   Future<void> loadDoctor(String id) async {
-    final token = _generation;
+    if (guest || !_uuid.hasMatch(id)) {
+      detailState = guest
+          ? const DoctorDetailFailure(DiscoverProblem.sessionExpired)
+          : const DoctorDetailNotFound();
+      _notify();
+      return;
+    }
+    final token = ++_detailGeneration;
     detailState = const DoctorDetailLoading();
     _notify();
     try {
       final doctor = await _repository.loadDoctor(id);
-      if (_current(token)) detailState = DoctorDetailReady(doctor);
+      if (_detailCurrent(token)) detailState = DoctorDetailReady(doctor);
     } on DoctorDiscoveryFailure catch (failure) {
-      if (_current(token)) {
+      if (_detailCurrent(token)) {
         detailState = failure.type == DoctorDiscoveryFailureType.notFound
             ? const DoctorDetailNotFound()
             : DoctorDetailFailure(_problem(failure));
@@ -154,6 +165,7 @@ class DiscoverController extends ChangeNotifier {
   void clearAuthoritativeData() {
     _debounce?.cancel();
     ++_generation;
+    ++_detailGeneration;
     _options = null;
     state = guest
         ? const DiscoverAuthenticationRequired()
@@ -191,7 +203,34 @@ class DiscoverController extends ChangeNotifier {
           DiscoverProblem.backendUnavailable,
         _ => DiscoverProblem.unknown,
       };
+
+  DoctorSearchCriteria _criteriaSupportedBy(DoctorDiscoveryOptions options) {
+    final specialty = criteria.specialtyCode;
+    final clinic = criteria.clinicId;
+    final language = criteria.language;
+    final gender = criteria.gender;
+    final experience = criteria.minimumYearsOfExperience;
+    return criteria.copyWith(
+      clearSpecialty:
+          specialty != null &&
+          !options.specialties.any((item) => item.code == specialty),
+      clearClinic:
+          clinic != null && !options.clinics.any((item) => item.id == clinic),
+      clearLanguage: language != null && !options.languages.contains(language),
+      clearGender: gender != null && !options.genders.contains(gender),
+      clearExperience:
+          experience != null &&
+          (options.minimumExperience == null ||
+              experience < options.minimumExperience! ||
+              experience > options.maximumExperience!),
+    );
+  }
+
   bool _current(int token) => !_disposed && token == _generation;
+  bool _detailCurrent(int token) => !_disposed && token == _detailGeneration;
+  static final _uuid = RegExp(
+    r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
+  );
   void _notify() {
     if (!_disposed) notifyListeners();
   }
@@ -201,6 +240,7 @@ class DiscoverController extends ChangeNotifier {
     _disposed = true;
     _debounce?.cancel();
     ++_generation;
+    ++_detailGeneration;
     super.dispose();
   }
 }
