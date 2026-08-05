@@ -17,15 +17,26 @@ class AuthenticatedApiClient {
   final SessionStorage _storage;
   final Future<StoredSession> Function() _refresh;
 
-  Future<ApiResponse> getJson(String path) async {
+  Future<ApiResponse> getJson(
+    String path, {
+    Map<String, String>? queryParameters,
+  }) async {
     final session = await _requiredSession();
     try {
-      return await _api.getJson(path, bearerToken: session.accessToken);
+      return await _api.getJson(
+        path,
+        bearerToken: session.accessToken,
+        queryParameters: queryParameters,
+      );
     } on ApiFailure catch (failure) {
       if (failure.type != ApiFailureType.unauthenticated) rethrow;
       final refreshed = await _refresh();
       try {
-        return await _api.getJson(path, bearerToken: refreshed.accessToken);
+        return await _api.getJson(
+          path,
+          bearerToken: refreshed.accessToken,
+          queryParameters: queryParameters,
+        );
       } on ApiFailure catch (retryFailure) {
         if (retryFailure.type == ApiFailureType.unauthenticated) {
           await _storage.clear();

@@ -1,149 +1,90 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/doctor_discovery_result.dart';
-import '../../domain/entities/discovery_types.dart';
-import '../discover_copy.dart';
-import '../../../../core/localization/localization_extensions.dart';
 import '../../../../design_system/components/content/saxlem_card.dart';
+import '../../domain/entities/doctor_discovery_result.dart';
 
 class DoctorResultCard extends StatelessWidget {
   const DoctorResultCard({
     required this.doctor,
-    required this.copy,
-    required this.onFavorite,
     required this.onProfile,
-    required this.onBook,
     super.key,
   });
   final DoctorDiscoveryResult doctor;
-  final DiscoverCopy copy;
-  final VoidCallback onFavorite, onProfile, onBook;
+  final VoidCallback onProfile;
   @override
-  Widget build(BuildContext context) {
-    final c = Theme.of(context).colorScheme;
-    final a = doctor.availability;
-    return Semantics(
-      container: true,
-      label:
-          '${doctor.doctorDisplayName}, ${copy.specialty(doctor.specialty)}, ${copy.availability(a.status)}, ${copy.fee(doctor.consultationFeeIqd)}',
-      child: SaxlemCard(
-        elevation: SaxlemCardElevation.low,
-        padding: const EdgeInsetsDirectional.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: c.primaryContainer,
-                  child: Icon(Icons.person_rounded, color: c.primary, size: 34),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              doctor.doctorDisplayName,
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                          if (doctor.verified) ...[
-                            const SizedBox(width: 5),
-                            Icon(
-                              Icons.verified_rounded,
-                              size: 18,
-                              color: c.primary,
-                            ),
-                          ],
-                        ],
+  Widget build(BuildContext context) => Semantics(
+    container: true,
+    button: true,
+    label: '${doctor.doctorDisplayName}, ${doctor.primarySpecialtyDisplayName}',
+    child: SaxlemCard(
+      elevation: SaxlemCardElevation.low,
+      padding: const EdgeInsetsDirectional.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundImage: doctor.photoUrl == null
+                    ? null
+                    : NetworkImage(doctor.photoUrl!),
+                child: doctor.photoUrl == null
+                    ? const Icon(Icons.person_rounded, size: 34)
+                    : null,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      doctor.doctorDisplayName,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
                       ),
+                    ),
+                    Text(doctor.primarySpecialtyDisplayName),
+                    if (doctor.clinics.isNotEmpty)
                       Text(
-                        '${copy.specialty(doctor.specialty)} · ${doctor.subSpecialtyDisplayName}',
+                        doctor.clinics.map((clinic) => clinic.name).join(', '),
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
-                      const SizedBox(height: 5),
-                      Text(
-                        '${doctor.clinicDisplayName} · ${doctor.location.areaDisplayName}',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
-                IconButton(
-                  onPressed: onFavorite,
-                  tooltip: doctor.isInMyDoctors
-                      ? context.l10n.removeFromMyDoctors
-                      : context.l10n.addToMyDoctors,
-                  icon: Icon(
-                    doctor.isInMyDoctors
-                        ? Icons.favorite_rounded
-                        : Icons.favorite_border_rounded,
-                    color: doctor.isInMyDoctors ? c.error : c.onSurfaceVariant,
-                  ),
-                ),
-              ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 12,
+            runSpacing: 8,
+            children: [
+              _Info(
+                Icons.work_history_outlined,
+                '${doctor.yearsOfExperience} years experience',
+              ),
+              if (doctor.languages.isNotEmpty)
+                _Info(Icons.language_rounded, doctor.languages.join(', ')),
+              _Info(
+                Icons.event_available_outlined,
+                doctor.availability.acceptingNewPatients
+                    ? 'Accepting new patients'
+                    : 'Not accepting new patients',
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: onProfile,
+              child: const Text('View profile'),
             ),
-            const SizedBox(height: 14),
-            Wrap(
-              spacing: 12,
-              runSpacing: 8,
-              children: [
-                _Info(
-                  Icons.star_rounded,
-                  '${doctor.patientRating.toStringAsFixed(1)} · ${doctor.totalRatings} ratings',
-                ),
-                _Info(
-                  Icons.chat_bubble_outline_rounded,
-                  '${doctor.totalReviews} reviews',
-                ),
-                _Info(
-                  Icons.payments_outlined,
-                  copy.fee(doctor.consultationFeeIqd),
-                ),
-                _Info(Icons.schedule_rounded, copy.availability(a.status)),
-                if (a.expectedWaitMinutes != null)
-                  _Info(
-                    Icons.hourglass_bottom_rounded,
-                    '${a.expectedWaitMinutes} min wait',
-                  ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              doctor.languages.map(copy.language).join(' · '),
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            const SizedBox(height: 14),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: onProfile,
-                    child: Text(context.l10n.viewProfile),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: FilledButton(
-                    onPressed: a.status == AvailabilityStatus.fullyBooked
-                        ? null
-                        : onBook,
-                    child: Text(context.l10n.book),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
 }
 
 class _Info extends StatelessWidget {
@@ -151,15 +92,12 @@ class _Info extends StatelessWidget {
   final IconData icon;
   final String text;
   @override
-  Widget build(BuildContext context) => Semantics(
-    label: text,
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 17, color: Theme.of(context).colorScheme.primary),
-        const SizedBox(width: 4),
-        Text(text, style: Theme.of(context).textTheme.bodySmall),
-      ],
-    ),
+  Widget build(BuildContext context) => Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(icon, size: 17),
+      const SizedBox(width: 4),
+      Text(text, style: Theme.of(context).textTheme.bodySmall),
+    ],
   );
 }

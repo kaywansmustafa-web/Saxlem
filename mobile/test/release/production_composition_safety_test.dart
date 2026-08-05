@@ -15,6 +15,8 @@ import 'package:saxlem_app/features/authentication/presentation/authentication_f
 import 'package:saxlem_app/features/family_profiles/data/repositories/backend_patient_profiles_repository.dart';
 import 'package:saxlem_app/features/family_profiles/data/repositories/in_memory_patient_profiles_repository.dart';
 import 'package:saxlem_app/l10n/app_localizations.dart';
+import 'package:saxlem_app/features/discover/data/repositories/backend_doctor_discovery_repository.dart';
+import 'package:saxlem_app/features/discover/data/repositories/unavailable_doctor_discovery_repository.dart';
 
 void main() {
   group('production-safe composition', () {
@@ -27,6 +29,10 @@ void main() {
       expect(dependencies.authRepository, isA<UnavailableAuthRepository>());
       expect(dependencies.authRepository, isNot(isA<MockAuthRepository>()));
       expect(dependencies.developmentOtp, isNull);
+      expect(
+        dependencies.doctorDiscoveryRepository,
+        isA<UnavailableDoctorDiscoveryRepository>(),
+      );
     });
 
     test('unknown environment defaults to production with no mock', () {
@@ -40,6 +46,10 @@ void main() {
       expect(configuration.allowMockAuthentication, isFalse);
       expect(dependencies.authRepository, isA<UnavailableAuthRepository>());
       expect(dependencies.developmentOtp, isNull);
+      expect(
+        dependencies.doctorDiscoveryRepository,
+        isA<UnavailableDoctorDiscoveryRepository>(),
+      );
     });
 
     test('production can never enable mock authentication', () {
@@ -81,6 +91,10 @@ void main() {
       );
       expect(dependencies.authRepository, isNot(isA<MockAuthRepository>()));
       expect(dependencies.developmentOtp, isNull);
+      expect(
+        dependencies.doctorDiscoveryRepository,
+        isA<BackendDoctorDiscoveryRepository>(),
+      );
     });
 
     test('development explicitly enables the mock repository', () {

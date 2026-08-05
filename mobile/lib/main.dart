@@ -24,6 +24,8 @@ import 'features/family_profiles/domain/repositories/patient_profiles_repository
 import 'features/family_profiles/data/repositories/unavailable_patient_profiles_repository.dart';
 import 'features/family_profiles/presentation/pages/primary_profile_setup_page.dart';
 import 'core/localization/localization_extensions.dart';
+import 'features/discover/domain/repositories/doctor_discovery_repository.dart';
+import 'features/discover/data/repositories/unavailable_doctor_discovery_repository.dart';
 
 void main() {
   const secureStorage = FlutterSecureStorage();
@@ -38,6 +40,7 @@ void main() {
       authRepository: dependencies.authRepository,
       developmentOtp: dependencies.developmentOtp,
       patientProfilesRepository: dependencies.patientProfilesRepository,
+      doctorDiscoveryRepository: dependencies.doctorDiscoveryRepository,
     ),
   );
 }
@@ -48,12 +51,15 @@ class SaxlemApp extends StatelessWidget {
     required this.authRepository,
     this.developmentOtp,
     this.patientProfilesRepository,
+    this.doctorDiscoveryRepository =
+        const UnavailableDoctorDiscoveryRepository(),
     super.key,
   });
   final LocaleRepository? localeRepository;
   final AuthRepository authRepository;
   final String? developmentOtp;
   final PatientProfilesRepository? patientProfilesRepository;
+  final DoctorDiscoveryRepository doctorDiscoveryRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +68,7 @@ class SaxlemApp extends StatelessWidget {
       authRepository: authRepository,
       developmentOtp: developmentOtp,
       patientProfilesRepository: patientProfilesRepository,
+      doctorDiscoveryRepository: doctorDiscoveryRepository,
     );
   }
 }
@@ -72,11 +79,13 @@ class _AppBootstrap extends StatefulWidget {
     required this.authRepository,
     this.developmentOtp,
     this.patientProfilesRepository,
+    required this.doctorDiscoveryRepository,
   });
   final LocaleRepository localeRepository;
   final AuthRepository authRepository;
   final String? developmentOtp;
   final PatientProfilesRepository? patientProfilesRepository;
+  final DoctorDiscoveryRepository doctorDiscoveryRepository;
   @override
   State<_AppBootstrap> createState() => _AppBootstrapState();
 }
@@ -214,6 +223,7 @@ class _AppBootstrapState extends State<_AppBootstrap> {
       guestMode: controller.guestMode,
       onLogout: _logout,
       profilesController: activeProfiles,
+      doctorDiscoveryRepository: widget.doctorDiscoveryRepository,
     );
   }
 

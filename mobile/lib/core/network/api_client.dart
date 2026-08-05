@@ -39,14 +39,29 @@ class ApiClient {
     String? bearerToken,
   }) => _send('POST', path, body: body, bearerToken: bearerToken);
 
-  Future<ApiResponse> getJson(String path, {String? bearerToken}) =>
-      _send('GET', path, bearerToken: bearerToken);
+  Future<ApiResponse> getJson(
+    String path, {
+    String? bearerToken,
+    Map<String, String>? queryParameters,
+  }) => _send(
+    'GET',
+    path,
+    bearerToken: bearerToken,
+    queryParameters: queryParameters,
+  );
 
   Future<ApiListResponse> getJsonList(
     String path, {
     String? bearerToken,
+    Map<String, String>? queryParameters,
   }) async {
-    final request = http.Request('GET', _configuration.apiEndpoint(path));
+    final endpoint = _configuration.apiEndpoint(path);
+    final request = http.Request(
+      'GET',
+      queryParameters == null
+          ? endpoint
+          : endpoint.replace(queryParameters: queryParameters),
+    );
     request.followRedirects = false;
     request.maxRedirects = 0;
     request.headers['accept'] = 'application/json';
@@ -100,8 +115,15 @@ class ApiClient {
     String path, {
     Map<String, Object?>? body,
     String? bearerToken,
+    Map<String, String>? queryParameters,
   }) async {
-    final request = http.Request(method, _configuration.apiEndpoint(path));
+    final endpoint = _configuration.apiEndpoint(path);
+    final request = http.Request(
+      method,
+      queryParameters == null
+          ? endpoint
+          : endpoint.replace(queryParameters: queryParameters),
+    );
     request.followRedirects = false;
     request.maxRedirects = 0;
     request.headers['accept'] = 'application/json';

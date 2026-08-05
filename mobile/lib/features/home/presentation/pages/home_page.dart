@@ -18,17 +18,22 @@ import '../../../notifications/presentation/controllers/notifications_controller
 import '../../../live_queue/live_queue_feature.dart';
 import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
 import '../../../family_profiles/presentation/pages/patient_profiles_page.dart';
+import '../../../discover/domain/repositories/doctor_discovery_repository.dart';
+import '../../../discover/data/repositories/unavailable_doctor_discovery_repository.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
     this.guestMode = false,
     this.onLogout,
     this.profilesController,
+    this.doctorDiscoveryRepository =
+        const UnavailableDoctorDiscoveryRepository(),
     super.key,
   });
   final bool guestMode;
   final Future<void> Function()? onLogout;
   final PatientProfilesController? profilesController;
+  final DoctorDiscoveryRepository doctorDiscoveryRepository;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -150,6 +155,7 @@ class _HomePageState extends State<HomePage> {
                     profilesController: widget.profilesController,
                   ),
                   DiscoverFeature(
+                    repository: widget.doctorDiscoveryRepository,
                     key: ValueKey(_discoverRequest),
                     initialCriteria: _discoverCriteria,
                     focusSearch: _focusDiscover,
@@ -171,6 +177,8 @@ class _HomePageState extends State<HomePage> {
                       : AppointmentsFeature(
                           onOpenDiscover: () => _openDiscover(),
                           profilesController: widget.profilesController,
+                          doctorDiscoveryRepository:
+                              widget.doctorDiscoveryRepository,
                         ),
                   NotificationsFeature(
                     controller: _notifications,

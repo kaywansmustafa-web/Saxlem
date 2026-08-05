@@ -3,14 +3,15 @@ import 'doctor_discovery_result.dart';
 class DoctorSearchPage {
   const DoctorSearchPage({
     required this.results,
+    required this.page,
+    required this.pageSize,
     required this.totalCount,
-    required this.hasMore,
-    required this.updatedAt,
-    this.stale = false,
+    required this.totalPages,
   });
   final List<DoctorDiscoveryResult> results;
+  final int page;
+  final int pageSize;
   final int totalCount;
-  final bool hasMore;
-  final DateTime updatedAt;
-  final bool stale;
+  final int totalPages;
+  bool get hasMore => page < totalPages && results.isNotEmpty;
 }

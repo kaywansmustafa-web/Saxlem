@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../../config/theme/app_colors.dart';
-import '../../domain/entities/discovery_types.dart';
+import '../../../../core/localization/localization_extensions.dart';
+import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
 import '../../domain/entities/doctor_search_criteria.dart';
 import '../controllers/discover_controller.dart';
-import '../discover_copy.dart';
 import '../state/discover_state.dart';
 import '../widgets/doctor_result_card.dart';
-import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
 import 'doctor_details_page.dart';
-import '../../../../core/localization/localization_extensions.dart';
 
 class DiscoverPage extends StatefulWidget {
   const DiscoverPage({
@@ -33,10 +31,10 @@ class DiscoverPage extends StatefulWidget {
 class _DiscoverPageState extends State<DiscoverPage> {
   final _search = TextEditingController();
   final _focus = FocusNode();
-  static const copy = DiscoverCopy();
   @override
   void initState() {
     super.initState();
+    _search.text = widget.controller.criteria.query;
     if (widget.focusSearch) {
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => _focus.requestFocus(),
@@ -74,36 +72,18 @@ class _DiscoverPageState extends State<DiscoverPage> {
                       decoration: InputDecoration(
                         hintText: context.l10n.searchHint,
                         prefixIcon: const Icon(Icons.search_rounded),
-                        suffixIcon: _search.text.isEmpty
-                            ? null
-                            : IconButton(
-                                onPressed: () {
-                                  _search.clear();
-                                  widget.controller.updateQuery('');
-                                },
-                                icon: const Icon(Icons.close_rounded),
-                              ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   IconButton.filledTonal(
-                    onPressed: _showFilters,
+                    onPressed:
+                        widget.controller.state is DiscoverReady ||
+                            widget.controller.state is DiscoverEmpty
+                        ? _showFilters
+                        : null,
                     tooltip: context.l10n.filters,
                     icon: const Icon(Icons.tune_rounded),
-                  ),
-                  PopupMenuButton<DiscoverySort>(
-                    tooltip: context.l10n.sortResults,
-                    onSelected: widget.controller.sort,
-                    itemBuilder: (_) => DiscoverySort.values
-                        .map(
-                          (v) => PopupMenuItem(
-                            value: v,
-                            child: Text(_sortLabel(v)),
-                          ),
-                        )
-                        .toList(),
-                    icon: const Icon(Icons.swap_vert_rounded),
                   ),
                 ],
               ),
@@ -115,185 +95,146 @@ class _DiscoverPageState extends State<DiscoverPage> {
     ),
   );
   Widget _body(DiscoverState state) => switch (state) {
-    DiscoverInitial() => _initial(),
+    DiscoverInitial() ||
+    DiscoverLoadingOptions() ||
     DiscoverLoading() => const Center(child: CircularProgressIndicator()),
-    DiscoverOffline() => _message(
-      Icons.cloud_off_outlined,
-      'You are offline',
-      'Connect to view the latest doctors.',
-      widget.controller.retry,
+    DiscoverAuthenticationRequired() => _message(
+      Icons.lock_outline_rounded,
+      context.l10n.personalizedFeatureTitle,
+      context.l10n.personalizedFeatureBody,
+      null,
     ),
-    DiscoverFailure(:final message) => _message(
-      Icons.error_outline_rounded,
-      'Something went wrong',
-      message,
-      widget.controller.retry,
-    ),
-    DiscoverEmpty(:final filtered) => _message(
+    DiscoverFailure(:final problem, :final retained) =>
+      retained != null
+          ? _results(retained)
+          : _message(
+              Icons.error_outline_rounded,
+              _problemTitle(problem),
+              _problemBody(problem),
+              widget.controller.retry,
+            ),
+    DiscoverEmpty(:final criteria) => _message(
       Icons.search_off_rounded,
-      filtered ? 'No doctors match these filters' : 'No doctors found',
-      filtered
-          ? 'Try removing one or two filters.'
-          : 'Try another doctor, clinic, or health term.',
-      filtered ? widget.controller.clearFilters : widget.controller.retry,
+      'No doctors found',
+      criteria.hasFilters
+          ? 'Try removing one or more filters.'
+          : 'Try another doctor or specialty.',
+      criteria.hasFilters
+          ? widget.controller.clearFilters
+          : widget.controller.retry,
     ),
-    DiscoverResults(:final page, :final criteria, :final loadingMore) =>
+    DiscoverReady() => _results(state),
+  };
+  Widget _results(DiscoverReady state) =>
       NotificationListener<ScrollNotification>(
-        onNotification: (n) {
-          if (n.metrics.extentAfter < 300) widget.controller.loadMore();
+        onNotification: (event) {
+          if (event.metrics.extentAfter < 300) widget.controller.loadMore();
           return false;
         },
         child: ListView(
           padding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 36),
           children: [
-            if (page.stale)
-              Container(
-                margin: const EdgeInsetsDirectional.only(bottom: 12),
-                padding: const EdgeInsetsDirectional.all(12),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.tertiaryContainer,
-                  borderRadius: BorderRadius.circular(16),
+            if (state.criteria.hasFilters)
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: ActionChip(
+                  label: Text(context.l10n.clearFilters),
+                  onPressed: widget.controller.clearFilters,
                 ),
-                child: const Text(
-                  'Showing saved results. Updates may be delayed.',
-                ),
-              ),
-            if (criteria.hasFilters)
-              Wrap(
-                spacing: 7,
-                children: [
-                  ActionChip(
-                    label: Text(context.l10n.clearFilters),
-                    onPressed: widget.controller.clearFilters,
-                  ),
-                ],
               ),
             Padding(
               padding: const EdgeInsetsDirectional.symmetric(vertical: 12),
               child: Text(
-                '${page.totalCount} doctors',
+                '${state.page.totalCount} doctors',
                 style: Theme.of(
                   context,
                 ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
               ),
             ),
-            ...page.results.map(
+            ...state.page.results.map(
               (doctor) => Padding(
                 padding: const EdgeInsetsDirectional.only(bottom: 14),
                 child: DoctorResultCard(
                   doctor: doctor,
-                  copy: copy,
-                  onFavorite: widget.guestMode
-                      ? _requiresAuthentication
-                      : () => widget.controller.toggleMyDoctor(doctor.doctorId),
-                  onProfile: () => _details(doctor),
-                  onBook: () => _details(doctor, book: true),
+                  onProfile: () => _details(doctor.doctorId),
                 ),
               ),
             ),
-            if (loadingMore)
+            if (state.loadingMore)
               const Center(
                 child: Padding(
                   padding: EdgeInsets.all(18),
                   child: CircularProgressIndicator(),
                 ),
               ),
-          ],
-        ),
-      ),
-  };
-  Widget _initial() => ListView(
-    padding: const EdgeInsetsDirectional.fromSTEB(24, 12, 24, 36),
-    children: [
-      Text(
-        context.l10n.findRightCare,
-        style: Theme.of(
-          context,
-        ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
-      ),
-      const SizedBox(height: 8),
-      Text(context.l10n.findRightCareBody),
-      const SizedBox(height: 24),
-      Text(
-        context.l10n.quickCategories,
-        style: Theme.of(context).textTheme.titleLarge,
-      ),
-      const SizedBox(height: 12),
-      Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: MedicalSpecialty.values
-            .take(8)
-            .map(
-              (s) => ActionChip(
-                label: Text(copy.specialty(s)),
-                onPressed: () => widget.controller.applyCriteria(
-                  DoctorSearchCriteria(specialty: s),
+            if (state.loadMoreFailed)
+              Center(
+                child: TextButton(
+                  onPressed: widget.controller.retryLoadMore,
+                  child: Text(context.l10n.tryAgain),
                 ),
               ),
-            )
-            .toList(),
-      ),
-    ],
-  );
+          ],
+        ),
+      );
   Widget _message(
     IconData icon,
     String title,
-    String message,
-    VoidCallback action,
+    String body,
+    VoidCallback? action,
   ) => Center(
     child: Padding(
-      padding: const EdgeInsetsDirectional.all(32),
+      padding: const EdgeInsets.all(32),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 52, color: Theme.of(context).colorScheme.primary),
+          Icon(icon, size: 52),
           const SizedBox(height: 16),
           Text(title, style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 7),
-          Text(message, textAlign: TextAlign.center),
-          const SizedBox(height: 20),
-          FilledButton(onPressed: action, child: Text(context.l10n.tryAgain)),
+          const SizedBox(height: 8),
+          Text(body, textAlign: TextAlign.center),
+          if (action != null) ...[
+            const SizedBox(height: 20),
+            FilledButton(onPressed: action, child: Text(context.l10n.tryAgain)),
+          ],
         ],
       ),
     ),
   );
-  void _details(dynamic doctor, {bool book = false}) =>
-      Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (_) => DoctorDetailsPage(
-            doctor: doctor,
-            bookingEmphasized: book,
-            onOpenAppointments: widget.onOpenAppointments,
-            guestMode: widget.guestMode,
-            profilesController: widget.profilesController,
-          ),
-        ),
-      );
-
-  void _requiresAuthentication() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.personalizedFeatureBody)),
-    );
-  }
-
-  String _sortLabel(DiscoverySort v) => switch (v) {
-    DiscoverySort.recommended => 'Recommended',
-    DiscoverySort.earliestAvailability => 'Earliest availability',
-    DiscoverySort.shortestWait => 'Shortest wait',
-    DiscoverySort.nearest => 'Nearest',
-    DiscoverySort.lowestFee => 'Lowest fee',
-    DiscoverySort.highestRating => 'Highest rating',
+  String _problemTitle(DiscoverProblem problem) => switch (problem) {
+    DiscoverProblem.offline => 'You are offline',
+    DiscoverProblem.forbidden => 'Doctor discovery is unavailable',
+    DiscoverProblem.sessionExpired => 'Your session has expired',
+    DiscoverProblem.malformedResponse => 'Doctor information is unavailable',
+    DiscoverProblem.backendUnavailable => 'Service temporarily unavailable',
+    DiscoverProblem.unknown => 'Something went wrong',
   };
+  String _problemBody(DiscoverProblem problem) =>
+      problem == DiscoverProblem.sessionExpired
+      ? 'Sign in again to discover doctors.'
+      : 'Please try again.';
+  void _details(String id) => Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (_) =>
+          DoctorDetailsPage(controller: widget.controller, doctorId: id),
+    ),
+  );
   Future<void> _showFilters() async {
+    final state = widget.controller.state;
+    final options = switch (state) {
+      DiscoverReady(:final options) => options,
+      DiscoverEmpty(:final options) => options,
+      _ => null,
+    };
+    if (options == null || !mounted) return;
     var draft = widget.controller.criteria;
-    final result = await showModalBottomSheet<DoctorSearchCriteria>(
+    final selected = await showModalBottomSheet<DoctorSearchCriteria>(
       context: context,
       isScrollControlled: true,
       builder: (context) => StatefulBuilder(
         builder: (context, setSheet) => SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsetsDirectional.all(24),
+            padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -301,133 +242,65 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   context.l10n.filters,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                const SizedBox(height: 18),
-                DropdownButtonFormField<MedicalSpecialty>(
-                  initialValue: draft.specialty,
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  initialValue: draft.specialtyCode,
                   decoration: const InputDecoration(labelText: 'Specialty'),
-                  items: MedicalSpecialty.values
+                  items: options.specialties
                       .map(
-                        (s) => DropdownMenuItem(
-                          value: s,
-                          child: Text(copy.specialty(s)),
+                        (item) => DropdownMenuItem(
+                          value: item.code,
+                          child: Text(item.displayName),
                         ),
                       )
                       .toList(),
-                  onChanged: (v) => setSheet(
+                  onChanged: (value) => setSheet(
                     () => draft = draft.copyWith(
-                      specialty: v,
-                      clearSpecialty: v == null,
+                      specialtyCode: value,
+                      clearSpecialty: value == null,
                     ),
                   ),
                 ),
-                const SizedBox(height: 14),
-                const Text('Neighborhood'),
-                Wrap(
-                  spacing: 7,
-                  children:
-                      const {
-                            'malta': 'Malta',
-                            'masike': 'Masike',
-                            'city-center': 'City Center',
-                            'zawa': 'Zawa',
-                            'baroshke': 'Baroshke',
-                          }.entries
-                          .map(
-                            (entry) => FilterChip(
-                              label: Text(entry.value),
-                              selected: draft.areaIds.contains(entry.key),
-                              onSelected: (selected) => setSheet(() {
-                                final areas = {...draft.areaIds};
-                                selected
-                                    ? areas.add(entry.key)
-                                    : areas.remove(entry.key);
-                                draft = draft.copyWith(
-                                  cityId: 'duhok',
-                                  areaIds: areas,
-                                );
-                              }),
-                            ),
-                          )
-                          .toList(),
-                ),
-                const SizedBox(height: 10),
-                const Text('Doctor gender'),
-                Wrap(
-                  spacing: 7,
-                  children: DoctorGender.values
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  initialValue: draft.clinicId,
+                  decoration: const InputDecoration(labelText: 'Clinic'),
+                  items: options.clinics
                       .map(
-                        (gender) => ChoiceChip(
-                          label: Text(
-                            gender == DoctorGender.female ? 'Female' : 'Male',
-                          ),
-                          selected: draft.gender == gender,
-                          onSelected: (_) => setSheet(
-                            () => draft = draft.copyWith(gender: gender),
-                          ),
+                        (item) => DropdownMenuItem(
+                          value: item.id,
+                          child: Text(item.name),
                         ),
                       )
                       .toList(),
-                ),
-                const SizedBox(height: 10),
-                const Text('Languages'),
-                Wrap(
-                  spacing: 7,
-                  children: SpokenLanguage.values
-                      .map(
-                        (language) => FilterChip(
-                          label: Text(copy.language(language)),
-                          selected: draft.languages.contains(language),
-                          onSelected: (selected) => setSheet(() {
-                            final languages = {...draft.languages};
-                            selected
-                                ? languages.add(language)
-                                : languages.remove(language);
-                            draft = draft.copyWith(languages: languages);
-                          }),
-                        ),
-                      )
-                      .toList(),
-                ),
-                SwitchListTile(
-                  title: const Text('Available today'),
-                  value: draft.availableToday,
-                  onChanged: (v) =>
-                      setSheet(() => draft = draft.copyWith(availableToday: v)),
-                ),
-                SwitchListTile(
-                  title: const Text('Available now'),
-                  value: draft.availableNow,
-                  onChanged: (v) =>
-                      setSheet(() => draft = draft.copyWith(availableNow: v)),
-                ),
-                SwitchListTile(
-                  title: const Text('Verified doctors only'),
-                  value: draft.verifiedOnly,
-                  onChanged: (v) =>
-                      setSheet(() => draft = draft.copyWith(verifiedOnly: v)),
-                ),
-                SwitchListTile(
-                  title: const Text('Shortest expected wait'),
-                  value: draft.shortestWaitOnly,
-                  onChanged: (v) => setSheet(
-                    () => draft = draft.copyWith(shortestWaitOnly: v),
+                  onChanged: (value) => setSheet(
+                    () => draft = draft.copyWith(
+                      clinicId: value,
+                      clearClinic: value == null,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
-                Text('Maximum fee: ${copy.fee(draft.maximumFeeIqd)}'),
-                Slider(
-                  value: draft.maximumFeeIqd.toDouble(),
-                  min: 20000,
-                  max: 100000,
-                  divisions: 16,
-                  onChanged: (v) => setSheet(
-                    () => draft = draft.copyWith(maximumFeeIqd: v.round()),
+                DropdownButtonFormField<String>(
+                  initialValue: draft.language,
+                  decoration: const InputDecoration(labelText: 'Language'),
+                  items: options.languages
+                      .map(
+                        (item) =>
+                            DropdownMenuItem(value: item, child: Text(item)),
+                      )
+                      .toList(),
+                  onChanged: (value) => setSheet(
+                    () => draft = draft.copyWith(
+                      language: value,
+                      clearLanguage: value == null,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 20),
                 FilledButton(
                   onPressed: () => Navigator.pop(context, draft),
-                  child: const Text('Show doctors'),
+                  child: const Text('Apply filters'),
                 ),
               ],
             ),
@@ -435,6 +308,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
         ),
       ),
     );
-    if (result != null) await widget.controller.applyCriteria(result);
+    if (selected != null) await widget.controller.applyCriteria(selected);
   }
 }

@@ -1,52 +1,57 @@
 import 'package:flutter/material.dart';
-import '../../../../config/theme/app_colors.dart';
-import '../../domain/entities/doctor_discovery_result.dart';
-import '../../domain/entities/discovery_types.dart';
-import '../discover_copy.dart';
-import '../../../booking/booking_feature.dart';
-import '../../../booking/domain/entities/booking_doctor_reference.dart';
-import '../../../../core/localization/localization_extensions.dart';
 import '../../../../design_system/components/layout/saxlem_responsive_content.dart';
-import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
+import '../controllers/discover_controller.dart';
+import '../state/discover_state.dart';
 
-class DoctorDetailsPage extends StatelessWidget {
+class DoctorDetailsPage extends StatefulWidget {
   const DoctorDetailsPage({
-    required this.doctor,
-    this.bookingEmphasized = false,
-    this.onOpenAppointments,
-    this.guestMode = false,
-    this.profilesController,
+    required this.controller,
+    required this.doctorId,
     super.key,
   });
-  final DoctorDiscoveryResult doctor;
-  final bool bookingEmphasized;
-  final VoidCallback? onOpenAppointments;
-  final bool guestMode;
-  final PatientProfilesController? profilesController;
+  final DiscoverController controller;
+  final String doctorId;
   @override
-  Widget build(BuildContext context) {
-    const copy = DiscoverCopy();
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(title: Text(context.l10n.doctorProfile)),
-      body: SafeArea(
-        top: false,
-        child: SingleChildScrollView(
-          padding: const EdgeInsetsDirectional.only(top: 20, bottom: 36),
+  State<DoctorDetailsPage> createState() => _DoctorDetailsPageState();
+}
+
+class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.loadDoctor(widget.doctorId);
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text('Doctor profile')),
+    body: ListenableBuilder(
+      listenable: widget.controller,
+      builder: (context, _) => switch (widget.controller.detailState) {
+        DoctorDetailInitial() || DoctorDetailLoading() => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        DoctorDetailNotFound() => const Center(child: Text('Doctor not found')),
+        DoctorDetailFailure() => Center(
+          child: FilledButton(
+            onPressed: () => widget.controller.loadDoctor(widget.doctorId),
+            child: const Text('Try again'),
+          ),
+        ),
+        DoctorDetailReady(:final doctor) => SingleChildScrollView(
+          padding: const EdgeInsetsDirectional.all(24),
           child: SaxlemResponsiveContent(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 CircleAvatar(
                   radius: 48,
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.primaryContainer,
-                  child: Icon(
-                    Icons.person_rounded,
-                    size: 54,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                  backgroundImage: doctor.photoUrl == null
+                      ? null
+                      : NetworkImage(doctor.photoUrl!),
+                  child: doctor.photoUrl == null
+                      ? const Icon(Icons.person_rounded, size: 52)
+                      : null,
                 ),
                 const SizedBox(height: 18),
                 Text(
@@ -56,91 +61,34 @@ class DoctorDetailsPage extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 5),
                 Text(
-                  '${copy.specialty(doctor.specialty)} · ${doctor.subSpecialtyDisplayName}',
+                  doctor.primarySpecialtyDisplayName,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
-                _Panel(
-                  children: [
-                    _row('Clinic', doctor.clinicDisplayName),
-                    _row(
-                      'Location',
-                      '${doctor.location.areaDisplayName}, ${doctor.location.cityDisplayName}',
-                    ),
-                    _row(
-                      'Availability',
-                      copy.availability(doctor.availability.status),
-                    ),
-                    _row('Consultation', copy.fee(doctor.consultationFeeIqd)),
-                    _row(
-                      'Patient rating',
-                      '${doctor.patientRating.toStringAsFixed(1)} from ${doctor.totalRatings} ratings',
-                    ),
-                    _row('Written reviews', '${doctor.totalReviews}'),
-                  ],
+                _row('Experience', '${doctor.yearsOfExperience} years'),
+                _row(
+                  'Clinics',
+                  doctor.clinics.map((clinic) => clinic.name).join(', '),
                 ),
-                const SizedBox(height: 18),
-                _Panel(
-                  children: [
-                    Text(
-                      'About this profile',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      context.l10n.findRightCareBody,
-                      style: TextStyle(height: 1.5),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                FilledButton(
-                  onPressed:
-                      doctor.availability.status ==
-                          AvailabilityStatus.fullyBooked
-                      ? null
-                      : guestMode
-                      ? () => ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(context.l10n.personalizedFeatureBody),
-                          ),
-                        )
-                      : () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => BookingFeature(
-                              doctor: BookingDoctorReference(
-                                id: doctor.doctorId,
-                                displayName: doctor.doctorDisplayName,
-                                specialtyDisplayName: copy.specialty(
-                                  doctor.specialty,
-                                ),
-                                photoUrl: doctor.photoUrl,
-                              ),
-                              onOpenAppointments: onOpenAppointments,
-                              profilesController: profilesController,
-                            ),
-                          ),
-                        ),
-                  child: Text(
-                    bookingEmphasized
-                        ? context.l10n.chooseAppointment
-                        : context.l10n.bookAppointment,
-                  ),
-                ),
+                _row('Languages', doctor.languages.join(', ')),
+                if (doctor.licenseNumber != null)
+                  _row('License', doctor.licenseNumber!),
+                if (doctor.biography != null) ...[
+                  const SizedBox(height: 20),
+                  Text('About', style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  Text(doctor.biography!),
+                ],
               ],
             ),
           ),
         ),
-      ),
-    );
-  }
-
+      },
+    ),
+  );
   static Widget _row(String label, String value) => Padding(
-    padding: const EdgeInsetsDirectional.symmetric(vertical: 7),
+    padding: const EdgeInsetsDirectional.symmetric(vertical: 8),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -152,24 +100,6 @@ class DoctorDetailsPage extends StatelessWidget {
           ),
         ),
       ],
-    ),
-  );
-}
-
-class _Panel extends StatelessWidget {
-  const _Panel({required this.children});
-  final List<Widget> children;
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsetsDirectional.all(18),
-    decoration: BoxDecoration(
-      color: Theme.of(context).colorScheme.surface,
-      borderRadius: BorderRadius.circular(22),
-      border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: children,
     ),
   );
 }

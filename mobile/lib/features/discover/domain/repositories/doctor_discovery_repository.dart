@@ -1,13 +1,31 @@
+import '../entities/doctor_discovery_options.dart';
+import '../entities/doctor_discovery_result.dart';
 import '../entities/doctor_search_criteria.dart';
 import '../entities/doctor_search_page.dart';
 
 abstract interface class DoctorDiscoveryRepository {
+  Future<DoctorDiscoveryOptions> loadOptions();
   Future<DoctorSearchPage> search(
     DoctorSearchCriteria criteria, {
-    int offset = 0,
-    int limit = 12,
+    required int page,
+    int pageSize = 20,
   });
-  Future<bool> toggleMyDoctor(String doctorId);
-  List<String> recentSearches();
-  void saveRecentSearch(String query);
+  Future<DoctorDiscoveryResult> loadDoctor(String doctorId);
+}
+
+enum DoctorDiscoveryFailureType {
+  unauthenticated,
+  forbidden,
+  notFound,
+  timeout,
+  offline,
+  rateLimited,
+  unavailable,
+  malformedResponse,
+  unknown,
+}
+
+class DoctorDiscoveryFailure implements Exception {
+  const DoctorDiscoveryFailure(this.type);
+  final DoctorDiscoveryFailureType type;
 }

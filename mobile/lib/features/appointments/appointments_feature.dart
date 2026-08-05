@@ -6,17 +6,22 @@ import 'presentation/controllers/appointments_controller.dart';
 import 'presentation/pages/appointments_page.dart';
 import '../family_profiles/presentation/controllers/patient_profiles_controller.dart';
 import '../../core/models/patient_profile.dart';
+import '../discover/domain/repositories/doctor_discovery_repository.dart';
+import '../discover/data/repositories/unavailable_doctor_discovery_repository.dart';
 
 class AppointmentsFeature extends StatefulWidget {
   const AppointmentsFeature({
     this.repository,
     this.onOpenDiscover,
     this.profilesController,
+    this.doctorDiscoveryRepository =
+        const UnavailableDoctorDiscoveryRepository(),
     super.key,
   });
   final PatientAppointmentsRepository? repository;
   final VoidCallback? onOpenDiscover;
   final PatientProfilesController? profilesController;
+  final DoctorDiscoveryRepository doctorDiscoveryRepository;
   @override
   State<AppointmentsFeature> createState() => _AppointmentsFeatureState();
 }
@@ -51,8 +56,13 @@ class _AppointmentsFeatureState extends State<AppointmentsFeature> {
         () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) =>
-                const Scaffold(body: SafeArea(child: DiscoverFeature())),
+            builder: (_) => Scaffold(
+              body: SafeArea(
+                child: DiscoverFeature(
+                  repository: widget.doctorDiscoveryRepository,
+                ),
+              ),
+            ),
           ),
         ),
   );

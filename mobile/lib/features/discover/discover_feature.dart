@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'data/data_sources/mock_doctor_discovery_data_source.dart';
-import 'data/mappers/doctor_discovery_result_mapper.dart';
-import 'data/repositories/doctor_discovery_repository_impl.dart';
+import '../family_profiles/presentation/controllers/patient_profiles_controller.dart';
 import 'domain/entities/doctor_search_criteria.dart';
-import 'domain/services/patient_term_specialty_mapper.dart';
-import 'domain/use_cases/search_doctors.dart';
-import 'domain/use_cases/toggle_my_doctor.dart';
+import 'domain/repositories/doctor_discovery_repository.dart';
+import 'data/repositories/unavailable_doctor_discovery_repository.dart';
 import 'presentation/controllers/discover_controller.dart';
 import 'presentation/pages/discover_page.dart';
-import '../family_profiles/presentation/controllers/patient_profiles_controller.dart';
 
 class DiscoverFeature extends StatefulWidget {
   const DiscoverFeature({
+    this.repository = const UnavailableDoctorDiscoveryRepository(),
     this.initialCriteria,
     this.focusSearch = false,
     this.openFilters = false,
@@ -20,6 +17,7 @@ class DiscoverFeature extends StatefulWidget {
     this.profilesController,
     super.key,
   });
+  final DoctorDiscoveryRepository repository;
   final DoctorSearchCriteria? initialCriteria;
   final bool focusSearch;
   final bool openFilters;
@@ -35,19 +33,8 @@ class _DiscoverFeatureState extends State<DiscoverFeature> {
   @override
   void initState() {
     super.initState();
-    final repo = DoctorDiscoveryRepositoryImpl(
-      MockDoctorDiscoveryDataSource(),
-      const DoctorDiscoveryResultMapper(),
-      const PatientTermSpecialtyMapper(),
-    );
-    controller = DiscoverController(
-      SearchDoctors(repo),
-      ToggleMyDoctor(repo),
-      repo,
-    );
-    if (widget.initialCriteria != null) {
-      controller.load(withCriteria: widget.initialCriteria);
-    }
+    controller = DiscoverController(widget.repository, guest: widget.guestMode)
+      ..load(withCriteria: widget.initialCriteria);
   }
 
   @override

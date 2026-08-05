@@ -1,7 +1,4 @@
-import '../repositories/doctor_discovery_repository.dart';
-
+@Deprecated('My Doctors mutations are not part of authoritative discovery.')
 class ToggleMyDoctor {
-  const ToggleMyDoctor(this._repository);
-  final DoctorDiscoveryRepository _repository;
-  Future<bool> call(String doctorId) => _repository.toggleMyDoctor(doctorId);
+  const ToggleMyDoctor();
 }
