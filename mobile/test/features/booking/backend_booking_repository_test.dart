@@ -214,6 +214,54 @@ void main() {
     );
     expect(calls, 1);
   });
+
+  test('create rejects timestamps without an explicit offset', () async {
+    final response = _appointment()
+      ..['startsAt'] = '2030-08-10T06:00:00'
+      ..['endsAt'] = '2030-08-10T06:30:00';
+    await _expectMalformedCreate(response);
+  });
+
+  test('create rejects a malformed public appointment reference', () async {
+    await _expectMalformedCreate(_appointment()..['reference'] = 'temporary');
+  });
+
+  test('create rejects response authority mismatches', () async {
+    for (final response in [
+      _appointment()..['feeIqd'] = 1,
+      _appointment()..['type'] = 'followUp',
+      _appointment()..['reason'] = 'Changed',
+      _appointment()..['status'] = 'confirmed',
+      _appointment()..['cancellationReason'] = 'Unexpected',
+    ]) {
+      await _expectMalformedCreate(response);
+    }
+  });
+}
+
+Future<void> _expectMalformedCreate(Map<String, dynamic> response) async {
+  final repository = _repository(
+    MockClient((_) async => http.Response(jsonEncode(response), 201)),
+  );
+  final options = BookingOptionsResponseDto.parse(_options());
+  await expectLater(
+    repository.create(
+      BookingDraft(
+        options: options,
+        profileId: const PatientProfileId(profileId),
+        reason: 'Consultation',
+        slot: options.days.first.slots.single,
+      ),
+      'booking-0123456789abcdef',
+    ),
+    throwsA(
+      predicate(
+        (error) =>
+            error is BookingFailure &&
+            error.problem == BookingProblem.malformedResponse,
+      ),
+    ),
+  );
 }
 
 BackendBookingRepository _repository(http.Client client) {

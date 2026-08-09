@@ -113,7 +113,12 @@ class BackendBookingRepository implements BookingRepository {
           confirmation.doctorId != draft.options.doctorId ||
           confirmation.patientProfileId != draft.profileId.value ||
           !confirmation.startsAt.isAtSameMomentAs(draft.slot.startsAt) ||
-          confirmation.durationMinutes != draft.options.durationMinutes) {
+          confirmation.durationMinutes != draft.options.durationMinutes ||
+          confirmation.feeIqd != draft.options.feeIqd ||
+          response.body['type'] != draft.options.appointmentType.name ||
+          response.body['reason'] != draft.reason.trim() ||
+          response.body['status'] != 'scheduled' ||
+          response.body['cancellationReason'] != null) {
         throw const FormatException('Invalid appointment response.');
       }
       return confirmation;

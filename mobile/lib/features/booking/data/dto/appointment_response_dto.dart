@@ -4,6 +4,10 @@ class AppointmentResponseDto {
   static final _uuid = RegExp(
     r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
   );
+  static final _reference = RegExp(r'^SX-\d{4}-\d{6,}$');
+  static final _instant = RegExp(
+    r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$',
+  );
   static BookingConfirmation parse(
     Map<String, dynamic> json, {
     required String clinicTimezone,
@@ -63,8 +67,16 @@ class AppointmentResponseDto {
       return value;
     }
 
-    final startsAt = DateTime.tryParse(text('startsAt'));
-    final endsAt = DateTime.tryParse(text('endsAt'));
+    final reference = text('reference');
+    final startsAtSource = text('startsAt');
+    final endsAtSource = text('endsAt');
+    if (!_reference.hasMatch(reference) ||
+        !_instant.hasMatch(startsAtSource) ||
+        !_instant.hasMatch(endsAtSource)) {
+      throw const FormatException('Invalid appointment response.');
+    }
+    final startsAt = DateTime.tryParse(startsAtSource);
+    final endsAt = DateTime.tryParse(endsAtSource);
     text('reason');
     final duration = integer('durationMinutes', minimum: 1);
     if (startsAt == null ||
@@ -75,7 +87,7 @@ class AppointmentResponseDto {
     }
     return BookingConfirmation(
       appointmentId: uuid('id'),
-      reference: text('reference'),
+      reference: reference,
       clinicId: uuid('clinicId'),
       clinicName: text('clinicName'),
       clinicTimezone: clinicTimezone,
