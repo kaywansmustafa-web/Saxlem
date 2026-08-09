@@ -6,5 +6,5 @@ class ConfirmBooking {
   const ConfirmBooking(this.repository);
   final BookingRepository repository;
   Future<BookingConfirmation> call(BookingQuote quote, String key) =>
-      repository.confirm(quote, key);
+      repository.create(quote.draft, key);
 }

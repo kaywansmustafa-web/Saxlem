@@ -172,6 +172,51 @@ class AppLocalizationsKu extends AppLocalizations {
   String get chooseTime => 'دەمێ هەلبژێرە';
 
   @override
+  String get appointmentType => 'Appointment type';
+
+  @override
+  String get initialAppointment => 'Initial appointment';
+
+  @override
+  String get followUpAppointment => 'Follow-up appointment';
+
+  @override
+  String get appointmentReason => 'Reason for visit';
+
+  @override
+  String get checkAvailability => 'Check availability';
+
+  @override
+  String get noAvailableSlots => 'No available times in this date range.';
+
+  @override
+  String get timezone => 'Time zone';
+
+  @override
+  String get bookingTimeout =>
+      'The availability request timed out. Please try again.';
+
+  @override
+  String get slotTaken =>
+      'That time is no longer available. Check availability again.';
+
+  @override
+  String get bookingValidationFailure =>
+      'Check your booking details and try again.';
+
+  @override
+  String get bookingUnknownOutcome =>
+      'We could not confirm the result. Do not submit another booking until you retry this request.';
+
+  @override
+  String get bookingSuccessful => 'Your appointment is booked.';
+
+  @override
+  String appointmentReferenceValue(String reference) {
+    return 'Appointment reference $reference';
+  }
+
+  @override
   String get reviewAppointment => 'ژڤانیێ پێداچوون بکە';
 
   @override

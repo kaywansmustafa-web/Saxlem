@@ -1,21 +1,28 @@
 import '../entities/booking_availability.dart';
-import '../entities/booking_clinic_option.dart';
 import '../entities/booking_confirmation.dart';
-import '../entities/booking_doctor_reference.dart';
 import '../entities/booking_draft.dart';
-import '../entities/booking_quote.dart';
+import '../entities/booking_types.dart';
 
 abstract interface class BookingRepository {
-  Future<List<BookingClinicOption>> getClinics(BookingDoctorReference doctor);
-  Future<BookingAvailability> getAvailability(
-    BookingDoctorReference doctor,
-    BookingClinicOption clinic,
-  );
-  Future<BookingQuote> createQuote(BookingDraft draft);
-  Future<BookingConfirmation> confirm(
-    BookingQuote quote,
-    String idempotencyKey,
-  );
+  Future<BookingAvailability> loadOptions(BookingOptionsRequest request);
+  Future<BookingConfirmation> create(BookingDraft draft, String operationId);
 }
 
-class SlotUnavailableException implements Exception {}
+class BookingOptionsRequest {
+  const BookingOptionsRequest({
+    required this.doctorId,
+    required this.clinicId,
+    required this.patientProfileId,
+    required this.appointmentType,
+    required this.dateFrom,
+    required this.dateTo,
+  });
+  final String doctorId, clinicId, patientProfileId;
+  final BookingAppointmentType appointmentType;
+  final DateTime dateFrom, dateTo;
+}
+
+class BookingFailure implements Exception {
+  const BookingFailure(this.problem);
+  final BookingProblem problem;
+}

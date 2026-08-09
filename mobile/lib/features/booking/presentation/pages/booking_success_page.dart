@@ -7,16 +7,14 @@ class BookingSuccessPage extends StatelessWidget {
   const BookingSuccessPage({
     required this.confirmation,
     required this.onViewDoctor,
-    required this.onMyAppointments,
     required this.onReturnHome,
     super.key,
   });
   final BookingConfirmation confirmation;
-  final VoidCallback onViewDoctor, onMyAppointments, onReturnHome;
+  final VoidCallback onViewDoctor, onReturnHome;
   @override
   Widget build(BuildContext context) {
     const copy = BookingCopy();
-    final d = confirmation.quote.draft;
     return SingleChildScrollView(
       padding: const EdgeInsetsDirectional.fromSTEB(24, 32, 24, 36),
       child: Column(
@@ -36,7 +34,7 @@ class BookingSuccessPage extends StatelessWidget {
             ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 8),
-          Text(confirmation.nextStep, textAlign: TextAlign.center),
+          Text(context.l10n.bookingSuccessful, textAlign: TextAlign.center),
           const SizedBox(height: 26),
           Container(
             padding: const EdgeInsetsDirectional.all(18),
@@ -48,26 +46,22 @@ class BookingSuccessPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  context.l10n.appointmentIdValue(
-                    confirmation.mockAppointmentId,
+                  context.l10n.appointmentReferenceValue(
+                    confirmation.reference,
                   ),
                   style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
                 const Divider(height: 28),
-                Text(d.doctor.displayName),
-                Text(d.clinic.displayName),
+                Text(confirmation.doctorName),
+                Text(confirmation.clinicName),
                 Text(
-                  '${copy.date(d.slot!.start)} · ${copy.time(d.slot!.start)}',
+                  '${copy.date(confirmation.startsAt, timezone: confirmation.clinicTimezone)} · '
+                  '${copy.time(confirmation.startsAt, timezone: confirmation.clinicTimezone)}',
                 ),
               ],
             ),
           ),
           const SizedBox(height: 24),
-          FilledButton(
-            onPressed: onMyAppointments,
-            child: Text(context.l10n.goToAppointments),
-          ),
-          const SizedBox(height: 10),
           OutlinedButton(
             onPressed: onViewDoctor,
             child: Text(context.l10n.viewDoctor),

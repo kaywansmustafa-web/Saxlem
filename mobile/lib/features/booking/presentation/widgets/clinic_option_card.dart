@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/booking_clinic_option.dart';
-import '../booking_copy.dart';
 import '../../../../design_system/components/content/saxlem_card.dart';
 
 class ClinicOptionCard extends StatelessWidget {
@@ -13,11 +12,9 @@ class ClinicOptionCard extends StatelessWidget {
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) {
-    const copy = BookingCopy();
     return Semantics(
       button: true,
-      label:
-          '${clinic.displayName}, ${copy.fee(clinic.consultationFeeIqd)}, ${clinic.durationMinutes} minutes',
+      label: clinic.displayName,
       child: Padding(
         padding: const EdgeInsetsDirectional.only(bottom: 12),
         child: SaxlemCard(
@@ -31,17 +28,6 @@ class ClinicOptionCard extends StatelessWidget {
                 style: Theme.of(
                   context,
                 ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 5),
-              Text('${clinic.areaDisplayName}, ${clinic.cityDisplayName}'),
-              const SizedBox(height: 10),
-              Wrap(
-                spacing: 14,
-                runSpacing: 6,
-                children: [
-                  Text(copy.fee(clinic.consultationFeeIqd)),
-                  Text('${clinic.durationMinutes} min'),
-                ],
               ),
             ],
           ),

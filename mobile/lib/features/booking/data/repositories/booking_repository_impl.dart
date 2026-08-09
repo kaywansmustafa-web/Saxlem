@@ -1,14 +1,6 @@
-import '../../domain/entities/booking_availability.dart';
-import '../../domain/entities/booking_clinic_option.dart';
-import '../../domain/entities/booking_confirmation.dart';
-import '../../domain/entities/booking_doctor_reference.dart';
-import '../../domain/entities/booking_draft.dart';
-import '../../domain/entities/booking_quote.dart';
 import '../../domain/repositories/booking_repository.dart';
-import '../../domain/services/arrival_recommendation_service.dart';
-import '../data_sources/mock_booking_data_source.dart';
-import '../mappers/booking_mapper.dart';
 
+/* Legacy mock implementation retained outside production composition.
 class BookingRepositoryImpl implements BookingRepository {
   BookingRepositoryImpl(this.source, this.mapper, this.arrival);
   final MockBookingDataSource source;
@@ -56,3 +48,7 @@ class BookingRepositoryImpl implements BookingRepository {
     return result;
   }
 }
+*/
+
+@Deprecated('Use BackendBookingRepository in production composition.')
+abstract class BookingRepositoryImpl implements BookingRepository {}

@@ -37,7 +37,14 @@ class ApiClient {
     String path, {
     required Map<String, Object?> body,
     String? bearerToken,
-  }) => _send('POST', path, body: body, bearerToken: bearerToken);
+    String? idempotencyKey,
+  }) => _send(
+    'POST',
+    path,
+    body: body,
+    bearerToken: bearerToken,
+    idempotencyKey: idempotencyKey,
+  );
 
   Future<ApiResponse> getJson(
     String path, {
@@ -116,6 +123,7 @@ class ApiClient {
     Map<String, Object?>? body,
     String? bearerToken,
     Map<String, String>? queryParameters,
+    String? idempotencyKey,
   }) async {
     final endpoint = _configuration.apiEndpoint(path);
     final request = http.Request(
@@ -127,6 +135,9 @@ class ApiClient {
     request.followRedirects = false;
     request.maxRedirects = 0;
     request.headers['accept'] = 'application/json';
+    if (idempotencyKey != null) {
+      request.headers['idempotency-key'] = idempotencyKey;
+    }
     if (body != null) {
       request.headers['content-type'] = 'application/json';
       request.body = jsonEncode(body);

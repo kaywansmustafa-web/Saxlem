@@ -20,6 +20,8 @@ import '../../../family_profiles/presentation/controllers/patient_profiles_contr
 import '../../../family_profiles/presentation/pages/patient_profiles_page.dart';
 import '../../../discover/domain/repositories/doctor_discovery_repository.dart';
 import '../../../discover/data/repositories/unavailable_doctor_discovery_repository.dart';
+import '../../../booking/domain/repositories/booking_repository.dart';
+import '../../../booking/data/repositories/backend_booking_repository.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -28,12 +30,14 @@ class HomePage extends StatefulWidget {
     this.profilesController,
     this.doctorDiscoveryRepository =
         const UnavailableDoctorDiscoveryRepository(),
+    this.bookingRepository = const UnavailableBookingRepository(),
     super.key,
   });
   final bool guestMode;
   final Future<void> Function()? onLogout;
   final PatientProfilesController? profilesController;
   final DoctorDiscoveryRepository doctorDiscoveryRepository;
+  final BookingRepository bookingRepository;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -156,6 +160,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   DiscoverFeature(
                     repository: widget.doctorDiscoveryRepository,
+                    bookingRepository: widget.bookingRepository,
                     onAuthenticationRequired: widget.onLogout,
                     key: ValueKey(_discoverRequest),
                     initialCriteria: _discoverCriteria,

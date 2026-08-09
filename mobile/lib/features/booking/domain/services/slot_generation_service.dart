@@ -1,9 +1,6 @@
-import '../entities/appointment_slot.dart';
-import '../entities/booking_types.dart';
-import '../entities/schedule_rule.dart';
-
 class SlotGenerationService {
   const SlotGenerationService();
+  /* Client-side slot generation is intentionally disabled.
   List<AppointmentSlot> generate({
     required String clinicId,
     required DateTime date,
@@ -43,4 +40,5 @@ class SlotGenerationService {
     }
     return slots;
   }
+  */
 }

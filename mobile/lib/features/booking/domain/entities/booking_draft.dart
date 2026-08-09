@@ -1,33 +1,16 @@
 import 'appointment_slot.dart';
-import 'booking_clinic_option.dart';
-import 'booking_doctor_reference.dart';
+import 'booking_availability.dart';
 import '../../../../core/models/patient_profile.dart';
 
 class BookingDraft {
   const BookingDraft({
-    required this.doctor,
-    required this.clinic,
-    this.date,
-    this.slot,
-    this.availabilityVersion,
-    this.profileId = PatientProfileId.me,
+    required this.options,
+    required this.profileId,
+    required this.reason,
+    required this.slot,
   });
-  final BookingDoctorReference doctor;
-  final BookingClinicOption clinic;
-  final DateTime? date;
-  final AppointmentSlot? slot;
-  final int? availabilityVersion;
+  final BookingAvailability options;
   final PatientProfileId profileId;
-  BookingDraft copyWith({
-    DateTime? date,
-    AppointmentSlot? slot,
-    int? availabilityVersion,
-  }) => BookingDraft(
-    doctor: doctor,
-    clinic: clinic,
-    date: date ?? this.date,
-    slot: slot ?? this.slot,
-    availabilityVersion: availabilityVersion ?? this.availabilityVersion,
-    profileId: profileId,
-  );
+  final String reason;
+  final AppointmentSlot slot;
 }

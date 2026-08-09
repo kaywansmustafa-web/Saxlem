@@ -418,6 +418,84 @@ abstract class AppLocalizations {
   /// **'Choose a time'**
   String get chooseTime;
 
+  /// No description provided for @appointmentType.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment type'**
+  String get appointmentType;
+
+  /// No description provided for @initialAppointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial appointment'**
+  String get initialAppointment;
+
+  /// No description provided for @followUpAppointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow-up appointment'**
+  String get followUpAppointment;
+
+  /// No description provided for @appointmentReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for visit'**
+  String get appointmentReason;
+
+  /// No description provided for @checkAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Check availability'**
+  String get checkAvailability;
+
+  /// No description provided for @noAvailableSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'No available times in this date range.'**
+  String get noAvailableSlots;
+
+  /// No description provided for @timezone.
+  ///
+  /// In en, this message translates to:
+  /// **'Time zone'**
+  String get timezone;
+
+  /// No description provided for @bookingTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The availability request timed out. Please try again.'**
+  String get bookingTimeout;
+
+  /// No description provided for @slotTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'That time is no longer available. Check availability again.'**
+  String get slotTaken;
+
+  /// No description provided for @bookingValidationFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your booking details and try again.'**
+  String get bookingValidationFailure;
+
+  /// No description provided for @bookingUnknownOutcome.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not confirm the result. Do not submit another booking until you retry this request.'**
+  String get bookingUnknownOutcome;
+
+  /// No description provided for @bookingSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Your appointment is booked.'**
+  String get bookingSuccessful;
+
+  /// No description provided for @appointmentReferenceValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment reference {reference}'**
+  String appointmentReferenceValue(String reference);
+
   /// No description provided for @reviewAppointment.
   ///
   /// In en, this message translates to:

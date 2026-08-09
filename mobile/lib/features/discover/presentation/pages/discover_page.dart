@@ -13,6 +13,8 @@ import '../widgets/applied_doctor_filters.dart';
 import '../widgets/doctor_filters_sheet.dart';
 import '../widgets/doctor_result_card.dart';
 import 'doctor_details_page.dart';
+import '../../../booking/domain/repositories/booking_repository.dart';
+import '../../../booking/data/repositories/backend_booking_repository.dart';
 
 class DiscoverPage extends StatefulWidget {
   const DiscoverPage({
@@ -23,6 +25,7 @@ class DiscoverPage extends StatefulWidget {
     this.guestMode = false,
     this.profilesController,
     this.onAuthenticationRequired,
+    this.bookingRepository = const UnavailableBookingRepository(),
     super.key,
   });
 
@@ -33,6 +36,7 @@ class DiscoverPage extends StatefulWidget {
   final bool guestMode;
   final PatientProfilesController? profilesController;
   final Future<void> Function()? onAuthenticationRequired;
+  final BookingRepository bookingRepository;
 
   @override
   State<DiscoverPage> createState() => _DiscoverPageState();
@@ -372,6 +376,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
         controller: widget.controller,
         doctorId: id,
         onAuthenticationRequired: widget.onAuthenticationRequired,
+        bookingRepository: widget.bookingRepository,
+        guestMode: widget.guestMode,
+        profilesController: widget.profilesController,
       ),
     ),
   );

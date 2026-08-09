@@ -171,6 +171,49 @@ class AppLocalizationsAr extends AppLocalizations {
   String get chooseTime => 'اختر الوقت';
 
   @override
+  String get appointmentType => 'نوع الموعد';
+
+  @override
+  String get initialAppointment => 'موعد أولي';
+
+  @override
+  String get followUpAppointment => 'موعد متابعة';
+
+  @override
+  String get appointmentReason => 'سبب الزيارة';
+
+  @override
+  String get checkAvailability => 'تحقق من المواعيد المتاحة';
+
+  @override
+  String get noAvailableSlots => 'لا توجد أوقات متاحة ضمن هذه الفترة.';
+
+  @override
+  String get timezone => 'المنطقة الزمنية';
+
+  @override
+  String get bookingTimeout =>
+      'انتهت مهلة طلب المواعيد المتاحة. حاول مرة أخرى.';
+
+  @override
+  String get slotTaken => 'لم يعد هذا الوقت متاحاً. تحقق من المواعيد مرة أخرى.';
+
+  @override
+  String get bookingValidationFailure => 'راجع تفاصيل الحجز وحاول مرة أخرى.';
+
+  @override
+  String get bookingUnknownOutcome =>
+      'تعذر تأكيد النتيجة. لا تنشئ حجزاً آخر قبل إعادة محاولة هذا الطلب.';
+
+  @override
+  String get bookingSuccessful => 'تم حجز موعدك.';
+
+  @override
+  String appointmentReferenceValue(String reference) {
+    return 'مرجع الموعد $reference';
+  }
+
+  @override
   String get reviewAppointment => 'مراجعة الموعد';
 
   @override

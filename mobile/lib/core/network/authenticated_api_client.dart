@@ -67,9 +67,29 @@ class AuthenticatedApiClient {
   Future<ApiResponse> postJson(
     String path, {
     required Map<String, Object?> body,
+    String? idempotencyKey,
   }) async {
-    final session = await _requiredSession();
-    return _api.postJson(path, body: body, bearerToken: session.accessToken);
+    var session = await _requiredSession();
+    if (!session.expiresAt.isAfter(DateTime.now().toUtc())) {
+      try {
+        session = await _refresh();
+      } on ApiFailure catch (failure) {
+        throw MutationNotSentFailure(failure);
+      }
+    }
+    try {
+      return await _api.postJson(
+        path,
+        body: body,
+        bearerToken: session.accessToken,
+        idempotencyKey: idempotencyKey,
+      );
+    } on ApiFailure catch (failure) {
+      if (failure.type == ApiFailureType.unauthenticated) {
+        await _storage.clear();
+      }
+      rethrow;
+    }
   }
 
   Future<StoredSession> _requiredSession() async {
@@ -79,4 +99,9 @@ class AuthenticatedApiClient {
     }
     return session;
   }
+}
+
+class MutationNotSentFailure implements Exception {
+  const MutationNotSentFailure(this.failure);
+  final ApiFailure failure;
 }

@@ -1,9 +1,14 @@
-enum BookingDayStatus {
-  available,
-  fullyBooked,
-  clinicClosed,
-  holiday,
-  doctorAbsent,
-}
+enum BookingAppointmentType { initial, followUp }
 
-enum BookingSlotStatus { available, booked, blocked }
+enum BookingProblem {
+  offline,
+  timeout,
+  forbidden,
+  sessionExpired,
+  malformedResponse,
+  backendUnavailable,
+  validation,
+  conflict,
+  unknownOutcome,
+  unknown,
+}

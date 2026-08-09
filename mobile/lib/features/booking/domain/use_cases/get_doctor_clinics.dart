@@ -5,6 +5,6 @@ import '../repositories/booking_repository.dart';
 class GetDoctorClinics {
   const GetDoctorClinics(this.repository);
   final BookingRepository repository;
-  Future<List<BookingClinicOption>> call(BookingDoctorReference doctor) =>
-      repository.getClinics(doctor);
+  Future<List<BookingClinicOption>> call(BookingDoctorReference doctor) async =>
+      doctor.clinics;
 }
