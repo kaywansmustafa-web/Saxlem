@@ -5,6 +5,8 @@ import 'domain/repositories/doctor_discovery_repository.dart';
 import 'data/repositories/unavailable_doctor_discovery_repository.dart';
 import 'presentation/controllers/discover_controller.dart';
 import 'presentation/pages/discover_page.dart';
+import '../booking/domain/repositories/booking_repository.dart';
+import '../booking/data/repositories/backend_booking_repository.dart';
 
 class DiscoverFeature extends StatefulWidget {
   const DiscoverFeature({
@@ -16,6 +18,7 @@ class DiscoverFeature extends StatefulWidget {
     this.guestMode = false,
     this.profilesController,
     this.onAuthenticationRequired,
+    this.bookingRepository = const UnavailableBookingRepository(),
     super.key,
   });
   final DoctorDiscoveryRepository repository;
@@ -26,6 +29,7 @@ class DiscoverFeature extends StatefulWidget {
   final bool guestMode;
   final PatientProfilesController? profilesController;
   final Future<void> Function()? onAuthenticationRequired;
+  final BookingRepository bookingRepository;
   @override
   State<DiscoverFeature> createState() => _DiscoverFeatureState();
 }
@@ -54,5 +58,6 @@ class _DiscoverFeatureState extends State<DiscoverFeature> {
     guestMode: widget.guestMode,
     profilesController: widget.profilesController,
     onAuthenticationRequired: widget.onAuthenticationRequired,
+    bookingRepository: widget.bookingRepository,
   );
 }

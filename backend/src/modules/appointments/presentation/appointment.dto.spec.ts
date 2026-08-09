@@ -68,4 +68,14 @@ describe('AppointmentListQueryDto', () => {
   it('rejects an oversized cursor', async () => {
     expect(await validate(query('a'.repeat(1025)))).not.toHaveLength(0);
   });
+
+  it('accepts an optional patient profile UUID and rejects malformed values', async () => {
+    const valid = query('0190a3e2-7b5c-7000-8000-000000000001');
+    valid.patientProfileId = '0190a3e2-7b5c-7000-8000-000000000004';
+    expect(await validate(valid)).toHaveLength(0);
+
+    const invalid = query('0190a3e2-7b5c-7000-8000-000000000001');
+    invalid.patientProfileId = 'not-a-profile';
+    expect(await validate(invalid)).not.toHaveLength(0);
+  });
 });

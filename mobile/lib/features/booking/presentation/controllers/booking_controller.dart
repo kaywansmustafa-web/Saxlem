@@ -5,128 +5,189 @@ import '../../domain/entities/booking_clinic_option.dart';
 import '../../domain/entities/booking_doctor_reference.dart';
 import '../../domain/entities/booking_draft.dart';
 import '../../domain/entities/booking_types.dart';
-import '../../domain/entities/booking_confirmation.dart';
+import '../../domain/entities/booking_quote.dart';
 import '../../domain/repositories/booking_repository.dart';
-import '../../domain/use_cases/confirm_booking.dart';
-import '../../domain/use_cases/create_booking_quote.dart';
-import '../../domain/use_cases/get_booking_availability.dart';
-import '../../domain/use_cases/get_doctor_clinics.dart';
+import '../../domain/services/booking_operation_id.dart';
 import '../state/booking_state.dart';
 import '../../../../core/models/patient_profile.dart';
 
 class BookingController extends ChangeNotifier {
   BookingController({
     required this.doctor,
-    required this.getClinics,
-    required this.getAvailability,
-    required this.createQuote,
-    required this.confirmBooking,
-    this.onConfirmed,
-    this.profileId = PatientProfileId.me,
-  });
+    required this.repository,
+    required this.operationIds,
+    required this.profileId,
+    DateTime Function()? now,
+  }) : _now = now ?? DateTime.now;
   final BookingDoctorReference doctor;
-  final GetDoctorClinics getClinics;
-  final GetBookingAvailability getAvailability;
-  final CreateBookingQuote createQuote;
-  final ConfirmBooking confirmBooking;
-  final Future<void> Function(BookingConfirmation confirmation)? onConfirmed;
+  final BookingRepository repository;
+  final BookingOperationIdGenerator operationIds;
+  final DateTime Function() _now;
   PatientProfileId profileId;
-  void selectProfile(PatientProfileId value) {
-    profileId = value;
-    load();
-  }
-
-  BookingState state = const BookingLoading();
-  bool confirming = false;
   BookingClinicOption? clinic;
+  BookingAppointmentType appointmentType = BookingAppointmentType.initial;
+  String reason = '';
+  AppointmentSlot? selectedSlot;
+  String? _operationId;
+  BookingQuote? _attemptQuote;
+  BookingProblem? _lastProblem;
+  int _generation = 0;
+  bool _disposed = false;
+
+  void selectProfile(PatientProfileId value) {
+    if (profileId == value) return;
+    profileId = value;
+    _invalidate();
+  }
+
+  BookingState state = const BookingInitial(
+    BookingDoctorReference(id: '', displayName: '', clinics: []),
+  );
+  bool confirming = false;
   BookingAvailability? availability;
-  Future<void> load() async {
-    state = const BookingLoading();
-    notifyListeners();
-    try {
-      state = BookingSelectingClinic(doctor, await getClinics(doctor));
-    } catch (_) {
-      state = const BookingFailure('We could not load booking options.');
-    }
+  void load() {
+    state = BookingSetup(doctor);
     notifyListeners();
   }
 
-  Future<void> selectClinic(BookingClinicOption value) async {
+  void selectClinic(BookingClinicOption value) {
     clinic = value;
-    state = const BookingLoading();
+    _invalidate();
+  }
+
+  void setAppointmentType(BookingAppointmentType value) {
+    if (appointmentType == value) return;
+    appointmentType = value;
+    _invalidate();
+  }
+
+  void setReason(String value) {
+    if (reason == value) return;
+    reason = value;
+    _invalidate();
+  }
+
+  Future<void> loadOptions() async {
+    if (clinic == null || reason.trim().isEmpty || reason.trim().length > 500) {
+      state = const BookingProblemState(BookingProblem.validation);
+      notifyListeners();
+      return;
+    }
+    final generation = ++_generation;
+    state = const BookingLoadingOptions();
     notifyListeners();
+    final iraqNow = _now().toUtc().add(const Duration(hours: 3));
+    final from = DateTime.utc(iraqNow.year, iraqNow.month, iraqNow.day);
     try {
-      availability = await getAvailability(doctor, value);
-      state = BookingSelectingDate(
-        BookingDraft(doctor: doctor, clinic: value, profileId: profileId),
-        availability!,
+      final result = await repository.loadOptions(
+        BookingOptionsRequest(
+          doctorId: doctor.id,
+          clinicId: clinic!.id,
+          patientProfileId: profileId.value,
+          appointmentType: appointmentType,
+          dateFrom: from,
+          dateTo: from.add(const Duration(days: 13)),
+        ),
       );
-    } catch (_) {
-      state = const BookingFailure('We could not load available dates.');
+      if (_disposed || generation != _generation) return;
+      availability = result;
+      state = result.days.every((day) => day.slots.isEmpty)
+          ? BookingEmpty(result)
+          : BookingOptionsReady(result);
+    } on BookingFailure catch (failure) {
+      if (_disposed || generation != _generation) return;
+      state = BookingProblemState(failure.problem, retained: availability);
     }
     notifyListeners();
   }
 
-  void selectDate(BookingDay day) {
-    if (day.status != BookingDayStatus.available) return;
-    state = BookingSelectingSlot(
-      BookingDraft(
-        doctor: doctor,
-        clinic: clinic!,
-        date: day.date,
-        availabilityVersion: availability!.version,
+  void selectSlot(AppointmentSlot slot) {
+    if (availability == null) return;
+    selectedSlot = slot;
+    _operationId = null;
+    _attemptQuote = BookingQuote(
+      draft: BookingDraft(
+        options: availability!,
         profileId: profileId,
+        reason: reason.trim(),
+        slot: slot,
       ),
-      day,
     );
-    notifyListeners();
-  }
-
-  Future<void> selectSlot(AppointmentSlot slot) async {
-    if (slot.status != BookingSlotStatus.available) return;
-    final draft = BookingDraft(
-      doctor: doctor,
-      clinic: clinic!,
-      date: slot.start,
-      slot: slot,
-      availabilityVersion: availability!.version,
-      profileId: profileId,
-    );
-    state = const BookingLoading();
-    notifyListeners();
-    try {
-      state = BookingReviewing(await createQuote(draft));
-    } on SlotUnavailableException {
-      state = const BookingSlotUnavailable(
-        'That time was just booked. Please choose another time.',
-      );
-    } catch (_) {
-      state = const BookingFailure('We could not prepare your booking.');
-    }
+    state = BookingReviewing(_attemptQuote!);
     notifyListeners();
   }
 
   Future<void> confirm() async {
     final current = state;
     if (current is! BookingReviewing || confirming) return;
+    final generation = _generation;
     confirming = true;
     state = BookingConfirming(current.quote);
     notifyListeners();
     try {
-      final confirmation = await confirmBooking(
-        current.quote,
-        'confirm-${current.quote.id}',
+      _operationId ??= operationIds.generate();
+      final confirmation = await repository.create(
+        current.quote.draft,
+        _operationId!,
       );
-      await onConfirmed?.call(confirmation);
+      if (_disposed || generation != _generation) {
+        confirming = false;
+        return;
+      }
       state = BookingSuccess(confirmation);
-    } on SlotUnavailableException {
-      state = const BookingSlotUnavailable('That time is no longer available.');
-    } catch (_) {
-      state = const BookingFailure('We could not confirm your booking.');
+      _operationId = null;
+      _attemptQuote = null;
+      _lastProblem = null;
+    } on BookingFailure catch (failure) {
+      if (_disposed || generation != _generation) {
+        confirming = false;
+        return;
+      }
+      _lastProblem = failure.problem;
+      state = BookingProblemState(failure.problem, retained: availability);
+      if (failure.problem == BookingProblem.conflict) {
+        selectedSlot = null;
+        availability = null;
+        _operationId = null;
+        _attemptQuote = null;
+      } else if (failure.problem == BookingProblem.sessionExpired) {
+        selectedSlot = null;
+        availability = null;
+        _operationId = null;
+        _attemptQuote = null;
+        state = const BookingProblemState(BookingProblem.sessionExpired);
+      }
     }
     confirming = false;
+    if (!_disposed) notifyListeners();
+  }
+
+  void restart() {
+    if (_lastProblem == BookingProblem.unknownOutcome &&
+        _attemptQuote != null) {
+      state = BookingReviewing(_attemptQuote!);
+      _lastProblem = null;
+      notifyListeners();
+      return;
+    }
+    availability == null ? load() : loadOptions();
+  }
+
+  void _invalidate() {
+    _generation++;
+    availability = null;
+    selectedSlot = null;
+    _operationId = null;
+    _attemptQuote = null;
+    _lastProblem = null;
+    state = BookingSetup(doctor);
     notifyListeners();
   }
 
-  void restart() => load();
+  @override
+  void dispose() {
+    _disposed = true;
+    _generation++;
+    super.dispose();
+  }
 }

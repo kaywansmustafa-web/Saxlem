@@ -8,12 +8,15 @@ import { PrismaAppointmentQueueCompletionPort } from './infrastructure/prisma-ap
 import { APPOINTMENT_QUEUE_COMPLETION_PORT } from './domain/appointment-queue-completion.port';
 import { AppointmentDtoMapper } from './presentation/appointment-dto.mapper';
 import { AppointmentsController } from './presentation/appointments.controller';
+import { BookingOptionsController } from './presentation/booking-options.controller';
+import { BookingOptionsDtoMapper } from './presentation/booking-options-dto.mapper';
 @Module({
   imports: [IdentityModule, DoctorsModule],
-  controllers: [AppointmentsController],
+  controllers: [AppointmentsController, BookingOptionsController],
   providers: [
     AppointmentService,
     AppointmentDtoMapper,
+    BookingOptionsDtoMapper,
     PrismaAppointmentRepository,
     {
       provide: APPOINTMENT_REPOSITORY,

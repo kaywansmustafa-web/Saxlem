@@ -28,6 +28,12 @@ const configurationSchema = z
       .int()
       .min(1)
       .default(25000),
+    APPOINTMENT_FOUNDATION_DURATION_MINUTES: z.coerce
+      .number()
+      .int()
+      .min(5)
+      .max(480)
+      .default(30),
     ARRIVAL_EARLY_WINDOW_MINUTES: z.coerce
       .number()
       .int()
@@ -185,6 +191,8 @@ const configurationSchema = z
       openApiEnabled: input.OPENAPI_ENABLED,
       appointmentPastToleranceMinutes: input.APPOINTMENT_PAST_TOLERANCE_MINUTES,
       appointmentFoundationFeeIqd: input.APPOINTMENT_FOUNDATION_FEE_IQD,
+      appointmentFoundationDurationMinutes:
+        input.APPOINTMENT_FOUNDATION_DURATION_MINUTES,
       arrivalEarlyWindowMinutes: input.ARRIVAL_EARLY_WINDOW_MINUTES,
       arrivalLateWindowMinutes: input.ARRIVAL_LATE_WINDOW_MINUTES,
       queueRecallGraceMinutes: input.QUEUE_RECALL_GRACE_MINUTES,

@@ -17,6 +17,8 @@ import 'package:saxlem_app/features/family_profiles/data/repositories/in_memory_
 import 'package:saxlem_app/l10n/app_localizations.dart';
 import 'package:saxlem_app/features/discover/data/repositories/backend_doctor_discovery_repository.dart';
 import 'package:saxlem_app/features/discover/data/repositories/unavailable_doctor_discovery_repository.dart';
+import 'package:saxlem_app/features/booking/data/repositories/backend_booking_repository.dart';
+import 'package:saxlem_app/features/appointments/data/repositories/backend_patient_appointments_repository.dart';
 
 void main() {
   group('production-safe composition', () {
@@ -94,6 +96,11 @@ void main() {
       expect(
         dependencies.doctorDiscoveryRepository,
         isA<BackendDoctorDiscoveryRepository>(),
+      );
+      expect(dependencies.bookingRepository, isA<BackendBookingRepository>());
+      expect(
+        dependencies.appointmentsRepository,
+        isA<BackendPatientAppointmentsRepository>(),
       );
     });
 

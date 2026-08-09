@@ -171,6 +171,49 @@ class AppLocalizationsAr extends AppLocalizations {
   String get chooseTime => 'اختر الوقت';
 
   @override
+  String get appointmentType => 'نوع الموعد';
+
+  @override
+  String get initialAppointment => 'موعد أولي';
+
+  @override
+  String get followUpAppointment => 'موعد متابعة';
+
+  @override
+  String get appointmentReason => 'سبب الزيارة';
+
+  @override
+  String get checkAvailability => 'تحقق من المواعيد المتاحة';
+
+  @override
+  String get noAvailableSlots => 'لا توجد أوقات متاحة ضمن هذه الفترة.';
+
+  @override
+  String get timezone => 'المنطقة الزمنية';
+
+  @override
+  String get bookingTimeout =>
+      'انتهت مهلة طلب المواعيد المتاحة. حاول مرة أخرى.';
+
+  @override
+  String get slotTaken => 'لم يعد هذا الوقت متاحاً. تحقق من المواعيد مرة أخرى.';
+
+  @override
+  String get bookingValidationFailure => 'راجع تفاصيل الحجز وحاول مرة أخرى.';
+
+  @override
+  String get bookingUnknownOutcome =>
+      'تعذر تأكيد النتيجة. لا تنشئ حجزاً آخر قبل إعادة محاولة هذا الطلب.';
+
+  @override
+  String get bookingSuccessful => 'تم حجز موعدك.';
+
+  @override
+  String appointmentReferenceValue(String reference) {
+    return 'مرجع الموعد $reference';
+  }
+
+  @override
   String get reviewAppointment => 'مراجعة الموعد';
 
   @override
@@ -843,4 +886,69 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get bookingComingSoon => 'سيصبح الحجز متاحاً في الإصدار القادم.';
+
+  @override
+  String get scheduled => 'مجدول';
+
+  @override
+  String get confirmed => 'مؤكد';
+
+  @override
+  String get noShow => 'لم يحضر';
+
+  @override
+  String get loadMore => 'تحميل المزيد';
+
+  @override
+  String get loadingMoreAppointments => 'جارٍ تحميل المزيد من المواعيد';
+
+  @override
+  String get appointmentTimeout =>
+      'استغرق الطلب وقتاً طويلاً. يرجى المحاولة مجدداً.';
+
+  @override
+  String get appointmentForbidden => 'لا يمكن لحسابك الوصول إلى هذا الموعد.';
+
+  @override
+  String get appointmentNotFound => 'لم يعد هذا الموعد متاحاً.';
+
+  @override
+  String get staleAppointment => 'تم تغيير الموعد. حمّلنا أحدث التفاصيل.';
+
+  @override
+  String get appointmentValidation => 'تحقق من المعلومات وحاول مجدداً.';
+
+  @override
+  String get appointmentUnknownOutcome =>
+      'تعذر تأكيد النتيجة. أعد المحاولة للتحقق من الطلب نفسه بأمان.';
+
+  @override
+  String get appointmentsUnavailable => 'المواعيد غير متاحة مؤقتاً.';
+
+  @override
+  String get reload => 'إعادة التحميل';
+
+  @override
+  String get patient => 'المريض';
+
+  @override
+  String get appointmentReference => 'رقم الموعد';
+
+  @override
+  String get cancellationReason => 'سبب الإلغاء';
+
+  @override
+  String get cancelAppointment => 'إلغاء الموعد';
+
+  @override
+  String get rescheduleAppointment => 'تغيير موعد الزيارة';
+
+  @override
+  String get chooseNewDateTime => 'اختر تاريخاً ووقتاً جديدين';
+
+  @override
+  String get confirmCancellation => 'تأكيد الإلغاء';
+
+  @override
+  String get cancel => 'رجوع';
 }

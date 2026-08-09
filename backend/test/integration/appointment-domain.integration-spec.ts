@@ -255,6 +255,58 @@ describe('appointment database domain', () => {
       doctor: false,
       platformAdministrator: false,
     };
+    const siblingProfile = await prisma.patientProfile.create({
+      data: {
+        patientAccountId: patientUser.patientAccount!.id,
+        firstName: 'Sibling',
+        lastName: 'Patient',
+        dateOfBirth: new Date('1992-01-01'),
+        gender: 'unspecified',
+      },
+    });
+    await prisma.organizationPatientProfile.create({
+      data: {
+        organizationId: organization.id,
+        patientProfileId: siblingProfile.id,
+      },
+    });
+    const siblingAppointment = await prisma.appointment.create({
+      data: {
+        organizationId: organization.id,
+        clinicId: clinic.id,
+        doctorId: doctor.id,
+        patientProfileId: siblingProfile.id,
+        type: 'initial',
+        reason: 'Profile-filter certification',
+        startsAt: new Date('2030-07-26T06:00:00.000Z'),
+        endsAt: new Date('2030-07-26T06:30:00.000Z'),
+        durationMinutes: 30,
+        feeIqd: 20000,
+        status: 'cancelled',
+        cancellationReason: 'Certification fixture',
+        cancelledAt: new Date(),
+      },
+    });
+    const filteredPage = await repository.list(access, {
+      patientProfileId: siblingProfile.id,
+      from: new Date('2030-07-20T00:00:00Z'),
+      to: new Date('2030-08-20T00:00:00Z'),
+      pageSize: 1,
+      status: 'cancelled',
+    });
+    expect(filteredPage.items.map((item) => item.id)).toEqual([
+      siblingAppointment.id,
+    ]);
+    await expect(
+      repository.list(access, {
+        patientProfileId: profile.id,
+        from: new Date('2030-07-20T00:00:00Z'),
+        to: new Date('2030-08-20T00:00:00Z'),
+        pageSize: 1,
+        status: 'cancelled',
+        cursor: siblingAppointment.id,
+      }),
+    ).rejects.toThrow('cursor');
     const idempotentInput = {
       ...raceInput,
       reason: 'Idempotent booking',

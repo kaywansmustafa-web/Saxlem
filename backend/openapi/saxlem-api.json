@@ -1432,6 +1432,15 @@
         "operationId": "AppointmentsController_list",
         "parameters": [
           {
+            "name": "patientProfileId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
             "name": "from",
             "required": true,
             "in": "query",
@@ -1558,7 +1567,10 @@
             "in": "header",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 128,
+              "pattern": "^[\\x21-\\x7e]+$"
             }
           }
         ],
@@ -1747,7 +1759,10 @@
             "in": "header",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 128,
+              "pattern": "^[\\x21-\\x7e]+$"
             }
           }
         ],
@@ -1861,7 +1876,10 @@
             "in": "header",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 128,
+              "pattern": "^[\\x21-\\x7e]+$"
             }
           }
         ],
@@ -1975,7 +1993,10 @@
             "in": "header",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 128,
+              "pattern": "^[\\x21-\\x7e]+$"
             }
           }
         ],
@@ -2066,6 +2087,135 @@
             "bearer": []
           }
         ],
+        "tags": [
+          "appointments"
+        ]
+      }
+    },
+    "/api/v1/doctors/{doctorId}/booking-options": {
+      "get": {
+        "description": "Returns advisory slots derived from active doctor-clinic schedules and current appointment conflicts. Appointment creation always revalidates availability. Empty days are successful results. Operational schedule internals are never returned.",
+        "operationId": "BookingOptionsController_options",
+        "parameters": [
+          {
+            "name": "doctorId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "clinicId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "patientProfileId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "appointmentType",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "initial",
+                "followUp"
+              ]
+            }
+          },
+          {
+            "name": "dateFrom",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-08-06",
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateTo",
+            "required": true,
+            "in": "query",
+            "description": "Inclusive. The requested window may contain at most 31 days.",
+            "schema": {
+              "format": "date",
+              "example": "2026-08-20",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingOptionsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get patient-safe authoritative booking options",
         "tags": [
           "appointments"
         ]
@@ -6174,6 +6324,131 @@
           "startsAt",
           "durationMinutes",
           "version"
+        ]
+      },
+      "BookingSlotResponseDto": {
+        "type": "object",
+        "properties": {
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "durationMinutes": {
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 480
+          }
+        },
+        "required": [
+          "startsAt",
+          "endsAt",
+          "durationMinutes"
+        ]
+      },
+      "BookingDayResponseDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookingSlotResponseDto"
+            }
+          }
+        },
+        "required": [
+          "date",
+          "slots"
+        ]
+      },
+      "BookingOptionsResponseDto": {
+        "type": "object",
+        "properties": {
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorName": {
+            "type": "string"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clinicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clinicName": {
+            "type": "string"
+          },
+          "clinicTimezone": {
+            "type": "string",
+            "example": "Asia/Baghdad"
+          },
+          "appointmentType": {
+            "type": "string",
+            "enum": [
+              "initial",
+              "followUp"
+            ]
+          },
+          "durationMinutes": {
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 480
+          },
+          "feeIqd": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "IQD"
+            ]
+          },
+          "dateFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "dateTo": {
+            "type": "string",
+            "format": "date"
+          },
+          "days": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookingDayResponseDto"
+            }
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "doctorId",
+          "doctorName",
+          "organizationId",
+          "clinicId",
+          "clinicName",
+          "clinicTimezone",
+          "appointmentType",
+          "durationMinutes",
+          "feeIqd",
+          "currency",
+          "dateFrom",
+          "dateTo",
+          "days",
+          "generatedAt"
         ]
       },
       "ArrivalResponseDto": {

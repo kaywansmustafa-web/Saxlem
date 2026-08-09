@@ -5,6 +5,6 @@ import '../repositories/booking_repository.dart';
 class CreateBookingQuote {
   const CreateBookingQuote(this.repository);
   final BookingRepository repository;
-  Future<BookingQuote> call(BookingDraft draft) =>
-      repository.createQuote(draft);
+  Future<BookingQuote> call(BookingDraft draft) async =>
+      BookingQuote(draft: draft);
 }

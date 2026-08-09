@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/appointment_slot.dart';
-import '../../domain/entities/booking_types.dart';
 import '../booking_copy.dart';
 
 class SlotGrid extends StatelessWidget {
-  const SlotGrid({required this.slots, required this.onSelected, super.key});
+  const SlotGrid({
+    required this.slots,
+    required this.timezone,
+    required this.onSelected,
+    super.key,
+  });
   final List<AppointmentSlot> slots;
+  final String timezone;
   final ValueChanged<AppointmentSlot> onSelected;
   @override
   Widget build(BuildContext context) {
@@ -14,17 +19,15 @@ class SlotGrid extends StatelessWidget {
       spacing: 10,
       runSpacing: 10,
       children: slots.map((slot) {
-        final enabled = slot.status == BookingSlotStatus.available;
         return Semantics(
-          button: enabled,
-          enabled: enabled,
-          label:
-              '${copy.time(slot.start)}, ${enabled ? 'available' : 'unavailable'}',
+          button: true,
+          enabled: true,
+          label: copy.time(slot.startsAt, timezone: timezone),
           child: ConstrainedBox(
             constraints: const BoxConstraints(minWidth: 96, minHeight: 48),
             child: OutlinedButton(
-              onPressed: enabled ? () => onSelected(slot) : null,
-              child: Text(copy.time(slot.start)),
+              onPressed: () => onSelected(slot),
+              child: Text(copy.time(slot.startsAt, timezone: timezone)),
             ),
           ),
         );

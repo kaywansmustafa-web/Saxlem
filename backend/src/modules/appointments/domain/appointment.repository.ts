@@ -21,6 +21,9 @@ export interface AppointmentRepository {
     access: AppointmentAccess,
     input: AppointmentWrite,
   ): Promise<void>;
+  findBookingConflicts(
+    input: BookingConflictQuery,
+  ): Promise<readonly BookingConflict[]>;
   create(
     access: AppointmentAccess,
     input: AppointmentWrite,
@@ -59,6 +62,17 @@ export interface AppointmentRepository {
     requestId: string,
   ): Promise<void>;
 }
+export interface BookingConflictQuery {
+  readonly organizationId: string;
+  readonly doctorId: string;
+  readonly patientProfileId: string;
+  readonly startsAt: Date;
+  readonly endsAt: Date;
+}
+export interface BookingConflict {
+  readonly startsAt: string;
+  readonly endsAt: string;
+}
 export interface AppointmentCommand {
   readonly key: string;
   readonly hash: string;
@@ -66,6 +80,7 @@ export interface AppointmentCommand {
   readonly responseCode: 200 | 201;
 }
 export interface AppointmentListQuery {
+  readonly patientProfileId?: string;
   readonly from: Date;
   readonly to: Date;
   readonly pageSize: number;

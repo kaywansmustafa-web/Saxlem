@@ -26,6 +26,10 @@ import 'features/family_profiles/presentation/pages/primary_profile_setup_page.d
 import 'core/localization/localization_extensions.dart';
 import 'features/discover/domain/repositories/doctor_discovery_repository.dart';
 import 'features/discover/data/repositories/unavailable_doctor_discovery_repository.dart';
+import 'features/booking/domain/repositories/booking_repository.dart';
+import 'features/booking/data/repositories/backend_booking_repository.dart';
+import 'features/appointments/domain/repositories/patient_appointments_repository.dart';
+import 'features/appointments/data/repositories/backend_patient_appointments_repository.dart';
 
 void main() {
   const secureStorage = FlutterSecureStorage();
@@ -41,6 +45,8 @@ void main() {
       developmentOtp: dependencies.developmentOtp,
       patientProfilesRepository: dependencies.patientProfilesRepository,
       doctorDiscoveryRepository: dependencies.doctorDiscoveryRepository,
+      bookingRepository: dependencies.bookingRepository,
+      appointmentsRepository: dependencies.appointmentsRepository,
     ),
   );
 }
@@ -53,6 +59,9 @@ class SaxlemApp extends StatelessWidget {
     this.patientProfilesRepository,
     this.doctorDiscoveryRepository =
         const UnavailableDoctorDiscoveryRepository(),
+    this.bookingRepository = const UnavailableBookingRepository(),
+    this.appointmentsRepository =
+        const UnavailablePatientAppointmentsRepository(),
     super.key,
   });
   final LocaleRepository? localeRepository;
@@ -60,6 +69,8 @@ class SaxlemApp extends StatelessWidget {
   final String? developmentOtp;
   final PatientProfilesRepository? patientProfilesRepository;
   final DoctorDiscoveryRepository doctorDiscoveryRepository;
+  final BookingRepository bookingRepository;
+  final PatientAppointmentsRepository appointmentsRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +80,8 @@ class SaxlemApp extends StatelessWidget {
       developmentOtp: developmentOtp,
       patientProfilesRepository: patientProfilesRepository,
       doctorDiscoveryRepository: doctorDiscoveryRepository,
+      bookingRepository: bookingRepository,
+      appointmentsRepository: appointmentsRepository,
     );
   }
 }
@@ -80,12 +93,16 @@ class _AppBootstrap extends StatefulWidget {
     this.developmentOtp,
     this.patientProfilesRepository,
     required this.doctorDiscoveryRepository,
+    required this.bookingRepository,
+    required this.appointmentsRepository,
   });
   final LocaleRepository localeRepository;
   final AuthRepository authRepository;
   final String? developmentOtp;
   final PatientProfilesRepository? patientProfilesRepository;
   final DoctorDiscoveryRepository doctorDiscoveryRepository;
+  final BookingRepository bookingRepository;
+  final PatientAppointmentsRepository appointmentsRepository;
   @override
   State<_AppBootstrap> createState() => _AppBootstrapState();
 }
@@ -224,6 +241,8 @@ class _AppBootstrapState extends State<_AppBootstrap> {
       onLogout: _logout,
       profilesController: activeProfiles,
       doctorDiscoveryRepository: widget.doctorDiscoveryRepository,
+      bookingRepository: widget.bookingRepository,
+      appointmentsRepository: widget.appointmentsRepository,
     );
   }
 

@@ -41,3 +41,29 @@ export interface AppointmentWrite {
   readonly durationMinutes: number;
   readonly feeIqd: number;
 }
+
+export interface BookingSlotProjection {
+  readonly startsAt: string;
+  readonly endsAt: string;
+  readonly durationMinutes: number;
+}
+export interface BookingDayProjection {
+  readonly date: string;
+  readonly slots: readonly BookingSlotProjection[];
+}
+export interface BookingOptionsProjection {
+  readonly doctorId: string;
+  readonly doctorName: string;
+  readonly organizationId: string;
+  readonly clinicId: string;
+  readonly clinicName: string;
+  readonly clinicTimezone: string;
+  readonly appointmentType: AppointmentType;
+  readonly durationMinutes: number;
+  readonly feeIqd: number;
+  readonly currency: 'IQD';
+  readonly dateFrom: string;
+  readonly dateTo: string;
+  readonly days: readonly BookingDayProjection[];
+  readonly generatedAt: string;
+}

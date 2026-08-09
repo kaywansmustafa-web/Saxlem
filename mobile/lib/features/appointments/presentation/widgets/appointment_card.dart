@@ -17,10 +17,10 @@ class AppointmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final date = MaterialLocalizations.of(
       context,
-    ).formatMediumDate(appointment.scheduledAt);
+    ).formatMediumDate(appointment.startsAt);
     final time = MaterialLocalizations.of(
       context,
-    ).formatTimeOfDay(TimeOfDay.fromDateTime(appointment.scheduledAt));
+    ).formatTimeOfDay(TimeOfDay.fromDateTime(appointment.startsAt));
     return Semantics(
       container: true,
       label: '${appointment.doctor.displayName}, $date, $time',
@@ -43,7 +43,8 @@ class AppointmentCard extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(fontWeight: FontWeight.w700),
                       ),
-                      Text(appointment.doctor.specialtyDisplayName),
+                      if (appointment.doctor.specialtyDisplayName.isNotEmpty)
+                        Text(appointment.doctor.specialtyDisplayName),
                     ],
                   ),
                 ),
@@ -54,59 +55,25 @@ class AppointmentCard extends StatelessWidget {
             Text(appointment.clinicName),
             const SizedBox(height: 6),
             Text('$date  •  $time'),
-            if (appointment.status == PatientAppointmentStatus.upcoming) ...[
+            if (appointment.canMutate) ...[
               const SizedBox(height: 6),
               Text(
                 context.l10n.consultationMinutes(appointment.durationMinutes),
               ),
-              if (appointment.estimatedWaitMinutes != null)
-                Text(
-                  context.l10n.estimatedWaitMinutes(
-                    appointment.estimatedWaitMinutes!,
-                  ),
-                ),
             ],
             const SizedBox(height: 6),
             Text(
-              context.l10n.appointmentIdValue(appointment.id),
+              context.l10n.appointmentIdValue(appointment.reference),
               style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 16),
-            if (appointment.status == PatientAppointmentStatus.upcoming)
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: onView,
-                  child: Text(context.l10n.viewAppointment),
-                ),
-              )
-            else
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  Semantics(
-                    label: context.l10n.actionUnavailable,
-                    enabled: false,
-                    child: OutlinedButton(
-                      onPressed: null,
-                      child: Text(
-                        appointment.status == PatientAppointmentStatus.cancelled
-                            ? context.l10n.viewDoctor
-                            : context.l10n.rateVisit,
-                      ),
-                    ),
-                  ),
-                  Semantics(
-                    label: context.l10n.actionUnavailable,
-                    enabled: false,
-                    child: TextButton(
-                      onPressed: null,
-                      child: Text(context.l10n.bookAgain),
-                    ),
-                  ),
-                ],
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: onView,
+                child: Text(context.l10n.viewAppointment),
               ),
+            ),
           ],
         ),
       ),
@@ -120,9 +87,11 @@ class _Status extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     switch (status) {
-      PatientAppointmentStatus.upcoming => context.l10n.upcoming,
+      PatientAppointmentStatus.scheduled => context.l10n.scheduled,
+      PatientAppointmentStatus.confirmed => context.l10n.confirmed,
       PatientAppointmentStatus.completed => context.l10n.completed,
       PatientAppointmentStatus.cancelled => context.l10n.cancelled,
+      PatientAppointmentStatus.noShow => context.l10n.noShow,
     },
     style: TextStyle(
       color: status == PatientAppointmentStatus.cancelled

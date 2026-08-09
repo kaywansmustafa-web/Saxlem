@@ -35,14 +35,29 @@ class BookingReviewPage extends StatelessWidget {
             const SizedBox(height: 20),
             _Summary(
               rows: [
-                (context.l10n.viewDoctor, d.doctor.displayName),
-                (context.l10n.clinic, d.clinic.displayName),
-                (context.l10n.date, copy.date(d.slot!.start)),
-                (context.l10n.time, copy.time(d.slot!.start)),
-                ('Consultation fee', copy.fee(d.clinic.consultationFeeIqd)),
-                ('Estimated duration', '${d.clinic.durationMinutes} minutes'),
-                ('Arrival', quote.arrivalRecommendation),
-                ('Cancellation policy', d.clinic.cancellationPolicy),
+                (context.l10n.viewDoctor, d.options.doctorName),
+                (context.l10n.clinic, d.options.clinicName),
+                (
+                  context.l10n.date,
+                  copy.date(
+                    d.slot.startsAt,
+                    timezone: d.options.clinicTimezone,
+                  ),
+                ),
+                (
+                  context.l10n.time,
+                  copy.time(
+                    d.slot.startsAt,
+                    timezone: d.options.clinicTimezone,
+                  ),
+                ),
+                (context.l10n.fee, copy.fee(d.options.feeIqd)),
+                (
+                  context.l10n.duration,
+                  context.l10n.minutesLong(d.options.durationMinutes),
+                ),
+                (context.l10n.timezone, d.options.clinicTimezone),
+                (context.l10n.appointmentReason, d.reason),
               ],
             ),
             const SizedBox(height: 24),

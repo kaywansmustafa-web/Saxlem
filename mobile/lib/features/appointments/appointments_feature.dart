@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../discover/discover_feature.dart';
-import 'data/repositories/in_memory_patient_appointments_repository.dart';
 import 'domain/repositories/patient_appointments_repository.dart';
 import 'presentation/controllers/appointments_controller.dart';
 import 'presentation/pages/appointments_page.dart';
@@ -8,10 +7,13 @@ import '../family_profiles/presentation/controllers/patient_profiles_controller.
 import '../../core/models/patient_profile.dart';
 import '../discover/domain/repositories/doctor_discovery_repository.dart';
 import '../discover/data/repositories/unavailable_doctor_discovery_repository.dart';
+import '../booking/domain/repositories/booking_repository.dart';
+import '../booking/data/repositories/backend_booking_repository.dart';
 
 class AppointmentsFeature extends StatefulWidget {
   const AppointmentsFeature({
-    this.repository,
+    required this.repository,
+    this.bookingRepository = const UnavailableBookingRepository(),
     this.onOpenDiscover,
     this.profilesController,
     this.doctorDiscoveryRepository =
@@ -19,7 +21,8 @@ class AppointmentsFeature extends StatefulWidget {
     this.onAuthenticationRequired,
     super.key,
   });
-  final PatientAppointmentsRepository? repository;
+  final PatientAppointmentsRepository repository;
+  final BookingRepository bookingRepository;
   final VoidCallback? onOpenDiscover;
   final PatientProfilesController? profilesController;
   final DoctorDiscoveryRepository doctorDiscoveryRepository;
@@ -33,9 +36,8 @@ class _AppointmentsFeatureState extends State<AppointmentsFeature> {
   @override
   void initState() {
     super.initState();
-    controller = AppointmentsController(
-      widget.repository ?? InMemoryPatientAppointmentsRepository.shared,
-    )..load(widget.profilesController?.activeProfileId ?? PatientProfileId.me);
+    controller = AppointmentsController(widget.repository)
+      ..load(widget.profilesController?.activeProfileId ?? PatientProfileId.me);
     widget.profilesController?.addListener(_profileChanged);
   }
 
@@ -53,6 +55,11 @@ class _AppointmentsFeatureState extends State<AppointmentsFeature> {
   Widget build(BuildContext context) => AppointmentsPage(
     controller: controller,
     profilesController: widget.profilesController,
+    repository: widget.repository,
+    bookingRepository: widget.bookingRepository,
+    onAppointmentsChanged: () => controller.load(
+      widget.profilesController?.activeProfileId ?? PatientProfileId.me,
+    ),
     onDiscover:
         widget.onOpenDiscover ??
         () => Navigator.push(

@@ -15,7 +15,31 @@ import { Type } from 'class-transformer';
 export class AppointmentParamsDto {
   @ApiProperty({ format: 'uuid' }) @IsUUID() id!: string;
 }
+export class DoctorBookingParamsDto {
+  @ApiProperty({ format: 'uuid' }) @IsUUID() doctorId!: string;
+}
+export class BookingOptionsQueryDto {
+  @ApiProperty({ format: 'uuid' }) @IsUUID() clinicId!: string;
+  @ApiProperty({ format: 'uuid' }) @IsUUID() patientProfileId!: string;
+  @ApiProperty({ enum: ['initial', 'followUp'] })
+  @IsEnum(['initial', 'followUp'])
+  appointmentType!: 'initial' | 'followUp';
+  @ApiProperty({ format: 'date', example: '2026-08-06' })
+  @Matches(/^\d{4}-\d{2}-\d{2}$/)
+  dateFrom!: string;
+  @ApiProperty({
+    format: 'date',
+    example: '2026-08-20',
+    description: 'Inclusive. The requested window may contain at most 31 days.',
+  })
+  @Matches(/^\d{4}-\d{2}-\d{2}$/)
+  dateTo!: string;
+}
 export class AppointmentListQueryDto {
+  @ApiPropertyOptional({ format: 'uuid' })
+  @IsOptional()
+  @IsUUID()
+  patientProfileId?: string;
   @ApiProperty({ format: 'date-time' }) @IsDateString() from!: string;
   @ApiProperty({ format: 'date-time' }) @IsDateString() to!: string;
   @ApiPropertyOptional({
@@ -138,4 +162,34 @@ export class AppointmentPageResponseDto {
   @ApiProperty({ type: AppointmentResponseDto, isArray: true })
   items!: AppointmentResponseDto[];
   @ApiProperty({ type: 'string', nullable: true }) nextCursor!: string | null;
+}
+export class BookingSlotResponseDto {
+  @ApiProperty({ format: 'date-time' }) startsAt!: string;
+  @ApiProperty({ format: 'date-time' }) endsAt!: string;
+  @ApiProperty({ type: 'integer', minimum: 5, maximum: 480 })
+  durationMinutes!: number;
+}
+export class BookingDayResponseDto {
+  @ApiProperty({ format: 'date' }) date!: string;
+  @ApiProperty({ type: BookingSlotResponseDto, isArray: true })
+  slots!: BookingSlotResponseDto[];
+}
+export class BookingOptionsResponseDto {
+  @ApiProperty({ format: 'uuid' }) doctorId!: string;
+  @ApiProperty() doctorName!: string;
+  @ApiProperty({ format: 'uuid' }) organizationId!: string;
+  @ApiProperty({ format: 'uuid' }) clinicId!: string;
+  @ApiProperty() clinicName!: string;
+  @ApiProperty({ example: 'Asia/Baghdad' }) clinicTimezone!: string;
+  @ApiProperty({ enum: ['initial', 'followUp'] })
+  appointmentType!: 'initial' | 'followUp';
+  @ApiProperty({ type: 'integer', minimum: 5, maximum: 480 })
+  durationMinutes!: number;
+  @ApiProperty({ type: 'integer', minimum: 1 }) feeIqd!: number;
+  @ApiProperty({ enum: ['IQD'] }) currency!: 'IQD';
+  @ApiProperty({ format: 'date' }) dateFrom!: string;
+  @ApiProperty({ format: 'date' }) dateTo!: string;
+  @ApiProperty({ type: BookingDayResponseDto, isArray: true })
+  days!: BookingDayResponseDto[];
+  @ApiProperty({ format: 'date-time' }) generatedAt!: string;
 }

@@ -172,6 +172,51 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseTime => 'Choose a time';
 
   @override
+  String get appointmentType => 'Appointment type';
+
+  @override
+  String get initialAppointment => 'Initial appointment';
+
+  @override
+  String get followUpAppointment => 'Follow-up appointment';
+
+  @override
+  String get appointmentReason => 'Reason for visit';
+
+  @override
+  String get checkAvailability => 'Check availability';
+
+  @override
+  String get noAvailableSlots => 'No available times in this date range.';
+
+  @override
+  String get timezone => 'Time zone';
+
+  @override
+  String get bookingTimeout =>
+      'The availability request timed out. Please try again.';
+
+  @override
+  String get slotTaken =>
+      'That time is no longer available. Check availability again.';
+
+  @override
+  String get bookingValidationFailure =>
+      'Check your booking details and try again.';
+
+  @override
+  String get bookingUnknownOutcome =>
+      'We could not confirm the result. Do not submit another booking until you retry this request.';
+
+  @override
+  String get bookingSuccessful => 'Your appointment is booked.';
+
+  @override
+  String appointmentReferenceValue(String reference) {
+    return 'Appointment reference $reference';
+  }
+
+  @override
   String get reviewAppointment => 'Review appointment';
 
   @override
@@ -876,4 +921,72 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get bookingComingSoon =>
       'Booking will be available in the next release.';
+
+  @override
+  String get scheduled => 'Scheduled';
+
+  @override
+  String get confirmed => 'Confirmed';
+
+  @override
+  String get noShow => 'No-show';
+
+  @override
+  String get loadMore => 'Load more';
+
+  @override
+  String get loadingMoreAppointments => 'Loading more appointments';
+
+  @override
+  String get appointmentTimeout =>
+      'The request took too long. Please try again.';
+
+  @override
+  String get appointmentForbidden =>
+      'Your account cannot access this appointment.';
+
+  @override
+  String get appointmentNotFound => 'This appointment is no longer available.';
+
+  @override
+  String get staleAppointment =>
+      'The appointment changed. We loaded the latest details.';
+
+  @override
+  String get appointmentValidation => 'Check the information and try again.';
+
+  @override
+  String get appointmentUnknownOutcome =>
+      'We could not confirm the result. Retry to safely check the same request.';
+
+  @override
+  String get appointmentsUnavailable =>
+      'Appointments are temporarily unavailable.';
+
+  @override
+  String get reload => 'Reload';
+
+  @override
+  String get patient => 'Patient';
+
+  @override
+  String get appointmentReference => 'Appointment reference';
+
+  @override
+  String get cancellationReason => 'Cancellation reason';
+
+  @override
+  String get cancelAppointment => 'Cancel appointment';
+
+  @override
+  String get rescheduleAppointment => 'Reschedule appointment';
+
+  @override
+  String get chooseNewDateTime => 'Choose a new date and time';
+
+  @override
+  String get confirmCancellation => 'Confirm cancellation';
+
+  @override
+  String get cancel => 'Cancel';
 }

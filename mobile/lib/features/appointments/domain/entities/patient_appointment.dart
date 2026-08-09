@@ -1,7 +1,15 @@
 import '../../../../core/models/doctor_reference.dart';
 import '../../../../core/models/patient_profile.dart';
 
-enum PatientAppointmentStatus { upcoming, completed, cancelled }
+enum PatientAppointmentStatus {
+  scheduled,
+  confirmed,
+  cancelled,
+  completed,
+  noShow,
+}
+
+enum PatientAppointmentType { initial, followUp }
 
 class PatientAppointment {
   const PatientAppointment({
@@ -9,24 +17,34 @@ class PatientAppointment {
     required this.doctor,
     required this.clinicId,
     required this.clinicName,
-    required this.scheduledAt,
+    required this.reference,
+    required this.profileId,
+    required this.patientName,
+    required this.type,
+    required this.reason,
+    required this.startsAt,
+    required this.endsAt,
     required this.status,
     required this.feeIqd,
     required this.durationMinutes,
-    this.estimatedWaitMinutes,
-    this.queueEntryId,
-    this.profileId = PatientProfileId.me,
+    required this.version,
+    this.cancellationReason,
   });
 
-  final String id;
+  final String id, reference, patientName, reason;
   final DoctorReference doctor;
   final String clinicId;
   final String clinicName;
-  final DateTime scheduledAt;
+  final PatientProfileId profileId;
+  final PatientAppointmentType type;
+  final DateTime startsAt, endsAt;
   final PatientAppointmentStatus status;
   final int feeIqd;
   final int durationMinutes;
-  final int? estimatedWaitMinutes;
-  final String? queueEntryId;
-  final PatientProfileId profileId;
+  final String? cancellationReason;
+  final int version;
+
+  bool get canMutate =>
+      status == PatientAppointmentStatus.scheduled ||
+      status == PatientAppointmentStatus.confirmed;
 }

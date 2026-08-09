@@ -20,6 +20,10 @@ import '../../../family_profiles/presentation/controllers/patient_profiles_contr
 import '../../../family_profiles/presentation/pages/patient_profiles_page.dart';
 import '../../../discover/domain/repositories/doctor_discovery_repository.dart';
 import '../../../discover/data/repositories/unavailable_doctor_discovery_repository.dart';
+import '../../../booking/domain/repositories/booking_repository.dart';
+import '../../../booking/data/repositories/backend_booking_repository.dart';
+import '../../../appointments/domain/repositories/patient_appointments_repository.dart';
+import '../../../appointments/data/repositories/backend_patient_appointments_repository.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -28,12 +32,17 @@ class HomePage extends StatefulWidget {
     this.profilesController,
     this.doctorDiscoveryRepository =
         const UnavailableDoctorDiscoveryRepository(),
+    this.bookingRepository = const UnavailableBookingRepository(),
+    this.appointmentsRepository =
+        const UnavailablePatientAppointmentsRepository(),
     super.key,
   });
   final bool guestMode;
   final Future<void> Function()? onLogout;
   final PatientProfilesController? profilesController;
   final DoctorDiscoveryRepository doctorDiscoveryRepository;
+  final BookingRepository bookingRepository;
+  final PatientAppointmentsRepository appointmentsRepository;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -156,6 +165,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   DiscoverFeature(
                     repository: widget.doctorDiscoveryRepository,
+                    bookingRepository: widget.bookingRepository,
                     onAuthenticationRequired: widget.onLogout,
                     key: ValueKey(_discoverRequest),
                     initialCriteria: _discoverCriteria,
@@ -176,6 +186,8 @@ class _HomePageState extends State<HomePage> {
                           onAction: widget.onLogout,
                         )
                       : AppointmentsFeature(
+                          repository: widget.appointmentsRepository,
+                          bookingRepository: widget.bookingRepository,
                           onOpenDiscover: () => _openDiscover(),
                           profilesController: widget.profilesController,
                           doctorDiscoveryRepository:

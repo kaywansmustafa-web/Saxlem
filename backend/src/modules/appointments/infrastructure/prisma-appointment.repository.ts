@@ -55,6 +55,9 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
   async list(access: AppointmentAccess, query: AppointmentListQuery) {
     const where: Prisma.AppointmentWhereInput = {
       ...this.scope(access),
+      ...(query.patientProfileId
+        ? { patientProfileId: query.patientProfileId }
+        : {}),
       startsAt: { gte: query.from, lt: query.to },
       ...(query.status ? { status: query.status } : {}),
     };
@@ -100,7 +103,9 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
           organizationId: input.organizationId,
           status: 'active',
           organization: { status: 'active' },
-          clinicAssignments: { some: { clinicId: input.clinicId } },
+          clinicAssignments: {
+            some: { clinicId: input.clinicId, status: 'active' },
+          },
         },
         select: { id: true },
       }),
@@ -116,6 +121,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
         where: {
           organizationId: input.organizationId,
           patientProfileId: input.patientProfileId,
+          status: 'active',
           patientProfile: {
             status: 'active',
             ...(access.patient
@@ -139,6 +145,36 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       throw new BadRequestException('Clinic is inactive or unavailable.');
     throw new BadRequestException(
       'Patient registration is inactive or unavailable.',
+    );
+  }
+  async findBookingConflicts(input: {
+    organizationId: string;
+    doctorId: string;
+    patientProfileId: string;
+    startsAt: Date;
+    endsAt: Date;
+  }) {
+    const rows = await this.prisma.db.appointment.findMany({
+      where: {
+        organizationId: input.organizationId,
+        status: { in: ['scheduled', 'confirmed'] },
+        startsAt: { lt: input.endsAt },
+        endsAt: { gt: input.startsAt },
+        OR: [
+          { doctorId: input.doctorId },
+          { patientProfileId: input.patientProfileId },
+        ],
+      },
+      select: { startsAt: true, endsAt: true },
+      orderBy: [{ startsAt: 'asc' }, { endsAt: 'asc' }, { id: 'asc' }],
+    });
+    return Object.freeze(
+      rows.map((row) =>
+        Object.freeze({
+          startsAt: row.startsAt.toISOString(),
+          endsAt: row.endsAt.toISOString(),
+        }),
+      ),
     );
   }
   async create(

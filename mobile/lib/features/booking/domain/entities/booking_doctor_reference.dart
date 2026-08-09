@@ -1,10 +1,11 @@
+import 'booking_clinic_option.dart';
+
 class BookingDoctorReference {
   const BookingDoctorReference({
     required this.id,
     required this.displayName,
-    required this.specialtyDisplayName,
-    this.photoUrl,
+    required this.clinics,
   });
-  final String id, displayName, specialtyDisplayName;
-  final String? photoUrl;
+  final String id, displayName;
+  final List<BookingClinicOption> clinics;
 }

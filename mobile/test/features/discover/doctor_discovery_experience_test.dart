@@ -139,7 +139,7 @@ void main() {
   });
 
   testWidgets(
-    'profile reloads authoritative detail and has no booking action',
+    'profile reloads authoritative detail and exposes booking handoff',
     (tester) async {
       final repository = _Repository();
       await _pump(tester, repository);
@@ -151,11 +151,7 @@ void main() {
       expect(repository.lastDoctorId, _doctorId);
       expect(find.text('Authoritative biography'), findsOneWidget);
       expect(find.text('Neurology'), findsOneWidget);
-      expect(
-        find.text('Booking will be available in the next release.'),
-        findsOneWidget,
-      );
-      expect(find.text('Book appointment'), findsNothing);
+      expect(find.text('Book appointment'), findsOneWidget);
     },
   );
 

@@ -153,6 +153,76 @@ void main() {
       expect(storage.cleared, isTrue);
     },
   );
+
+  test('POST is sent once and is never replayed after unauthorized', () async {
+    final storage = _MemoryStorage(_session('current'));
+    var requests = 0;
+    var refreshes = 0;
+    final client = AuthenticatedApiClient(
+      api: ApiClient(
+        configuration: AppConfiguration.fromValues(
+          environment: 'production',
+          apiBaseUrl: 'https://api.saxlem.test',
+        ),
+        client: MockClient((_) async {
+          requests++;
+          return http.Response(
+            jsonEncode({
+              'error': {
+                'code': 'UNAUTHENTICATED',
+                'message': 'Rejected',
+                'requestId': 'request',
+                'retryable': false,
+                'fieldErrors': [],
+              },
+            }),
+            401,
+          );
+        }),
+      ),
+      storage: storage,
+      refresh: () async {
+        refreshes++;
+        return _session('new');
+      },
+    );
+    await expectLater(
+      client.postJson('appointments', body: const {}),
+      throwsA(isA<ApiFailure>()),
+    );
+    expect(requests, 1);
+    expect(refreshes, 0);
+    expect(storage.cleared, isTrue);
+  });
+
+  test('expired session refreshes before POST is sent', () async {
+    final storage = _MemoryStorage(
+      StoredSession(
+        phoneNumber: '+9647500000000',
+        expiresAt: DateTime.utc(2020),
+        accessToken: 'expired',
+        refreshToken: 'refresh',
+        deviceId: '00000000-0000-4000-8000-000000000001',
+      ),
+    );
+    String? authorization;
+    final client = AuthenticatedApiClient(
+      api: ApiClient(
+        configuration: AppConfiguration.fromValues(
+          environment: 'production',
+          apiBaseUrl: 'https://api.saxlem.test',
+        ),
+        client: MockClient((request) async {
+          authorization = request.headers['authorization'];
+          return http.Response('{"ok":true}', 201);
+        }),
+      ),
+      storage: storage,
+      refresh: () async => _session('fresh'),
+    );
+    await client.postJson('appointments', body: const {});
+    expect(authorization, 'Bearer fresh-access');
+  });
 }
 
 StoredSession _session(String prefix) => StoredSession(

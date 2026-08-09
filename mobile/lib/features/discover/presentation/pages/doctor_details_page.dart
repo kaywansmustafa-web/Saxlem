@@ -9,18 +9,29 @@ import '../../domain/entities/doctor_discovery_result.dart';
 import '../controllers/discover_controller.dart';
 import '../state/discover_state.dart';
 import '../widgets/applied_doctor_filters.dart';
+import '../../../booking/booking_feature.dart';
+import '../../../booking/domain/entities/booking_clinic_option.dart';
+import '../../../booking/domain/entities/booking_doctor_reference.dart';
+import '../../../booking/domain/repositories/booking_repository.dart';
+import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
 
 class DoctorDetailsPage extends StatefulWidget {
   const DoctorDetailsPage({
     required this.controller,
     required this.doctorId,
     this.onAuthenticationRequired,
+    required this.bookingRepository,
+    required this.guestMode,
+    this.profilesController,
     super.key,
   });
 
   final DiscoverController controller;
   final String doctorId;
   final Future<void> Function()? onAuthenticationRequired;
+  final BookingRepository bookingRepository;
+  final bool guestMode;
+  final PatientProfilesController? profilesController;
 
   @override
   State<DoctorDetailsPage> createState() => _DoctorDetailsPageState();
@@ -249,18 +260,45 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
           const SizedBox(height: 24),
           Semantics(
             button: true,
-            enabled: false,
-            label: context.l10n.bookingComingSoon,
+            enabled: true,
+            label: context.l10n.bookAppointment,
             child: FilledButton.icon(
-              onPressed: null,
+              onPressed: () => _book(doctor),
               icon: const Icon(Icons.calendar_month_outlined),
-              label: Text(context.l10n.bookingComingSoon),
+              label: Text(context.l10n.bookAppointment),
             ),
           ),
         ],
       ),
     ),
   );
+
+  Future<void> _book(DoctorDiscoveryResult doctor) async {
+    if (widget.guestMode || widget.profilesController == null) {
+      await widget.onAuthenticationRequired?.call();
+      return;
+    }
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => BookingFeature(
+          doctor: BookingDoctorReference(
+            id: doctor.doctorId,
+            displayName: doctor.doctorDisplayName,
+            clinics: doctor.clinics
+                .map(
+                  (clinic) => BookingClinicOption(
+                    id: clinic.id,
+                    displayName: clinic.name,
+                  ),
+                )
+                .toList(growable: false),
+          ),
+          repository: widget.bookingRepository,
+          profilesController: widget.profilesController!,
+        ),
+      ),
+    );
+  }
 
   String _genderLabel(BackendDoctorGender gender) => switch (gender) {
     BackendDoctorGender.female => context.l10n.genderFemale,
