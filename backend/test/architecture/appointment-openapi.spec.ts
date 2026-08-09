@@ -16,6 +16,9 @@ describe('appointment OpenAPI contract', () => {
     const cursor = parameters.find(
       (item: { name: string }) => item.name === 'cursor',
     ).schema;
+    const patientProfileId = parameters.find(
+      (item: { name: string }) => item.name === 'patientProfileId',
+    ).schema;
     expect(pageSize).toMatchObject({
       type: 'integer',
       minimum: 1,
@@ -28,6 +31,7 @@ describe('appointment OpenAPI contract', () => {
       maxLength: 1024,
     });
     expect(cursor.format).toBeUndefined();
+    expect(patientProfileId).toMatchObject({ type: 'string', format: 'uuid' });
   });
 
   it('documents exact response and mutation scalar types', () => {

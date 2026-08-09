@@ -1432,6 +1432,15 @@
         "operationId": "AppointmentsController_list",
         "parameters": [
           {
+            "name": "patientProfileId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
             "name": "from",
             "required": true,
             "in": "query",

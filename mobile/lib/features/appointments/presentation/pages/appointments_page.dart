@@ -7,16 +7,24 @@ import 'appointment_details_page.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
 import '../../../family_profiles/presentation/widgets/patient_selector.dart';
+import '../../domain/repositories/patient_appointments_repository.dart';
+import '../../../booking/domain/repositories/booking_repository.dart';
 
 class AppointmentsPage extends StatelessWidget {
   const AppointmentsPage({
     required this.controller,
     required this.onDiscover,
+    required this.repository,
+    required this.bookingRepository,
+    required this.onAppointmentsChanged,
     this.profilesController,
     super.key,
   });
   final AppointmentsController controller;
   final VoidCallback onDiscover;
+  final PatientAppointmentsRepository repository;
+  final BookingRepository bookingRepository;
+  final Future<void> Function() onAppointmentsChanged;
   final PatientProfilesController? profilesController;
 
   @override
@@ -30,11 +38,11 @@ class AppointmentsPage extends StatelessWidget {
           child: const CircularProgressIndicator(),
         ),
       ),
-      AppointmentsFailure(:final message) => Center(
+      AppointmentsFailure(:final problem) => Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(message),
+            Text(_problem(context, problem)),
             const SizedBox(height: 16),
             FilledButton(
               onPressed: controller.load,
@@ -94,31 +102,62 @@ class AppointmentsPage extends StatelessWidget {
       ),
       const SizedBox(height: 14),
       Expanded(
-        child: state.visible.isEmpty
-            ? AppointmentsEmptyState(
-                firstTime: !state.snapshot.hasAppointmentHistory,
-                onDiscover: onDiscover,
-              )
-            : ListView.separated(
-                padding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 32),
-                itemCount: state.visible.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 14),
-                itemBuilder: (context, index) {
-                  final appointment = state.visible[index];
-                  return AppointmentCard(
-                    appointment: appointment,
-                    onView: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => AppointmentDetailsPage(
-                          appointment: appointment,
-                          profilesController: profilesController,
-                        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: state.visible.isEmpty
+                  ? AppointmentsEmptyState(
+                      firstTime: !state.snapshot.hasAppointmentHistory,
+                      onDiscover: onDiscover,
+                    )
+                  : ListView.separated(
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                        24,
+                        8,
+                        24,
+                        32,
                       ),
+                      itemCount: state.visible.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: 14),
+                      itemBuilder: (context, index) {
+                        final appointment = state.visible[index];
+                        return AppointmentCard(
+                          appointment: appointment,
+                          onView: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => AppointmentDetailsPage(
+                                appointmentId: appointment.id,
+                                repository: repository,
+                                bookingRepository: bookingRepository,
+                                onChanged: onAppointmentsChanged,
+                                profilesController: profilesController,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
+            ),
+            if (state.loadMoreProblem != null)
+              Semantics(
+                liveRegion: true,
+                child: Text(_problem(context, state.loadMoreProblem!)),
               ),
+            if (state.canLoadMore)
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 24),
+                child: OutlinedButton(
+                  onPressed: state.loadingMore ? null : controller.loadMore,
+                  child: Text(
+                    state.loadingMore
+                        ? context.l10n.loadingMoreAppointments
+                        : context.l10n.loadMore,
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     ],
   );
@@ -128,4 +167,19 @@ class AppointmentsPage extends StatelessWidget {
     AppointmentsTab.completed => context.l10n.completed,
     AppointmentsTab.cancelled => context.l10n.cancelled,
   };
+
+  String _problem(BuildContext context, AppointmentProblem problem) =>
+      switch (problem) {
+        AppointmentProblem.offline => context.l10n.offlineBody,
+        AppointmentProblem.timeout => context.l10n.appointmentTimeout,
+        AppointmentProblem.forbidden => context.l10n.appointmentForbidden,
+        AppointmentProblem.sessionExpired => context.l10n.sessionExpiredBody,
+        AppointmentProblem.notFound => context.l10n.appointmentNotFound,
+        AppointmentProblem.conflict => context.l10n.staleAppointment,
+        AppointmentProblem.validation => context.l10n.appointmentValidation,
+        AppointmentProblem.malformed => context.l10n.patientAccountInvalid,
+        AppointmentProblem.unknownOutcome =>
+          context.l10n.appointmentUnknownOutcome,
+        _ => context.l10n.appointmentsUnavailable,
+      };
 }

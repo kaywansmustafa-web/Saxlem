@@ -80,6 +80,7 @@ export interface AppointmentCommand {
   readonly responseCode: 200 | 201;
 }
 export interface AppointmentListQuery {
+  readonly patientProfileId?: string;
   readonly from: Date;
   readonly to: Date;
   readonly pageSize: number;

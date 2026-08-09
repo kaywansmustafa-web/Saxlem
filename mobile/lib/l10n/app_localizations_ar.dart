@@ -886,4 +886,69 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get bookingComingSoon => 'سيصبح الحجز متاحاً في الإصدار القادم.';
+
+  @override
+  String get scheduled => 'مجدول';
+
+  @override
+  String get confirmed => 'مؤكد';
+
+  @override
+  String get noShow => 'لم يحضر';
+
+  @override
+  String get loadMore => 'تحميل المزيد';
+
+  @override
+  String get loadingMoreAppointments => 'جارٍ تحميل المزيد من المواعيد';
+
+  @override
+  String get appointmentTimeout =>
+      'استغرق الطلب وقتاً طويلاً. يرجى المحاولة مجدداً.';
+
+  @override
+  String get appointmentForbidden => 'لا يمكن لحسابك الوصول إلى هذا الموعد.';
+
+  @override
+  String get appointmentNotFound => 'لم يعد هذا الموعد متاحاً.';
+
+  @override
+  String get staleAppointment => 'تم تغيير الموعد. حمّلنا أحدث التفاصيل.';
+
+  @override
+  String get appointmentValidation => 'تحقق من المعلومات وحاول مجدداً.';
+
+  @override
+  String get appointmentUnknownOutcome =>
+      'تعذر تأكيد النتيجة. أعد المحاولة للتحقق من الطلب نفسه بأمان.';
+
+  @override
+  String get appointmentsUnavailable => 'المواعيد غير متاحة مؤقتاً.';
+
+  @override
+  String get reload => 'إعادة التحميل';
+
+  @override
+  String get patient => 'المريض';
+
+  @override
+  String get appointmentReference => 'رقم الموعد';
+
+  @override
+  String get cancellationReason => 'سبب الإلغاء';
+
+  @override
+  String get cancelAppointment => 'إلغاء الموعد';
+
+  @override
+  String get rescheduleAppointment => 'تغيير موعد الزيارة';
+
+  @override
+  String get chooseNewDateTime => 'اختر تاريخاً ووقتاً جديدين';
+
+  @override
+  String get confirmCancellation => 'تأكيد الإلغاء';
+
+  @override
+  String get cancel => 'رجوع';
 }

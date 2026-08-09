@@ -17,6 +17,8 @@ import '../features/discover/data/repositories/backend_doctor_discovery_reposito
 import '../features/discover/data/repositories/unavailable_doctor_discovery_repository.dart';
 import '../features/booking/domain/repositories/booking_repository.dart';
 import '../features/booking/data/repositories/backend_booking_repository.dart';
+import '../features/appointments/domain/repositories/patient_appointments_repository.dart';
+import '../features/appointments/data/repositories/backend_patient_appointments_repository.dart';
 
 class AppDependencies {
   const AppDependencies({
@@ -25,6 +27,8 @@ class AppDependencies {
     this.doctorDiscoveryRepository =
         const UnavailableDoctorDiscoveryRepository(),
     this.bookingRepository = const UnavailableBookingRepository(),
+    this.appointmentsRepository =
+        const UnavailablePatientAppointmentsRepository(),
     this.developmentOtp,
   });
 
@@ -41,6 +45,8 @@ class AppDependencies {
         developmentOtp: MockAuthRepository.developmentOtp,
         doctorDiscoveryRepository: const UnavailableDoctorDiscoveryRepository(),
         bookingRepository: const UnavailableBookingRepository(),
+        appointmentsRepository:
+            const UnavailablePatientAppointmentsRepository(),
       );
     }
     if (!configuration.hasValidApiConfiguration || deviceIdentity == null) {
@@ -72,6 +78,9 @@ class AppDependencies {
         authenticatedApi,
       ),
       bookingRepository: BackendBookingRepository(authenticatedApi),
+      appointmentsRepository: BackendPatientAppointmentsRepository(
+        authenticatedApi,
+      ),
     );
   }
 
@@ -79,5 +88,6 @@ class AppDependencies {
   final PatientProfilesRepository? patientProfilesRepository;
   final DoctorDiscoveryRepository doctorDiscoveryRepository;
   final BookingRepository bookingRepository;
+  final PatientAppointmentsRepository appointmentsRepository;
   final String? developmentOtp;
 }

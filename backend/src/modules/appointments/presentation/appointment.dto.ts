@@ -36,6 +36,10 @@ export class BookingOptionsQueryDto {
   dateTo!: string;
 }
 export class AppointmentListQueryDto {
+  @ApiPropertyOptional({ format: 'uuid' })
+  @IsOptional()
+  @IsUUID()
+  patientProfileId?: string;
   @ApiProperty({ format: 'date-time' }) @IsDateString() from!: string;
   @ApiProperty({ format: 'date-time' }) @IsDateString() to!: string;
   @ApiPropertyOptional({

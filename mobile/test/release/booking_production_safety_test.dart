@@ -18,6 +18,21 @@ void main() {
     },
   );
 
+  test('production appointment composition cannot reach in-memory data', () {
+    final dependencies = File(
+      'lib/app/app_dependencies.dart',
+    ).readAsStringSync();
+    final feature = File(
+      'lib/features/appointments/appointments_feature.dart',
+    ).readAsStringSync();
+    expect(dependencies, contains('BackendPatientAppointmentsRepository'));
+    expect(
+      dependencies,
+      isNot(contains('InMemoryPatientAppointmentsRepository')),
+    );
+    expect(feature, isNot(contains('InMemoryPatientAppointmentsRepository')));
+  });
+
   test(
     'authoritative booking widgets contain no fabricated slot fee or policy',
     () {

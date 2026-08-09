@@ -1671,6 +1671,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Booking will be available in the next release.'**
   String get bookingComingSoon;
+
+  /// No description provided for @scheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get scheduled;
+
+  /// No description provided for @confirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get confirmed;
+
+  /// No description provided for @noShow.
+  ///
+  /// In en, this message translates to:
+  /// **'No-show'**
+  String get noShow;
+
+  /// No description provided for @loadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get loadMore;
+
+  /// No description provided for @loadingMoreAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading more appointments'**
+  String get loadingMoreAppointments;
+
+  /// No description provided for @appointmentTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The request took too long. Please try again.'**
+  String get appointmentTimeout;
+
+  /// No description provided for @appointmentForbidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account cannot access this appointment.'**
+  String get appointmentForbidden;
+
+  /// No description provided for @appointmentNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This appointment is no longer available.'**
+  String get appointmentNotFound;
+
+  /// No description provided for @staleAppointment.
+  ///
+  /// In en, this message translates to:
+  /// **'The appointment changed. We loaded the latest details.'**
+  String get staleAppointment;
+
+  /// No description provided for @appointmentValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the information and try again.'**
+  String get appointmentValidation;
+
+  /// No description provided for @appointmentUnknownOutcome.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not confirm the result. Retry to safely check the same request.'**
+  String get appointmentUnknownOutcome;
+
+  /// No description provided for @appointmentsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointments are temporarily unavailable.'**
+  String get appointmentsUnavailable;
+
+  /// No description provided for @reload.
+  ///
+  /// In en, this message translates to:
+  /// **'Reload'**
+  String get reload;
+
+  /// No description provided for @patient.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get patient;
+
+  /// No description provided for @appointmentReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment reference'**
+  String get appointmentReference;
+
+  /// No description provided for @cancellationReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation reason'**
+  String get cancellationReason;
+
+  /// No description provided for @cancelAppointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel appointment'**
+  String get cancelAppointment;
+
+  /// No description provided for @rescheduleAppointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Reschedule appointment'**
+  String get rescheduleAppointment;
+
+  /// No description provided for @chooseNewDateTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a new date and time'**
+  String get chooseNewDateTime;
+
+  /// No description provided for @confirmCancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm cancellation'**
+  String get confirmCancellation;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
 }
 
 class _AppLocalizationsDelegate

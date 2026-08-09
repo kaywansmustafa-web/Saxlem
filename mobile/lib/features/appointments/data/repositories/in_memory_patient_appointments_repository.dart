@@ -1,3 +1,4 @@
+/* Legacy fixture implementation retained for source history.
 import 'dart:async';
 
 import '../../../../core/models/doctor_reference.dart';
@@ -83,4 +84,53 @@ class InMemoryPatientAppointmentsRepository
       ),
     ];
   }
+}
+*/
+
+import '../../../../core/models/patient_profile.dart';
+import '../../domain/entities/appointments_snapshot.dart';
+import '../../domain/entities/patient_appointment.dart';
+import '../../domain/repositories/patient_appointments_repository.dart';
+
+class InMemoryPatientAppointmentsRepository
+    implements PatientAppointmentsRepository {
+  InMemoryPatientAppointmentsRepository({
+    List<PatientAppointment> initialAppointments = const [],
+    bool hasAppointmentHistory = false,
+  }) : _items = List.of(initialAppointments);
+  final List<PatientAppointment> _items;
+
+  @override
+  Future<AppointmentPage> list(AppointmentListRequest request) async {
+    final items = _items
+        .where(
+          (item) =>
+              item.profileId == request.profileId &&
+              item.status == request.status &&
+              !item.startsAt.isBefore(request.from) &&
+              item.startsAt.isBefore(request.to),
+        )
+        .toList();
+    return AppointmentPage(items: items, nextCursor: null);
+  }
+
+  @override
+  Future<PatientAppointment> detail(
+    String appointmentId,
+    PatientProfileId profileId,
+  ) async => _items.firstWhere(
+    (item) => item.id == appointmentId && item.profileId == profileId,
+  );
+
+  @override
+  Future<PatientAppointment> cancel(
+    AppointmentCancellation command,
+    String operationId,
+  ) async => throw const AppointmentFailure(AppointmentProblem.unavailable);
+
+  @override
+  Future<PatientAppointment> reschedule(
+    AppointmentReschedule command,
+    String operationId,
+  ) async => throw const AppointmentFailure(AppointmentProblem.unavailable);
 }

@@ -55,6 +55,9 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
   async list(access: AppointmentAccess, query: AppointmentListQuery) {
     const where: Prisma.AppointmentWhereInput = {
       ...this.scope(access),
+      ...(query.patientProfileId
+        ? { patientProfileId: query.patientProfileId }
+        : {}),
       startsAt: { gte: query.from, lt: query.to },
       ...(query.status ? { status: query.status } : {}),
     };

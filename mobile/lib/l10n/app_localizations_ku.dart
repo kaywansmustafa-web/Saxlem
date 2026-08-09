@@ -897,4 +897,72 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get bookingComingSoon => 'حجزکرن د وەشانێ داهاتی دا بەردەست دبیت.';
+
+  @override
+  String get scheduled => 'Scheduled';
+
+  @override
+  String get confirmed => 'Confirmed';
+
+  @override
+  String get noShow => 'No-show';
+
+  @override
+  String get loadMore => 'Load more';
+
+  @override
+  String get loadingMoreAppointments => 'Loading more appointments';
+
+  @override
+  String get appointmentTimeout =>
+      'The request took too long. Please try again.';
+
+  @override
+  String get appointmentForbidden =>
+      'Your account cannot access this appointment.';
+
+  @override
+  String get appointmentNotFound => 'This appointment is no longer available.';
+
+  @override
+  String get staleAppointment =>
+      'The appointment changed. We loaded the latest details.';
+
+  @override
+  String get appointmentValidation => 'Check the information and try again.';
+
+  @override
+  String get appointmentUnknownOutcome =>
+      'We could not confirm the result. Retry to safely check the same request.';
+
+  @override
+  String get appointmentsUnavailable =>
+      'Appointments are temporarily unavailable.';
+
+  @override
+  String get reload => 'Reload';
+
+  @override
+  String get patient => 'Patient';
+
+  @override
+  String get appointmentReference => 'Appointment reference';
+
+  @override
+  String get cancellationReason => 'Cancellation reason';
+
+  @override
+  String get cancelAppointment => 'Cancel appointment';
+
+  @override
+  String get rescheduleAppointment => 'Reschedule appointment';
+
+  @override
+  String get chooseNewDateTime => 'Choose a new date and time';
+
+  @override
+  String get confirmCancellation => 'Confirm cancellation';
+
+  @override
+  String get cancel => 'Cancel';
 }
