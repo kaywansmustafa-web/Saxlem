@@ -11,6 +11,9 @@ const implementedRoutes = new Set([
   "doctorPatients",
   "doctorSchedule",
   "doctorNotifications",
+  "administration",
+  "organizations",
+  "clinics",
 ]);
 
 describe("central route policy", () => {

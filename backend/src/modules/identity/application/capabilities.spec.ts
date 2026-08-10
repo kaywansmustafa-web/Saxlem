@@ -66,3 +66,15 @@ describe('patient directory capabilities', () => {
     },
   );
 });
+
+describe('platform administration capability', () => {
+  it.each([
+    ['platformAdministrator', true],
+    ['clinicManager', false],
+    ['receptionist', false],
+    ['doctor', false],
+    ['patient', false],
+  ] as const)('is isolated from %s', (role, granted) => {
+    expect(capabilitiesFor(role).has('platform:administration')).toBe(granted);
+  });
+});

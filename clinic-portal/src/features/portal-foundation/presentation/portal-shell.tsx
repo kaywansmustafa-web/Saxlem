@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { Locale } from "@/i18n";
 import type { PortalStaffRole } from "@/features/authentication/domain/portal-access-types";
@@ -51,6 +52,7 @@ export function PortalShell({
   const [open, setOpen] = useState(false),
     trigger = useRef<HTMLButtonElement>(null),
     drawer = useRef<HTMLElement>(null);
+  const pathname = usePathname() ?? `/${locale}/${navigation.find((item) => item.id === current)?.segment ?? "dashboard"}`;
   useEffect(() => {
     if (!open) return;
     const first = drawer.current?.querySelector<HTMLElement>("a,button");
@@ -94,7 +96,6 @@ export function PortalShell({
     });
     location.assign(`/${locale}/login`);
   };
-  const pathname = `/${locale}/${navigation.find((item) => item.id === current)?.segment ?? "dashboard"}`;
   return (
     <div className="foundation-shell">
       <a className="skip" href="#main">

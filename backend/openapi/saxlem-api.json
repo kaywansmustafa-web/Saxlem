@@ -202,6 +202,350 @@
         ]
       }
     },
+    "/api/v1/administration/organizations": {
+      "get": {
+        "operationId": "AdministrationController_organizations",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 25,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Opaque signed cursor.",
+            "schema": {
+              "maxLength": 2048,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationPageResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation or cursor validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The platform administration capability is required."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List organizations for platform administration",
+        "tags": [
+          "administration"
+        ]
+      },
+      "post": {
+        "operationId": "AdministrationController_createOrganization",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Printable ASCII command key bound to actor, operation, and request body.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 128
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrganizationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation or cursor validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The platform administration capability is required."
+          },
+          "409": {
+            "description": "The idempotency key conflicts with another command."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create an active organization",
+        "tags": [
+          "administration"
+        ]
+      }
+    },
+    "/api/v1/administration/organizations/{organizationId}": {
+      "get": {
+        "operationId": "AdministrationController_organizationDetail",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation or cursor validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The platform administration capability is required."
+          },
+          "404": {
+            "description": "Organization was not found."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get organization details for platform administration",
+        "tags": [
+          "administration"
+        ]
+      }
+    },
+    "/api/v1/administration/clinics": {
+      "get": {
+        "operationId": "AdministrationController_clinics",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 25,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Opaque signed cursor.",
+            "schema": {
+              "maxLength": 2048,
+              "type": "string"
+            }
+          },
+          {
+            "name": "organizationId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicPageResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation or cursor validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The platform administration capability is required."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List clinics for platform administration",
+        "tags": [
+          "administration"
+        ]
+      },
+      "post": {
+        "operationId": "AdministrationController_createClinic",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Printable ASCII command key bound to actor, operation, and request body.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 128
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateClinicDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation or cursor validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The platform administration capability is required."
+          },
+          "404": {
+            "description": "Active organization was not found."
+          },
+          "409": {
+            "description": "Clinic code already exists in the organization or the idempotency key conflicts."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create an active clinic in an active organization",
+        "tags": [
+          "administration"
+        ]
+      }
+    },
+    "/api/v1/administration/clinics/{clinicId}": {
+      "get": {
+        "operationId": "AdministrationController_clinicDetail",
+        "parameters": [
+          {
+            "name": "clinicId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation or cursor validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The platform administration capability is required."
+          },
+          "404": {
+            "description": "Clinic was not found."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get clinic details for platform administration",
+        "tags": [
+          "administration"
+        ]
+      }
+    },
     "/api/v1/doctors": {
       "get": {
         "operationId": "DoctorsController_search",
@@ -4927,6 +5271,170 @@
         },
         "required": [
           "refreshToken"
+        ]
+      },
+      "OrganizationResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "OrganizationPageResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrganizationResponseDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "CreateOrganizationDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120,
+            "example": "Saxlem Health Group"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ClinicResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "organizationId",
+          "name",
+          "code",
+          "timezone",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "ClinicPageResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClinicResponseDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "CreateClinicDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "code": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 32,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "Asia/Baghdad",
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "organizationId",
+          "name",
+          "code",
+          "timezone"
         ]
       },
       "ApiFieldErrorDto": {

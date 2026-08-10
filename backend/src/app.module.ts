@@ -28,6 +28,7 @@ export class AppModule implements NestModule {
               paths: [
                 'req.headers.authorization',
                 'req.headers.cookie',
+                'req.headers["idempotency-key"]',
                 'req.body.otp',
                 'req.body.phone',
                 'req.body.phoneNumber',

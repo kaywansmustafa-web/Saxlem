@@ -6,24 +6,24 @@ const NO_STORE_HEADERS = Object.freeze({
   pragma: "no-cache",
 });
 
-export function safeJson(
-  body: object,
-  status = 200,
-): NextResponse {
+export function safeJson(body: object, status = 200): NextResponse {
   return NextResponse.json(body, { status, headers: NO_STORE_HEADERS });
 }
 
 export function safeRouteError(error: unknown): NextResponse {
   if (error instanceof PortalApiError) {
-    const status = error.detail.status === 404 || error.detail.status === 409
-      ? error.detail.status
-      : error.detail.kind === "unauthorized"
-        ? 401
-        : error.detail.kind === "forbidden"
-          ? 403
-          : error.detail.kind === "validation"
-            ? 400
-            : 503;
+    const status =
+      error.detail.kind === "notFound" ||
+      error.detail.kind === "conflict" ||
+      error.detail.kind === "idempotencyConflict"
+        ? error.detail.status
+        : error.detail.kind === "unauthorized"
+          ? 401
+          : error.detail.kind === "forbidden"
+            ? 403
+            : error.detail.kind === "validation"
+              ? 400
+              : 503;
     return safeJson(
       {
         ok: false,

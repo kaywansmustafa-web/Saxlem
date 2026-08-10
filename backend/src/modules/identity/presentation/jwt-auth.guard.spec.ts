@@ -149,4 +149,52 @@ describe('JwtAuthGuard security enforcement', () => {
       capabilityGuard.canActivate(contextFor(requestFor(token))),
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
+
+  it('accepts a globally assigned platform administrator without clinic membership', async () => {
+    const adminSession = {
+      ...session,
+      family: {
+        ...session.family,
+        role: 'platformAdministrator',
+        organizationId: null,
+        clinicId: null,
+      },
+      user: {
+        ...session.user,
+        roles: [
+          {
+            role: 'platformAdministrator',
+            organizationId: null,
+            clinicId: null,
+          },
+        ],
+        memberships: [],
+      },
+    };
+    (prisma.db.refreshSession.findUnique as jest.Mock).mockResolvedValueOnce(
+      adminSession,
+    );
+    const token = await jwt.signAsync(
+      {
+        ...claims(),
+        role: 'platformAdministrator',
+        org: undefined,
+        clinic: undefined,
+      },
+      {
+        secret: configuration.accessTokenSecret,
+        algorithm: 'HS256',
+        issuer: 'saxlem',
+        audience: 'saxlem-clients',
+        expiresIn: '10m',
+      },
+    );
+    const request = requestFor(token);
+    await expect(
+      new JwtAuthGuard(jwt, prisma, new Reflector(), configuration).canActivate(
+        contextFor(request),
+      ),
+    ).resolves.toBe(true);
+    expect(request.principal?.kind).toBe('platformAdministrator');
+  });
 });
