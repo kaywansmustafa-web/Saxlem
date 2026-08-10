@@ -1,36 +1,47 @@
-import '../../domain/entities/queue_types.dart';
+import '../../../../core/network/api_failure.dart';
+import '../../../../core/network/authenticated_api_client.dart';
+import '../../domain/entities/patient_queue_status.dart';
 import '../../domain/repositories/live_queue_repository.dart';
-import '../data_sources/mock_live_queue_data_source.dart';
-import '../mappers/patient_queue_snapshot_mapper.dart';
+import '../dto/patient_queue_status_dto.dart';
 
-class LiveQueueRepositoryImpl implements LiveQueueRepository {
-  LiveQueueRepositoryImpl(this._dataSource, this._mapper);
-
-  final MockLiveQueueDataSource _dataSource;
-  final PatientQueueSnapshotMapper _mapper;
-
+class BackendLiveQueueRepository implements LiveQueueRepository {
+  BackendLiveQueueRepository(this._api);
+  final AuthenticatedApiClient _api;
+  static final _uuid = RegExp(
+    r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
+  );
   @override
-  Stream<LiveQueueUpdate> watchQueue(String queueEntryId) => _dataSource
-      .watch(queueEntryId)
-      .map(
-        (event) => switch (event) {
-          MockSnapshotEvent(:final snapshot) => QueueSnapshotUpdate(
-            _mapper.toDomain(snapshot),
-          ),
-          MockConnectionEvent(:final status) => QueueConnectionUpdate(
-            QueueConnectionStatus.values.byName(status),
-          ),
-          MockFailureEvent(:final message) => QueueFailureUpdate(message),
-        },
+  Future<PatientQueueStatus> getQueueStatus(String appointmentId) async {
+    if (!_uuid.hasMatch(appointmentId))
+      throw const LiveQueueFailure(LiveQueueProblem.validation);
+    try {
+      return PatientQueueStatusDto.parse(
+        appointmentId,
+        (await _api.getJson('/appointments/$appointmentId/queue-status')).body,
       );
-
-  @override
-  Future<void> performAction(String queueEntryId, PatientQueueAction action) =>
-      _dataSource.performAction(action.name);
-
-  @override
-  Future<void> refresh(String queueEntryId) => _dataSource.refresh();
-
-  @override
-  void dispose() => _dataSource.dispose();
+    } on FormatException {
+      throw const LiveQueueFailure(LiveQueueProblem.malformed);
+    } on ApiFailure catch (e) {
+      throw LiveQueueFailure(switch (e.type) {
+        ApiFailureType.unauthenticated => LiveQueueProblem.sessionExpired,
+        ApiFailureType.forbidden => LiveQueueProblem.forbidden,
+        ApiFailureType.notFound => LiveQueueProblem.notFound,
+        ApiFailureType.offline => LiveQueueProblem.offline,
+        ApiFailureType.timeout => LiveQueueProblem.timeout,
+        ApiFailureType.malformedResponse => LiveQueueProblem.malformed,
+        ApiFailureType.server ||
+        ApiFailureType.unavailable => LiveQueueProblem.unavailable,
+        _ => LiveQueueProblem.unknown,
+      });
+    }
+  }
 }
+
+class UnavailableLiveQueueRepository implements LiveQueueRepository {
+  const UnavailableLiveQueueRepository();
+  @override
+  Future<PatientQueueStatus> getQueueStatus(String appointmentId) async =>
+      throw const LiveQueueFailure(LiveQueueProblem.unavailable);
+}
+
+// ignore_for_file: curly_braces_in_flow_control_structures

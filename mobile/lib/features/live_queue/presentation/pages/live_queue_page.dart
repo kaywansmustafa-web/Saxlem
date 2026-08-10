@@ -1,128 +1,129 @@
 import 'package:flutter/material.dart';
-
-import '../../../../config/theme/app_colors.dart';
-import '../../domain/entities/queue_types.dart';
-import '../controllers/live_queue_controller.dart';
-import '../live_queue_copy.dart';
-import '../state/live_queue_state.dart';
-import '../widgets/live_queue_content.dart';
-import '../widgets/live_queue_failure_view.dart';
-import '../widgets/live_queue_loading_view.dart';
-import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
-import '../../../family_profiles/presentation/widgets/patient_selector.dart';
 import '../../../../core/localization/localization_extensions.dart';
+import '../../../../design_system/components/layout/saxlem_responsive_content.dart';
+import '../../domain/entities/patient_queue_status.dart';
+import '../../domain/repositories/live_queue_repository.dart';
+import '../controllers/live_queue_controller.dart';
+import '../state/live_queue_state.dart';
 
 class LiveQueuePage extends StatelessWidget {
-  const LiveQueuePage({
-    required this.controller,
-    this.copy = const LiveQueueCopy(),
-    this.profilesController,
-    super.key,
-  });
-
+  const LiveQueuePage({required this.controller, super.key});
   final LiveQueueController controller;
-  final LiveQueueCopy copy;
-  final PatientProfilesController? profilesController;
-
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(title: Text(copy.pageTitle)),
-      body: SafeArea(
-        top: false,
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: Text(context.l10n.liveQueue)),
+    body: SafeArea(
+      child: ListenableBuilder(
+        listenable: controller,
+        builder: (context, _) => AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: _body(context, controller.state),
+        ),
+      ),
+    ),
+  );
+  Widget _body(BuildContext context, LiveQueueState state) => switch (state) {
+    LiveQueueInitial() ||
+    LiveQueueLoading() => const Center(child: CircularProgressIndicator()),
+    LiveQueueFailed(:final problem) => _failure(context, problem),
+    LiveQueueReady(:final status, :final refreshProblem) => _content(
+      context,
+      status,
+      refreshProblem,
+    ),
+  };
+  Widget _failure(BuildContext context, LiveQueueProblem problem) => Center(
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Semantics(liveRegion: true, child: Text(_problem(context, problem))),
+          const SizedBox(height: 16),
+          FilledButton(
+            onPressed: controller.load,
+            child: Text(context.l10n.reload),
+          ),
+        ],
+      ),
+    ),
+  );
+  Widget _content(
+    BuildContext context,
+    PatientQueueStatus q,
+    LiveQueueProblem? problem,
+  ) => RefreshIndicator(
+    onRefresh: controller.load,
+    child: SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsetsDirectional.fromSTEB(24, 24, 24, 40),
+      child: SaxlemResponsiveContent(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (profilesController != null)
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(24, 12, 24, 0),
-                child: PatientSelector(
-                  controller: profilesController!,
-                  label: context.l10n.currentPatient,
-                ),
+            Semantics(
+              header: true,
+              child: Text(
+                q.doctor.name,
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
-            Expanded(
-              child: ListenableBuilder(
-                listenable: controller,
-                builder: (context, _) => AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 220),
-                  child: _bodyFor(controller.state),
-                ),
+            ),
+            Text(q.clinic.name),
+            const SizedBox(height: 24),
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                q.instruction,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
+            ),
+            const SizedBox(height: 20),
+            if (q.ticketNumber != null)
+              _row(context, context.l10n.yourNumber, '${q.ticketNumber}'),
+            if (q.currentTicketNumber != null)
+              _row(
+                context,
+                context.l10n.currentPatient,
+                '${q.currentTicketNumber}',
+              ),
+            _row(context, context.l10n.patientsAhead, '${q.patientsAhead}'),
+            if (q.estimatedWait != null && !q.estimateSuspended)
+              _row(
+                context,
+                context.l10n.estimatedWait,
+                '${q.estimatedWait!.minimumMinutes}-${q.estimatedWait!.maximumMinutes} ${context.l10n.minutesShort}',
+              ),
+            if (problem != null) ...[
+              const SizedBox(height: 16),
+              Semantics(
+                liveRegion: true,
+                child: Text(_problem(context, problem)),
+              ),
+            ],
+            const SizedBox(height: 24),
+            OutlinedButton(
+              onPressed: controller.load,
+              child: Text(context.l10n.reload),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _bodyFor(LiveQueueState state) {
-    return switch (state) {
-      LiveQueueInitial() || LiveQueueLoading() => const LiveQueueLoadingView(
-        key: ValueKey('loading'),
-      ),
-      LiveQueueFailure(:final message, :final value) when value == null =>
-        LiveQueueFailureView(
-          key: const ValueKey('failure'),
-          message: message,
-          retryLabel: copy.retry,
-          onRetry: controller.retry,
-        ),
-      LiveQueueActionPending(:final value, :final action) => LiveQueueContent(
-        key: const ValueKey('content'),
-        snapshot: value,
-        copy: copy,
-        pendingAction: action,
-        onAction: controller.perform,
-      ),
-      LiveQueueReconnecting(:final value) => LiveQueueContent(
-        key: const ValueKey('content'),
-        snapshot: value,
-        copy: copy,
-        connectionStatus: QueueConnectionStatus.reconnecting,
-        onAction: controller.perform,
-      ),
-      LiveQueueStale(:final value) => LiveQueueContent(
-        key: const ValueKey('content'),
-        snapshot: value,
-        copy: copy,
-        connectionStatus: QueueConnectionStatus.stale,
-        onAction: controller.perform,
-      ),
-      LiveQueueOffline(:final value) when value != null => LiveQueueContent(
-        key: const ValueKey('content'),
-        snapshot: value,
-        copy: copy,
-        connectionStatus: QueueConnectionStatus.offline,
-        onAction: controller.perform,
-      ),
-      LiveQueueOffline() => LiveQueueFailureView(
-        key: const ValueKey('offline-empty'),
-        message: 'You are offline and no saved queue update is available.',
-        retryLabel: copy.retry,
-        onRetry: controller.retry,
-      ),
-      LiveQueuePaused(:final value) ||
-      LiveQueueClosed(:final value) => LiveQueueContent(
-        key: const ValueKey('content'),
-        snapshot: value,
-        copy: copy,
-        onAction: controller.perform,
-      ),
-      LiveQueueFailure(:final message, :final value) => LiveQueueContent(
-        key: const ValueKey('content'),
-        snapshot: value!,
-        copy: copy,
-        feedbackMessage: message,
-        onAction: controller.perform,
-      ),
-      LiveQueueLive(:final value, :final feedbackMessage) => LiveQueueContent(
-        key: const ValueKey('content'),
-        snapshot: value,
-        copy: copy,
-        feedbackMessage: feedbackMessage,
-        onAction: controller.perform,
-      ),
-    };
-  }
+    ),
+  );
+  Widget _row(BuildContext context, String label, String value) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    child: Row(
+      children: [
+        Expanded(child: Text(label)),
+        Text(value, style: Theme.of(context).textTheme.titleLarge),
+      ],
+    ),
+  );
+  String _problem(BuildContext context, LiveQueueProblem p) => switch (p) {
+    LiveQueueProblem.offline => context.l10n.offlineBody,
+    LiveQueueProblem.sessionExpired => context.l10n.sessionExpiredBody,
+    LiveQueueProblem.notFound => context.l10n.appointmentNotFound,
+    LiveQueueProblem.forbidden => context.l10n.appointmentForbidden,
+    _ => context.l10n.queueNotReady,
+  };
 }

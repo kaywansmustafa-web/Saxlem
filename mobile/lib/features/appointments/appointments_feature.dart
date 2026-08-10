@@ -9,11 +9,17 @@ import '../discover/domain/repositories/doctor_discovery_repository.dart';
 import '../discover/data/repositories/unavailable_doctor_discovery_repository.dart';
 import '../booking/domain/repositories/booking_repository.dart';
 import '../booking/data/repositories/backend_booking_repository.dart';
+import '../arrival/domain/repositories/patient_arrival_repository.dart';
+import '../arrival/data/repositories/backend_patient_arrival_repository.dart';
+import '../live_queue/domain/repositories/live_queue_repository.dart';
+import '../live_queue/data/repositories/live_queue_repository_impl.dart';
 
 class AppointmentsFeature extends StatefulWidget {
   const AppointmentsFeature({
     required this.repository,
     this.bookingRepository = const UnavailableBookingRepository(),
+    this.arrivalRepository = const UnavailablePatientArrivalRepository(),
+    this.liveQueueRepository = const UnavailableLiveQueueRepository(),
     this.onOpenDiscover,
     this.profilesController,
     this.doctorDiscoveryRepository =
@@ -23,6 +29,8 @@ class AppointmentsFeature extends StatefulWidget {
   });
   final PatientAppointmentsRepository repository;
   final BookingRepository bookingRepository;
+  final PatientArrivalRepository arrivalRepository;
+  final LiveQueueRepository liveQueueRepository;
   final VoidCallback? onOpenDiscover;
   final PatientProfilesController? profilesController;
   final DoctorDiscoveryRepository doctorDiscoveryRepository;
@@ -57,6 +65,8 @@ class _AppointmentsFeatureState extends State<AppointmentsFeature> {
     profilesController: widget.profilesController,
     repository: widget.repository,
     bookingRepository: widget.bookingRepository,
+    arrivalRepository: widget.arrivalRepository,
+    liveQueueRepository: widget.liveQueueRepository,
     onAppointmentsChanged: () => controller.load(
       widget.profilesController?.activeProfileId ?? PatientProfileId.me,
     ),

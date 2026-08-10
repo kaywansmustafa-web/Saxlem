@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/models/recommended_doctor.dart';
 import '../../../../core/models/specialty.dart';
-import '../../../live_queue/domain/entities/patient_queue_snapshot.dart';
-import '../../../live_queue/domain/entities/queue_types.dart';
 import '../../../discover/domain/entities/doctor_search_criteria.dart';
 import 'dashboard_header.dart';
 import 'dashboard_search_bar.dart';
-import 'live_queue_card.dart';
 import 'popular_specialties_section.dart';
 import 'recommended_doctors_section.dart';
 import '../../../../core/localization/localization_extensions.dart';
@@ -19,7 +16,6 @@ class DashboardView extends StatelessWidget {
     required this.onOpenDiscover,
     required this.onOpenAlerts,
     required this.onOpenAppointments,
-    required this.onOpenLiveQueue,
     this.profilesController,
     super.key,
   });
@@ -31,7 +27,6 @@ class DashboardView extends StatelessWidget {
   onOpenDiscover;
   final VoidCallback onOpenAlerts;
   final VoidCallback onOpenAppointments;
-  final VoidCallback onOpenLiveQueue;
   final PatientProfilesController? profilesController;
 
   static const _specialties = [
@@ -101,48 +96,6 @@ class DashboardView extends StatelessWidget {
             onTap: () => onOpenDiscover(focus: true, openFilters: false),
             onFilterPressed: () =>
                 onOpenDiscover(focus: false, openFilters: true),
-          ),
-          const SizedBox(height: 24),
-          LiveQueueCard(
-            queue: PatientQueueSnapshot(
-              sessionId: 'session-duhok-01',
-              queueEntryId: 'entry-patient-23',
-              queueVersion: 12,
-              careProviderDisplayName: 'Dr. Ahmed Hassan',
-              serviceDisplayName: 'Dentistry',
-              anonymousCurrentToken: '18',
-              patientNumber: '23',
-              patientsAhead: 4,
-              estimatedWaitLowerMinutes: 21,
-              estimatedWaitUpperMinutes: 29,
-              estimateConfidence: QueueEstimateConfidence.medium,
-              doctorTimingMinutes: 8,
-              patientStatus: PatientQueueStatus.expected,
-              sessionStatus: QueueSessionStatus.open,
-              lastUpdatedAt: DateTime.now(),
-              remoteWaitingAllowed: true,
-              allowedActions: const {
-                PatientQueueAction.onMyWay,
-                PatientQueueAction.arrived,
-              },
-              guidanceMessage: 'Relax, no need to leave yet.',
-            ),
-            labels: LiveQueueLabels(
-              title: strings.liveQueue,
-              live: strings.live,
-              currentPatient: strings.currentPatient,
-              youAre: strings.yourNumber,
-              patientsAhead: strings.patientsAhead,
-              estimatedWait: strings.estimatedWait,
-              doctorDelay: strings.doctorStatus,
-              minutes: strings.minutesShort,
-              action: strings.viewLiveQueue,
-              semanticSummary:
-                  '${strings.liveQueue}. ${strings.currentPatient} 18. '
-                  '${strings.yourNumber} 23. ${strings.patientsAhead} 4. '
-                  '${strings.estimatedWait} 21–29 ${strings.minutesShort}.',
-            ),
-            onActionPressed: onOpenLiveQueue,
           ),
           const SizedBox(height: 30),
           PopularSpecialtiesSection(

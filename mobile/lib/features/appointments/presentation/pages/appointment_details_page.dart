@@ -174,6 +174,12 @@ import '../../domain/entities/patient_appointment.dart';
 import '../../domain/repositories/patient_appointments_repository.dart';
 import '../controllers/appointment_detail_controller.dart';
 import '../state/appointment_detail_state.dart';
+import '../../../arrival/domain/entities/patient_arrival.dart';
+import '../../../arrival/domain/repositories/patient_arrival_repository.dart';
+import '../../../arrival/presentation/controllers/patient_arrival_controller.dart';
+import '../../../arrival/presentation/state/patient_arrival_state.dart';
+import '../../../live_queue/domain/repositories/live_queue_repository.dart';
+import '../../../live_queue/live_queue_feature.dart';
 
 class AppointmentDetailsPage extends StatefulWidget {
   const AppointmentDetailsPage({
@@ -182,6 +188,8 @@ class AppointmentDetailsPage extends StatefulWidget {
     required this.bookingRepository,
     required this.onChanged,
     required this.profilesController,
+    required this.arrivalRepository,
+    required this.liveQueueRepository,
     super.key,
   });
   final String appointmentId;
@@ -189,6 +197,8 @@ class AppointmentDetailsPage extends StatefulWidget {
   final BookingRepository bookingRepository;
   final Future<void> Function() onChanged;
   final PatientProfilesController? profilesController;
+  final PatientArrivalRepository arrivalRepository;
+  final LiveQueueRepository liveQueueRepository;
 
   @override
   State<AppointmentDetailsPage> createState() => _AppointmentDetailsPageState();
@@ -196,6 +206,8 @@ class AppointmentDetailsPage extends StatefulWidget {
 
 class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
   late final AppointmentDetailController controller;
+  late PatientArrivalController arrivalController;
+  bool _arrivalLoadRequested = false;
   final _statusFocus = FocusNode();
 
   @override
@@ -211,17 +223,33 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
       operationIds: SecureBookingOperationIdGenerator(),
       onChanged: widget.onChanged,
     )..load();
+    _createArrivalController();
     widget.profilesController?.addListener(_profileChanged);
   }
 
-  void _profileChanged() =>
-      controller.changeProfile(widget.profilesController!.activeProfileId);
+  void _createArrivalController() {
+    arrivalController = PatientArrivalController(
+      appointmentId: widget.appointmentId,
+      expectedProfileId: widget.profilesController?.activeProfileId.value ?? '',
+      repository: widget.arrivalRepository,
+      operationIds: SecureBookingOperationIdGenerator(),
+    );
+  }
+
+  void _profileChanged() {
+    controller.changeProfile(widget.profilesController!.activeProfileId);
+    arrivalController.dispose();
+    _arrivalLoadRequested = false;
+    _createArrivalController();
+    if (mounted) setState(() {});
+  }
 
   @override
   void dispose() {
     widget.profilesController?.removeListener(_profileChanged);
     _statusFocus.dispose();
     controller.dispose();
+    arrivalController.dispose();
     super.dispose();
   }
 
@@ -269,6 +297,12 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
 
   Widget _ready(AppointmentDetailReady detail) {
     final item = detail.appointment;
+    if (item.canMutate && !_arrivalLoadRequested) {
+      _arrivalLoadRequested = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) arrivalController.load();
+      });
+    }
     final material = MaterialLocalizations.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsetsDirectional.only(top: 20, bottom: 36),
@@ -319,6 +353,10 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                   _DetailRow(context.l10n.cancellationReason, reason),
               ],
             ),
+            if (item.canMutate) ...[
+              const SizedBox(height: 20),
+              _arrivalExperience(),
+            ],
             if (detail.problem != null) ...[
               const SizedBox(height: 16),
               Focus(
@@ -382,6 +420,89 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
         ),
       ),
     );
+  }
+
+  Widget _arrivalExperience() => ListenableBuilder(
+    listenable: arrivalController,
+    builder: (context, _) => switch (arrivalController.state) {
+      PatientArrivalInitial() || PatientArrivalLoading() => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      PatientArrivalFailed() => Semantics(
+        liveRegion: true,
+        child: Column(
+          children: [
+            Text(context.l10n.queueNotReady),
+            TextButton(
+              onPressed: arrivalController.load,
+              child: Text(context.l10n.reload),
+            ),
+          ],
+        ),
+      ),
+      PatientArrivalReady(:final arrival, :final submitting, :final problem) =>
+        Semantics(
+          container: true,
+          liveRegion: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                context.l10n.status,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              Text(_arrivalMessage(arrival)),
+              if (problem != null) Text(context.l10n.appointmentUnknownOutcome),
+              if (arrival.eligibility.canArrive) ...[
+                const SizedBox(height: 12),
+                FilledButton(
+                  onPressed: submitting
+                      ? null
+                      : arrivalController.recordArrival,
+                  child: Text(
+                    submitting
+                        ? context.l10n.loadingAppointments
+                        : context.l10n.recordArrival,
+                  ),
+                ),
+              ],
+              if (arrival.status == ArrivalStatus.queueReady) ...[
+                const SizedBox(height: 12),
+                FilledButton(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => LiveQueueFeature(
+                        appointmentId: widget.appointmentId,
+                        repository: widget.liveQueueRepository,
+                      ),
+                    ),
+                  ),
+                  child: Text(context.l10n.openLiveQueue),
+                ),
+              ],
+            ],
+          ),
+        ),
+    },
+  );
+
+  String _arrivalMessage(PatientArrival arrival) {
+    if (arrival.status == ArrivalStatus.queueReady) {
+      return context.l10n.queueAvailableToday;
+    }
+    if (arrival.status == ArrivalStatus.arrived) {
+      return context.l10n.notificationReservedWhy;
+    }
+    return switch (arrival.eligibility.reason) {
+      ArrivalEligibilityReason.tooEarly
+          when arrival.eligibility.opensAt != null =>
+        '${context.l10n.queueOpensAppointmentDay} ${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(arrival.eligibility.opensAt!))}',
+      ArrivalEligibilityReason.tooLate ||
+      ArrivalEligibilityReason.invalidAppointmentStatus ||
+      ArrivalEligibilityReason.unavailable => context.l10n.actionUnavailable,
+      _ => context.l10n.queueNotReady,
+    };
   }
 
   Future<void> _cancel() async {

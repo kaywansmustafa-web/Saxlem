@@ -951,4 +951,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cancel => 'رجوع';
+
+  @override
+  String get recordArrival => 'تسجيل الوصول';
 }

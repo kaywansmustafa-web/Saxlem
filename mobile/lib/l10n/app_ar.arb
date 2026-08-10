@@ -260,5 +260,6 @@
   "rescheduleAppointment": "تغيير موعد الزيارة",
   "chooseNewDateTime": "اختر تاريخاً ووقتاً جديدين",
   "confirmCancellation": "تأكيد الإلغاء",
-  "cancel": "رجوع"
+  "cancel": "رجوع",
+  "recordArrival": "تسجيل الوصول"
 }

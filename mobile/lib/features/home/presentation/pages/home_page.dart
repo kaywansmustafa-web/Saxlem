@@ -15,7 +15,6 @@ import '../../../notifications/domain/entities/patient_notification.dart';
 import '../../../notifications/domain/entities/notification_types.dart';
 import '../../../notifications/notifications_feature.dart';
 import '../../../notifications/presentation/controllers/notifications_controller.dart';
-import '../../../live_queue/live_queue_feature.dart';
 import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
 import '../../../family_profiles/presentation/pages/patient_profiles_page.dart';
 import '../../../discover/domain/repositories/doctor_discovery_repository.dart';
@@ -24,6 +23,10 @@ import '../../../booking/domain/repositories/booking_repository.dart';
 import '../../../booking/data/repositories/backend_booking_repository.dart';
 import '../../../appointments/domain/repositories/patient_appointments_repository.dart';
 import '../../../appointments/data/repositories/backend_patient_appointments_repository.dart';
+import '../../../arrival/domain/repositories/patient_arrival_repository.dart';
+import '../../../arrival/data/repositories/backend_patient_arrival_repository.dart';
+import '../../../live_queue/domain/repositories/live_queue_repository.dart';
+import '../../../live_queue/data/repositories/live_queue_repository_impl.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -35,6 +38,8 @@ class HomePage extends StatefulWidget {
     this.bookingRepository = const UnavailableBookingRepository(),
     this.appointmentsRepository =
         const UnavailablePatientAppointmentsRepository(),
+    this.arrivalRepository = const UnavailablePatientArrivalRepository(),
+    this.liveQueueRepository = const UnavailableLiveQueueRepository(),
     super.key,
   });
   final bool guestMode;
@@ -43,6 +48,8 @@ class HomePage extends StatefulWidget {
   final DoctorDiscoveryRepository doctorDiscoveryRepository;
   final BookingRepository bookingRepository;
   final PatientAppointmentsRepository appointmentsRepository;
+  final PatientArrivalRepository arrivalRepository;
+  final LiveQueueRepository liveQueueRepository;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -85,16 +92,6 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  void _openQueue() => Navigator.of(context).push(
-    MaterialPageRoute<void>(
-      builder: (_) => LiveQueueFeature(
-        queueEntryId:
-            'entry-${widget.profilesController?.activeProfileId.value ?? 'me'}',
-        profilesController: widget.profilesController,
-      ),
-    ),
-  );
-
   void _openNotificationAction(NotificationAction action) {
     switch (action.destination) {
       case NotificationDestination.appointment:
@@ -103,7 +100,7 @@ class _HomePageState extends State<HomePage> {
       case NotificationDestination.booking:
         _openDiscover();
       case NotificationDestination.liveQueue:
-        _openQueue();
+        setState(() => _selectedIndex = 2);
       case NotificationDestination.settings:
         setState(() => _selectedIndex = 4);
       case NotificationDestination.none:
@@ -160,7 +157,6 @@ class _HomePageState extends State<HomePage> {
                     onOpenAlerts: () => setState(() => _selectedIndex = 3),
                     onOpenAppointments: () =>
                         setState(() => _selectedIndex = 2),
-                    onOpenLiveQueue: _openQueue,
                     profilesController: widget.profilesController,
                   ),
                   DiscoverFeature(
@@ -188,6 +184,8 @@ class _HomePageState extends State<HomePage> {
                       : AppointmentsFeature(
                           repository: widget.appointmentsRepository,
                           bookingRepository: widget.bookingRepository,
+                          arrivalRepository: widget.arrivalRepository,
+                          liveQueueRepository: widget.liveQueueRepository,
                           onOpenDiscover: () => _openDiscover(),
                           profilesController: widget.profilesController,
                           doctorDiscoveryRepository:

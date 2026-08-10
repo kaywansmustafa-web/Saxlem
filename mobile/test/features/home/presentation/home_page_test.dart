@@ -14,10 +14,10 @@ void main() {
   testWidgets('shows the complete patient dashboard', (tester) async {
     await tester.pumpWidget(buildSubject());
 
-    expect(find.text('Live queue'), findsOneWidget);
+    expect(find.text('Live queue'), findsNothing);
     expect(find.text('Popular specialties'), findsOneWidget);
     expect(find.text('Recommended doctors'), findsOneWidget);
-    expect(find.text('Patients ahead'), findsOneWidget);
+    expect(find.text('Patients ahead'), findsNothing);
     expect(find.text('Book'), findsWidgets);
   });
 
@@ -26,6 +26,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(find.text('Live queue'), findsOneWidget);
+    expect(find.text('Live queue'), findsNothing);
   });
 }
