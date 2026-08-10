@@ -107,14 +107,14 @@ export class JwtAuthGuard implements CanActivate {
       throw new ForbiddenException('Doctor eligibility is no longer active.');
     if (
       claims.role === 'platformAdministrator' &&
-      !session.user.memberships.some(
-        (membership) =>
-          membership.status === 'active' &&
-          membership.organization.status === 'active' &&
-          membership.clinic.status === 'active',
+      !session.user.roles.some(
+        (role) =>
+          role.role === 'platformAdministrator' &&
+          !role.organizationId &&
+          !role.clinicId,
       )
     )
-      throw new ForbiddenException('Staff membership is no longer active.');
+      throw new ForbiddenException('Platform role is no longer active.');
     if (claims.org && claims.clinic) {
       const membership = await this.prisma.db.clinicMembership.findFirst({
         where: {

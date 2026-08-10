@@ -515,13 +515,11 @@ export class AuthenticationService {
     const administrator = staff.user.roles.find(
       (assignment) => assignment.role === 'platformAdministrator',
     );
-    const activeMembership = staff.user.memberships.some(
-      (membership) =>
-        membership.status === 'active' &&
-        membership.organization.status === 'active' &&
-        membership.clinic.status === 'active',
-    );
-    if (administrator && activeMembership)
+    if (
+      administrator &&
+      !administrator.organizationId &&
+      !administrator.clinicId
+    )
       return { role: 'platformAdministrator' };
     for (const assignment of staff.user.roles) {
       if (
@@ -561,11 +559,11 @@ export class AuthenticationService {
     if (session.family.role === 'doctor' && !session.user.staffAccount?.doctor)
       return false;
     if (session.family.role === 'platformAdministrator')
-      return session.user.memberships.some(
-        (membership) =>
-          membership.status === 'active' &&
-          membership.organization.status === 'active' &&
-          membership.clinic.status === 'active',
+      return session.user.roles.some(
+        (assignment) =>
+          assignment.role === 'platformAdministrator' &&
+          !assignment.organizationId &&
+          !assignment.clinicId,
       );
     return session.user.memberships.some(
       (membership) =>

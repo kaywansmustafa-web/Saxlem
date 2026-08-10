@@ -6,11 +6,8 @@ import { AppointmentsModule } from './appointments/appointments.module';
 import { ArrivalsModule } from './arrivals/arrivals.module';
 import { QueueModule } from './queue/queue.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { AdministrationModule } from './administration/administration.module';
 
-@Module({})
-export class OrganizationsModule {}
-@Module({})
-export class ClinicsModule {}
 @Module({})
 export class ClinicStaffModule {}
 @Module({})
@@ -24,8 +21,7 @@ export class AuditModule {}
 @Module({
   imports: [
     IdentityModule,
-    OrganizationsModule,
-    ClinicsModule,
+    AdministrationModule,
     ClinicStaffModule,
     DoctorsModule,
     PatientsModule,
