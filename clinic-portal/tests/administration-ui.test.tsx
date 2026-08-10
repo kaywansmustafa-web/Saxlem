@@ -207,7 +207,9 @@ describe("Sprint 13S administration experience", () => {
 
     render(<AdministrationCreateForm kind="clinic" locale="en" m={m} />);
 
-    expect(await screen.findByText(m.unavailable)).toBeInTheDocument();
+    expect(
+      await screen.findByText(m.organizationSelectionLimit),
+    ).toBeInTheDocument();
     expect(
       screen.queryByLabelText(m.selectOrganization),
     ).not.toBeInTheDocument();

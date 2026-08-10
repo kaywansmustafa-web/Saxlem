@@ -421,7 +421,7 @@ export function AdministrationCreateForm({
     attempt = useRef<{ fingerprint: string; id: string } | null>(null);
   const [organizations, setOrganizations] = useState<Organization[]>([]),
     [organizationState, setOrganizationState] = useState<
-      "loading" | "ready" | "failure"
+      "loading" | "ready" | "failure" | "incomplete"
     >(kind === "clinic" ? "loading" : "ready"),
     [pending, setPending] = useState(false),
     [error, setError] = useState<string | null>(null),
@@ -449,7 +449,10 @@ export function AdministrationCreateForm({
           if (seenCursors.has(cursor)) throw new Error("stale cursor");
           seenCursors.add(cursor);
         }
-        if (cursor) throw new Error("organization selection is incomplete");
+        if (cursor) {
+          if (active) setOrganizationState("incomplete");
+          return;
+        }
         if (!active) return;
         setOrganizations([
           ...new Map(items.map((item) => [item.id, item])).values(),
@@ -544,6 +547,8 @@ export function AdministrationCreateForm({
         onAction={() => location.reload()}
       />
     );
+  if (organizationState === "incomplete")
+    return <AdminState text={m.organizationSelectionLimit} />;
   const title = kind === "organization" ? m.createOrganization : m.createClinic;
   return (
     <div className="administration-page">

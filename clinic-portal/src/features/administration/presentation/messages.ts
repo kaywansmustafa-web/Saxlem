@@ -44,6 +44,8 @@ const en = {
   loadMore: "Load more",
   loading: "Loading…",
   loadingOrganizations: "Loading organizations…",
+  organizationSelectionLimit:
+    "The organization list is too large to show safely. Review Organizations before trying again.",
   loadingClinics: "Loading clinics…",
   unavailable: "Saxlem services are temporarily unavailable.",
   forbidden: "You do not have permission to use administration.",
@@ -105,6 +107,7 @@ const ar: AdministrationMessages = {
   loadMore: "تحميل المزيد",
   loading: "جارٍ التحميل…",
   loadingOrganizations: "جارٍ تحميل المؤسسات…",
+  organizationSelectionLimit: en.organizationSelectionLimit,
   loadingClinics: "جارٍ تحميل العيادات…",
   unavailable: "خدمات ساكلم غير متاحة مؤقتاً.",
   forbidden: "ليس لديك صلاحية لاستخدام الإدارة.",
