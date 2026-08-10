@@ -46,6 +46,8 @@ class PatientNotification {
     this.action = const NotificationAction.none(),
     this.groupKey,
     this.profileId = PatientProfileId.me,
+    this.deliverySequence = '0',
+    this.actionCode = '',
   });
 
   final NotificationId id;
@@ -58,6 +60,8 @@ class PatientNotification {
   final NotificationAction action;
   final String? groupKey;
   final PatientProfileId? profileId;
+  final String deliverySequence;
+  final String actionCode;
 
   bool get isUnread => readState == NotificationReadState.unread;
   bool get isQueue => category == NotificationCategory.queue;
@@ -74,5 +78,7 @@ class PatientNotification {
     action: action,
     groupKey: groupKey,
     profileId: profileId,
+    deliverySequence: deliverySequence,
+    actionCode: actionCode,
   );
 }

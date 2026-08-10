@@ -13,6 +13,7 @@ import '../arrival/domain/repositories/patient_arrival_repository.dart';
 import '../arrival/data/repositories/backend_patient_arrival_repository.dart';
 import '../live_queue/domain/repositories/live_queue_repository.dart';
 import '../live_queue/data/repositories/live_queue_repository_impl.dart';
+import '../notifications/domain/entities/notification_page.dart';
 
 class AppointmentsFeature extends StatefulWidget {
   const AppointmentsFeature({
@@ -20,6 +21,7 @@ class AppointmentsFeature extends StatefulWidget {
     this.bookingRepository = const UnavailableBookingRepository(),
     this.arrivalRepository = const UnavailablePatientArrivalRepository(),
     this.liveQueueRepository = const UnavailableLiveQueueRepository(),
+    this.notificationSignals,
     this.onOpenDiscover,
     this.profilesController,
     this.doctorDiscoveryRepository =
@@ -31,6 +33,7 @@ class AppointmentsFeature extends StatefulWidget {
   final BookingRepository bookingRepository;
   final PatientArrivalRepository arrivalRepository;
   final LiveQueueRepository liveQueueRepository;
+  final Stream<NotificationSignal>? notificationSignals;
   final VoidCallback? onOpenDiscover;
   final PatientProfilesController? profilesController;
   final DoctorDiscoveryRepository doctorDiscoveryRepository;
@@ -67,6 +70,7 @@ class _AppointmentsFeatureState extends State<AppointmentsFeature> {
     bookingRepository: widget.bookingRepository,
     arrivalRepository: widget.arrivalRepository,
     liveQueueRepository: widget.liveQueueRepository,
+    notificationSignals: widget.notificationSignals,
     onAppointmentsChanged: () => controller.load(
       widget.profilesController?.activeProfileId ?? PatientProfileId.me,
     ),

@@ -8,9 +8,6 @@ import '../../../discover/domain/entities/doctor_search_criteria.dart';
 import '../../../appointments/appointments_feature.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import 'informational_page.dart';
-import '../../../notifications/data/data_sources/mock_notifications_data_source.dart';
-import '../../../notifications/data/mappers/patient_notification_mapper.dart';
-import '../../../notifications/data/repositories/in_memory_notifications_repository.dart';
 import '../../../notifications/domain/entities/patient_notification.dart';
 import '../../../notifications/domain/entities/notification_types.dart';
 import '../../../notifications/notifications_feature.dart';
@@ -27,6 +24,8 @@ import '../../../arrival/domain/repositories/patient_arrival_repository.dart';
 import '../../../arrival/data/repositories/backend_patient_arrival_repository.dart';
 import '../../../live_queue/domain/repositories/live_queue_repository.dart';
 import '../../../live_queue/data/repositories/live_queue_repository_impl.dart';
+import '../../../notifications/domain/repositories/notifications_repository.dart';
+import '../../../notifications/data/repositories/backend_notifications_repository.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -40,6 +39,7 @@ class HomePage extends StatefulWidget {
         const UnavailablePatientAppointmentsRepository(),
     this.arrivalRepository = const UnavailablePatientArrivalRepository(),
     this.liveQueueRepository = const UnavailableLiveQueueRepository(),
+    this.notificationsRepository = const UnavailableNotificationsRepository(),
     super.key,
   });
   final bool guestMode;
@@ -50,12 +50,13 @@ class HomePage extends StatefulWidget {
   final PatientAppointmentsRepository appointmentsRepository;
   final PatientArrivalRepository arrivalRepository;
   final LiveQueueRepository liveQueueRepository;
+  final NotificationsRepository notificationsRepository;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   int _selectedIndex = 0;
   int _discoverRequest = 0;
   DoctorSearchCriteria? _discoverCriteria;
@@ -66,13 +67,12 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _notifications = NotificationsController(
-      InMemoryNotificationsRepository(
-        MockNotificationsDataSource(),
-        const PatientNotificationMapper(),
-      ),
+      widget.notificationsRepository,
       onAction: _openNotificationAction,
-    )..load();
+    );
+    if (!widget.guestMode) _notifications.load();
     _notifications.addListener(_onNotificationsChanged);
     widget.profilesController?.addListener(_onProfileChanged);
   }
@@ -86,10 +86,28 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _notifications.removeListener(_onNotificationsChanged);
     widget.profilesController?.removeListener(_onProfileChanged);
     _notifications.dispose();
     super.dispose();
+  }
+
+  Future<void> _logout() async {
+    _notifications.clear();
+    await widget.onLogout?.call();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (widget.guestMode) return;
+    if (state == AppLifecycleState.resumed) {
+      _notifications.resume();
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached) {
+      _notifications.pause();
+    }
   }
 
   void _openNotificationAction(NotificationAction action) {
@@ -162,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                   DiscoverFeature(
                     repository: widget.doctorDiscoveryRepository,
                     bookingRepository: widget.bookingRepository,
-                    onAuthenticationRequired: widget.onLogout,
+                    onAuthenticationRequired: _logout,
                     key: ValueKey(_discoverRequest),
                     initialCriteria: _discoverCriteria,
                     focusSearch: _focusDiscover,
@@ -179,18 +197,19 @@ class _HomePageState extends State<HomePage> {
                           icon: Icons.lock_outline_rounded,
                           semanticLabel: strings.informationalScreen,
                           actionLabel: strings.verifyNumber,
-                          onAction: widget.onLogout,
+                          onAction: _logout,
                         )
                       : AppointmentsFeature(
                           repository: widget.appointmentsRepository,
                           bookingRepository: widget.bookingRepository,
                           arrivalRepository: widget.arrivalRepository,
                           liveQueueRepository: widget.liveQueueRepository,
+                          notificationSignals: _notifications.signals,
                           onOpenDiscover: () => _openDiscover(),
                           profilesController: widget.profilesController,
                           doctorDiscoveryRepository:
                               widget.doctorDiscoveryRepository,
-                          onAuthenticationRequired: widget.onLogout,
+                          onAuthenticationRequired: _logout,
                         ),
                   NotificationsFeature(
                     controller: _notifications,
@@ -205,11 +224,11 @@ class _HomePageState extends State<HomePage> {
                           actionLabel: widget.guestMode
                               ? strings.verifyNumber
                               : strings.logOut,
-                          onAction: widget.onLogout,
+                          onAction: _logout,
                         )
                       : PatientProfilesPage(
                           controller: widget.profilesController!,
-                          onLogout: widget.onLogout,
+                          onLogout: _logout,
                         ),
                 ],
               ),

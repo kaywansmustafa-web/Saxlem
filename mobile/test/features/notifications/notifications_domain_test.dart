@@ -26,7 +26,7 @@ void main() {
     },
   );
 
-  test('mark read and individual deletion emit accurate snapshots', () async {
+  test('mark read emits an accurate snapshot', () async {
     final repository = InMemoryNotificationsRepository(
       MockNotificationsDataSource(now: () => DateTime.utc(2026, 7, 15, 10)),
       const PatientNotificationMapper(),
@@ -36,7 +36,5 @@ void main() {
     final id = initial.notifications.first.id;
     await repository.markRead(id);
     expect((await repository.get(id))!.isUnread, isFalse);
-    await repository.delete(id);
-    expect(await repository.get(id), isNull);
   });
 }

@@ -19,9 +19,3 @@ class MarkNotificationRead {
   final NotificationsRepository repository;
   Future<void> call(NotificationId id) => repository.markRead(id);
 }
-
-class DeleteNotification {
-  const DeleteNotification(this.repository);
-  final NotificationsRepository repository;
-  Future<void> call(NotificationId id) => repository.delete(id);
-}

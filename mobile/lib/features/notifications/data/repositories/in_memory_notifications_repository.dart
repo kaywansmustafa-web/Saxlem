@@ -1,7 +1,6 @@
 import 'dart:async';
 import '../../domain/entities/notification_snapshot.dart';
 import '../../domain/entities/patient_notification.dart';
-import '../../domain/entities/notification_types.dart';
 import '../../domain/repositories/notifications_repository.dart';
 import '../data_sources/mock_notifications_data_source.dart';
 import '../mappers/patient_notification_mapper.dart';
@@ -38,15 +37,6 @@ class InMemoryNotificationsRepository implements NotificationsRepository {
   Future<void> markRead(NotificationId id) async {
     await load();
     _items = _items!.map((e) => e.id == id ? e.markRead() : e).toList();
-    _changes.add(_snapshot);
-  }
-
-  @override
-  Future<void> delete(NotificationId id) async {
-    await load();
-    final item = await get(id);
-    if (item?.priority == NotificationPriority.critical) return;
-    _items!.removeWhere((e) => e.id == id);
     _changes.add(_snapshot);
   }
 

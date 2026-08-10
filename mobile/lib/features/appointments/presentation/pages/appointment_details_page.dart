@@ -1,10 +1,14 @@
 /* Legacy in-memory appointment detail retained only for source history.
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:async';
 import '../../../../config/theme/app_colors.dart';
 import '../../domain/entities/patient_appointment.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../../core/models/patient_profile.dart';
 import '../../../live_queue/live_queue_feature.dart';
+import '../../../notifications/domain/entities/notification_page.dart';
+import '../../../notifications/domain/entities/notification_page.dart';
 import '../../../../design_system/components/layout/saxlem_responsive_content.dart';
 import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
 import '../../../family_profiles/presentation/widgets/patient_selector.dart';
@@ -161,6 +165,7 @@ class _Row extends StatelessWidget {
 }
 */
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/localization/localization_extensions.dart';
@@ -180,6 +185,7 @@ import '../../../arrival/presentation/controllers/patient_arrival_controller.dar
 import '../../../arrival/presentation/state/patient_arrival_state.dart';
 import '../../../live_queue/domain/repositories/live_queue_repository.dart';
 import '../../../live_queue/live_queue_feature.dart';
+import '../../../notifications/domain/entities/notification_page.dart';
 
 class AppointmentDetailsPage extends StatefulWidget {
   const AppointmentDetailsPage({
@@ -190,6 +196,7 @@ class AppointmentDetailsPage extends StatefulWidget {
     required this.profilesController,
     required this.arrivalRepository,
     required this.liveQueueRepository,
+    this.notificationSignals,
     super.key,
   });
   final String appointmentId;
@@ -199,6 +206,7 @@ class AppointmentDetailsPage extends StatefulWidget {
   final PatientProfilesController? profilesController;
   final PatientArrivalRepository arrivalRepository;
   final LiveQueueRepository liveQueueRepository;
+  final Stream<NotificationSignal>? notificationSignals;
 
   @override
   State<AppointmentDetailsPage> createState() => _AppointmentDetailsPageState();
@@ -208,6 +216,8 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
   late final AppointmentDetailController controller;
   late PatientArrivalController arrivalController;
   bool _arrivalLoadRequested = false;
+  StreamSubscription<NotificationSignal>? _notificationSubscription;
+  Timer? _refreshDebounce;
   final _statusFocus = FocusNode();
 
   @override
@@ -224,6 +234,15 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
       onChanged: widget.onChanged,
     )..load();
     _createArrivalController();
+    _notificationSubscription = widget.notificationSignals?.listen((signal) {
+      final profile = signal.notification.profileId?.value;
+      final selected = widget.profilesController?.activeProfileId.value;
+      if (profile != null && profile != selected) return;
+      _refreshDebounce?.cancel();
+      _refreshDebounce = Timer(const Duration(milliseconds: 300), () {
+        if (mounted && _arrivalLoadRequested) arrivalController.load();
+      });
+    }, onError: (_) => arrivalController.invalidate());
     widget.profilesController?.addListener(_profileChanged);
   }
 
@@ -247,6 +266,8 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
   @override
   void dispose() {
     widget.profilesController?.removeListener(_profileChanged);
+    _refreshDebounce?.cancel();
+    _notificationSubscription?.cancel();
     _statusFocus.dispose();
     controller.dispose();
     arrivalController.dispose();
@@ -475,6 +496,7 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                       builder: (_) => LiveQueueFeature(
                         appointmentId: widget.appointmentId,
                         repository: widget.liveQueueRepository,
+                        notificationSignals: widget.notificationSignals,
                       ),
                     ),
                   ),
