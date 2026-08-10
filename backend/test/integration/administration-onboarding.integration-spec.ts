@@ -61,6 +61,18 @@ describe('platform administration onboarding API', () => {
       'status',
       'updatedAt',
     ]);
+    const defaultPlan = await prisma.organizationPlanAssignment.findFirst({
+      where: { organizationId: organization.body.id, effectiveTo: null },
+      include: { plan: true },
+    });
+    expect(defaultPlan).toMatchObject({
+      effectiveFrom: new Date(organization.body.createdAt),
+      plan: {
+        code: 'STANDARD_1250',
+        commissionAmountIqd: 1250,
+        currency: 'IQD',
+      },
+    });
     const replay = await request(app.getHttpServer())
       .post('/api/v1/administration/organizations')
       .set('Authorization', authorization)

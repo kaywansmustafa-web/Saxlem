@@ -1,6 +1,7 @@
 export type AppointmentStatus =
   'scheduled' | 'confirmed' | 'cancelled' | 'completed' | 'noShow';
 export type AppointmentType = 'initial' | 'followUp';
+export type AppointmentOrigin = 'patientBooked' | 'clinicCreated' | 'walkIn';
 export interface AppointmentProjection {
   readonly id: string;
   readonly reference: string;
@@ -35,6 +36,7 @@ export interface AppointmentWrite {
   readonly doctorId: string;
   readonly patientProfileId: string;
   readonly type: AppointmentType;
+  readonly origin: AppointmentOrigin;
   readonly reason: string;
   readonly startsAt: Date;
   readonly endsAt: Date;

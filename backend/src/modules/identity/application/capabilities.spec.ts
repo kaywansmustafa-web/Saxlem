@@ -78,3 +78,18 @@ describe('platform administration capability', () => {
     expect(capabilitiesFor(role).has('platform:administration')).toBe(granted);
   });
 });
+
+describe('billing capabilities', () => {
+  it.each([
+    ['platformAdministrator', true, true],
+    ['clinicManager', true, false],
+    ['receptionist', false, false],
+    ['doctor', false, false],
+    ['patient', false, false],
+  ] as const)('applies billing least privilege to %s', (role, read, manage) => {
+    const granted = capabilitiesFor(role);
+    expect(granted.has('billing:read')).toBe(read);
+    expect(granted.has('billing:plan:manage')).toBe(manage);
+    expect(granted.has('billing:statement:finalize')).toBe(manage);
+  });
+});

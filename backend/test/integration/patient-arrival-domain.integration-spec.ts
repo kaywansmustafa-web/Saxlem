@@ -583,6 +583,7 @@ async function createFixture(createArrival = true) {
       clinicId: clinic.id,
       doctorId: doctor.id,
       patientProfileId: patientUser.profileId,
+      origin: 'patientBooked',
       startsAt: new Date('2031-01-01T06:00:00.000Z'),
       endsAt: new Date('2031-01-01T06:30:00.000Z'),
       durationMinutes: 30,

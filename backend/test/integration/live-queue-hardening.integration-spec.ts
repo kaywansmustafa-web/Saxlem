@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import type { BackendConfiguration } from '../../src/config/environment';
 import type { PrismaService } from '../../src/infrastructure/database/prisma.service';
 import { PrismaAppointmentQueueCompletionPort } from '../../src/modules/appointments/infrastructure/prisma-appointment-queue-completion.port';
+import { PrismaBillingRepository } from '../../src/modules/billing/infrastructure/prisma-billing.repository';
 import { PrismaAppointmentRepository } from '../../src/modules/appointments/infrastructure/prisma-appointment.repository';
 import type {
   QueueAccess,
@@ -1606,7 +1607,9 @@ describe('live queue structural hardening', () => {
 function queueRepository() {
   return new PrismaQueueRepository(
     { db: prisma } as unknown as PrismaService,
-    new PrismaAppointmentQueueCompletionPort(),
+    new PrismaAppointmentQueueCompletionPort(
+      new PrismaBillingRepository({ db: prisma } as unknown as PrismaService),
+    ),
     {
       auditHashSecret: 'queue-hardening-audit-secret-32-characters',
     } as BackendConfiguration,
@@ -1734,6 +1737,7 @@ async function createFixture(appointmentCount: number) {
         clinicId: clinic.id,
         doctorId: doctor.id,
         patientProfileId: profile.id,
+        origin: 'patientBooked',
         startsAt,
         endsAt: new Date(startsAt.getTime() + 20 * 60_000),
         durationMinutes: 20,

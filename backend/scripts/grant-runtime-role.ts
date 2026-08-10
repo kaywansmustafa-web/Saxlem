@@ -90,6 +90,31 @@ async function grant(): Promise<void> {
       public.notification_mark_read(uuid,uuid,timestamptz)
       TO ${quotedRole}`,
   );
+  await client.query(
+    `REVOKE INSERT, UPDATE, DELETE ON TABLE public.billing_plans FROM ${quotedRole}`,
+  );
+  await client.query(
+    `REVOKE UPDATE, DELETE ON TABLE public.commission_ledger_entries FROM ${quotedRole}`,
+  );
+  await client.query(
+    `REVOKE UPDATE, DELETE ON TABLE public.billing_statement_lines,
+      public.billing_statement_clinic_breakdowns FROM ${quotedRole}`,
+  );
+  await client.query(
+    `REVOKE UPDATE, DELETE ON TABLE public.organization_plan_assignments,
+      public.billing_statements FROM ${quotedRole}`,
+  );
+  await client.query(
+    `GRANT UPDATE (effective_to, version) ON TABLE
+      public.organization_plan_assignments TO ${quotedRole}`,
+  );
+  await client.query(
+    `GRANT UPDATE (
+      status, gross_earned_iqd, reversals_iqd, net_commission_iqd,
+      qualifying_count, reversal_count, version, finalized_at,
+      finalized_by_id, updated_at
+    ) ON TABLE public.billing_statements TO ${quotedRole}`,
+  );
 }
 
 void grant().finally(() => client.end());

@@ -28,6 +28,7 @@
     "db:grant-runtime": "ts-node -r tsconfig-paths/register scripts/grant-runtime-role.ts",
     "db:verify-queue-runtime": "ts-node -r tsconfig-paths/register scripts/verify-queue-runtime-privileges.ts",
     "db:verify-notification-runtime": "ts-node -r tsconfig-paths/register scripts/verify-notification-runtime-privileges.ts",
+    "db:verify-billing-runtime": "ts-node -r tsconfig-paths/register scripts/verify-billing-runtime-privileges.ts",
     "db:seed": "ts-node -r tsconfig-paths/register scripts/seed-development.ts",
     "db:test:reset": "ts-node -r tsconfig-paths/register scripts/database-command.ts reset-test",
     "db:backup:rehearse": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/backup-restore-rehearsal.ps1",

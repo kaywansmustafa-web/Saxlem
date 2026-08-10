@@ -1,13 +1,21 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import type { Prisma } from '@prisma/client';
 import type {
   AppointmentQueueCompletionPort,
   CompleteAppointmentFromQueueInput,
 } from '../domain/appointment-queue-completion.port';
 import { AppointmentAuditPersistenceError } from '../domain/appointment.errors';
+import {
+  BILLING_REPOSITORY,
+  type BillingRepository,
+} from '../../billing/domain/billing.repository';
 
 @Injectable()
 export class PrismaAppointmentQueueCompletionPort implements AppointmentQueueCompletionPort {
+  constructor(
+    @Inject(BILLING_REPOSITORY)
+    private readonly billing: Pick<BillingRepository, 'materializeCompletion'>,
+  ) {}
   async completeFromQueue(
     tx: Prisma.TransactionClient,
     input: CompleteAppointmentFromQueueInput,
@@ -74,6 +82,13 @@ export class PrismaAppointmentQueueCompletionPort implements AppointmentQueueCom
           occurredAt: input.occurredAt,
         },
       });
+      await this.billing.materializeCompletion(
+        tx,
+        appointment.id,
+        input.occurredAt,
+        input.actorUserId,
+        input.requestId,
+      );
     } catch {
       throw new AppointmentAuditPersistenceError();
     }

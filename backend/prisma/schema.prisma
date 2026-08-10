@@ -24,6 +24,27 @@ enum AppointmentType {
   followUp
 }
 
+enum AppointmentOrigin {
+  patientBooked
+  clinicCreated
+  walkIn
+}
+
+enum BillingPlanStatus {
+  active
+  inactive
+}
+
+enum CommissionLedgerStatus {
+  earned
+  reversed
+}
+
+enum BillingStatementStatus {
+  draft
+  finalized
+}
+
 enum ArrivalStatus {
   expected
   arrived
@@ -147,20 +168,23 @@ model Organization {
   doctorLeaves             DoctorLeave[]
   doctorHolidays           DoctorHoliday[]
   doctorScheduleExceptions DoctorScheduleException[]
+  billingPlanAssignments   OrganizationPlanAssignment[]
+  commissionLedgerEntries  CommissionLedgerEntry[]
+  billingStatements        BillingStatement[]
 
   @@map("organizations")
 }
 
 model Clinic {
-  id                       String                    @id @default(uuid(7)) @db.Uuid
-  organizationId           String                    @map("organization_id") @db.Uuid
+  id                       String                            @id @default(uuid(7)) @db.Uuid
+  organizationId           String                            @map("organization_id") @db.Uuid
   name                     String
   code                     String
   timezone                 String
-  status                   RecordStatus              @default(active)
-  createdAt                DateTime                  @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt                DateTime                  @updatedAt @map("updated_at") @db.Timestamptz(3)
-  organization             Organization              @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  status                   RecordStatus                      @default(active)
+  createdAt                DateTime                          @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt                DateTime                          @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization             Organization                      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   memberships              ClinicMembership[]
   doctorSchedules          DoctorSchedule[]
   appointments             Appointment[]
@@ -180,6 +204,9 @@ model Clinic {
   doctorLeaves             DoctorLeave[]
   doctorHolidays           DoctorHoliday[]
   doctorScheduleExceptions DoctorScheduleException[]
+  commissionLedgerEntries  CommissionLedgerEntry[]
+  billingStatementLines    BillingStatementLine[]
+  billingClinicBreakdowns  BillingStatementClinicBreakdown[]
 
   @@unique([organizationId, id])
   @@unique([organizationId, code])
@@ -204,6 +231,8 @@ model User {
   roles                IdentityRoleAssignment[]
   sessionFamilies      SessionFamily[]
   authenticationEvents AuthenticationEvent[]
+  billingReversals     CommissionLedgerEntry[]  @relation("BillingReversalActor")
+  finalizedStatements  BillingStatement[]       @relation("BillingStatementFinalizer")
   authorizationVersion Int                      @default(1) @map("authorization_version")
   roleVersion          Int                      @default(1) @map("role_version")
 
@@ -561,6 +590,7 @@ model Appointment {
   patientProfileId    String                     @map("patient_profile_id") @db.Uuid
   publicReference     String                     @unique @default(dbgenerated()) @map("public_reference")
   type                AppointmentType            @default(initial)
+  origin              AppointmentOrigin?
   reason              String                     @default("General consultation")
   startsAt            DateTime                   @map("starts_at") @db.Timestamptz(3)
   endsAt              DateTime                   @default(dbgenerated()) @map("ends_at") @db.Timestamptz(3)
@@ -579,6 +609,8 @@ model Appointment {
   events              AppointmentEvent[]
   arrival             AppointmentArrival?
   queueEntries        QueueEntry[]
+  commissionEntries   CommissionLedgerEntry[]
+  statementLines      BillingStatementLine[]
 
   @@unique([organizationId, clinicId, id])
   @@unique([organizationId, clinicId, id, patientProfileId])
@@ -587,6 +619,138 @@ model Appointment {
   @@index([organizationId, doctorId, startsAt])
   @@index([patientProfileId, startsAt])
   @@map("appointments")
+}
+
+model BillingPlan {
+  id                  String                       @id @default(uuid(7)) @db.Uuid
+  code                String                       @unique
+  displayName         String                       @map("display_name")
+  status              BillingPlanStatus            @default(active)
+  currency            String                       @default("IQD")
+  commissionAmountIqd Int                          @map("commission_amount_iqd")
+  ruleCode            String                       @map("rule_code")
+  ruleVersion         Int                          @map("rule_version")
+  version             Int                          @default(1)
+  createdAt           DateTime                     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime                     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  assignments         OrganizationPlanAssignment[]
+  commissionEntries   CommissionLedgerEntry[]
+
+  @@map("billing_plans")
+}
+
+model OrganizationPlanAssignment {
+  id             String       @id @default(uuid(7)) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  planId         String       @map("plan_id") @db.Uuid
+  effectiveFrom  DateTime     @map("effective_from") @db.Timestamptz(3)
+  effectiveTo    DateTime?    @map("effective_to") @db.Timestamptz(3)
+  version        Int          @default(1)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  plan           BillingPlan  @relation(fields: [planId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, effectiveFrom])
+  @@map("organization_plan_assignments")
+}
+
+model CommissionLedgerEntry {
+  id                   String                 @id @default(uuid(7)) @db.Uuid
+  organizationId       String                 @map("organization_id") @db.Uuid
+  clinicId             String                 @map("clinic_id") @db.Uuid
+  appointmentId        String                 @map("appointment_id") @db.Uuid
+  planId               String                 @map("plan_id") @db.Uuid
+  originalCommissionId String?                @unique(map: "commission_one_reversal_per_original") @map("original_commission_id") @db.Uuid
+  amountIqd            Int                    @map("amount_iqd")
+  currency             String                 @default("IQD")
+  ruleCode             String                 @map("rule_code")
+  ruleVersion          Int                    @map("rule_version")
+  planVersion          Int                    @map("plan_version")
+  appointmentType      AppointmentType        @map("appointment_type")
+  appointmentOrigin    AppointmentOrigin      @map("appointment_origin")
+  completedAt          DateTime               @map("completed_at") @db.Timestamptz(3)
+  recognizedAt         DateTime               @map("recognized_at") @db.Timestamptz(3)
+  status               CommissionLedgerStatus
+  reversalReason       String?                @map("reversal_reason")
+  reversalActorId      String?                @map("reversal_actor_id") @db.Uuid
+  createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
+  organization         Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  clinic               Clinic                 @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+  appointment          Appointment            @relation(fields: [organizationId, appointmentId], references: [organizationId, id], onDelete: Restrict)
+  plan                 BillingPlan            @relation(fields: [planId], references: [id], onDelete: Restrict)
+  originalCommission   CommissionLedgerEntry? @relation("CommissionReversal", fields: [originalCommissionId], references: [id], onDelete: Restrict)
+  reversal             CommissionLedgerEntry? @relation("CommissionReversal")
+  reversalActor        User?                  @relation("BillingReversalActor", fields: [reversalActorId], references: [id], onDelete: Restrict)
+  statementLine        BillingStatementLine?
+
+  @@index([organizationId, recognizedAt, id])
+  @@index([organizationId, clinicId, recognizedAt])
+  @@map("commission_ledger_entries")
+}
+
+model BillingStatement {
+  id               String                            @id @default(uuid(7)) @db.Uuid
+  organizationId   String                            @map("organization_id") @db.Uuid
+  periodStart      DateTime                          @map("period_start") @db.Timestamptz(3)
+  periodEnd        DateTime                          @map("period_end") @db.Timestamptz(3)
+  timezone         String                            @default("Asia/Baghdad")
+  status           BillingStatementStatus            @default(draft)
+  grossEarnedIqd   Int                               @default(0) @map("gross_earned_iqd")
+  reversalsIqd     Int                               @default(0) @map("reversals_iqd")
+  netCommissionIqd Int                               @default(0) @map("net_commission_iqd")
+  qualifyingCount  Int                               @default(0) @map("qualifying_count")
+  reversalCount    Int                               @default(0) @map("reversal_count")
+  version          Int                               @default(1)
+  finalizedAt      DateTime?                         @map("finalized_at") @db.Timestamptz(3)
+  finalizedById    String?                           @map("finalized_by_id") @db.Uuid
+  createdAt        DateTime                          @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime                          @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization     Organization                      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  finalizedBy      User?                             @relation("BillingStatementFinalizer", fields: [finalizedById], references: [id], onDelete: Restrict)
+  lines            BillingStatementLine[]
+  clinicBreakdowns BillingStatementClinicBreakdown[]
+
+  @@unique([organizationId, periodStart])
+  @@index([organizationId, periodStart, id])
+  @@map("billing_statements")
+}
+
+model BillingStatementLine {
+  id                   String                 @id @default(uuid(7)) @db.Uuid
+  statementId          String                 @map("statement_id") @db.Uuid
+  ledgerEntryId        String                 @unique @map("ledger_entry_id") @db.Uuid
+  clinicId             String                 @map("clinic_id") @db.Uuid
+  appointmentId        String                 @map("appointment_id") @db.Uuid
+  appointmentReference String                 @map("appointment_reference")
+  recognizedAt         DateTime               @map("recognized_at") @db.Timestamptz(3)
+  status               CommissionLedgerStatus
+  amountIqd            Int                    @map("amount_iqd")
+  netAmountIqd         Int                    @map("net_amount_iqd")
+  currency             String                 @default("IQD")
+  createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
+  statement            BillingStatement       @relation(fields: [statementId], references: [id], onDelete: Restrict)
+  ledgerEntry          CommissionLedgerEntry  @relation(fields: [ledgerEntryId], references: [id], onDelete: Restrict)
+  clinic               Clinic                 @relation(fields: [clinicId], references: [id], onDelete: Restrict)
+  appointment          Appointment            @relation(fields: [appointmentId], references: [id], onDelete: Restrict)
+
+  @@index([statementId, recognizedAt, id])
+  @@map("billing_statement_lines")
+}
+
+model BillingStatementClinicBreakdown {
+  id               String           @id @default(uuid(7)) @db.Uuid
+  statementId      String           @map("statement_id") @db.Uuid
+  clinicId         String           @map("clinic_id") @db.Uuid
+  grossEarnedIqd   Int              @map("gross_earned_iqd")
+  reversalsIqd     Int              @map("reversals_iqd")
+  netCommissionIqd Int              @map("net_commission_iqd")
+  qualifyingCount  Int              @map("qualifying_count")
+  reversalCount    Int              @map("reversal_count")
+  statement        BillingStatement @relation(fields: [statementId], references: [id], onDelete: Restrict)
+  clinic           Clinic           @relation(fields: [clinicId], references: [id], onDelete: Restrict)
+
+  @@unique([statementId, clinicId])
+  @@map("billing_statement_clinic_breakdowns")
 }
 
 model AppointmentEvent {

@@ -257,6 +257,7 @@ async function patientWithAppointment(
       clinicId: tenant.clinicId,
       doctorId,
       patientProfileId: profile.id,
+      origin: 'patientBooked',
       startsAt: new Date(Date.now() + (60 + minute * 30) * 60_000),
       durationMinutes: 20,
       feeIqd: 25000,

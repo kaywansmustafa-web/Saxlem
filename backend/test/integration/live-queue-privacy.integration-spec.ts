@@ -67,6 +67,7 @@ describe('live queue DTO and persisted metadata privacy certification', () => {
         clinicId: fixture.tenant.clinicId,
         doctorId: fixture.doctor.doctorId!,
         patientProfileId: fixture.profile.id,
+        origin: 'patientBooked',
         reason: 'not-enqueued-certification',
         startsAt: new Date('2035-01-01T07:00:00.000Z'),
         endsAt: new Date('2035-01-01T07:30:00.000Z'),

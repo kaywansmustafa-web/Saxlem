@@ -6,6 +6,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { createApplication } from '../../src/main';
 import { loadConfiguration } from '../../src/config/environment';
 import { PrismaAppointmentQueueCompletionPort } from '../../src/modules/appointments/infrastructure/prisma-appointment-queue-completion.port';
+import { PrismaBillingRepository } from '../../src/modules/billing/infrastructure/prisma-billing.repository';
 import type { QueueCommand } from '../../src/modules/queue/domain/queue';
 import { PrismaQueueRepository } from '../../src/modules/queue/infrastructure/prisma-queue.repository';
 import type { PrismaService } from '../../src/infrastructure/database/prisma.service';
@@ -77,6 +78,7 @@ export async function createSeededQueue(entryCount: number) {
       clinicId: tenant.clinicId,
       doctorId: doctor.doctorId!,
       patientProfileId: profile.id,
+      origin: 'patientBooked' as const,
       reason: `${marker}-${index}`,
       startsAt: new Date(start + index * 5 * 60_000),
       endsAt: new Date(start + (index * 5 + 5) * 60_000),
@@ -115,7 +117,11 @@ export async function createSeededQueue(entryCount: number) {
   });
   const repository = new PrismaQueueRepository(
     { db: apiPrisma } as unknown as PrismaService,
-    new PrismaAppointmentQueueCompletionPort(),
+    new PrismaAppointmentQueueCompletionPort(
+      new PrismaBillingRepository({
+        db: apiPrisma,
+      } as unknown as PrismaService),
+    ),
     apiConfiguration,
   );
   const access = {
