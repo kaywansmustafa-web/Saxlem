@@ -1,0 +1,103 @@
+.billing-workspace {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 76rem;
+  margin-inline: auto;
+}
+.billing-workspace header,
+.billing-card,
+.billing-selector {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #d9e1e8);
+  border-radius: 1rem;
+  padding: clamp(1rem, 2vw, 1.5rem);
+}
+.billing-selector {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.75rem;
+}
+.billing-selector label {
+  font-weight: 700;
+  flex-basis: 100%;
+}
+.billing-selector select,
+.billing-workspace input {
+  min-height: 3rem;
+  max-width: 100%;
+  padding: 0.65rem;
+  border: 1px solid currentColor;
+  border-radius: 0.6rem;
+}
+.billing-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.billing-tabs a {
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #d9e1e8);
+}
+.billing-list {
+  display: grid;
+  gap: 0.65rem;
+  list-style: none;
+  padding: 0;
+}
+.billing-list li {
+  display: grid;
+  grid-template-columns: minmax(9rem, 1.5fr) repeat(3, minmax(7rem, 1fr));
+  gap: 0.75rem;
+  align-items: center;
+  padding: 1rem;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #d9e1e8);
+  border-radius: 0.8rem;
+}
+.billing-card dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 1rem;
+}
+.billing-card dt {
+  color: var(--text-muted, #52606d);
+}
+.billing-card dd {
+  margin: 0;
+  font-weight: 700;
+}
+.billing-workspace dialog {
+  max-width: 32rem;
+  border: 0;
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+.billing-workspace dialog::backdrop {
+  background: #0b1f3380;
+}
+.billing-workspace button,
+.billing-workspace a {
+  min-height: 2.75rem;
+}
+.billing-workspace :focus-visible {
+  outline: 3px solid #1769e0;
+  outline-offset: 3px;
+}
+@media (max-width: 700px) {
+  .billing-list li {
+    grid-template-columns: 1fr;
+  }
+  .billing-tabs a {
+    flex: 1 1 9rem;
+    text-align: center;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .billing-workspace * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}

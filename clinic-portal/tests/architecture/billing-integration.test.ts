@@ -37,4 +37,28 @@ describe("billing integration architecture", () => {
       "/api/v1/billing",
     );
   });
+  it("keeps billing presentation behind same-origin BFF routes and free of financial persistence", () => {
+    const source = read("features/billing/presentation/billing-workspace.tsx");
+    expect(source).not.toMatch(
+      /https?:\/\/|authorization|bearer|x-organization|x-clinic/iu,
+    );
+    expect(source).not.toMatch(
+      /localStorage|sessionStorage|indexedDB|dangerouslySetInnerHTML/u,
+    );
+    expect(source).not.toMatch(
+      /stripe|paypal|fastpay|checkout|payment provider/iu,
+    );
+    expect(source).toContain("/api/billing/");
+    expect(source).toContain("expectedVersion: statement.version");
+    expect(source).toContain("finalizeAttempt.current");
+    expect(source).toContain("if (pending) return");
+  });
+  it("contains no known encoding corruption in billing production source", () => {
+    const source = [
+      read("features/billing/presentation/billing-workspace.tsx"),
+      read("features/billing/presentation/messages.ts"),
+      read("app/[locale]/billing/page.tsx"),
+    ].join("\n");
+    expect(source).not.toMatch(/Ã|â|ΓÇ|├|┬|�/u);
+  });
 });
