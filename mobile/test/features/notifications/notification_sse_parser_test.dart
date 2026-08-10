@@ -33,4 +33,36 @@ void main() {
       throwsA(anything),
     );
   });
+  test('supports CRLF and multiline data across chunks', () async {
+    final split = data.indexOf(',') + 1;
+    final frame =
+        'id: 42\r\nevent: notification\r\ndata: ${data.substring(0, split)}\r\ndata: ${data.substring(split)}\r\n\r\n';
+    final bytes = utf8.encode(frame);
+    final values = await const NotificationSseParser()
+        .parse(
+          Stream.fromIterable([
+            bytes.sublist(0, 17),
+            bytes.sublist(17, 83),
+            bytes.sublist(83),
+          ]),
+        )
+        .toList();
+    expect(values.single.deliverySequence, '42');
+  });
+  test('rejects malformed UTF-8 and bounded empty data growth', () async {
+    expect(
+      const NotificationSseParser().parse(Stream.value([0xff, 0x0a])).toList(),
+      throwsA(anything),
+    );
+    final emptyLines = List.filled(
+      NotificationSseParser.maximumDataBytes + 2,
+      'data:\n',
+    ).join();
+    expect(
+      const NotificationSseParser()
+          .parse(Stream.value(utf8.encode(emptyLines)))
+          .toList(),
+      throwsA(anything),
+    );
+  });
 }

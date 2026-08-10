@@ -19,6 +19,7 @@ class BackendNotificationsRepository
   final AuthenticatedNotificationSseTransport _transport;
   final Random _random;
   final _inFlight = <String, Future<PatientNotification>>{};
+  final _operationIds = <String, String>{};
   @override
   Future<NotificationPage> list({String? cursor, int pageSize = 25}) async {
     if (pageSize < 1 ||
@@ -66,8 +67,11 @@ class BackendNotificationsRepository
       r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
     ).hasMatch(id.value))
       throw const NotificationFailure(NotificationProblem.validation);
-    final key =
-        'notification-${List.generate(24, (_) => _random.nextInt(256).toRadixString(16).padLeft(2, '0')).join()}';
+    final key = _operationIds.putIfAbsent(
+      id.value,
+      () =>
+          'notification-${List.generate(24, (_) => _random.nextInt(256).toRadixString(16).padLeft(2, '0')).join()}',
+    );
     try {
       final body = (await _api.postJson(
         '/notifications/${id.value}/read',
@@ -77,9 +81,11 @@ class BackendNotificationsRepository
       if (body.keys.length != 1 ||
           body['notification'] is! Map<String, dynamic>)
         throw const FormatException();
-      return BackendNotificationDto.parse(
+      final notification = BackendNotificationDto.parse(
         body['notification'] as Map<String, dynamic>,
       );
+      _operationIds.remove(id.value);
+      return notification;
     } on FormatException {
       throw const NotificationFailure(NotificationProblem.malformed);
     } on MutationNotSentFailure catch (e) {

@@ -36,6 +36,7 @@ class NotificationsController extends ChangeNotifier {
   String? _nextCursor, _lastEventId;
   int _generation = 0;
   bool _disposed = false, _loadingMore = false;
+  bool _terminalStreamFailure = false;
   NotificationConnectionState connectionState =
       NotificationConnectionState.disconnected;
   NotificationsState state = const NotificationsLoading();
@@ -112,7 +113,12 @@ class NotificationsController extends ChangeNotifier {
   void perform(NotificationAction action) => onAction?.call(action);
   Future<void> connect() async {
     final repo = _authoritative;
-    if (repo == null || _stream != null || _disposed) return;
+    if (repo == null ||
+        _stream != null ||
+        _disposed ||
+        _terminalStreamFailure) {
+      return;
+    }
     connectionState = _lastEventId == null
         ? NotificationConnectionState.connecting
         : NotificationConnectionState.reconnecting;
@@ -133,29 +139,39 @@ class NotificationsController extends ChangeNotifier {
             if (error is NotificationFailure &&
                 (error.problem == NotificationProblem.sessionExpired ||
                     error.problem == NotificationProblem.forbidden)) {
+              _terminalStreamFailure = true;
+              _reconnectTimer?.cancel();
               _items = [];
               _nextCursor = null;
               _lastEventId = null;
+              connectionState = NotificationConnectionState.failed;
               _setFailure(error.problem);
             } else {
               connectionState = NotificationConnectionState.failed;
               notifyListeners();
+              _scheduleReconnect();
             }
           },
           onDone: () {
             _stream = null;
-            if (!_disposed) {
+            if (!_disposed && !_terminalStreamFailure) {
               connectionState = NotificationConnectionState.disconnected;
               notifyListeners();
-              _reconnectTimer?.cancel();
-              _reconnectTimer = Timer(const Duration(seconds: 5), connect);
+              _scheduleReconnect();
             }
           },
+          cancelOnError: true,
         );
   }
 
   Timer? _reloadTimer;
   Timer? _reconnectTimer;
+  void _scheduleReconnect() {
+    if (_disposed || _terminalStreamFailure) return;
+    _reconnectTimer?.cancel();
+    _reconnectTimer = Timer(const Duration(seconds: 5), connect);
+  }
+
   void _coalescedReload() {
     _reloadTimer?.cancel();
     _reloadTimer = Timer(const Duration(milliseconds: 300), () {
@@ -187,6 +203,7 @@ class NotificationsController extends ChangeNotifier {
     _items = [];
     _nextCursor = null;
     _lastEventId = null;
+    _terminalStreamFailure = true;
     state = const NotificationsLoading();
     connectionState = NotificationConnectionState.disconnected;
     if (!_disposed) notifyListeners();

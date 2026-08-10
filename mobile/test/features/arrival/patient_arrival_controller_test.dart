@@ -40,6 +40,23 @@ void main() {
     expect(controller.state, isA<PatientArrivalFailed>());
     controller.dispose();
   });
+  test('mutation response for another appointment fails closed', () async {
+    final repository = _Repository()
+      ..recordAppointmentId = '66666666-6666-4666-8666-666666666666';
+    final controller = PatientArrivalController(
+      appointmentId: _appointment,
+      expectedProfileId: _profile,
+      repository: repository,
+      operationIds: _Ids(),
+    );
+    await controller.load();
+    await controller.recordArrival();
+    expect(
+      (controller.state as PatientArrivalReady).problem,
+      ArrivalProblem.forbidden,
+    );
+    controller.dispose();
+  });
 }
 
 const _appointment = '22222222-2222-4222-8222-222222222222',
@@ -55,6 +72,7 @@ class _Ids implements BookingOperationIdGenerator {
 class _Repository implements PatientArrivalRepository {
   String profileId = _profile;
   ArrivalFailure? recordFailure;
+  String? recordAppointmentId;
   final operationIds = <String>[];
   PatientArrival get value => PatientArrival(
     id: '11111111-1111-4111-8111-111111111111',
@@ -84,6 +102,22 @@ class _Repository implements PatientArrivalRepository {
   ) async {
     operationIds.add(operationId);
     if (recordFailure case final failure?) throw failure;
-    return value;
+    return recordAppointmentId == null
+        ? value
+        : PatientArrival(
+            id: value.id,
+            appointmentId: recordAppointmentId!,
+            appointmentReference: value.appointmentReference,
+            clinicId: value.clinicId,
+            clinicName: value.clinicName,
+            doctorId: value.doctorId,
+            doctorName: value.doctorName,
+            patientProfileId: value.patientProfileId,
+            patientName: value.patientName,
+            appointmentStartsAt: value.appointmentStartsAt,
+            status: value.status,
+            version: value.version,
+            eligibility: value.eligibility,
+          );
   }
 }

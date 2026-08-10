@@ -49,7 +49,9 @@ class PatientArrivalDto {
         (status == ArrivalStatus.queueReady &&
             (arrivedAt == null || queueReadyAt == null)) ||
         (eligibility.canArrive !=
-            (eligibility.reason == ArrivalEligibilityReason.eligible))) {
+            (eligibility.reason == ArrivalEligibilityReason.eligible)) ||
+        !_statusMatchesEligibility(status, eligibility.reason) ||
+        !_validWindow(eligibility)) {
       throw const FormatException();
     }
     final reference = _text(json, 'appointmentReference', 64);
@@ -73,6 +75,27 @@ class PatientArrivalDto {
       version: version,
       eligibility: eligibility,
     );
+  }
+
+  static bool _statusMatchesEligibility(
+    ArrivalStatus status,
+    ArrivalEligibilityReason reason,
+  ) => switch (status) {
+    ArrivalStatus.expected =>
+      reason != ArrivalEligibilityReason.alreadyArrived &&
+          reason != ArrivalEligibilityReason.queueReady,
+    ArrivalStatus.arrived => reason == ArrivalEligibilityReason.alreadyArrived,
+    ArrivalStatus.queueReady => reason == ArrivalEligibilityReason.queueReady,
+  };
+
+  static bool _validWindow(ArrivalEligibility eligibility) {
+    final opens = eligibility.opensAt, closes = eligibility.closesAt;
+    if ((opens == null) != (closes == null)) return false;
+    if (opens != null && closes != null && opens.isAfter(closes)) return false;
+    if (eligibility.reason == ArrivalEligibilityReason.unavailable) {
+      return opens == null && closes == null;
+    }
+    return opens != null && closes != null;
   }
 
   static ArrivalEligibility _eligibility(Map<String, dynamic> json) {

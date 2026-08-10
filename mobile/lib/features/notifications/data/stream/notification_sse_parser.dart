@@ -9,13 +9,7 @@ class NotificationSseParser {
   Stream<NotificationSignal> parse(Stream<List<int>> bytes) async* {
     var id = '', event = '', data = <String>[];
     var dataBytes = 0;
-    await for (final line
-        in bytes
-            .map<List<int>>((chunk) => chunk)
-            .transform(utf8.decoder)
-            .transform(const LineSplitter())) {
-      if (utf8.encode(line).length > maximumLineBytes)
-        throw const NotificationFailure(NotificationProblem.malformed);
+    await for (final line in _boundedLines(bytes)) {
       if (line.isEmpty) {
         if (data.isNotEmpty) {
           if (event.isEmpty || event == 'notification') {
@@ -54,10 +48,40 @@ class NotificationSseParser {
         case 'event':
           event = value;
         case 'data':
-          dataBytes += utf8.encode(value).length;
+          dataBytes += utf8.encode(value).length + (data.isEmpty ? 0 : 1);
           if (dataBytes > maximumDataBytes)
             throw const NotificationFailure(NotificationProblem.malformed);
           data.add(value);
+      }
+    }
+  }
+
+  Stream<String> _boundedLines(Stream<List<int>> bytes) async* {
+    var line = <int>[];
+    await for (final chunk in bytes) {
+      for (final byte in chunk) {
+        if (byte == 0x0a) {
+          if (line.isNotEmpty && line.last == 0x0d) line.removeLast();
+          try {
+            yield utf8.decode(line, allowMalformed: false);
+          } on FormatException {
+            throw const NotificationFailure(NotificationProblem.malformed);
+          }
+          line = <int>[];
+          continue;
+        }
+        line.add(byte);
+        if (line.length > maximumLineBytes) {
+          throw const NotificationFailure(NotificationProblem.malformed);
+        }
+      }
+    }
+    if (line.isNotEmpty) {
+      if (line.last == 0x0d) line.removeLast();
+      try {
+        yield utf8.decode(line, allowMalformed: false);
+      } on FormatException {
+        throw const NotificationFailure(NotificationProblem.malformed);
       }
     }
   }

@@ -54,8 +54,10 @@ class PatientArrivalController extends ChangeNotifier {
         version,
         _operationId!,
       );
-      if (value.patientProfileId != expectedProfileId)
+      if (value.appointmentId != appointmentId ||
+          value.patientProfileId != expectedProfileId) {
         throw const ArrivalFailure(ArrivalProblem.forbidden);
+      }
       _operationId = null;
       _operationVersion = null;
       _set(PatientArrivalReady(value));

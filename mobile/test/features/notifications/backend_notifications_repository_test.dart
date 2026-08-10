@@ -9,6 +9,7 @@ import 'package:saxlem_app/features/authentication/domain/repositories/auth_repo
 import 'package:saxlem_app/features/notifications/data/repositories/backend_notifications_repository.dart';
 import 'package:saxlem_app/features/notifications/data/stream/authenticated_notification_sse_transport.dart';
 import 'package:saxlem_app/features/notifications/domain/entities/patient_notification.dart';
+import 'package:saxlem_app/features/notifications/domain/repositories/authoritative_notifications_repository.dart';
 
 void main() {
   test('lists with exact cursor and marks read with idempotency', () async {
@@ -71,6 +72,50 @@ void main() {
       matches(RegExp(r'^notification-[0-9a-f]{48}$')),
     );
     expect(requests.last.body, '{}');
+    await repository.dispose();
+  });
+
+  test('retries one mark-read attempt with the same idempotency key', () async {
+    final keys = <String?>[];
+    var attempts = 0;
+    final client = MockClient((request) async {
+      keys.add(request.headers['idempotency-key']);
+      attempts++;
+      if (attempts == 1) throw http.ClientException('offline');
+      return http.Response(
+        jsonEncode({'notification': _item(readAt: '2026-08-10T06:01:00Z')}),
+        200,
+        headers: {'content-type': 'application/json'},
+      );
+    });
+    final config = AppConfiguration.fromValues(
+      environment: 'production',
+      apiBaseUrl: 'https://api.saxlem.test',
+    );
+    final storage = _Storage();
+    final repository = BackendNotificationsRepository(
+      AuthenticatedApiClient(
+        api: ApiClient(configuration: config, client: client),
+        storage: storage,
+        refresh: () async => _session,
+      ),
+      AuthenticatedNotificationSseTransport(
+        configuration: config,
+        storage: storage,
+        refresh: () async => _session,
+        client: MockClient((_) async => http.Response('', 503)),
+      ),
+    );
+    const id = NotificationId('11111111-1111-4111-8111-111111111111');
+
+    await expectLater(
+      repository.markNotificationRead(id),
+      throwsA(isA<NotificationFailure>()),
+    );
+    await repository.markNotificationRead(id);
+
+    expect(keys, hasLength(2));
+    expect(keys[1], keys[0]);
     await repository.dispose();
   });
 }

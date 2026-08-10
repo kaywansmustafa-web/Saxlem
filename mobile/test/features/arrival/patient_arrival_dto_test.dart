@@ -50,13 +50,44 @@ void main() {
       'unavailable',
     ]) {
       final json = value();
+      if (reason == 'alreadyArrived') {
+        json['status'] = 'arrived';
+        json['arrivedAt'] = '2026-08-10T08:30:00+03:00';
+      } else if (reason == 'queueReady') {
+        json['status'] = 'queueReady';
+        json['arrivedAt'] = '2026-08-10T08:30:00+03:00';
+        json['queueReadyAt'] = '2026-08-10T08:31:00+03:00';
+      }
       json['arrivalEligibility'] = {
         'canArrive': false,
         'reason': reason,
-        'opensAt': null,
-        'closesAt': null,
+        'opensAt': reason == 'unavailable' ? null : '2026-08-10T08:00:00+03:00',
+        'closesAt': reason == 'unavailable'
+            ? null
+            : '2026-08-10T09:30:00+03:00',
       };
       expect(PatientArrivalDto.parse(json).eligibility.canArrive, isFalse);
     }
+  });
+  test('rejects contradictory status reasons and arrival windows', () {
+    final wrongStatus = value();
+    wrongStatus['arrivalEligibility'] = {
+      'canArrive': false,
+      'reason': 'alreadyArrived',
+      'opensAt': '2026-08-10T08:00:00+03:00',
+      'closesAt': '2026-08-10T09:30:00+03:00',
+    };
+    final reversedWindow = value();
+    reversedWindow['arrivalEligibility'] = {
+      'canArrive': true,
+      'reason': 'eligible',
+      'opensAt': '2026-08-10T10:00:00+03:00',
+      'closesAt': '2026-08-10T09:30:00+03:00',
+    };
+    expect(() => PatientArrivalDto.parse(wrongStatus), throwsFormatException);
+    expect(
+      () => PatientArrivalDto.parse(reversedWindow),
+      throwsFormatException,
+    );
   });
 }

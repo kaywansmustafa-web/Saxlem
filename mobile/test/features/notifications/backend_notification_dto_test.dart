@@ -32,6 +32,7 @@ void main() {
       item(sequence: '0'),
       item()..['occurredAt'] = 'yesterday',
       item()..['actionCode'] = 'unsafe path',
+      item()..['readAt'] = '2026-08-10T08:59:59+03:00',
     ]) {
       expect(() => BackendNotificationDto.parse(json), throwsFormatException);
     }

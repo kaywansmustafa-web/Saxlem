@@ -45,7 +45,9 @@ class BackendNotificationDto {
     final occurred = _date(json['occurredAt']),
         created = _date(json['createdAt']),
         read = _nullableDate(json['readAt']);
-    if (created.isBefore(occurred)) throw const FormatException();
+    if (created.isBefore(occurred) || read != null && read.isBefore(created)) {
+      throw const FormatException();
+    }
     final mapped = _mappedType(type);
     return PatientNotification(
       id: NotificationId(id),
