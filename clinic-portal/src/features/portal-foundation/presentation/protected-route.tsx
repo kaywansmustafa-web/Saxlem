@@ -48,7 +48,12 @@ export async function ProtectedRoute({
     );
   const m = foundationMessages(locale),
     integrated =
-      route === "appointments" || route === "patients" || route === "liveQueue",
+      route === "appointments" ||
+      route === "patients" ||
+      route === "liveQueue" ||
+      route === "administration" ||
+      route === "organizations" ||
+      route === "clinics",
     content =
       integrated || composition.configuration.environment === "development" ? (
         children

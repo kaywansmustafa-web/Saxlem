@@ -22,6 +22,9 @@ const implementedRoutes = new Set([
   "doctorPatients",
   "doctorSchedule",
   "doctorNotifications",
+  "administration",
+  "organizations",
+  "clinics",
 ]);
 
 describe("Sprint 13K-C protected route matrix", () => {

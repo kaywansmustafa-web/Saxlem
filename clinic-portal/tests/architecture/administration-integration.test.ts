@@ -22,6 +22,7 @@ describe("Sprint 13S-B administration boundaries", () => {
   });
   it("has no production mock, static fixture, generic proxy, or client token path", () => {
     const source = files(resolve(root, "features/administration"))
+      .filter((file) => !file.includes("presentation"))
       .map((file) => readFileSync(file, "utf8"))
       .join("\n");
     expect(source).not.toMatch(
@@ -51,9 +52,22 @@ describe("Sprint 13S-B administration boundaries", () => {
     for (const route of ["administration", "organizations", "clinics"])
       expect(policy).toMatch(
         new RegExp(
-          `id:\"${route}\"[^\\n]+roles:\\[\"platformAdministrator\"\\]`,
+          `id\\s*:\\s*\"${route}\"[\\s\\S]*?roles\\s*:\\s*\\[\"platformAdministrator\"\\]`,
           "u",
         ),
       );
+  });
+
+  it("keeps the final administration presentation on same-origin BFF boundaries", () => {
+    const presentation = read(
+      "features/administration/presentation/administration-workspace.tsx",
+    );
+    expect(presentation).not.toMatch(
+      /SAXLEM_BACKEND|authorization|bearer|localStorage|sessionStorage|dangerouslySetInnerHTML/u,
+    );
+    expect(presentation).not.toMatch(/x-organization-id|x-clinic-id/u);
+    expect(presentation).toMatch(/\/api\/administration\//u);
+    expect(presentation).not.toMatch(/\/api\/v1\//u);
+    expect(presentation).not.toMatch(/Idempotency-Key|idempotency-key/u);
   });
 });

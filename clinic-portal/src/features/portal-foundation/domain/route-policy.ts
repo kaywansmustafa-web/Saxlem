@@ -19,9 +19,9 @@ export const routePolicies:readonly RoutePolicy[]=Object.freeze([
  {id:"doctorNotifications",segment:"doctor/notifications",roles:["doctor"],navigation:true,landing:false,placeholder:false,owner:"Sprint 13N"},
  {id:"doctorSettings",segment:"doctor/settings",roles:["doctor"],navigation:true,landing:false,placeholder:true,owner:"Sprint 13K-C"},
  {id:"clinicManagement",segment:"clinic-management",roles:["clinicManager"],navigation:true,landing:false,placeholder:true,owner:"Sprint 13S"},
- {id:"administration",segment:"administration",roles:["platformAdministrator"],navigation:true,landing:true,placeholder:true,owner:"Sprint 13S"},
- {id:"organizations",segment:"organizations",roles:["platformAdministrator"],navigation:true,landing:false,placeholder:true,owner:"Sprint 13S"},
- {id:"clinics",segment:"clinics",roles:["platformAdministrator"],navigation:true,landing:false,placeholder:true,owner:"Sprint 13S"},
+ {id:"administration",segment:"administration",roles:["platformAdministrator"],navigation:true,landing:true,placeholder:false,owner:"Sprint 13S"},
+ {id:"organizations",segment:"administration/organizations",roles:["platformAdministrator"],navigation:true,landing:false,placeholder:false,owner:"Sprint 13S"},
+ {id:"clinics",segment:"administration/clinics",roles:["platformAdministrator"],navigation:true,landing:false,placeholder:false,owner:"Sprint 13S"},
 ]);
 export const policy=(id:PortalRouteId)=>routePolicies.find(item=>item.id===id)!;
 export const allowed=(id:PortalRouteId,role:PortalStaffRole)=>policy(id).roles.includes(role);
