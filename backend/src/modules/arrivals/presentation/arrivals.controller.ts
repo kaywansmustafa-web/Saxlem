@@ -55,7 +55,7 @@ export class ArrivalsController {
   @ApiOperation({
     summary: 'Read appointment arrival eligibility',
     description:
-      'Patients may read only their appointments; doctors only their appointments; clinic staff are tenant-scoped; platform administrators may cross tenants. Staff reads require a durable arrival.viewed audit.',
+      'Patients may read only their appointments; doctors only their appointments; clinic staff are tenant-scoped; platform administrators may cross tenants. Staff reads require a durable arrival.viewed audit. Eligibility is advisory and every mutation revalidates current policy.',
   })
   @ApiOkResponse({ type: ArrivalResponseDto })
   @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
@@ -69,6 +69,7 @@ export class ArrivalsController {
   ) {
     return this.mapper.map(
       await this.service.get(this.access(req), params.id, req.requestId),
+      this.patient(req),
     );
   }
 
@@ -110,7 +111,14 @@ export class ArrivalsController {
         idempotencyKey,
         req.requestId,
       ),
+      this.patient(req),
     );
+  }
+
+  private patient(req: AuthenticatedRequest): boolean {
+    if (!req.principal)
+      throw new Error('Authentication guard invariant is broken.');
+    return req.principal.kind === 'patient';
   }
 
   private access(req: AuthenticatedRequest): ArrivalAccess {

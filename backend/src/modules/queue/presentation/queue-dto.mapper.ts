@@ -58,7 +58,7 @@ export function mapPatientQueue(status: PatientQueueStatus) {
   return Object.freeze({
     queueState: status.queueState,
     ticketNumber: status.ticketNumber,
-    currentTicket: status.currentTicket,
+    currentTicketNumber: status.currentTicket,
     patientsAhead: status.patientsAhead,
     estimatedWait: status.estimatedWait,
     estimateSuspended: status.estimateSuspended,
@@ -66,8 +66,8 @@ export function mapPatientQueue(status: PatientQueueStatus) {
     doctor: status.doctor,
     clinic: status.clinic,
     appointmentReference: status.appointmentReference,
-    status: status.status,
+    patientEntryStatus: status.status,
     instruction: status.instruction,
-    lastUpdatedAt: status.lastUpdatedAt,
+    updatedAt: status.lastUpdatedAt,
   });
 }

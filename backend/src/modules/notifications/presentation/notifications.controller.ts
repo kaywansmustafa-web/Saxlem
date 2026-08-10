@@ -114,6 +114,11 @@ export class NotificationsController {
       'REST and PostgreSQL snapshots remain authoritative. Reconnect with Last-Event-ID.',
   })
   @ApiHeader({ name: 'Last-Event-ID', required: false })
+  @ApiHeader({
+    name: 'Authorization',
+    required: true,
+    description: 'Bearer access token. Query-string tokens are unsupported.',
+  })
   @ApiProduces('text/event-stream')
   @ApiPayloadTooLargeResponse({
     type: ApiErrorEnvelopeDto,
@@ -126,7 +131,7 @@ export class NotificationsController {
     schema: {
       type: 'string',
       example:
-        'id: 42\\nevent: notification\\ndata: {"id":"0198a4ae-0000-7000-8000-000000000003","deliverySequence":"42","type":"queue.patient.called","priority":"high","actionCode":"queue.patient.called","occurredAt":"2026-07-30T08:00:00.000Z","createdAt":"2026-07-30T08:00:01.000Z","readAt":null}\\n\\n',
+        'id: 42\\nevent: notification\\ndata: {"id":"0198a4ae-0000-7000-8000-000000000003","patientProfileId":"0198a4ae-0000-7000-8000-000000000004","deliverySequence":"42","type":"queue.patient.called","priority":"high","actionCode":"queue.patient.called","occurredAt":"2026-07-30T08:00:00.000Z","createdAt":"2026-07-30T08:00:01.000Z","readAt":null}\\n\\n',
     },
   })
   @Header('Cache-Control', 'no-cache, no-transform')

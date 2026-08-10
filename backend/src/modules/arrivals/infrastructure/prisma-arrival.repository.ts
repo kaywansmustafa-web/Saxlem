@@ -13,6 +13,7 @@ import type {
   ArrivalProjection,
   ArrivalWindowPolicy,
 } from '../domain/arrival';
+import { deriveArrivalEligibility } from '../domain/arrival';
 import { ArrivalAuditPersistenceError } from '../domain/arrival.errors';
 import type { ArrivalRepository } from '../domain/arrival.repository';
 
@@ -194,12 +195,14 @@ export class PrismaArrivalRepository implements ArrivalRepository {
     occurredAt: Date,
     window: ArrivalWindowPolicy,
   ) {
-    const earliest = startsAt.getTime() - window.earlyMinutes * 60_000;
-    const latest = startsAt.getTime() + window.lateMinutes * 60_000;
     if (
-      !Number.isFinite(occurredAt.getTime()) ||
-      occurredAt.getTime() < earliest ||
-      occurredAt.getTime() > latest
+      !deriveArrivalEligibility({
+        appointmentStatus: 'scheduled',
+        arrivalStatus: 'expected',
+        startsAt,
+        now: occurredAt,
+        policy: window,
+      }).canArrive
     )
       throw new ConflictException(
         `Arrival is available from ${window.earlyMinutes} minutes before until ${window.lateMinutes} minutes after the appointment.`,

@@ -2223,7 +2223,7 @@
     },
     "/api/v1/appointments/{id}/arrival": {
       "get": {
-        "description": "Patients may read only their appointments; doctors only their appointments; clinic staff are tenant-scoped; platform administrators may cross tenants. Staff reads require a durable arrival.viewed audit.",
+        "description": "Patients may read only their appointments; doctors only their appointments; clinic staff are tenant-scoped; platform administrators may cross tenants. Staff reads require a durable arrival.viewed audit. Eligibility is advisory and every mutation revalidates current policy.",
         "operationId": "ArrivalsController_get",
         "parameters": [
           {
@@ -2688,7 +2688,7 @@
     },
     "/api/v1/appointments/{appointmentId}/queue-status": {
       "get": {
-        "description": "Never exposes another patient identity. Wait estimates are ranges and are suspended while paused.",
+        "description": "Returns a normal notEnqueued state for an owned appointment before staff assigns a ticket. Never exposes another patient identity. Wait estimates are ranges and are suspended while paused.",
         "operationId": "QueueController_patientStatus",
         "parameters": [
           {
@@ -2798,7 +2798,7 @@
             "bearer": []
           }
         ],
-        "summary": "Read only the authenticated patient’s queue position",
+        "summary": "Read only the authenticated patient's queue position",
         "tags": [
           "live-queue"
         ]
@@ -4613,6 +4613,15 @@
         "operationId": "NotificationsController_events",
         "parameters": [
           {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer access token. Query-string tokens are unsupported.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "Last-Event-ID",
             "in": "header",
             "required": false,
@@ -4628,7 +4637,7 @@
               "text/event-stream": {
                 "schema": {
                   "type": "string",
-                  "example": "id: 42\\nevent: notification\\ndata: {\"id\":\"0198a4ae-0000-7000-8000-000000000003\",\"deliverySequence\":\"42\",\"type\":\"queue.patient.called\",\"priority\":\"high\",\"actionCode\":\"queue.patient.called\",\"occurredAt\":\"2026-07-30T08:00:00.000Z\",\"createdAt\":\"2026-07-30T08:00:01.000Z\",\"readAt\":null}\\n\\n"
+                  "example": "id: 42\\nevent: notification\\ndata: {\"id\":\"0198a4ae-0000-7000-8000-000000000003\",\"patientProfileId\":\"0198a4ae-0000-7000-8000-000000000004\",\"deliverySequence\":\"42\",\"type\":\"queue.patient.called\",\"priority\":\"high\",\"actionCode\":\"queue.patient.called\",\"occurredAt\":\"2026-07-30T08:00:00.000Z\",\"createdAt\":\"2026-07-30T08:00:01.000Z\",\"readAt\":null}\\n\\n"
                 }
               }
             }
@@ -6451,6 +6460,42 @@
           "generatedAt"
         ]
       },
+      "ArrivalEligibilityResponseDto": {
+        "type": "object",
+        "properties": {
+          "canArrive": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "eligible",
+              "tooEarly",
+              "tooLate",
+              "invalidAppointmentStatus",
+              "alreadyArrived",
+              "queueReady",
+              "unavailable"
+            ]
+          },
+          "opensAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "closesAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "canArrive",
+          "reason",
+          "opensAt",
+          "closesAt"
+        ]
+      },
       "ArrivalResponseDto": {
         "type": "object",
         "properties": {
@@ -6501,18 +6546,27 @@
             "description": "Arrival eligibility only. queueReady does not create or order a queue entry."
           },
           "arrivedAt": {
-            "type": "object",
+            "type": "string",
             "format": "date-time",
             "nullable": true
           },
           "queueReadyAt": {
-            "type": "object",
+            "type": "string",
             "format": "date-time",
             "nullable": true
           },
           "version": {
-            "type": "number",
+            "type": "integer",
+            "minimum": 1,
             "description": "Required by the arrival record command."
+          },
+          "arrivalEligibility": {
+            "description": "Authoritative advisory eligibility returned for authenticated patient access. Mutations always revalidate.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ArrivalEligibilityResponseDto"
+              }
+            ]
           }
         },
         "required": [
@@ -6527,6 +6581,8 @@
           "patientName",
           "appointmentStartsAt",
           "status",
+          "arrivedAt",
+          "queueReadyAt",
           "version"
         ]
       },
@@ -6752,16 +6808,17 @@
             ]
           },
           "ticketNumber": {
-            "type": "number",
+            "type": "integer",
+            "nullable": true,
             "minimum": 1
           },
-          "currentTicket": {
+          "currentTicketNumber": {
             "type": "integer",
             "nullable": true,
             "minimum": 1
           },
           "patientsAhead": {
-            "type": "number",
+            "type": "integer",
             "minimum": 0
           },
           "queueHealth": {
@@ -6770,7 +6827,8 @@
               "healthy",
               "busy",
               "delayed"
-            ]
+            ],
+            "nullable": true
           },
           "instruction": {
             "type": "string"
@@ -6801,10 +6859,19 @@
           "appointmentReference": {
             "type": "string"
           },
-          "status": {
-            "type": "string"
+          "patientEntryStatus": {
+            "type": "string",
+            "enum": [
+              "notEnqueued",
+              "waiting",
+              "called",
+              "inConsultation",
+              "completed",
+              "noResponse",
+              "removed"
+            ]
           },
-          "lastUpdatedAt": {
+          "updatedAt": {
             "type": "string",
             "format": "date-time"
           }
@@ -6812,7 +6879,7 @@
         "required": [
           "queueState",
           "ticketNumber",
-          "currentTicket",
+          "currentTicketNumber",
           "patientsAhead",
           "queueHealth",
           "instruction",
@@ -6821,8 +6888,8 @@
           "doctor",
           "clinic",
           "appointmentReference",
-          "status",
-          "lastUpdatedAt"
+          "patientEntryStatus",
+          "updatedAt"
         ]
       },
       "QueueVersionDto": {
@@ -6909,6 +6976,11 @@
             "type": "string",
             "format": "uuid"
           },
+          "patientProfileId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "deliverySequence": {
             "type": "string",
             "example": "42"
@@ -6943,6 +7015,7 @@
         },
         "required": [
           "id",
+          "patientProfileId",
           "deliverySequence",
           "type",
           "priority",

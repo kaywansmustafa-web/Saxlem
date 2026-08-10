@@ -24,6 +24,7 @@ export interface NotificationAccess {
 
 export interface NotificationProjection {
   readonly id: string;
+  readonly patientProfileId: string | null;
   readonly sequence: bigint;
   readonly type: string;
   readonly priority: 'high' | 'normal' | 'information';

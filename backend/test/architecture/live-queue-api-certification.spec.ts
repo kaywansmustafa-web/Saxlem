@@ -47,6 +47,14 @@ describe('live queue OpenAPI certification manifest', () => {
     }
   });
 
+  it('exposes patient queue status as read-only', () => {
+    const path =
+      document.paths['/api/v1/appointments/{appointmentId}/queue-status'];
+    expect(path?.get).toBeDefined();
+    for (const method of ['post', 'put', 'patch', 'delete'])
+      expect(path?.[method]).toBeUndefined();
+  });
+
   it('documents idempotency on every mutation and never on GET', () => {
     for (const [, operations] of queuePaths) {
       for (const [method, operation] of Object.entries(operations)) {
@@ -165,10 +173,40 @@ describe('live queue OpenAPI certification manifest', () => {
       type: 'string',
       nullable: true,
     });
-    expect(patient.properties?.currentTicket).toMatchObject({
+    expect(patient.properties?.currentTicketNumber).toMatchObject({
       type: 'integer',
       nullable: true,
       minimum: 1,
+    });
+    expect(patient.properties?.ticketNumber).toMatchObject({
+      type: 'integer',
+      nullable: true,
+      minimum: 1,
+    });
+    expect(patient.properties?.patientsAhead).toMatchObject({
+      type: 'integer',
+      minimum: 0,
+    });
+    expect(patient.properties?.queueHealth).toMatchObject({
+      type: 'string',
+      nullable: true,
+      enum: ['healthy', 'busy', 'delayed'],
+    });
+    expect(patient.properties?.patientEntryStatus).toMatchObject({
+      type: 'string',
+      enum: [
+        'notEnqueued',
+        'waiting',
+        'called',
+        'inConsultation',
+        'completed',
+        'noResponse',
+        'removed',
+      ],
+    });
+    expect(patient.properties?.updatedAt).toMatchObject({
+      type: 'string',
+      format: 'date-time',
     });
     expect(staff.properties?.currentPatient).toMatchObject({
       nullable: true,
@@ -254,7 +292,7 @@ describe('live queue OpenAPI certification manifest', () => {
     }
     for (const field of [
       page.properties?.nextCursor,
-      patient.properties?.currentTicket,
+      patient.properties?.currentTicketNumber,
       staff.properties?.currentPatient,
       patient.properties?.doctor,
       patient.properties?.clinic,

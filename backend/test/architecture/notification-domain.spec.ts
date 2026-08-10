@@ -98,7 +98,12 @@ describe('Sprint 13J notification architecture', () => {
           }
         >
       >;
-      components: { schemas: Record<string, unknown> };
+      components: {
+        schemas: Record<
+          string,
+          { properties?: Record<string, Record<string, unknown>> }
+        >;
+      };
     };
     const inbox = document.paths['/api/v1/notifications']?.get;
     const read =
@@ -126,8 +131,25 @@ describe('Sprint 13J notification architecture', () => {
       stream?.responses?.['200']?.content?.['text/event-stream']?.schema,
     ).toMatchObject({ type: 'string' });
     expect(stream?.responses?.['413']).toBeDefined();
+    expect(document.paths['/api/v1/notifications']?.delete).toBeUndefined();
+    expect(
+      document.paths['/api/v1/notifications/{notificationId}']?.delete,
+    ).toBeUndefined();
     for (const name of ['NotificationItemDto', 'NotificationPageDto'])
       expect(document.components.schemas[name]).toBeDefined();
+    const item = document.components.schemas.NotificationItemDto!;
+    expect(item.properties?.patientProfileId).toMatchObject({
+      type: 'string',
+      format: 'uuid',
+      nullable: true,
+    });
+    expect(item.properties).not.toHaveProperty('appointmentId');
+    expect(JSON.stringify(item)).not.toMatch(
+      /patientName|ticketNumber|appointmentReason|doctorNotes|payload|url/i,
+    );
+    expect(
+      stream?.parameters?.find(({ name }) => name === 'Authorization'),
+    ).toMatchObject({ required: true });
   });
 
   it('keeps notification source and generated OpenAPI free of mojibake', () => {

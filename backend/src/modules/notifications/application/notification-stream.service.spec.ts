@@ -21,6 +21,7 @@ describe('NotificationStreamService', () => {
   it('emits persisted notification frames strictly after the supplied sequence', async () => {
     const item = {
       id: '0198a4ae-0000-7000-8000-000000000003',
+      patientProfileId: '0198a4ae-0000-7000-8000-000000000004',
       sequence: 8n,
       type: 'queue.patient.called',
       priority: 'high' as const,
@@ -137,6 +138,7 @@ describe('NotificationStreamService', () => {
 function projection(sequence: bigint) {
   return {
     id: `0198a4ae-0000-7000-8000-${sequence.toString().padStart(12, '0')}`,
+    patientProfileId: '0198a4ae-0000-7000-8000-000000000004',
     sequence,
     type: 'queue.patient.called',
     priority: 'high' as const,

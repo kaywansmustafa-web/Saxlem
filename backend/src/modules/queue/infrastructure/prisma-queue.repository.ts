@@ -72,23 +72,7 @@ export class PrismaQueueRepository implements QueueRepository {
       select: { timezone: true },
     });
     if (!clinic) throw new NotFoundException('Clinic was not found.');
-    try {
-      const parts = new Intl.DateTimeFormat('en-CA', {
-        timeZone: clinic.timezone,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      }).formatToParts(now);
-      const value = (type: Intl.DateTimeFormatPartTypes) =>
-        Number(parts.find((part) => part.type === type)?.value);
-      return new Date(
-        Date.UTC(value('year'), value('month') - 1, value('day')),
-      );
-    } catch {
-      throw new ServiceUnavailableException(
-        'Clinic timezone configuration is invalid.',
-      );
-    }
+    return this.dateInTimezone(now, clinic.timezone);
   }
 
   async get(access: QueueAccess, id: string) {
@@ -191,6 +175,29 @@ export class PrismaQueueRepository implements QueueRepository {
   ): Promise<PatientQueueStatus | null> {
     if (!access.patient)
       throw new ForbiddenException('Patient access required.');
+    const appointment = await this.prisma.db.appointment.findFirst({
+      where: {
+        id: appointmentId,
+        patientRegistration: {
+          patientProfile: { patientAccount: { userId: access.actorId } },
+        },
+      },
+      select: {
+        organizationId: true,
+        clinicId: true,
+        doctorId: true,
+        publicReference: true,
+        startsAt: true,
+        updatedAt: true,
+        clinic: { select: { id: true, name: true, timezone: true } },
+        doctorAssignment: {
+          select: {
+            doctor: { select: { id: true, displayName: true } },
+          },
+        },
+      },
+    });
+    if (!appointment) return null;
     const entry = await this.prisma.db.queueEntry.findFirst({
       where: {
         appointmentId,
@@ -222,7 +229,49 @@ export class PrismaQueueRepository implements QueueRepository {
         },
       },
     });
-    if (!entry) return null;
+    if (!entry) {
+      const operationalDate = this.dateInTimezone(
+        appointment.startsAt,
+        appointment.clinic.timezone,
+      );
+      const session = await this.prisma.db.queueSession.findUnique({
+        where: {
+          organizationId_clinicId_doctorId_operationalDate: {
+            organizationId: appointment.organizationId,
+            clinicId: appointment.clinicId,
+            doctorId: appointment.doctorId,
+            operationalDate,
+          },
+        },
+        select: { status: true, updatedAt: true },
+      });
+      return Object.freeze({
+        queueState: session?.status ?? 'notStarted',
+        ticketNumber: null,
+        currentTicket: null,
+        patientsAhead: 0,
+        estimatedWait: null,
+        estimateSuspended: session?.status === 'paused',
+        queueHealth: null,
+        doctor: {
+          id: appointment.doctorAssignment.doctor.id,
+          name: appointment.doctorAssignment.doctor.displayName,
+        },
+        clinic: {
+          id: appointment.clinic.id,
+          name: appointment.clinic.name,
+        },
+        appointmentReference: appointment.publicReference,
+        status: 'notEnqueued',
+        instruction:
+          session?.status === 'paused'
+            ? 'The queue is paused. You have not been added yet.'
+            : 'You have not been added to the queue yet.',
+        lastUpdatedAt: (
+          session?.updatedAt ?? appointment.updatedAt
+        ).toISOString(),
+      });
+    }
     const activeAhead = entry.queueSession.entries.filter(
       (candidate) =>
         candidate.ticketNumber < entry.ticketNumber &&
@@ -295,6 +344,28 @@ export class PrismaQueueRepository implements QueueRepository {
             : 'Please stay nearby. We will keep your position updated.',
       lastUpdatedAt: entry.updatedAt.toISOString(),
     });
+  }
+
+  private dateInTimezone(value: Date, timezone: string): Date {
+    try {
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: timezone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).formatToParts(value);
+      const number = (type: Intl.DateTimeFormatPartTypes) =>
+        Number(parts.find((part) => part.type === type)?.value);
+      const result = new Date(
+        Date.UTC(number('year'), number('month') - 1, number('day')),
+      );
+      if (!Number.isFinite(result.getTime())) throw new Error('invalid');
+      return result;
+    } catch {
+      throw new ServiceUnavailableException(
+        'Clinic timezone configuration is invalid.',
+      );
+    }
   }
 
   async open(

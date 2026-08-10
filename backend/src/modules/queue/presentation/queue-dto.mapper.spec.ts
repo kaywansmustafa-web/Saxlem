@@ -75,20 +75,54 @@ describe('queue presentation privacy allowlists', () => {
       [
         'appointmentReference',
         'clinic',
-        'currentTicket',
+        'currentTicketNumber',
         'doctor',
         'estimateSuspended',
         'estimatedWait',
         'instruction',
-        'lastUpdatedAt',
+        'updatedAt',
         'patientsAhead',
         'queueHealth',
         'queueState',
-        'status',
+        'patientEntryStatus',
         'ticketNumber',
       ].sort(),
     );
   });
+
+  it.each([
+    'notEnqueued',
+    'waiting',
+    'called',
+    'noResponse',
+    'inConsultation',
+    'completed',
+    'removed',
+  ] as const)(
+    'maps patient entry status %s without identity fields',
+    (status) => {
+      const response = mapPatientQueue({
+        queueState: 'notStarted',
+        ticketNumber: status === 'notEnqueued' ? null : 2,
+        currentTicket: null,
+        patientsAhead: 0,
+        estimatedWait: null,
+        estimateSuspended: false,
+        queueHealth: status === 'notEnqueued' ? null : 'healthy',
+        doctor: { id: 'public-doctor', name: 'Dr. Test' },
+        clinic: { id: 'public-clinic', name: 'Clinic' },
+        appointmentReference: 'SAX-TEST',
+        status,
+        instruction: 'Please wait.',
+        lastUpdatedAt: '2031-01-01T00:00:00.000Z',
+      } satisfies PatientQueueStatus);
+      expect(response.patientEntryStatus).toBe(status);
+      expect(response.ticketNumber).toBe(status === 'notEnqueued' ? null : 2);
+      expect(JSON.stringify(response)).not.toMatch(
+        /patientName|patientProfileId|appointmentId/,
+      );
+    },
+  );
 });
 
 function snapshot(): QueueSnapshot {

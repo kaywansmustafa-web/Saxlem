@@ -15,6 +15,7 @@ import type {
   ArrivalCommand,
   ArrivalProjection,
 } from '../domain/arrival';
+import { deriveArrivalEligibility } from '../domain/arrival';
 import { ArrivalAuditPersistenceError } from '../domain/arrival.errors';
 import {
   ARRIVAL_REPOSITORY,
@@ -31,12 +32,21 @@ export class ArrivalService {
     private readonly configuration: BackendConfiguration,
   ) {}
 
-  async get(access: ArrivalAccess, appointmentId: string, requestId: string) {
-    await this.appointments.get(access, appointmentId, requestId);
+  async get(
+    access: ArrivalAccess,
+    appointmentId: string,
+    requestId: string,
+    now = new Date(),
+  ) {
+    const appointment = await this.appointments.get(
+      access,
+      appointmentId,
+      requestId,
+    );
     const arrival = await this.repository.get(access, appointmentId);
     if (!arrival) throw new NotFoundException('Arrival was not found.');
     if (!access.patient) await this.audit(access, arrival, requestId);
-    return arrival;
+    return this.withEligibility(arrival, appointment.status, now);
   }
 
   async record(
@@ -60,7 +70,7 @@ export class ArrivalService {
     const replay = await this.execute(() =>
       this.repository.replay(access, appointmentId, command),
     );
-    if (replay) return replay;
+    if (replay) return this.withEligibility(replay, appointment.status, now);
     if (!['scheduled', 'confirmed'].includes(appointment.status))
       throw new ConflictException(
         'Cancelled, completed, or no-show appointments cannot arrive.',
@@ -70,7 +80,7 @@ export class ArrivalService {
         'Arrival version must be a positive integer.',
       );
     this.assertWindow(new Date(appointment.startsAt), now);
-    return this.execute(() =>
+    const recorded = await this.execute(() =>
       this.repository.record(
         access,
         appointmentId,
@@ -84,6 +94,7 @@ export class ArrivalService {
         },
       ),
     );
+    return this.withEligibility(recorded, appointment.status, now);
   }
 
   private command(
@@ -104,19 +115,41 @@ export class ArrivalService {
   }
 
   private assertWindow(startsAt: Date, now: Date) {
-    const earliest =
-      startsAt.getTime() -
-      this.configuration.arrivalEarlyWindowMinutes * 60_000;
-    const latest =
-      startsAt.getTime() + this.configuration.arrivalLateWindowMinutes * 60_000;
-    if (
-      !Number.isFinite(now.getTime()) ||
-      now.getTime() < earliest ||
-      now.getTime() > latest
-    )
+    const eligibility = deriveArrivalEligibility({
+      appointmentStatus: 'scheduled',
+      arrivalStatus: 'expected',
+      startsAt,
+      now,
+      policy: this.policy(),
+    });
+    if (!eligibility.canArrive)
       throw new ConflictException(
         `Arrival is available from ${this.configuration.arrivalEarlyWindowMinutes} minutes before until ${this.configuration.arrivalLateWindowMinutes} minutes after the appointment.`,
       );
+  }
+
+  private withEligibility(
+    arrival: ArrivalProjection,
+    appointmentStatus: string,
+    now: Date,
+  ) {
+    return Object.freeze({
+      ...arrival,
+      arrivalEligibility: deriveArrivalEligibility({
+        appointmentStatus,
+        arrivalStatus: arrival.status,
+        startsAt: new Date(arrival.appointmentStartsAt),
+        now,
+        policy: this.policy(),
+      }),
+    });
+  }
+
+  private policy() {
+    return Object.freeze({
+      earlyMinutes: this.configuration.arrivalEarlyWindowMinutes,
+      lateMinutes: this.configuration.arrivalLateWindowMinutes,
+    });
   }
 
   private async audit(

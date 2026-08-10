@@ -50,6 +50,9 @@ export class NotificationItemDto {
   @ApiProperty({ format: 'uuid' })
   id!: string;
 
+  @ApiProperty({ type: 'string', format: 'uuid', nullable: true })
+  patientProfileId!: string | null;
+
   @ApiProperty({ type: 'string', example: '42' })
   deliverySequence!: string;
 

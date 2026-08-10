@@ -16,6 +16,7 @@ const select = {
   id: true,
   organizationId: true,
   clinicId: true,
+  patientProfileId: true,
   deliverySequence: true,
   type: true,
   priority: true,
@@ -190,6 +191,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
         : {};
     return Object.freeze({
       id: row.id,
+      patientProfileId: row.patientProfileId,
       sequence: row.deliverySequence,
       type: row.type,
       priority: row.priority,

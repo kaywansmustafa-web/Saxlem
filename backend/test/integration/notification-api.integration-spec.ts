@@ -48,6 +48,7 @@ describe('notification inbox API', () => {
     expect(Object.keys(patientList.body.items[0]).sort()).toEqual(
       [
         'id',
+        'patientProfileId',
         'deliverySequence',
         'type',
         'priority',
@@ -58,6 +59,7 @@ describe('notification inbox API', () => {
       ].sort(),
     );
     expect(patientList.body.items[0].readAt).toBeNull();
+    expect(patientList.body.items[0].patientProfileId).toBe(seeded.profile.id);
     expect(patientList.body.nextCursor).toEqual(expect.any(String));
 
     const managerList = await request(app.getHttpServer())

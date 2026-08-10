@@ -169,14 +169,18 @@ export class QueueEntriesPageResponseDto {
 export class PatientQueueStatusResponseDto {
   @ApiProperty({ enum: ['notStarted', 'open', 'paused', 'closed'] })
   queueState!: string;
-  @ApiProperty({ minimum: 1 })
-  ticketNumber!: number;
   @ApiProperty({ type: 'integer', nullable: true, minimum: 1 })
-  currentTicket!: number | null;
-  @ApiProperty({ minimum: 0 })
+  ticketNumber!: number | null;
+  @ApiProperty({ type: 'integer', nullable: true, minimum: 1 })
+  currentTicketNumber!: number | null;
+  @ApiProperty({ type: 'integer', minimum: 0 })
   patientsAhead!: number;
-  @ApiProperty({ enum: ['healthy', 'busy', 'delayed'] })
-  queueHealth!: string;
+  @ApiProperty({
+    type: 'string',
+    enum: ['healthy', 'busy', 'delayed'],
+    nullable: true,
+  })
+  queueHealth!: 'healthy' | 'busy' | 'delayed' | null;
   @ApiProperty()
   instruction!: string;
   @ApiProperty({
@@ -191,7 +195,7 @@ export class PatientQueueStatusResponseDto {
     minimumMinutes: number;
     maximumMinutes: number;
   } | null;
-  @ApiProperty()
+  @ApiProperty({ type: 'boolean' })
   estimateSuspended!: boolean;
   @ApiProperty({ type: () => QueueDoctorReferenceResponseDto })
   doctor!: QueueDoctorReferenceResponseDto;
@@ -199,8 +203,25 @@ export class PatientQueueStatusResponseDto {
   clinic!: QueueClinicReferenceResponseDto;
   @ApiProperty()
   appointmentReference!: string;
-  @ApiProperty()
-  status!: string;
+  @ApiProperty({
+    enum: [
+      'notEnqueued',
+      'waiting',
+      'called',
+      'inConsultation',
+      'completed',
+      'noResponse',
+      'removed',
+    ],
+  })
+  patientEntryStatus!:
+    | 'notEnqueued'
+    | 'waiting'
+    | 'called'
+    | 'inConsultation'
+    | 'completed'
+    | 'noResponse'
+    | 'removed';
   @ApiProperty({ format: 'date-time' })
-  lastUpdatedAt!: string;
+  updatedAt!: string;
 }
