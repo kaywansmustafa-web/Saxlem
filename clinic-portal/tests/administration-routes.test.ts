@@ -292,6 +292,22 @@ describe("administration BFF routes", () => {
     }
   });
 
+  it("ignores hostile identity headers and keeps authority in the sealed session", async () => {
+    const response = await getOrganizations(
+      request("/api/administration/organizations?pageSize=25", {
+        headers: {
+          authorization: "Bearer browser-controlled",
+          "x-role": "platformAdministrator",
+          "x-organization-scope": id,
+          "x-clinic-scope": id,
+        },
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(services.listOrganizations).toHaveBeenCalledWith({ pageSize: 25 });
+  });
+
   it("rejects invalid clinic fields and browser attempts to set an idempotency key", async () => {
     for (const body of [
       {

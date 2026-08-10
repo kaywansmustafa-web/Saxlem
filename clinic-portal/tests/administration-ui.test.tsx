@@ -178,12 +178,120 @@ describe("Sprint 13S administration experience", () => {
     await userEvent.click(screen.getByRole("button", { name: m.create }));
     await waitFor(() =>
       expect(navigation.push).toHaveBeenCalledWith(
-        `/en/administration/clinics/${clinic.id}`,
+        `/en/administration/clinics/${clinic.id}?created=true`,
       ),
     );
     expect(JSON.parse(String(fetch.mock.calls[1]![1]?.body)).code).toBe(
       "DHK_1",
     );
+  });
+
+  it("fails closed instead of presenting a partial organization selector", async () => {
+    const fetch = vi.spyOn(globalThis, "fetch");
+    for (let page = 0; page < 20; page += 1) {
+      fetch.mockResolvedValueOnce(
+        json({
+          ok: true,
+          page: {
+            items: [
+              {
+                ...organization,
+                id: `00000000-0000-4000-8000-${String(page + 1).padStart(12, "0")}`,
+              },
+            ],
+            nextCursor: `opaque-${page + 1}`,
+          },
+        }),
+      );
+    }
+
+    render(<AdministrationCreateForm kind="clinic" locale="en" m={m} />);
+
+    expect(await screen.findByText(m.unavailable)).toBeInTheDocument();
+    expect(
+      screen.queryByLabelText(m.selectOrganization),
+    ).not.toBeInTheDocument();
+    expect(fetch).toHaveBeenCalledTimes(20);
+  });
+
+  it("announces an authoritative creation result on the detail page", async () => {
+    navigation.query = "created=true";
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      json({ ok: true, organization }),
+    );
+
+    render(
+      <AdministrationDetail
+        kind="organizations"
+        locale="en"
+        m={m}
+        id={organization.id}
+      />,
+    );
+
+    await screen.findByRole("heading", { name: organization.name });
+    expect(screen.getByRole("status")).toHaveTextContent(m.organizationCreated);
+  });
+
+  it("does not render a stale detail response after the requested record changes", async () => {
+    let resolveFirst: ((response: Response) => void) | undefined;
+    const replacement = {
+      ...organization,
+      id: "00000000-0000-4000-8000-000000000099",
+      name: "Replacement Organization",
+    };
+    vi.spyOn(globalThis, "fetch")
+      .mockImplementationOnce(
+        () =>
+          new Promise<Response>((resolve) => {
+            resolveFirst = resolve;
+          }),
+      )
+      .mockResolvedValueOnce(json({ ok: true, organization: replacement }));
+    const view = render(
+      <AdministrationDetail
+        kind="organizations"
+        locale="en"
+        m={m}
+        id={organization.id}
+      />,
+    );
+
+    view.rerender(
+      <AdministrationDetail
+        kind="organizations"
+        locale="en"
+        m={m}
+        id={replacement.id}
+      />,
+    );
+    expect(
+      await screen.findByRole("heading", { name: replacement.name }),
+    ).toBeInTheDocument();
+    resolveFirst?.(json({ ok: true, organization }));
+    await Promise.resolve();
+
+    expect(screen.queryByText(organization.name)).not.toBeInTheDocument();
+    expect(screen.getByText(replacement.name)).toBeInTheDocument();
+  });
+
+  it("references field error descriptions only when those errors exist", async () => {
+    render(<AdministrationCreateForm kind="organization" locale="en" m={m} />);
+    const name = screen.getByLabelText(m.organizationName);
+    expect(name).not.toHaveAttribute("aria-describedby");
+
+    await userEvent.click(screen.getByRole("button", { name: m.create }));
+
+    expect(name).toHaveAttribute("aria-describedby", "name-error");
+    expect(document.getElementById("name-error")).toBeInTheDocument();
+  });
+
+  it("keeps the organization onboarding form free of axe violations", async () => {
+    const { container } = render(
+      <AdministrationCreateForm kind="organization" locale="en" m={m} />,
+    );
+
+    expect((await axe(container)).violations).toEqual([]);
   });
 
   it("has localized catalog parity, RTL-safe operational values, and no axe violations", async () => {

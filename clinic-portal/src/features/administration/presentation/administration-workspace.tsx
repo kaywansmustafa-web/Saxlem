@@ -284,10 +284,13 @@ export function AdministrationDetail({
   m: AdministrationMessages;
   id: string;
 }) {
+  const search = useSearchParams();
   const [record, setRecord] = useState<RecordValue | null>(null),
     [state, setState] = useState<"loading" | "ready" | "failure">("loading"),
     [failure, setFailure] = useState<Failure>("failure");
+  const generation = useRef(0);
   const load = useCallback(async () => {
+    const current = ++generation.current;
     if (!uuid.safeParse(id).success) {
       setFailure("notFound");
       setState("failure");
@@ -301,16 +304,20 @@ export function AdministrationDetail({
           `/api/administration/organizations/${id}`,
           organizationEnvelope,
         );
+        if (current !== generation.current) return;
         setRecord(result.organization);
       } else {
         const result = await portalRequest(
           `/api/administration/clinics/${id}`,
           clinicEnvelope,
         );
+        if (current !== generation.current) return;
         setRecord(result.clinic);
       }
+      if (current !== generation.current) return;
       setState("ready");
     } catch (error) {
+      if (current !== generation.current) return;
       setFailure(
         error instanceof Error ? (error.message as Failure) : "failure",
       );
@@ -319,6 +326,9 @@ export function AdministrationDetail({
   }, [id, kind]);
   useEffect(() => {
     queueMicrotask(() => void load());
+    return () => {
+      generation.current += 1;
+    };
   }, [load]);
   if (state === "loading") return <AdminState text={m.loading} loading />;
   if (state === "failure" || !record)
@@ -332,6 +342,11 @@ export function AdministrationDetail({
   const clinic = kind === "clinics" ? (record as Clinic) : null;
   return (
     <div className="administration-page">
+      {search.get("created") === "true" && (
+        <p className="admin-success" role="status">
+          {kind === "organizations" ? m.organizationCreated : m.clinicCreated}
+        </p>
+      )}
       <Link className="admin-back" href={`/${locale}/administration/${kind}`}>
         {kind === "organizations" ? m.backToOrganizations : m.backToClinics}
       </Link>
@@ -420,6 +435,7 @@ export function AdministrationCreateForm({
       try {
         const items: Organization[] = [];
         let cursor: string | null = null;
+        const seenCursors = new Set<string>();
         for (let page = 0; page < 20; page += 1) {
           const query = new URLSearchParams({ pageSize: "100" });
           if (cursor) query.set("cursor", cursor);
@@ -430,7 +446,10 @@ export function AdministrationCreateForm({
           items.push(...result.page.items);
           cursor = result.page.nextCursor;
           if (!cursor) break;
+          if (seenCursors.has(cursor)) throw new Error("stale cursor");
+          seenCursors.add(cursor);
         }
+        if (cursor) throw new Error("organization selection is incomplete");
         if (!active) return;
         setOrganizations([
           ...new Map(items.map((item) => [item.id, item])).values(),
@@ -502,7 +521,7 @@ export function AdministrationCreateForm({
         recordId = result.clinic.id;
       }
       attempt.current = null;
-      router.push(`/${locale}/administration/${path}/${recordId}`);
+      router.push(`/${locale}/administration/${path}/${recordId}?created=true`);
     } catch (cause) {
       setError(
         messageFor(
@@ -560,7 +579,9 @@ export function AdministrationCreateForm({
               name="organizationId"
               defaultValue={preselected}
               aria-invalid={!!fieldErrors.organizationId}
-              aria-describedby="organizationId-error"
+              aria-describedby={
+                fieldErrors.organizationId ? "organizationId-error" : undefined
+              }
             >
               <option value="">{m.selectOrganization}</option>
               {organizations.map((item) => (
@@ -581,7 +602,7 @@ export function AdministrationCreateForm({
             name="name"
             maxLength={120}
             aria-invalid={!!fieldErrors.name}
-            aria-describedby="name-error"
+            aria-describedby={fieldErrors.name ? "name-error" : undefined}
             autoComplete="organization"
             onChange={() => {
               attempt.current = null;
@@ -603,7 +624,9 @@ export function AdministrationCreateForm({
                 maxLength={32}
                 dir="ltr"
                 aria-invalid={!!fieldErrors.code}
-                aria-describedby="code-help code-error"
+                aria-describedby={
+                  fieldErrors.code ? "code-help code-error" : "code-help"
+                }
                 onChange={(event) => {
                   setCodePreview(event.target.value.toUpperCase());
                   attempt.current = null;
@@ -627,7 +650,11 @@ export function AdministrationCreateForm({
                 defaultValue="Asia/Baghdad"
                 dir="ltr"
                 aria-invalid={!!fieldErrors.timezone}
-                aria-describedby="timezone-help timezone-error"
+                aria-describedby={
+                  fieldErrors.timezone
+                    ? "timezone-help timezone-error"
+                    : "timezone-help"
+                }
                 onChange={() => {
                   attempt.current = null;
                 }}
