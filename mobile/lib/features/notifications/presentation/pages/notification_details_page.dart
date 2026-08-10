@@ -77,17 +77,6 @@ class NotificationDetailsPage extends StatelessWidget {
                 onPressed: () => controller.perform(item.action),
                 expand: true,
               ),
-            const SizedBox(height: SaxlemSpacing.one),
-            if (item.priority != NotificationPriority.critical)
-              SaxlemButton(
-                label: strings.deleteNotification,
-                hierarchy: SaxlemButtonHierarchy.tertiary,
-                onPressed: () async {
-                  await controller.delete(item.id);
-                  if (context.mounted) Navigator.pop(context);
-                },
-                expand: true,
-              ),
           ],
         ),
       ),

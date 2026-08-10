@@ -11,6 +11,5 @@ abstract interface class NotificationsRepository {
   ]);
   Future<PatientNotification?> get(NotificationId id);
   Future<void> markRead(NotificationId id);
-  Future<void> delete(NotificationId id);
   Future<void> dispose();
 }

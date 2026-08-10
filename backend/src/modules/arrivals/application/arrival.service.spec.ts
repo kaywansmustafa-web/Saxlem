@@ -18,6 +18,66 @@ describe('ArrivalService', () => {
   };
   const startsAt = new Date('2026-07-21T09:00:00.000Z');
 
+  it.each([
+    ['2026-07-21T08:30:00.000Z', 'eligible', true],
+    ['2026-07-21T07:59:59.999Z', 'tooEarly', false],
+    ['2026-07-21T11:00:00.001Z', 'tooLate', false],
+  ] as const)(
+    'derives authoritative eligibility at %s',
+    async (now, reason, canArrive) => {
+      const { service, repository, arrival } = fixture();
+      repository.get.mockResolvedValue({ ...arrival, status: 'expected' });
+      const result = await service.get(
+        access,
+        'appointment',
+        'request',
+        new Date(now),
+      );
+      expect(result.arrivalEligibility).toEqual({
+        canArrive,
+        reason,
+        opensAt: '2026-07-21T08:00:00.000Z',
+        closesAt: '2026-07-21T11:00:00.000Z',
+      });
+    },
+  );
+
+  it.each([
+    ['arrived', 'alreadyArrived'],
+    ['queueReady', 'queueReady'],
+  ] as const)('reports %s as %s', async (status, reason) => {
+    const { service, repository, arrival } = fixture();
+    repository.get.mockResolvedValue({ ...arrival, status });
+    const result = await service.get(
+      access,
+      'appointment',
+      'request',
+      startsAt,
+    );
+    expect(result.arrivalEligibility).toMatchObject({
+      canArrive: false,
+      reason,
+    });
+  });
+
+  it.each(['cancelled', 'completed', 'noShow'] as const)(
+    'reports terminal %s appointments as ineligible',
+    async (status) => {
+      const { service, repository, arrival } = fixture({ status });
+      repository.get.mockResolvedValue({ ...arrival, status: 'expected' });
+      const result = await service.get(
+        access,
+        'appointment',
+        'request',
+        startsAt,
+      );
+      expect(result.arrivalEligibility).toMatchObject({
+        canArrive: false,
+        reason: 'invalidAppointmentStatus',
+      });
+    },
+  );
+
   it('accepts both inclusive arrival-window boundaries', async () => {
     const early = fixture();
     await early.service.record(
@@ -128,7 +188,15 @@ describe('ArrivalService', () => {
         'request',
         startsAt,
       ),
-    ).resolves.toBe(arrival);
+    ).resolves.toEqual({
+      ...arrival,
+      arrivalEligibility: {
+        canArrive: false,
+        reason: 'queueReady',
+        opensAt: '2026-07-21T08:00:00.000Z',
+        closesAt: '2026-07-21T11:00:00.000Z',
+      },
+    });
     expect(record).not.toHaveBeenCalled();
   });
 

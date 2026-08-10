@@ -19,6 +19,9 @@ import 'package:saxlem_app/features/discover/data/repositories/backend_doctor_di
 import 'package:saxlem_app/features/discover/data/repositories/unavailable_doctor_discovery_repository.dart';
 import 'package:saxlem_app/features/booking/data/repositories/backend_booking_repository.dart';
 import 'package:saxlem_app/features/appointments/data/repositories/backend_patient_appointments_repository.dart';
+import 'package:saxlem_app/features/arrival/data/repositories/backend_patient_arrival_repository.dart';
+import 'package:saxlem_app/features/live_queue/data/repositories/live_queue_repository_impl.dart';
+import 'package:saxlem_app/features/notifications/data/repositories/backend_notifications_repository.dart';
 
 void main() {
   group('production-safe composition', () {
@@ -101,6 +104,18 @@ void main() {
       expect(
         dependencies.appointmentsRepository,
         isA<BackendPatientAppointmentsRepository>(),
+      );
+      expect(
+        dependencies.arrivalRepository,
+        isA<BackendPatientArrivalRepository>(),
+      );
+      expect(
+        dependencies.liveQueueRepository,
+        isA<BackendLiveQueueRepository>(),
+      );
+      expect(
+        dependencies.notificationsRepository,
+        isA<BackendNotificationsRepository>(),
       );
     });
 

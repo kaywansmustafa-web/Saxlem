@@ -9,12 +9,21 @@ class NotificationsLoading extends NotificationsState {
 }
 
 class NotificationsFailure extends NotificationsState {
-  const NotificationsFailure();
+  const NotificationsFailure([this.problem]);
+  final Object? problem;
 }
 
 class NotificationsReady extends NotificationsState {
-  const NotificationsReady({required this.snapshot, required this.groups});
+  const NotificationsReady({
+    required this.snapshot,
+    required this.groups,
+    this.loadingMore = false,
+    this.canLoadMore = false,
+    this.loadMoreProblem,
+  });
   final NotificationSnapshot snapshot;
   final List<NotificationGroup> groups;
+  final bool loadingMore, canLoadMore;
+  final Object? loadMoreProblem;
   int get unreadCount => snapshot.unreadCount;
 }

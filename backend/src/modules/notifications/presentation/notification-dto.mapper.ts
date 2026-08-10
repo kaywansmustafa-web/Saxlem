@@ -9,6 +9,7 @@ export function mapNotification(
 ): NotificationItemDto {
   return {
     id: value.id,
+    patientProfileId: value.patientProfileId,
     deliverySequence: value.sequence.toString(),
     type: value.type,
     priority: value.priority,

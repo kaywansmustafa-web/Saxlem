@@ -11,6 +11,7 @@ export type QueueEntryState =
   | 'completed'
   | 'noResponse'
   | 'removed';
+export type PatientQueueEntryStatus = 'notEnqueued' | QueueEntryState;
 export type QueueHealth = 'healthy' | 'busy' | 'delayed';
 
 export interface QueueCommand {
@@ -66,7 +67,7 @@ export interface QueueEntryPage {
 }
 export interface PatientQueueStatus {
   readonly queueState: QueueSessionState;
-  readonly ticketNumber: number;
+  readonly ticketNumber: number | null;
   readonly currentTicket: number | null;
   readonly patientsAhead: number;
   readonly estimatedWait: {
@@ -74,11 +75,11 @@ export interface PatientQueueStatus {
     readonly maximumMinutes: number;
   } | null;
   readonly estimateSuspended: boolean;
-  readonly queueHealth: QueueHealth;
+  readonly queueHealth: QueueHealth | null;
   readonly doctor: { readonly id: string; readonly name: string };
   readonly clinic: { readonly id: string; readonly name: string };
   readonly appointmentReference: string;
-  readonly status: QueueEntryState;
+  readonly status: PatientQueueEntryStatus;
   readonly instruction: string;
   readonly lastUpdatedAt: string;
 }

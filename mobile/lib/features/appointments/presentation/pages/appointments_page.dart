@@ -9,6 +9,9 @@ import '../../../family_profiles/presentation/controllers/patient_profiles_contr
 import '../../../family_profiles/presentation/widgets/patient_selector.dart';
 import '../../domain/repositories/patient_appointments_repository.dart';
 import '../../../booking/domain/repositories/booking_repository.dart';
+import '../../../arrival/domain/repositories/patient_arrival_repository.dart';
+import '../../../live_queue/domain/repositories/live_queue_repository.dart';
+import '../../../notifications/domain/entities/notification_page.dart';
 
 class AppointmentsPage extends StatelessWidget {
   const AppointmentsPage({
@@ -17,6 +20,9 @@ class AppointmentsPage extends StatelessWidget {
     required this.repository,
     required this.bookingRepository,
     required this.onAppointmentsChanged,
+    required this.arrivalRepository,
+    required this.liveQueueRepository,
+    this.notificationSignals,
     this.profilesController,
     super.key,
   });
@@ -24,6 +30,9 @@ class AppointmentsPage extends StatelessWidget {
   final VoidCallback onDiscover;
   final PatientAppointmentsRepository repository;
   final BookingRepository bookingRepository;
+  final PatientArrivalRepository arrivalRepository;
+  final LiveQueueRepository liveQueueRepository;
+  final Stream<NotificationSignal>? notificationSignals;
   final Future<void> Function() onAppointmentsChanged;
   final PatientProfilesController? profilesController;
 
@@ -130,6 +139,9 @@ class AppointmentsPage extends StatelessWidget {
                                 appointmentId: appointment.id,
                                 repository: repository,
                                 bookingRepository: bookingRepository,
+                                arrivalRepository: arrivalRepository,
+                                liveQueueRepository: liveQueueRepository,
+                                notificationSignals: notificationSignals,
                                 onChanged: onAppointmentsChanged,
                                 profilesController: profilesController,
                               ),

@@ -965,4 +965,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get cancel => 'Cancel';
+
+  @override
+  String get recordArrival => 'تۆمارکرنا هاتنێ';
 }

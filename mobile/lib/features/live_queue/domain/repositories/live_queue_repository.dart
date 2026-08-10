@@ -1,28 +1,22 @@
-import '../entities/patient_queue_snapshot.dart';
-import '../entities/queue_types.dart';
+import '../entities/patient_queue_status.dart';
 
-sealed class LiveQueueUpdate {
-  const LiveQueueUpdate();
+enum LiveQueueProblem {
+  validation,
+  forbidden,
+  sessionExpired,
+  notFound,
+  offline,
+  timeout,
+  malformed,
+  unavailable,
+  unknown,
 }
 
-class QueueSnapshotUpdate extends LiveQueueUpdate {
-  const QueueSnapshotUpdate(this.snapshot);
-  final PatientQueueSnapshot snapshot;
-}
-
-class QueueConnectionUpdate extends LiveQueueUpdate {
-  const QueueConnectionUpdate(this.status);
-  final QueueConnectionStatus status;
-}
-
-class QueueFailureUpdate extends LiveQueueUpdate {
-  const QueueFailureUpdate(this.message);
-  final String message;
+class LiveQueueFailure implements Exception {
+  const LiveQueueFailure(this.problem);
+  final LiveQueueProblem problem;
 }
 
 abstract interface class LiveQueueRepository {
-  Stream<LiveQueueUpdate> watchQueue(String queueEntryId);
-  Future<void> performAction(String queueEntryId, PatientQueueAction action);
-  Future<void> refresh(String queueEntryId);
-  void dispose();
+  Future<PatientQueueStatus> getQueueStatus(String appointmentId);
 }

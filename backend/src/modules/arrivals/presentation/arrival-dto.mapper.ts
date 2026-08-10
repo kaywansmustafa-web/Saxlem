@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import type { ArrivalProjection } from '../domain/arrival';
+import type { ArrivalResponseProjection } from '../domain/arrival';
 import type { ArrivalResponseDto } from './arrival.dto';
 
 @Injectable()
 export class ArrivalDtoMapper {
-  map(value: ArrivalProjection): ArrivalResponseDto {
+  map(
+    value: ArrivalResponseProjection,
+    includeEligibility: boolean,
+  ): ArrivalResponseDto {
     return {
       id: value.id,
       appointmentId: value.appointmentId,
@@ -20,6 +23,9 @@ export class ArrivalDtoMapper {
       arrivedAt: value.arrivedAt,
       queueReadyAt: value.queueReadyAt,
       version: value.version,
+      ...(includeEligibility
+        ? { arrivalEligibility: value.arrivalEligibility }
+        : {}),
     };
   }
 }

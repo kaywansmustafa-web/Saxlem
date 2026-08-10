@@ -1797,6 +1797,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
+
+  /// No description provided for @recordArrival.
+  ///
+  /// In en, this message translates to:
+  /// **'Record arrival'**
+  String get recordArrival;
 }
 
 class _AppLocalizationsDelegate

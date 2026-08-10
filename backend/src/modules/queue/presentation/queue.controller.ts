@@ -110,9 +110,9 @@ export class QueueController {
   @Get('appointments/:appointmentId/queue-status')
   @RequireCapabilities('queue:patient-status:read')
   @ApiOperation({
-    summary: 'Read only the authenticated patient’s queue position',
+    summary: "Read only the authenticated patient's queue position",
     description:
-      'Never exposes another patient identity. Wait estimates are ranges and are suspended while paused.',
+      'Returns a normal notEnqueued state for an owned appointment before staff assigns a ticket. Never exposes another patient identity. Wait estimates are ranges and are suspended while paused.',
   })
   @ApiOkResponse({ type: PatientQueueStatusResponseDto })
   patientStatus(

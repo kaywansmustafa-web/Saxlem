@@ -19,6 +19,13 @@ import '../features/booking/domain/repositories/booking_repository.dart';
 import '../features/booking/data/repositories/backend_booking_repository.dart';
 import '../features/appointments/domain/repositories/patient_appointments_repository.dart';
 import '../features/appointments/data/repositories/backend_patient_appointments_repository.dart';
+import '../features/arrival/domain/repositories/patient_arrival_repository.dart';
+import '../features/arrival/data/repositories/backend_patient_arrival_repository.dart';
+import '../features/live_queue/domain/repositories/live_queue_repository.dart';
+import '../features/live_queue/data/repositories/live_queue_repository_impl.dart';
+import '../features/notifications/domain/repositories/notifications_repository.dart';
+import '../features/notifications/data/repositories/backend_notifications_repository.dart';
+import '../features/notifications/data/stream/authenticated_notification_sse_transport.dart';
 
 class AppDependencies {
   const AppDependencies({
@@ -29,6 +36,9 @@ class AppDependencies {
     this.bookingRepository = const UnavailableBookingRepository(),
     this.appointmentsRepository =
         const UnavailablePatientAppointmentsRepository(),
+    this.arrivalRepository = const UnavailablePatientArrivalRepository(),
+    this.liveQueueRepository = const UnavailableLiveQueueRepository(),
+    this.notificationsRepository = const UnavailableNotificationsRepository(),
     this.developmentOtp,
   });
 
@@ -81,6 +91,16 @@ class AppDependencies {
       appointmentsRepository: BackendPatientAppointmentsRepository(
         authenticatedApi,
       ),
+      arrivalRepository: BackendPatientArrivalRepository(authenticatedApi),
+      liveQueueRepository: BackendLiveQueueRepository(authenticatedApi),
+      notificationsRepository: BackendNotificationsRepository(
+        authenticatedApi,
+        AuthenticatedNotificationSseTransport(
+          configuration: configuration,
+          storage: sessionStorage,
+          refresh: auth.refreshSession,
+        ),
+      ),
     );
   }
 
@@ -89,5 +109,8 @@ class AppDependencies {
   final DoctorDiscoveryRepository doctorDiscoveryRepository;
   final BookingRepository bookingRepository;
   final PatientAppointmentsRepository appointmentsRepository;
+  final PatientArrivalRepository arrivalRepository;
+  final LiveQueueRepository liveQueueRepository;
+  final NotificationsRepository notificationsRepository;
   final String? developmentOtp;
 }

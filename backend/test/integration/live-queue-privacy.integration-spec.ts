@@ -34,16 +34,16 @@ describe('live queue DTO and persisted metadata privacy certification', () => {
       [
         'appointmentReference',
         'clinic',
-        'currentTicket',
+        'currentTicketNumber',
         'doctor',
         'estimateSuspended',
         'estimatedWait',
         'instruction',
-        'lastUpdatedAt',
+        'updatedAt',
         'patientsAhead',
         'queueHealth',
         'queueState',
-        'status',
+        'patientEntryStatus',
         'ticketNumber',
       ].sort(),
     );
@@ -58,6 +58,51 @@ describe('live queue DTO and persisted metadata privacy certification', () => {
       .set('Authorization', `Bearer ${foreignPatient.token}`);
     expect(foreign.status).toBe(404);
     expectErrorEnvelope(foreign.body, 404);
+  });
+
+  it('returns an owned not-enqueued appointment as a normal privacy-safe state', async () => {
+    const appointment = await apiPrisma.appointment.create({
+      data: {
+        organizationId: fixture.tenant.organizationId,
+        clinicId: fixture.tenant.clinicId,
+        doctorId: fixture.doctor.doctorId!,
+        patientProfileId: fixture.profile.id,
+        reason: 'not-enqueued-certification',
+        startsAt: new Date('2035-01-01T07:00:00.000Z'),
+        endsAt: new Date('2035-01-01T07:30:00.000Z'),
+        durationMinutes: 30,
+        feeIqd: 25000,
+        status: 'confirmed',
+      },
+    });
+    await apiPrisma.appointmentArrival.create({
+      data: {
+        organizationId: fixture.tenant.organizationId,
+        clinicId: fixture.tenant.clinicId,
+        appointmentId: appointment.id,
+        patientProfileId: fixture.profile.id,
+      },
+    });
+
+    const response = await request(app.getHttpServer())
+      .get(`/api/v1/appointments/${appointment.id}/queue-status`)
+      .set('Authorization', `Bearer ${fixture.patient.token}`)
+      .expect(200);
+
+    expect(response.body).toMatchObject({
+      queueState: 'open',
+      ticketNumber: null,
+      currentTicketNumber: null,
+      patientsAhead: 0,
+      estimatedWait: null,
+      estimateSuspended: false,
+      queueHealth: null,
+      patientEntryStatus: 'notEnqueued',
+      appointmentReference: appointment.publicReference,
+    });
+    expect(JSON.stringify(response.body)).not.toMatch(
+      /patientProfileId|patientName|appointmentId|phone|dateOfBirth|reason/,
+    );
   });
 
   it('uses exact staff session and entry summary allowlists', async () => {

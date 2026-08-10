@@ -1,65 +1,40 @@
-import 'dart:async';
-
-import 'package:saxlem_app/features/live_queue/domain/entities/patient_queue_snapshot.dart';
-import 'package:saxlem_app/features/live_queue/domain/entities/queue_types.dart';
+import 'package:saxlem_app/features/live_queue/domain/entities/patient_queue_status.dart';
 import 'package:saxlem_app/features/live_queue/domain/repositories/live_queue_repository.dart';
 
-PatientQueueSnapshot testSnapshot({
-  QueueSessionStatus sessionStatus = QueueSessionStatus.open,
-  int version = 1,
-}) => PatientQueueSnapshot(
-  sessionId: 'session-1',
-  queueEntryId: 'entry-1',
-  queueVersion: version,
-  careProviderDisplayName: 'Dr. Test',
-  serviceDisplayName: 'Cardiology',
-  anonymousCurrentToken: '18',
-  patientNumber: '23',
-  patientsAhead: 4,
-  estimatedWaitLowerMinutes: 20,
-  estimatedWaitUpperMinutes: 28,
-  estimateConfidence: QueueEstimateConfidence.medium,
-  doctorTimingMinutes: 8,
-  patientStatus: PatientQueueStatus.expected,
-  sessionStatus: sessionStatus,
-  lastUpdatedAt: DateTime.now(),
-  remoteWaitingAllowed: true,
-  allowedActions: const {
-    PatientQueueAction.onMyWay,
-    PatientQueueAction.arrived,
-    PatientQueueAction.requestHelp,
-  },
-  guidanceMessage: 'Relax, no need to leave yet.',
-);
-
-class FakeLiveQueueRepository implements LiveQueueRepository {
-  final controller = StreamController<LiveQueueUpdate>();
-  final actions = <PatientQueueAction>[];
-  bool disposed = false;
-  Object? actionError;
-
+class FakeQueueRepository implements LiveQueueRepository {
+  FakeQueueRepository(this.result);
+  final PatientQueueStatus result;
+  int calls = 0;
   @override
-  Stream<LiveQueueUpdate> watchQueue(String queueEntryId) => controller.stream;
-
-  @override
-  Future<void> performAction(
-    String queueEntryId,
-    PatientQueueAction action,
-  ) async {
-    actions.add(action);
-    if (actionError case final error?) throw error;
-  }
-
-  @override
-  Future<void> refresh(String queueEntryId) async {
-    controller.add(
-      const QueueConnectionUpdate(QueueConnectionStatus.connected),
-    );
-  }
-
-  @override
-  void dispose() {
-    disposed = true;
-    controller.close();
+  Future<PatientQueueStatus> getQueueStatus(String appointmentId) async {
+    calls++;
+    return result;
   }
 }
+
+PatientQueueStatus queueStatus({
+  PatientEntryStatus entry = PatientEntryStatus.waiting,
+  QueueState state = QueueState.open,
+}) => PatientQueueStatus(
+  appointmentId: '11111111-1111-4111-8111-111111111111',
+  queueState: state,
+  ticketNumber: entry == PatientEntryStatus.notEnqueued ? null : 4,
+  currentTicketNumber: entry == PatientEntryStatus.notEnqueued ? null : 2,
+  patientsAhead: entry == PatientEntryStatus.notEnqueued ? 0 : 2,
+  instruction: 'Please wait for your turn.',
+  estimateSuspended: false,
+  doctor: const QueueReference(
+    '22222222-2222-4222-8222-222222222222',
+    'Doctor',
+  ),
+  clinic: const QueueReference(
+    '33333333-3333-4333-8333-333333333333',
+    'Clinic',
+  ),
+  appointmentReference: 'SX-2026-000001',
+  patientEntryStatus: entry,
+  updatedAt: DateTime.parse('2026-08-10T09:00:00+03:00'),
+  estimatedWait: entry == PatientEntryStatus.notEnqueued
+      ? null
+      : const EstimatedWait(10, 15),
+);

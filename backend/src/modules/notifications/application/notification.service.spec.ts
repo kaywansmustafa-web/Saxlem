@@ -12,6 +12,7 @@ const access: NotificationAccess = {
 
 const item = {
   id: '0198a4ae-0000-7000-8000-000000000003',
+  patientProfileId: '0198a4ae-0000-7000-8000-000000000004',
   sequence: 7n,
   type: 'queue.patient.called',
   priority: 'high' as const,

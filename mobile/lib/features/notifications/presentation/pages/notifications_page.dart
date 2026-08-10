@@ -5,6 +5,7 @@ import '../../domain/entities/notification_snapshot.dart';
 import '../controllers/notifications_controller.dart';
 import '../state/notifications_state.dart';
 import '../widgets/notification_card.dart';
+import '../../domain/repositories/authoritative_notifications_repository.dart';
 import 'notification_details_page.dart';
 import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
 import '../../../family_profiles/presentation/widgets/patient_selector.dart';
@@ -24,10 +25,10 @@ class NotificationsPage extends StatelessWidget {
       NotificationsLoading() => const Center(
         child: CircularProgressIndicator(),
       ),
-      NotificationsFailure() => SaxlemStateView(
+      NotificationsFailure(:final problem) => SaxlemStateView(
         kind: SaxlemStateKind.error,
         title: context.l10n.notificationsUnavailable,
-        message: context.l10n.notificationsUnavailableBody,
+        message: _failureMessage(context, problem),
         actionLabel: context.l10n.tryAgain,
         onAction: controller.load,
       ),
@@ -38,6 +39,13 @@ class NotificationsPage extends StatelessWidget {
       ),
     },
   );
+
+  String _failureMessage(BuildContext context, Object? problem) =>
+      switch (problem) {
+        NotificationProblem.offline => context.l10n.offlineBody,
+        NotificationProblem.sessionExpired => context.l10n.sessionExpiredBody,
+        _ => context.l10n.notificationsUnavailableBody,
+      };
 }
 
 class _Ready extends StatelessWidget {
@@ -94,9 +102,39 @@ class _Ready extends StatelessWidget {
           ],
           const SizedBox(height: SaxlemSpacing.half),
           Text(context.l10n.unreadNotifications(state.unreadCount)),
+          if (controller.connectionState ==
+                  NotificationConnectionState.connecting ||
+              controller.connectionState ==
+                  NotificationConnectionState.reconnecting)
+            Semantics(
+              liveRegion: true,
+              child: Text(context.l10n.loadingAppointments),
+            ),
+          if (controller.connectionState == NotificationConnectionState.failed)
+            Semantics(
+              liveRegion: true,
+              child: Text(context.l10n.notificationsUnavailableBody),
+            ),
           ..._section(context, context.l10n.unread, unread),
           ..._section(context, context.l10n.today, today),
           ..._section(context, context.l10n.earlier, earlier),
+          if (state.loadMoreProblem != null)
+            Semantics(
+              liveRegion: true,
+              child: Text(context.l10n.notificationsUnavailableBody),
+            ),
+          if (state.canLoadMore)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(top: SaxlemSpacing.two),
+              child: OutlinedButton(
+                onPressed: state.loadingMore ? null : controller.loadMore,
+                child: Text(
+                  state.loadingMore
+                      ? context.l10n.loadingMoreAppointments
+                      : context.l10n.loadMore,
+                ),
+              ),
+            ),
         ],
       ),
     );
