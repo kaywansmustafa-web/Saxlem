@@ -70,24 +70,27 @@ export class BackendApiClient {
         headers.set("idempotency-key", input.idempotencyKey);
       }
 
-      const response = await this.transport(
-        requestUrl,
-        {
-          method: input.method ?? "GET",
-          headers,
-          body: input.body === undefined ? undefined : JSON.stringify(input.body),
-          signal: controller.signal,
-          cache: "no-store",
-          redirect: "error",
-        },
+      const response = await this.transport(requestUrl, {
+        method: input.method ?? "GET",
+        headers,
+        body: input.body === undefined ? undefined : JSON.stringify(input.body),
+        signal: controller.signal,
+        cache: "no-store",
+        redirect: "error",
+      });
+      const headerRequestId = this.safeRequestId(
+        response.headers.get("x-request-id"),
       );
-      const headerRequestId = this.safeRequestId(response.headers.get("x-request-id"));
 
       if (response.status === 204) {
         if (!response.ok) {
           throw this.errorForStatus(response.status, headerRequestId);
         }
-        return { data: undefined as T, status: 204, requestId: headerRequestId };
+        return {
+          data: undefined as T,
+          status: 204,
+          requestId: headerRequestId,
+        };
       }
 
       const raw = await this.readJson(response, headerRequestId);
@@ -96,7 +99,11 @@ export class BackendApiClient {
       }
 
       if (!input.schema) {
-        return { data: raw as T, status: response.status, requestId: headerRequestId };
+        return {
+          data: raw as T,
+          status: response.status,
+          requestId: headerRequestId,
+        };
       }
       const parsed = input.schema.safeParse(raw);
       if (!parsed.success) {
@@ -209,9 +216,13 @@ export class BackendApiClient {
         ? "unauthorized"
         : status === 403
           ? "forbidden"
-          : status === 400 || status === 422
-            ? "validation"
-            : "unavailable";
+          : status === 404
+            ? "notFound"
+            : status === 409
+              ? "conflict"
+              : status === 400 || status === 422
+                ? "validation"
+                : "unavailable";
     return new PortalApiError({
       kind,
       status,
@@ -234,14 +245,15 @@ export class BackendApiClient {
   }
 
   private isErrorEnvelope(value: unknown): value is BackendErrorEnvelope {
-    if (!value || typeof value !== "object" || !("error" in value)) return false;
+    if (!value || typeof value !== "object" || !("error" in value))
+      return false;
     const error = (value as { error?: unknown }).error;
     return Boolean(
       error &&
-        typeof error === "object" &&
-        typeof (error as Record<string, unknown>).code === "string" &&
-        typeof (error as Record<string, unknown>).requestId === "string" &&
-        typeof (error as Record<string, unknown>).retryable === "boolean",
+      typeof error === "object" &&
+      typeof (error as Record<string, unknown>).code === "string" &&
+      typeof (error as Record<string, unknown>).requestId === "string" &&
+      typeof (error as Record<string, unknown>).retryable === "boolean",
     );
   }
 

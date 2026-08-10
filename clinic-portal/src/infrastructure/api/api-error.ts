@@ -2,6 +2,9 @@ export type PortalApiErrorKind =
   | "unauthorized"
   | "forbidden"
   | "validation"
+  | "notFound"
+  | "conflict"
+  | "idempotencyConflict"
   | "timeout"
   | "offline"
   | "invalidResponse"
@@ -27,8 +30,14 @@ export const safeApiMessage = Object.freeze({
   unauthorized: "Your email or password is incorrect.",
   forbidden: "Your account does not have access to the Clinic Portal.",
   validation: "Check the information you entered and try again.",
+  notFound: "The requested information could not be found.",
+  conflict:
+    "The information changed or already exists. Review it and try again.",
+  idempotencyConflict:
+    "This request conflicts with an earlier attempt. Start a new attempt.",
   timeout: "The service took too long to respond. Please try again.",
-  offline: "The service cannot be reached. Check your connection and try again.",
+  offline:
+    "The service cannot be reached. Check your connection and try again.",
   invalidResponse: "The service returned an unexpected response.",
   unavailable: "The service could not complete the request.",
 });
