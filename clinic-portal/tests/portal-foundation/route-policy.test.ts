@@ -14,6 +14,7 @@ const implementedRoutes = new Set([
   "administration",
   "organizations",
   "clinics",
+  "billing",
 ]);
 
 describe("central route policy", () => {
@@ -37,18 +38,17 @@ describe("central route policy", () => {
       "doctorSettings",
     ]);
 
-    expect(
-      navigationFor("platformAdministrator").map((x) => x.id),
-    ).toEqual([
+    expect(navigationFor("platformAdministrator").map((x) => x.id)).toEqual([
       "settings",
       "administration",
       "organizations",
       "clinics",
+      "billing",
     ]);
 
-    expect(
-      navigationFor("doctor").some((x) => x.id === "liveQueue"),
-    ).toBe(false);
+    expect(navigationFor("doctor").some((x) => x.id === "liveQueue")).toBe(
+      false,
+    );
   });
 
   it("isolates platform administration from clinic operations", () => {
@@ -65,12 +65,8 @@ describe("central route policy", () => {
 
   it("defines one landing route for every supported role", () => {
     expect(landingRoute("en", "receptionist")).toBe("/en/dashboard");
-    expect(landingRoute("ar", "doctor")).toBe(
-      "/ar/doctor/session",
-    );
-    expect(landingRoute("ku", "clinicManager")).toBe(
-      "/ku/dashboard",
-    );
+    expect(landingRoute("ar", "doctor")).toBe("/ar/doctor/session");
+    expect(landingRoute("ku", "clinicManager")).toBe("/ku/dashboard");
     expect(landingRoute("en", "platformAdministrator")).toBe(
       "/en/administration",
     );
@@ -84,9 +80,7 @@ describe("central route policy", () => {
     expect(routePolicies.every((x) => Boolean(x.owner))).toBe(true);
 
     for (const route of routePolicies) {
-      expect(route.placeholder).toBe(
-        !implementedRoutes.has(route.id),
-      );
+      expect(route.placeholder).toBe(!implementedRoutes.has(route.id));
     }
   });
 });

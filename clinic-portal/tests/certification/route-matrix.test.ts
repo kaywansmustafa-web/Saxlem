@@ -25,6 +25,7 @@ const implementedRoutes = new Set([
   "administration",
   "organizations",
   "clinics",
+  "billing",
 ]);
 
 describe("Sprint 13K-C protected route matrix", () => {
@@ -34,22 +35,16 @@ describe("Sprint 13K-C protected route matrix", () => {
         const expected = policy.roles.includes(role);
 
         expect(allowed(policy.id, role)).toBe(expected);
-        expect(
-          navigationFor(role).some((item) => item.id === policy.id),
-        ).toBe(expected && policy.navigation);
+        expect(navigationFor(role).some((item) => item.id === policy.id)).toBe(
+          expected && policy.navigation,
+        );
 
-        expect(
-          safeRoleReturnPath(routePath("ar", policy.id), role),
-        ).toBe(
-          expected
-            ? routePath("ar", policy.id)
-            : landingRoute("ar", role),
+        expect(safeRoleReturnPath(routePath("ar", policy.id), role)).toBe(
+          expected ? routePath("ar", policy.id) : landingRoute("ar", role),
         );
       }
 
-      expect(policy.placeholder).toBe(
-        !implementedRoutes.has(policy.id),
-      );
+      expect(policy.placeholder).toBe(!implementedRoutes.has(policy.id));
       expect(policy.owner).toMatch(/^Sprint 13/u);
     });
   }
@@ -78,17 +73,14 @@ describe("Sprint 13K-C protected route matrix", () => {
     expect(safeReturnPath("/en/dashboard?from=a%20b")).toBe(
       "/en/dashboard?from=a%20b",
     );
-    expect(
-      safeRoleReturnPath(
-        "/en/dashboard?from=a%20b",
-        "receptionist",
-      ),
-    ).toBe("/en/dashboard?from=a%20b");
-    expect(
-      safeRoleReturnPath("/en/doctor/session", "receptionist"),
-    ).toBe("/en/dashboard");
-    expect(
-      safeRoleReturnPath("/ku/appointments", "doctor"),
-    ).toBe("/ku/doctor/session");
+    expect(safeRoleReturnPath("/en/dashboard?from=a%20b", "receptionist")).toBe(
+      "/en/dashboard?from=a%20b",
+    );
+    expect(safeRoleReturnPath("/en/doctor/session", "receptionist")).toBe(
+      "/en/dashboard",
+    );
+    expect(safeRoleReturnPath("/ku/appointments", "doctor")).toBe(
+      "/ku/doctor/session",
+    );
   });
 });

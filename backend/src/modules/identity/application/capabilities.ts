@@ -89,6 +89,7 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'notifications:read',
     'notifications:stream',
     'notifications:mark-read',
+    'billing:read',
   ],
   platformAdministrator: [
     'platform:administration',
@@ -104,6 +105,9 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'arrival:read',
     'arrival:record',
     'queue:read',
+    'billing:read',
+    'billing:plan:manage',
+    'billing:statement:finalize',
   ],
 };
 

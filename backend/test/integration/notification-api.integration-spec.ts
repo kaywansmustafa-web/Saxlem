@@ -38,7 +38,13 @@ describe('notification inbox API', () => {
       { db: apiPrisma } as unknown as PrismaService,
       { ...apiConfiguration, notificationWorkerTickLimit: 100 },
     );
-    await worker.processTick();
+    for (let tick = 0; tick < 10; tick += 1) {
+      await worker.processTick();
+      const projected = await apiPrisma.notificationRecord.count({
+        where: { recipientUserId: seeded.patient.userId },
+      });
+      if (projected >= 2) break;
+    }
 
     const patientList = await request(app.getHttpServer())
       .get('/api/v1/notifications?pageSize=1')

@@ -13,6 +13,7 @@ import type {
   OrganizationRecord,
 } from '../domain/administration';
 import type { AdministrationRepository } from '../domain/administration.repository';
+import { STANDARD_BILLING_PLAN_ID } from '../../billing/domain/billing';
 
 @Injectable()
 export class PrismaAdministrationRepository implements AdministrationRepository {
@@ -26,6 +27,13 @@ export class PrismaAdministrationRepository implements AdministrationRepository 
   ) {
     return this.create(access, command, async (tx) => {
       const row = await tx.organization.create({ data: { name } });
+      await tx.organizationPlanAssignment.create({
+        data: {
+          organizationId: row.id,
+          planId: STANDARD_BILLING_PLAN_ID,
+          effectiveFrom: row.createdAt,
+        },
+      });
       await this.events(tx, access, 'organization', row.id, null, requestId);
       return this.organizationRecord(row);
     });

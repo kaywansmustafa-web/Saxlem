@@ -53,7 +53,8 @@ export async function ProtectedRoute({
       route === "liveQueue" ||
       route === "administration" ||
       route === "organizations" ||
-      route === "clinics",
+      route === "clinics" ||
+      route === "billing",
     content =
       integrated || composition.configuration.environment === "development" ? (
         children

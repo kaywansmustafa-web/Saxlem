@@ -25,6 +25,7 @@ const labels: Record<PortalRouteId, keyof FoundationMessages> = {
   administration: "administration",
   organizations: "organizations",
   clinics: "clinics",
+  billing: "billing",
 };
 const roleLabels: Record<PortalStaffRole, keyof FoundationMessages> = {
   receptionist: "receptionist",
@@ -52,7 +53,9 @@ export function PortalShell({
   const [open, setOpen] = useState(false),
     trigger = useRef<HTMLButtonElement>(null),
     drawer = useRef<HTMLElement>(null);
-  const pathname = usePathname() ?? `/${locale}/${navigation.find((item) => item.id === current)?.segment ?? "dashboard"}`;
+  const pathname =
+    usePathname() ??
+    `/${locale}/${navigation.find((item) => item.id === current)?.segment ?? "dashboard"}`;
   useEffect(() => {
     if (!open) return;
     const first = drawer.current?.querySelector<HTMLElement>("a,button");
