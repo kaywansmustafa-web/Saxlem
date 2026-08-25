@@ -243,4 +243,4 @@ Use the official term for Notification consistently. Notification titles, bodies
 - Preserve approved Badini word order, spelling, and punctuation exactly.
 - Do not shorten, expand, normalize, or machine-translate approved copy.
 - Keep proper names and runtime values unchanged unless an approved localized form exists.
-- Apply the mandatory UI terminology consistently: Doctor uses ??????, Appointment uses ????, and Live Queue uses ?????????? ????.
+- Apply the mandatory UI terminology consistently: Doctor uses نوژدار, Appointment uses ژڤان, and Live Queue uses رێزبەندییا زندی.
