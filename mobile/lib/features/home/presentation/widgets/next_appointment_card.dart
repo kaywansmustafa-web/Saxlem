@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../config/theme/app_colors.dart';
 import '../../../../design_system/components/content/saxlem_card.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class NextAppointmentCard extends StatelessWidget {
   const NextAppointmentCard({
@@ -23,6 +24,7 @@ class NextAppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return SaxlemCard(
       onTap: onTap,
       elevation: SaxlemCardElevation.low,
@@ -33,7 +35,7 @@ class NextAppointmentCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                'Your next appointment',
+                localizations.nextAppointmentTitle,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
@@ -50,9 +52,9 @@ class NextAppointmentCard extends StatelessWidget {
                   color: AppColors.success.withValues(alpha: 0.10),
                   borderRadius: BorderRadius.circular(100),
                 ),
-                child: const Text(
-                  'TODAY',
-                  style: TextStyle(
+                child: Text(
+                  localizations.today.toUpperCase(),
+                  style: const TextStyle(
                     color: AppColors.success,
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
@@ -129,7 +131,7 @@ class NextAppointmentCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '$patientsAhead patients ahead',
+                        localizations.patientsAheadCount(patientsAhead),
                         style: const TextStyle(
                           color: AppColors.textPrimary,
                           fontWeight: FontWeight.w700,
@@ -137,7 +139,7 @@ class NextAppointmentCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Estimated wait: $estimatedWaitMinutes minutes',
+                        localizations.estimatedWaitLong(estimatedWaitMinutes),
                         style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 13,

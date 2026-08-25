@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/entities/queue_types.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class LiveQueueSessionMessage extends StatelessWidget {
   const LiveQueueSessionMessage({required this.status, super.key});
@@ -8,16 +9,17 @@ class LiveQueueSessionMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     final (icon, title, message) = status == QueueSessionStatus.paused
         ? (
             Icons.pause_circle_outline_rounded,
-            'The queue is temporarily paused',
-            "Your place is safe. We'll update you when the queue resumes.",
+            localizations.queuePausedTitle,
+            localizations.queuePausedBody,
           )
         : (
             Icons.check_circle_outline_rounded,
-            'This queue has closed',
-            'For assistance with your appointment, please contact reception.',
+            localizations.queueClosedTitle,
+            localizations.queueClosedBody,
           );
     final colors = Theme.of(context).colorScheme;
     return Semantics(

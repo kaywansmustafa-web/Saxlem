@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/entities/queue_types.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class ConnectionStatusBanner extends StatelessWidget {
   const ConnectionStatusBanner({required this.status, super.key});
@@ -8,26 +9,27 @@ class ConnectionStatusBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     final (icon, title, message) = switch (status) {
       QueueConnectionStatus.connected => (
         Icons.cloud_done_outlined,
-        'Connected',
-        'Your queue is live.',
+        localizations.queueConnectedTitle,
+        localizations.queueConnectedBody,
       ),
       QueueConnectionStatus.reconnecting => (
         Icons.sync_rounded,
-        'Reconnecting',
-        'Showing your latest queue update.',
+        localizations.queueReconnectingTitle,
+        localizations.queueReconnectingBody,
       ),
       QueueConnectionStatus.stale => (
         Icons.history_rounded,
-        'Update delayed',
-        'This information may be out of date.',
+        localizations.queueDelayedTitle,
+        localizations.queueDelayedBody,
       ),
       QueueConnectionStatus.offline => (
         Icons.cloud_off_outlined,
-        'You are offline',
-        'Showing the last queue update saved on this device.',
+        localizations.queueOfflineTitle,
+        localizations.queueOfflineBody,
       ),
     };
     final colors = Theme.of(context).colorScheme;

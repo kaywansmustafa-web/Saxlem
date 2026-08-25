@@ -2,22 +2,25 @@ import '../domain/entities/queue_types.dart';
 
 class LiveQueueCopy {
   const LiveQueueCopy({
-    this.pageTitle = 'Live Queue',
-    this.currentPatient = 'Now serving',
-    this.yourNumber = 'Your Number',
-    this.patientsAhead = 'Patients ahead',
-    this.estimatedWait = 'Estimated wait',
-    this.estimateConfidence = 'Estimate confidence',
-    this.doctorStatus = 'Doctor status',
-    this.onMyWay = "I'm on my way",
-    this.arrived = "I've arrived",
-    this.runningLate = "I'm running late",
-    this.cancel = 'Cancel appointment',
-    this.requestHelp = 'Request help',
-    this.retry = 'Try again',
-    this.veryAccurate = 'Very Accurate',
-    this.reliable = 'Reliable',
-    this.lessCertain = 'Less Certain',
+    required this.pageTitle,
+    required this.currentPatient,
+    required this.yourNumber,
+    required this.patientsAhead,
+    required this.estimatedWait,
+    required this.estimateConfidence,
+    required this.doctorStatus,
+    required this.onMyWay,
+    required this.arrived,
+    required this.runningLate,
+    required this.cancel,
+    required this.requestHelp,
+    required this.retry,
+    required this.veryAccurate,
+    required this.reliable,
+    required this.lessCertain,
+    required this.doctorStatusFor,
+    required this.relativeUpdateFor,
+    required this.waitRangeFor,
   });
 
   final String pageTitle;
@@ -36,6 +39,9 @@ class LiveQueueCopy {
   final String veryAccurate;
   final String reliable;
   final String lessCertain;
+  final String Function(int minutes) doctorStatusFor;
+  final String Function(DateTime updatedAt, DateTime now) relativeUpdateFor;
+  final String Function(int lowerMinutes, int upperMinutes) waitRangeFor;
 
   String confidenceLabel(QueueEstimateConfidence confidence) =>
       switch (confidence) {
@@ -43,17 +49,4 @@ class LiveQueueCopy {
         QueueEstimateConfidence.medium => reliable,
         QueueEstimateConfidence.low => lessCertain,
       };
-
-  String doctorStatusFor(int minutes) {
-    if (minutes.abs() <= 2) return 'Running on time';
-    if (minutes > 0) return 'Running $minutes minutes late';
-    return 'Running ${minutes.abs()} minutes early';
-  }
-
-  String relativeUpdateFor(DateTime updatedAt, DateTime now) {
-    final minutes = now.difference(updatedAt).inMinutes;
-    if (minutes <= 0) return 'Updated just now';
-    if (minutes == 1) return 'Updated 1 minute ago';
-    return 'Updated $minutes minutes ago';
-  }
 }

@@ -83,7 +83,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get openSearchFilters => 'فتح مرشحات البحث';
 
   @override
-  String get liveQueue => 'الطابور المباشر';
+  String get liveQueue => 'قائمة الانتظار المباشرة';
 
   @override
   String get live => 'مباشر';
@@ -98,7 +98,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get patientsAhead => 'المرضى قبلك';
 
   @override
-  String get estimatedWait => 'الانتظار المتوقع';
+  String get estimatedWait => 'وقت الانتظار المتوقع';
 
   @override
   String get doctorStatus => 'حالة الطبيب';
@@ -122,7 +122,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get book => 'احجز';
 
   @override
-  String get filters => 'المرشحات';
+  String get filters => 'عوامل التصفية';
 
   @override
   String get sortResults => 'ترتيب النتائج';
@@ -131,7 +131,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tryAgain => 'حاول مجدداً';
 
   @override
-  String get clearFilters => 'مسح المرشحات';
+  String get clearFilters => 'مسح عوامل التصفية';
 
   @override
   String get findRightCare => 'اعثر على الرعاية المناسبة';
@@ -232,7 +232,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get viewDoctor => 'عرض الطبيب';
 
   @override
-  String get returnHome => 'العودة للرئيسية';
+  String get returnHome => 'العودة إلى الرئيسية';
 
   @override
   String get loadingBooking => 'جارٍ تحميل خيارات الحجز';
@@ -250,10 +250,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get upcoming => 'القادمة';
 
   @override
-  String get completed => 'المكتملة';
+  String get completed => 'مكتمل';
 
   @override
-  String get cancelled => 'الملغاة';
+  String get cancelled => 'ملغى';
 
   @override
   String get viewAppointment => 'عرض الموعد';
@@ -262,7 +262,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get rateVisit => 'قيّم الزيارة';
 
   @override
-  String get bookAgain => 'احجز مجدداً';
+  String get bookAgain => 'احجز مجددًا';
 
   @override
   String get actionUnavailable => 'سيصبح هذا الإجراء متاحاً في إصدار قادم.';
@@ -317,7 +317,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'دخولك إلى الطابور غير جاهز بعد. سنحدّث الموعد عند توفره.';
 
   @override
-  String get openLiveQueue => 'فتح الطابور المباشر';
+  String get openLiveQueue => 'فتح قائمة الانتظار المباشرة';
 
   @override
   String get loadingAppointments => 'جارٍ تحميل مواعيدك';
@@ -337,7 +337,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String tabWithCount(String label, int count) {
-    return '$label ($count)';
+    return 'معلومات';
   }
 
   @override
@@ -391,7 +391,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'يمكنك استكشاف ساكسلم، لكن الحجز والمواعيد الشخصية تتطلب التحقق.';
 
   @override
-  String get phoneTitle => 'رقم هاتفك المحمول';
+  String get phoneTitle => 'رقم هاتفك';
 
   @override
   String get phoneBody => 'سنرسل رمزاً لمرة واحدة للتحقق من رقمك بأمان.';
@@ -406,16 +406,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get phoneNumber => 'رقم الهاتف';
 
   @override
-  String get phoneHint => '750 123 4567';
+  String get phoneHint => 'معلومات';
 
   @override
-  String get phoneInvalid => 'أدخل رقم هاتف عراقي صالحاً.';
+  String get phoneInvalid => 'أدخل رقم هاتف عراقي صحيحًا.';
 
   @override
   String get sendCode => 'إرسال الرمز';
 
   @override
-  String get otpTitle => 'أدخل الرمز';
+  String get otpTitle => 'أدخل رمز التحقق';
 
   @override
   String otpBody(String phone) {
@@ -423,7 +423,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get otpLabel => 'رمز التحقق المكون من 6 أرقام';
+  String get otpLabel => 'رمز تحقق مكوّن من 6 أرقام';
 
   @override
   String get otpHint => 'أدخل 6 أرقام';
@@ -486,7 +486,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get today => 'اليوم';
 
   @override
-  String get earlier => 'سابقاً';
+  String get earlier => 'سابقًا';
 
   @override
   String unreadNotifications(int count) {
@@ -727,10 +727,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get clearSearch => 'مسح البحث';
 
   @override
-  String get applyFilters => 'تطبيق المرشحات';
+  String get applyFilters => 'تطبيق عوامل التصفية';
 
   @override
-  String get specialtyLabel => 'الاختصاص';
+  String get specialtyLabel => 'التخصص';
 
   @override
   String get languageLabel => 'اللغة';
@@ -932,7 +932,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get patient => 'المريض';
 
   @override
-  String get appointmentReference => 'رقم الموعد';
+  String get appointmentReference => 'مرجع الموعد';
 
   @override
   String get cancellationReason => 'سبب الإلغاء';
@@ -941,17 +941,84 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cancelAppointment => 'إلغاء الموعد';
 
   @override
-  String get rescheduleAppointment => 'تغيير موعد الزيارة';
+  String get rescheduleAppointment => 'تغيير الموعد';
 
   @override
-  String get chooseNewDateTime => 'اختر تاريخاً ووقتاً جديدين';
+  String get chooseNewDateTime => 'اختر تاريخًا ووقتًا جديدين';
 
   @override
   String get confirmCancellation => 'تأكيد الإلغاء';
 
   @override
-  String get cancel => 'رجوع';
+  String get cancel => 'إلغاء';
 
   @override
   String get recordArrival => 'تسجيل الوصول';
+
+  @override
+  String get nextAppointmentTitle => 'موعدك القادم';
+
+  @override
+  String patientsAheadCount(int count) {
+    return '$count من المرضى قبلك';
+  }
+
+  @override
+  String estimatedWaitLong(int minutes) {
+    return 'وقت الانتظار المتوقع: $minutes دقيقة';
+  }
+
+  @override
+  String get loadingYourLiveQueue => 'جارٍ تحميل قائمة الانتظار المباشرة';
+
+  @override
+  String queueStatusSemantic(String status) {
+    return 'حالة قائمة الانتظار: $status';
+  }
+
+  @override
+  String get queueIsLive => 'قائمة الانتظار مفتوحة';
+
+  @override
+  String get queueIsPaused => 'قائمة الانتظار متوقفة مؤقتًا';
+
+  @override
+  String get queueIsClosed => 'قائمة الانتظار مغلقة';
+
+  @override
+  String get queueConnectedTitle => 'متصل';
+
+  @override
+  String get queueConnectedBody => 'قائمة انتظارك مباشرة الآن.';
+
+  @override
+  String get queueReconnectingTitle => 'جارٍ إعادة الاتصال';
+
+  @override
+  String get queueReconnectingBody => 'نعرض آخر تحديث لقائمة انتظارك.';
+
+  @override
+  String get queueDelayedTitle => 'التحديث متأخر';
+
+  @override
+  String get queueDelayedBody => 'قد لا تكون هذه المعلومات محدثة.';
+
+  @override
+  String get queueOfflineTitle => 'أنت غير متصل';
+
+  @override
+  String get queueOfflineBody => 'نعرض آخر تحديث محفوظ على هذا الجهاز.';
+
+  @override
+  String get queuePausedTitle => 'قائمة الانتظار متوقفة مؤقتًا';
+
+  @override
+  String get queuePausedBody =>
+      'مكانك محفوظ. سنحدّثك عند استئناف قائمة الانتظار.';
+
+  @override
+  String get queueClosedTitle => 'أُغلقت قائمة الانتظار';
+
+  @override
+  String get queueClosedBody => 'للمساعدة بشأن موعدك، يرجى مراجعة الاستقبال.';
 }

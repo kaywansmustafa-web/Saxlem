@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/entities/queue_types.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class QueueStatusIndicator extends StatelessWidget {
   const QueueStatusIndicator({required this.status, super.key});
@@ -8,26 +9,27 @@ class QueueStatusIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     final colors = Theme.of(context).colorScheme;
     final (label, icon, color) = switch (status) {
       QueueSessionStatus.open => (
-        'Queue is live',
+        localizations.queueIsLive,
         Icons.podcasts_rounded,
         colors.primary,
       ),
       QueueSessionStatus.paused => (
-        'Queue is paused',
+        localizations.queueIsPaused,
         Icons.pause_circle_outline_rounded,
         colors.tertiary,
       ),
       QueueSessionStatus.closed => (
-        'Queue is closed',
+        localizations.queueIsClosed,
         Icons.check_circle_outline_rounded,
         colors.onSurfaceVariant,
       ),
     };
     return Semantics(
-      label: 'Queue status: $label',
+      label: localizations.queueStatusSemantic(label),
       child: Container(
         padding: const EdgeInsetsDirectional.symmetric(
           horizontal: 12,

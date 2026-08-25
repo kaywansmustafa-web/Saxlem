@@ -1,7 +1,7 @@
 {
   "@@locale": "ku",
   "appName": "ساخله‌م",
-  "chooseLanguage": "زمانێ خۆ هەلبژێرە",
+  "chooseLanguage": "زمانێ خو ب هەلبژێرە",
   "languageCanChange": "دێ شێی پاشتر ل پروفایلێ خۆ بگوهۆڕی.",
   "badiniKurdish": "کوردی بادینی",
   "english": "ئینگلیزی",
@@ -29,87 +29,138 @@
   "currentPatient": "نەخوشێ نوکە",
   "yourNumber": "ژمارا تە",
   "patientsAhead": "نەخوشێن بەری تە",
-  "estimatedWait": "پێشىینییا چاڤەرێکرنێ",
-  "doctorStatus": "بارێ نوژداری",
+  "estimatedWait": "دەمێ چاڤەرێکرنا پێشبینی کری",
+  "doctorStatus": "رەوشا نوژداری",
   "minutesShort": "خولەک",
   "viewLiveQueue": "رێزبەندییا زندی ببینە",
   "popularSpecialties": "پسپۆڕیێن بەناڤودەنگ",
   "recommendedDoctors": "نوژدارێن پێشنیارکری",
-  "seeAll": "هەمیێ ببینە",
-  "book": "حجز بکە",
-  "filters": "فلتەر",
+  "seeAll": "هەمیان ببینە",
+  "book": "ژڤانی بگرە",
+  "filters": "جوداکرن",
   "sortResults": "ئەنجامان رێک بخە",
-  "tryAgain": "دووبارە هەول بدە",
-  "clearFilters": "فلتەران پاک بکە",
+  "tryAgain": "دیسان هەول بدە",
+  "clearFilters": "جوداکرنێ پاک بکە",
   "findRightCare": "چاڤدێریا گونجای بدۆزەڤە",
   "findRightCareBody": "ب پەیڤێن سادە بگەڕێ، ئەم دێ هاریکاریا تە کەین نوژدارێ گونجای بدۆزی.",
   "quickCategories": "پۆلێن خێرا",
-  "doctorProfile": "پروفایلا نوژداری",
+  "doctorProfile": "پروفایلێ نوژداری",
   "viewProfile": "پروفایلێ ببینە",
   "addToMyDoctors": "زێدە بکە بۆ نوژدارێن من",
   "removeFromMyDoctors": "ژ نوژدارێن من ڕاکە",
-  "bookAppointment": "ژڤانەکی داخواز بکە",
+  "bookAppointment": "ژڤانی بگرە",
   "chooseAppointment": "ژڤانیەکێ هەلبژێرە",
-  "chooseClinic": "کلینیکێ هەلبژێرە",
-  "chooseDate": "رۆژێ هەلبژێرە",
-  "chooseTime": "دەمێ هەلبژێرە",
-  "appointmentType": "Appointment type",
-  "initialAppointment": "Initial appointment",
-  "followUpAppointment": "Follow-up appointment",
-  "appointmentReason": "Reason for visit",
-  "checkAvailability": "Check availability",
-  "noAvailableSlots": "No available times in this date range.",
-  "timezone": "Time zone",
-  "bookingTimeout": "The availability request timed out. Please try again.",
-  "slotTaken": "That time is no longer available. Check availability again.",
-  "bookingValidationFailure": "Check your booking details and try again.",
-  "bookingUnknownOutcome": "We could not confirm the result. Do not submit another booking until you retry this request.",
-  "bookingSuccessful": "Your appointment is booked.",
-  "appointmentReferenceValue": "Appointment reference {reference}",
-  "@appointmentReferenceValue": {"placeholders": {"reference": {"type": "String"}}},
+  "chooseClinic": "کلینیکەکێ ب هەلبژێرە",
+  "chooseDate": "رێکەفتەکێ ب هەلبژێرە",
+  "chooseTime": "دەمەکی ب هەلبژێرە",
+  "appointmentType": "جورێ ژڤانێ",
+  "initialAppointment": "ئێکەم ژڤان",
+  "followUpAppointment": "ژڤانێ ل دویفچوونێ",
+  "appointmentReason": "ئەگەرێ سەردانێ",
+  "checkAvailability": "ژڤانێن بەردەست ب پشکنە",
+  "noAvailableSlots": "د ڤی ماوەی دا چ دەمێن بەردەست نینن",
+  "timezone": "هەرێما دەمێ",
+  "bookingTimeout": "دەما داخوازا دەمێن بەردەست ب دووماهی هات. دیسان هەول بدە.",
+  "slotTaken": "ئەو دەمە ئیدی بەردەست نینە. دیسان دەمێن بەردەست بپشکنە.",
+  "bookingValidationFailure": "هویرکاتیێن گرتنا ژڤانی بپشکنە و دیسان هەول بدە",
+  "bookingUnknownOutcome": "مە نەشیا ئەنجامی پشتڕاست بکەین. هەتا دیسان هەمان داخواز دکەی، ژڤانەکا دی نەگرە.",
+  "bookingSuccessful": "ژڤانا تە هاتە گرتن.",
+  "appointmentReferenceValue": "ژمارا ژڤانێ {reference}",
+  "@appointmentReferenceValue": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
   "reviewAppointment": "ژڤانیێ پێداچوون بکە",
-  "confirmAppointment": "ژڤانیێ پشتڕاست بکە",
+  "confirmAppointment": "ژڤانێ پشتراست بکە",
   "confirmingAppointment": "ژڤان دهێتە پشتڕاستکرن",
-  "appointmentConfirmed": "ژڤان هاتە پشتڕاستکرن",
+  "appointmentConfirmed": "ژڤان هاتە پشتراستکرن",
   "goToAppointments": "ژڤانێن من",
   "viewDoctor": "نوژداری ببینە",
-  "returnHome": "بزڤرە سەرەکی",
+  "returnHome": "ب ڤەگەرە بو سەرەکی",
   "loadingBooking": "هەلبژاردنێن ژڤانیێ دهێنە بارکرن",
-  "bookingUnavailable": "ژڤان وەرگرتن نە بەردەستە",
-  "timeUnavailable": "دەم نە بەردەستە",
+  "bookingUnavailable": "گرتنا ژڤانی بەردەست نینە",
+  "timeUnavailable": "دەم نەبەردەستە",
   "myAppointments": "ژڤانێن من",
   "upcoming": "داهاتی",
   "completed": "تەمامبووی",
   "cancelled": "هەلوەشای",
   "viewAppointment": "ژڤانیێ ببینە",
   "rateVisit": "سەردانێ هەلسەنگینە",
-  "bookAgain": "دیسە ژڤان بگرە",
+  "bookAgain": "دووبارە ژڤانی بگرە",
   "actionUnavailable": "ڤی کار دێ ل وەشانەکا داهاتی بەردەست بیت.",
   "discoverDoctors": "نوژداران بدۆزەڤە",
   "firstAppointmentTitle": "چاڤدێریا تە ل ڤێرێ دەست پێ دکەت",
   "firstAppointmentBody": "سەردانا خۆ یا ئێکێ ل گەل نوژدارەکێ باوەرپێکری بگرە.",
-  "emptyAppointmentsTitle": "نوکە تشتەک ل ڤێرێ نینە",
+  "emptyAppointmentsTitle": "نوکە هیچ تشتەک ل ڤێرێ نینە",
   "emptyAppointmentsBody": "ژڤانیێن ڤێ پۆلێ دێ ل ڤێرێ دیار بن.",
-  "appointmentDetails": "زانیاری یێن ژڤانێ تە",
+  "appointmentDetails": "هویرکاتیێن ژڤانێ",
   "clinic": "کلینیک",
   "date": "رێکەفت",
-  "time": "دەمژمێر",
-  "status": "بار",
+  "time": "دەم",
+  "status": "رەوش",
   "fee": "بها",
-  "duration": "دەم",
-  "appointmentId": "ناسناما ژڤانیێ",
+  "duration": "مایی",
+  "appointmentId": "ژمارا ژڤانێ",
   "queueOpensAppointmentDay": "ڕیز ل رۆژا ژڤانیێ ڤەدبیت.",
   "queueAvailableToday": "رێزبەندییا زندی بۆ ژڤانیا ئەڤرۆ بەردەستە.",
   "queueNotReady": "دەرکەفتنا تە یا ڕیزێ هێشتا ئامادە نینە. دێ ژڤانیێ نویکەین دەمێ بەردەست بوو.",
   "openLiveQueue": "رێزبەندییا زندی ڤەکە",
   "loadingAppointments": "ژڤانیێن تە دهێنە بارکرن",
-  "appointmentsLoadFailed": "بارکرنا ژڤانیێن تە نەشیا.",
+  "appointmentsLoadFailed": "ئەم نەشیاین ژڤانێن تە بار بکەین",
   "consultationMinutes": "راوێژ بۆ {minutes} خولەکان",
+  "@consultationMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "estimatedWaitMinutes": "چاڤەڕێکرنا پێشبینیکری: {minutes} خولەک",
-  "tabWithCount": "{label} ({count})",
+  "@estimatedWaitMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "tabWithCount": "زانیاری",
+  "@tabWithCount": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "minutesLong": "{minutes} خولەک",
+  "@minutesLong": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "iqdAmount": "{amount} د.ع",
+  "@iqdAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
   "appointmentIdValue": "ناسناما ژڤانیێ {id}",
+  "@appointmentIdValue": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "informationalScreen": "پەڕا زانیاریێ",
   "welcomeTitle": "ساخله‌می، ڕوونتر",
   "welcomeBody": "ساخله‌م چاڤدێرییا باوەرپێکری، وەعدە و نویکرنێن زیندی یێن کلینیکێ د ئەزموونەکا ئارام دا دکەتە ئێک.",
@@ -119,41 +170,76 @@
   "welcomeAppointments": "چاڤدێرییا خۆ ڕێک و پێک بکە",
   "continueAsGuest": "وەک مێهڤان بەردەوام بە",
   "verifyNumber": "ژمارا مۆبایلا خو پشتراست بکە",
-  "guestMode": "دوخێ مێهڤانان",
+  "guestMode": "رەوشا مێهڤانی",
   "guestModeMessage": "تو دشێی ساخله‌مێ بگەڕی، لێ وەعدە و تایبەتمەندیێن کەسی پشتڕاستکرنێ دخوازن.",
-  "phoneTitle": "ژمارا مۆبایلا تە",
+  "phoneTitle": "ژمارا موبایلا تە",
   "phoneBody": "ئەم دێ کودەکا ئێکجارێ فرێکەین دا ژمارا تە ب پارێزراوی پشتڕاست بکەین.",
   "country": "وەلات",
-  "iraq": "عیراق",
-  "phoneNumber": "ژمارا مۆبایلێ",
-  "phoneHint": "750 123 4567",
-  "phoneInvalid": "ژمارەکا موبایلا عیراقی یا دروست بنڤیسە.",
-  "sendCode": "کودی ڤرێکە",
-  "otpTitle": "کودی پڕ بکە",
+  "iraq": "ئیراق",
+  "phoneNumber": "ژمارا موبایلێ",
+  "phoneHint": "زانیاری",
+  "phoneInvalid": "ژمارەکا موبایلا ئیراقی یا دروست بنڤیسە",
+  "sendCode": "کودی فرێکە",
+  "otpTitle": "کودێ خو بنڤیسە",
   "otpBody": "ڤرێکر{phone} مە کودەکێ  ٦ ژمارەیی بۆ",
-  "otpLabel": "کودا پشتراستکرنێ یا ٦ ژمارەیی",
-  "otpHint": "٦ ژمارەیان پڕ بکە",
+  "@otpBody": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "otpLabel": "کودێ پشتراستکرنێ یێ 6 ژمارەیی",
+  "otpHint": "6 ژماران بنڤیسە",
   "verify": "پشتراست بکە و بەردەوام بە",
   "changeNumber": "ژمارێ بگۆڕە",
-  "resendCode": "کودی دیسان ڤڕیکە",
-  "resendIn": "چرکەیان دیسان دێ هنێرین {seconds} پشتی",
+  "resendCode": "کودی دیسان فرێکە",
+  "resendIn": "پشتی {seconds} چرکەیان دیسان فرێکە",
+  "@resendIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "otpInvalid": "ئەڤ کودە راست نینە. تکایە دیسان هەوڵ بدە.",
   "otpExpired": "ئەڤ کودە ماوەیا وێ دەرباس بوو. کودەکێ نوی داخواز بکە.",
-  "otpLimited": "هەوڵدان زۆر بوون. تکایە کودەکێ نوی داخواز بکە.",
+  "otpLimited": "هەول زور بوون. هیڤییە کودەکێ نوی بخوازە",
   "authUnavailable": "پشتراستکرنا ژمارا مۆبایلێ هێشتا ل ڤێ وەشانێ بەردەست نینە.",
-  "sessionExpiredTitle": "دانیشتنا تە دەرچووە",
-  "sessionExpiredBody": "بۆ بەردەوامبوونێ ژمارا خۆ دیسان پشتراست بکە.",
+  "sessionExpiredTitle": "دانیشتنا تە ب دووماهی هات",
+  "sessionExpiredBody": "ژمارا خو دیسان پشتراست بکە دا ب پاراستی بەردەوام بی",
   "developmentCodeHint": "کودا پەرەپێدانێ: {code}",
+  "@developmentCodeHint": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "logOut": "دەرکەڤە",
-  "personalizedFeatureTitle": "پشتراستکرن پێویستە",
+  "personalizedFeatureTitle": "پشتراستکرن پێدڤییە",
   "personalizedFeatureBody": "ب ژمارا خۆ بچە ژوور بۆ بکارئینانا وەعدە و تایبەتمەندیێن چاڤدێرییا کەسی.",
   "notifications": "ئاگەهداری",
-  "unread": "نە ڤەکری",
+  "unread": "نەڤەکری",
   "today": "ئەڤرو",
   "earlier": "بەری نوکە",
   "unreadNotifications": "{count} نەهاتینە خواندن",
+  "@unreadNotifications": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "notificationUpdates": "{count} نووکرنێن ریزێ",
-  "notificationDetails": "وردەکاریێن ئاگەهداریێ",
+  "@notificationUpdates": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationDetails": "هویرکاتیێن ئاگەهداریێ",
   "queueUpdates": "نووکرنێن ریزێ",
   "whatHappened": "چی روویدا",
   "whyItHappened": "بۆچی",
@@ -164,17 +250,38 @@
   "notificationsEmptyBody": "نووکرنێن وەعدە، کلینیک و ریزێ ل ڤێرێ دێ دیار بن.",
   "notificationsUnavailable": "ئاگەهداری بەردەست نینن",
   "notificationsUnavailableBody": "مە نەشیا نووکرنێن تە بار بکەین. دیسان تاقی بکە.",
-  "notificationBookingConfirmed": "وەعدە هاتە پشتڕاستکرن",
+  "notificationBookingConfirmed": "ژڤان هاتە پشتراستکرن",
   "notificationBookingHappened": "وەعدەیا تە ل گەل {doctor} هاتە پشتڕاستکرن.",
+  "@notificationBookingHappened": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
   "notificationBookingWhy": "کلینیکێ داخوازا وەعدەیا تە قەبویل کر.",
   "notificationBookingNext": "وردەکاریێن وەعدەیێ ببینە و د دەمێ پێشنیارکری دا بەرهەڤ بە.",
   "notificationQueueOpened": "ریزا تە ڤەبوو",
   "notificationQueueOpenedHappened": "ریزا زیندی یا {doctor} نوکە بەردەستە.",
+  "@notificationQueueOpenedHappened": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
   "notificationQueueOpenedWhy": "کلینیکێ ریزا نەخۆشان یا ئیرۆ دەستپێکر.",
-  "notificationQueueOpenedNext": "دەمێ بەرهەڤ بی ریزا زیندی ڤەکە و جهێ خۆ ببینە.",
+  "notificationQueueOpenedNext": "دەمێ ئامادە دبی رێزبەندییا زندی ڤەکە دا لدویف جهێ خو بچی.",
   "notificationAlmostTurn": "نۆرا تە نێزیکە",
   "notificationAlmostTurnHappened": "ژمارا تە یا نوکە {number} ـە.",
-  "notificationAlmostTurnWhy": "ریز پێشڤەچوو و نۆرا تە نێزیک بوو.",
+  "@notificationAlmostTurnHappened": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationAlmostTurnWhy": "سرایا تە نێزیکتر بوو.",
   "notificationAlmostTurnNext": "هیڤییە بچە پێشوازیێ و ل نێزیک بمینە.",
   "notificationWelcome": "بخێر بهێی بو ساخلەم",
   "notificationWelcomeHappened": "ئەزموونا تە یا ساخله‌مێ بەرهەڤە.",
@@ -185,21 +292,28 @@
   "notificationReservedWhy": "کلینیکێ هاتنا تە تۆمار کر.",
   "notificationReservedNext": "هیڤییە چاڤەرێی رێنماییێن پێشوازیێ بە.",
   "notificationGeneralHappened": "نووکرنەکا نوو دەربارەی چاڤدێرییا تە هەیە.",
-  "notificationGeneralWhy": "زانیاریێن نوو بەردەست بوون.",
+  "notificationGeneralWhy": "زانیاریێن نوی بەردەست بوون.",
   "notificationGeneralNext": "نووکرنێ ببینە و رێنماییێن دیار بکە.",
   "notificationTimeJustNow": "نوکە هاتە نووکرن",
   "notificationTimeMinutesAgo": "بەری {minutes} خولەکان هاتە نووکرن",
+  "@notificationTimeMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "notificationTimeEarlier": "بەری نوکە هاتە نووکرن",
-  "choosePatient": "نەخوشی ب هەلبژێرە",
-  "bookingFor": "حجز ژ بوی",
-  "addPatient": "ئەندامێ خێزانێ زێدە بکە",
+  "choosePatient": "نەخوشەکی ب هەلبژێرە",
+  "bookingFor": "ژڤان بو",
+  "addPatient": "ئەندامەکێ خێزانێ زێدە بکە",
   "firstName": "ناڤێ ئێکێ",
   "lastName": "ناڤێ دووماهیێ",
   "relationship": "پەیوەندی",
   "gender": "رەگەز",
   "dateOfBirth": "رێکەفتا ژدایکبوونێ",
-  "patientRelationship": "{relationship, select, mother {یێن دی} father {باب} wife {هەڤژین} husband {هەڤژین} son {کور} daughter {کچ} brother {یێن دی} sister {خویشک} grandfather {باپیر} grandmother {یێن دی} me {ئەز} other {یێن دی}}",
-  "patientGender": "{gender, select, female {نێر} male {نێر} other {دیار نینە}}",
+  "patientRelationship": "زانیاری",
+  "patientGender": "زانیاری",
   "loadingPatientAccount": "هەژمارێ نەخۆشی دهێتە بارکرن",
   "profileSetupTitle": "دەربارەی نەخۆشی بێژە مە",
   "profileSetupBody": "زانیاریێن پێویست بۆ چاڤدێریا تایبەت تۆمار بکە.",
@@ -212,10 +326,10 @@
   "emptyPatientProfiles": "هێشتا چ پڕۆفایلێن نەخۆشان نینن.",
   "doctorDiscoveryTitle": "نوژداران بدۆزەڤە",
   "doctorDiscoveryInstruction": "ل نوژدارێن باوەرپێکری بگەڕە و ئەنجامان ب فلتەرێن بەردەست کورت بکە.",
-  "searchDoctorsLabel": "ل نوژداران بگەڕە",
+  "searchDoctorsLabel": "ل نوژداران بگەرە",
   "searchDoctorsHint": "ناڤێ نوژداری",
-  "clearSearch": "گەڕیانێ پاک بکە",
-  "applyFilters": "فلتەران جێبەجێ بکە",
+  "clearSearch": "گەریانێ پاک بکە",
+  "applyFilters": "جوداکرنێ جێبەجێ بکە",
   "specialtyLabel": "پسپۆڕی",
   "languageLabel": "زمان",
   "soraniKurdish": "کوردی سۆرانی",
@@ -225,7 +339,13 @@
   "anyOption": "هەمی",
   "appliedFilters": "فلتەرێن جێبەجێکری",
   "doctorResults": "{count} نوژدار",
-  "@doctorResults": {"placeholders": {"count": {"type": "int"}}},
+  "@doctorResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "noDoctorsTitle": "چ نوژدار نەهاتنە دیتن",
   "noDoctorsBody": "ناڤێ نوژدارەکێ دی تاقی بکە.",
   "noDoctorsFilteredBody": "فلتەرەک یان ژ پتر پاک بکە.",
@@ -233,21 +353,27 @@
   "loadingMoreDoctors": "نوژدارێن پتر دهێنە بارکرن",
   "loadMoreFailed": "بارکرنا نوژدارێن پتر سەرنەکەفت. ئەنجامێن نوکە هێشتا دیارن.",
   "offlineTitle": "تو ئۆفلاینی",
-  "offlineBody": "پەیوەندییا خۆ بپشکنە و دیسان هەول بدە.",
+  "offlineBody": "پەیوەندییا ئینتەرنێتێ بپشکنە و دیسان هەول بدە.",
   "discoveryUnavailableTitle": "گەڕیان ل نوژداران بەردەست نینە",
   "discoveryUnavailableBody": "خزمەتگوزاری نوکە بەردەست نینە. دیسان هەول بدە.",
   "discoveryForbiddenTitle": "گەڕیان ل نوژداران سنووردارە",
   "discoveryForbiddenBody": "هەژمارا تە ناتوانیت دەست بگەهینیت.",
   "malformedDoctorDataTitle": "زانیاریێن نوژداری بەردەست نینن",
   "malformedDoctorDataBody": "مە نەشیا زانیاریێن نوژداری ب پارێزراوی بخوینین. دیسان هەول بدە.",
-  "discoveryErrorTitle": "تشتەک خەلەت چوو",
+  "discoveryErrorTitle": "تشتەک خەلەت چێبوو",
   "discoveryErrorBody": "دیسان هەول بدە.",
   "discoveryAuthTitle": "بچۆ ژوور بۆ دیتنا نوژداران",
   "discoveryAuthBody": "ژمارا موبایلا خۆ پشتڕاست بکە بۆ دیتنا زانیاریێن نوژداران.",
   "doctorNotFound": "نوژدار نەهاتە دیتن",
   "doctorNotFoundBody": "پڕۆفایلا ڤی نوژداری ئێدی بەردەست نینە.",
   "yearsExperience": "{years} سال ئەزموون",
-  "@yearsExperience": {"placeholders": {"years": {"type": "int"}}},
+  "@yearsExperience": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
   "genderFemale": "مێ",
   "genderMale": "نێر",
   "genderUnspecified": "دیار نەکری",
@@ -255,40 +381,105 @@
   "clinicsLabel": "کلینیک",
   "specialtiesLabel": "پسپۆڕی",
   "biographyLabel": "دەربارە",
-  "availabilityLabel": "بەردەستبوون",
-  "doctorAvailable": "بەردەستە",
+  "availabilityLabel": "ژڤانێن بەردەست",
+  "doctorAvailable": "بەردەست",
   "doctorUnavailable": "بەردەست نینە",
   "acceptingNewPatients": "نەخۆشێن نوی وەردگریت",
   "notAcceptingNewPatients": "نەخۆشێن نوی وەرناگریت",
   "profileImageLabel": "وێنێ پڕۆفایلا {name}",
-  "@profileImageLabel": {"placeholders": {"name": {"type": "String"}}},
+  "@profileImageLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "profileImageFallback": "وێنێ پڕۆفایلا {name} نینە",
-  "@profileImageFallback": {"placeholders": {"name": {"type": "String"}}},
+  "@profileImageFallback": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "viewDoctorProfile": "پڕۆفایلا {name} ببینە",
-  "@viewDoctorProfile": {"placeholders": {"name": {"type": "String"}}},
+  "@viewDoctorProfile": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "removeAppliedFilter": "فلتەرا {label} پاک بکە",
-  "@removeAppliedFilter": {"placeholders": {"label": {"type": "String"}}},
+  "@removeAppliedFilter": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
   "bookingComingSoon": "حجزکرن د وەشانێ داهاتی دا بەردەست دبیت.",
-  "scheduled": "Scheduled",
-  "confirmed": "Confirmed",
-  "noShow": "No-show",
-  "loadMore": "Load more",
-  "loadingMoreAppointments": "Loading more appointments",
-  "appointmentTimeout": "The request took too long. Please try again.",
-  "appointmentForbidden": "Your account cannot access this appointment.",
-  "appointmentNotFound": "This appointment is no longer available.",
-  "staleAppointment": "The appointment changed. We loaded the latest details.",
-  "appointmentValidation": "Check the information and try again.",
-  "appointmentUnknownOutcome": "We could not confirm the result. Retry to safely check the same request.",
-  "appointmentsUnavailable": "Appointments are temporarily unavailable.",
-  "reload": "Reload",
-  "patient": "Patient",
-  "appointmentReference": "Appointment reference",
-  "cancellationReason": "Cancellation reason",
-  "cancelAppointment": "Cancel appointment",
-  "rescheduleAppointment": "Reschedule appointment",
-  "chooseNewDateTime": "Choose a new date and time",
-  "confirmCancellation": "Confirm cancellation",
-  "cancel": "Cancel",
-  "recordArrival": "تۆمارکرنا هاتنێ"
+  "scheduled": "پلانکری",
+  "confirmed": "پشتڕاستکری",
+  "noShow": "نەهات",
+  "loadMore": "پتر بار بکە",
+  "loadingMoreAppointments": "ژڤانێن پتر دهێنە بارکرن…",
+  "appointmentTimeout": "داخوازی پتر ژ پێدڤی دەم گرت. هیڤییە دیسان هەول بدە.",
+  "appointmentForbidden": "هەژمارا تە دەستهەلاتا ڤێ ژڤانێ نینە.",
+  "appointmentNotFound": "ئەڤ ژڤانە ئیدی بەردەست نینە.",
+  "staleAppointment": "ژڤان هاتە گهورین. مە زانیاریێن نوی بارکرن.",
+  "appointmentValidation": "زانیارییان بپشکنە و دیسان هەول بدە",
+  "appointmentUnknownOutcome": "مە نەشیا ئەنجامی پشتڕاست بکەین. ب دیسان هەولدانێ هەمان داخواز ب پاراستی بپشکنە.",
+  "appointmentsUnavailable": "ژڤان بو دەمکی بەردەست نینن",
+  "reload": "دیسان بار بکە",
+  "patient": "نەخوش",
+  "appointmentReference": "ناسناما ژڤانێ",
+  "cancellationReason": "ئەگەرێ هەلوەشاندنێ",
+  "cancelAppointment": "ژڤانێ هەلوەشێنە",
+  "rescheduleAppointment": "دەمێ ژڤانێ بگهورە",
+  "chooseNewDateTime": "رێکەفت و دەمەکێ نوی ب هەلبژێرە",
+  "confirmCancellation": "هەلوەشاندنێ پشتراست بکە",
+  "cancel": "ب هەلوەشینە",
+  "recordArrival": "هاتنێ تومار بکە",
+  "nextAppointmentTitle": "ژڤانا تە یا ل دویفرا",
+  "patientsAheadCount": "{count} نەخوش بەری تە",
+  "@patientsAheadCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "estimatedWaitLong": "دەمێ چاڤەرێکرنا پێشبینی کری: {minutes} خولەک",
+  "@estimatedWaitLong": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "loadingYourLiveQueue": "رێزبەندییا زندی دهێتە بارکرن",
+  "queueStatusSemantic": "رەوشا رێزبەندیێ: {status}",
+  "@queueStatusSemantic": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "queueIsLive": "رێزبەندی ڤەکرییە",
+  "queueIsPaused": "رێزبەندی بو دەمکی هاتیە راگرتن",
+  "queueIsClosed": "رێزبەندی گرتییە",
+  "queueConnectedTitle": "پەیوەندی هەیە",
+  "queueConnectedBody": "رێزبەندییا تە زندییە.",
+  "queueReconnectingTitle": "دیسان پەیوەندی دهێتە کرن",
+  "queueReconnectingBody": "نویکرنا دووماهی یا رێزبەندییا تە نیشان ددەین.",
+  "queueDelayedTitle": "نویکرن پاشکەفت",
+  "queueDelayedBody": "دبیت ئەڤ زانیارییە نوی نەبن.",
+  "queueOfflineTitle": "تو بێ پەیوەندییە",
+  "queueOfflineBody": "نویکرنا دووماهی یا پاراستی ل ڤی ئامیری نیشان ددەین.",
+  "queuePausedTitle": "رێزبەندی بو دەمکی هاتیە راگرتن",
+  "queuePausedBody": "جهێ تە پاراستییە. دەمێ رێزبەندی دیسان دەستپێدکەت دێ تە ئاگەهدار کەین.",
+  "queueClosedTitle": "ئەڤ رێزبەندییە گرتییە",
+  "queueClosedBody": "بو هاریکاریا ژڤانا خۆ، بچۆ پێشوازیێ."
 }
