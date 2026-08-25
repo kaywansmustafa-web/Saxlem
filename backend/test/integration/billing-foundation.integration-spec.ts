@@ -138,11 +138,100 @@ describe('billing foundation', () => {
       ruleVersion: 1,
       status: 'earned',
     });
+    const [beforeActivation, atActivation, afterActivation] = await Promise.all(
+      [
+        create('patientBooked', 'initial', 1),
+        create('patientBooked', 'initial', 2),
+        create('patientBooked', 'initial', 3),
+      ],
+    );
+    await prisma.$transaction((tx) =>
+      repository.materializeCompletion(
+        tx,
+        beforeActivation.id,
+        new Date('2026-08-09T23:59:59.999Z'),
+        actor.id,
+        `request-${beforeActivation.id}`,
+      ),
+    );
+    await prisma.$transaction((tx) =>
+      repository.materializeCompletion(
+        tx,
+        atActivation.id,
+        new Date('2026-08-10T00:00:00.000Z'),
+        actor.id,
+        `request-${atActivation.id}`,
+      ),
+    );
+    await prisma.$transaction((tx) =>
+      repository.materializeCompletion(
+        tx,
+        afterActivation.id,
+        new Date('2026-08-10T00:00:00.001Z'),
+        actor.id,
+        `request-${afterActivation.id}`,
+      ),
+    );
+    expect(
+      await prisma.commissionLedgerEntry.count({
+        where: { organizationId: organization.id },
+      }),
+    ).toBe(3);
     await expect(
       prisma.commissionLedgerEntry.update({
         where: { id: entries[0]!.id },
         data: { amountIqd: 1 },
       }),
     ).rejects.toThrow();
+    await expect(
+      prisma.commissionLedgerEntry.create({
+        data: {
+          organizationId: organization.id,
+          clinicId: clinic.id,
+          appointmentId: qualifying.id,
+          planId: entries[0]!.planId,
+          originalCommissionId: entries[0]!.id,
+          amountIqd: 1,
+          currency: 'IQD',
+          ruleCode: entries[0]!.ruleCode,
+          ruleVersion: entries[0]!.ruleVersion,
+          planVersion: entries[0]!.planVersion,
+          appointmentType: entries[0]!.appointmentType,
+          appointmentOrigin: entries[0]!.appointmentOrigin,
+          completedAt: entries[0]!.completedAt,
+          recognizedAt: new Date(entries[0]!.recognizedAt.getTime() + 1),
+          status: 'reversed',
+          reversalReason: 'Invalid partial reversal',
+          reversalActorId: actor.id,
+        },
+      }),
+    ).rejects.toThrow(/fully mirror/u);
+
+    const finalized = await prisma.billingStatement.create({
+      data: {
+        organizationId: organization.id,
+        periodStart: new Date('2031-12-01T21:00:00.000Z'),
+        periodEnd: new Date('2032-01-31T21:00:00.000Z'),
+        status: 'finalized',
+        finalizedAt: new Date(),
+        finalizedById: actor.id,
+      },
+    });
+    await expect(
+      prisma.billingStatementLine.create({
+        data: {
+          statementId: finalized.id,
+          ledgerEntryId: entries[0]!.id,
+          clinicId: clinic.id,
+          appointmentId: qualifying.id,
+          appointmentReference: qualifying.publicReference,
+          recognizedAt: entries[0]!.recognizedAt,
+          status: 'earned',
+          amountIqd: entries[0]!.amountIqd,
+          netAmountIqd: entries[0]!.amountIqd,
+          currency: 'IQD',
+        },
+      }),
+    ).rejects.toThrow(/draft statement/u);
   });
 });

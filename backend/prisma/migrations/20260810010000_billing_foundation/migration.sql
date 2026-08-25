@@ -105,6 +105,33 @@ BEGIN RAISE EXCEPTION 'Financial history is immutable'; END $$;
 CREATE TRIGGER "commission_ledger_immutable" BEFORE UPDATE OR DELETE ON "commission_ledger_entries"
   FOR EACH ROW EXECUTE FUNCTION reject_financial_history_mutation();
 
+CREATE FUNCTION validate_commission_reversal() RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE original "commission_ledger_entries"%ROWTYPE;
+BEGIN
+  IF NEW."status" = 'earned' THEN RETURN NEW; END IF;
+  SELECT * INTO original FROM "commission_ledger_entries"
+    WHERE "id" = NEW."original_commission_id" FOR KEY SHARE;
+  IF NOT FOUND OR original."status" <> 'earned' OR
+     NEW."organization_id" <> original."organization_id" OR
+     NEW."clinic_id" <> original."clinic_id" OR
+     NEW."appointment_id" <> original."appointment_id" OR
+     NEW."plan_id" <> original."plan_id" OR
+     NEW."amount_iqd" <> original."amount_iqd" OR
+     NEW."currency" <> original."currency" OR
+     NEW."rule_code" <> original."rule_code" OR
+     NEW."rule_version" <> original."rule_version" OR
+     NEW."plan_version" <> original."plan_version" OR
+     NEW."appointment_type" <> original."appointment_type" OR
+     NEW."appointment_origin" <> original."appointment_origin" OR
+     NEW."completed_at" <> original."completed_at" OR
+     NEW."recognized_at" < original."recognized_at" THEN
+    RAISE EXCEPTION 'A reversal must fully mirror its original earned commission';
+  END IF;
+  RETURN NEW;
+END $$;
+CREATE TRIGGER "commission_reversal_full_and_linked" BEFORE INSERT ON "commission_ledger_entries"
+  FOR EACH ROW EXECUTE FUNCTION validate_commission_reversal();
+
 CREATE TABLE "billing_statements" (
   "id" UUID NOT NULL, "organization_id" UUID NOT NULL,
   "period_start" TIMESTAMPTZ(3) NOT NULL, "period_end" TIMESTAMPTZ(3) NOT NULL,
@@ -149,11 +176,83 @@ CREATE TABLE "billing_statement_clinic_breakdowns" (
   CONSTRAINT "billing_statement_clinic_breakdowns_clinic_id_fkey" FOREIGN KEY ("clinic_id") REFERENCES "clinics"("id") ON DELETE RESTRICT
 );
 
+CREATE FUNCTION validate_statement_line_insert() RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE statement "billing_statements"%ROWTYPE;
+DECLARE ledger "commission_ledger_entries"%ROWTYPE;
+DECLARE reference TEXT;
+BEGIN
+  SELECT * INTO statement FROM "billing_statements" WHERE "id" = NEW."statement_id" FOR KEY SHARE;
+  SELECT * INTO ledger FROM "commission_ledger_entries" WHERE "id" = NEW."ledger_entry_id" FOR KEY SHARE;
+  SELECT "public_reference" INTO reference FROM "appointments" WHERE "id" = ledger."appointment_id";
+  IF statement."id" IS NULL OR ledger."id" IS NULL OR reference IS NULL OR statement."status" <> 'draft' OR
+     ledger."organization_id" <> statement."organization_id" OR
+     ledger."recognized_at" < statement."period_start" OR ledger."recognized_at" >= statement."period_end" OR
+     NEW."clinic_id" <> ledger."clinic_id" OR NEW."appointment_id" <> ledger."appointment_id" OR
+     NEW."appointment_reference" <> reference OR NEW."recognized_at" <> ledger."recognized_at" OR
+     NEW."status" <> ledger."status" OR NEW."amount_iqd" <> ledger."amount_iqd" OR
+     NEW."currency" <> ledger."currency" OR
+     NEW."net_amount_iqd" <> (CASE WHEN ledger."status" = 'earned' THEN ledger."amount_iqd" ELSE -ledger."amount_iqd" END) THEN
+    RAISE EXCEPTION 'Statement line does not match its draft statement and ledger entry';
+  END IF;
+  RETURN NEW;
+END $$;
+CREATE TRIGGER "billing_statement_line_valid" BEFORE INSERT ON "billing_statement_lines"
+  FOR EACH ROW EXECUTE FUNCTION validate_statement_line_insert();
+
+CREATE FUNCTION validate_statement_breakdown_insert() RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE statement "billing_statements"%ROWTYPE;
+DECLARE totals RECORD;
+BEGIN
+  SELECT * INTO statement FROM "billing_statements" WHERE "id" = NEW."statement_id" FOR KEY SHARE;
+  SELECT
+    COALESCE(SUM("amount_iqd") FILTER (WHERE "status" = 'earned'), 0)::INTEGER AS gross,
+    COALESCE(SUM("amount_iqd") FILTER (WHERE "status" = 'reversed'), 0)::INTEGER AS reversals,
+    COUNT(*) FILTER (WHERE "status" = 'earned')::INTEGER AS qualifying,
+    COUNT(*) FILTER (WHERE "status" = 'reversed')::INTEGER AS reversal_count
+  INTO totals FROM "commission_ledger_entries"
+  WHERE "organization_id" = statement."organization_id" AND "clinic_id" = NEW."clinic_id"
+    AND "recognized_at" >= statement."period_start" AND "recognized_at" < statement."period_end";
+  IF statement."id" IS NULL OR statement."status" <> 'draft' OR
+     NOT EXISTS (SELECT 1 FROM "clinics" WHERE "id" = NEW."clinic_id" AND "organization_id" = statement."organization_id") OR
+     NEW."gross_earned_iqd" <> totals.gross OR NEW."reversals_iqd" <> totals.reversals OR
+     NEW."net_commission_iqd" <> totals.gross - totals.reversals OR
+     NEW."qualifying_count" <> totals.qualifying OR NEW."reversal_count" <> totals.reversal_count THEN
+    RAISE EXCEPTION 'Statement clinic breakdown does not reconcile';
+  END IF;
+  RETURN NEW;
+END $$;
+CREATE TRIGGER "billing_statement_breakdown_valid" BEFORE INSERT ON "billing_statement_clinic_breakdowns"
+  FOR EACH ROW EXECUTE FUNCTION validate_statement_breakdown_insert();
+
 CREATE FUNCTION protect_finalized_statement() RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE line_totals RECORD;
+DECLARE breakdown_totals RECORD;
 BEGIN
   IF OLD."status" = 'finalized' THEN RAISE EXCEPTION 'Finalized statement is immutable'; END IF;
   IF NEW."status" = 'draft' AND NEW IS DISTINCT FROM OLD THEN RETURN NEW; END IF;
-  IF NEW."status" = 'finalized' THEN RETURN NEW; END IF;
+  IF NEW."status" = 'finalized' THEN
+    SELECT
+      COALESCE(SUM("amount_iqd") FILTER (WHERE "status" = 'earned'), 0)::INTEGER AS gross,
+      COALESCE(SUM("amount_iqd") FILTER (WHERE "status" = 'reversed'), 0)::INTEGER AS reversals,
+      COUNT(*) FILTER (WHERE "status" = 'earned')::INTEGER AS qualifying,
+      COUNT(*) FILTER (WHERE "status" = 'reversed')::INTEGER AS reversal_count
+    INTO line_totals FROM "billing_statement_lines" WHERE "statement_id" = OLD."id";
+    SELECT COALESCE(SUM("gross_earned_iqd"), 0)::INTEGER AS gross,
+      COALESCE(SUM("reversals_iqd"), 0)::INTEGER AS reversals,
+      COALESCE(SUM("net_commission_iqd"), 0)::INTEGER AS net,
+      COALESCE(SUM("qualifying_count"), 0)::INTEGER AS qualifying,
+      COALESCE(SUM("reversal_count"), 0)::INTEGER AS reversal_count
+    INTO breakdown_totals FROM "billing_statement_clinic_breakdowns" WHERE "statement_id" = OLD."id";
+    IF NEW."gross_earned_iqd" <> line_totals.gross OR NEW."reversals_iqd" <> line_totals.reversals OR
+       NEW."net_commission_iqd" <> line_totals.gross - line_totals.reversals OR
+       NEW."qualifying_count" <> line_totals.qualifying OR NEW."reversal_count" <> line_totals.reversal_count OR
+       NEW."gross_earned_iqd" <> breakdown_totals.gross OR NEW."reversals_iqd" <> breakdown_totals.reversals OR
+       NEW."net_commission_iqd" <> breakdown_totals.net OR NEW."qualifying_count" <> breakdown_totals.qualifying OR
+       NEW."reversal_count" <> breakdown_totals.reversal_count THEN
+      RAISE EXCEPTION 'Finalized statement snapshot does not reconcile';
+    END IF;
+    RETURN NEW;
+  END IF;
   RAISE EXCEPTION 'Invalid statement lifecycle';
 END $$;
 CREATE TRIGGER "billing_statement_immutable_after_finalization" BEFORE UPDATE ON "billing_statements"
