@@ -40,63 +40,9 @@ const en = {
 
 export type DoctorPatientsMessages = typeof en;
 
-const ar: DoctorPatientsMessages = {
-  ...en,
-  eyebrow: "الطبيب",
-  title: "مرضى اليوم",
-  sessionSummary: "ملخص الجلسة",
-  doctor: "الطبيب",
-  clinic: "العيادة",
-  room: "الغرفة",
-  sessionState: "حالة الجلسة",
-  active: "نشطة",
-  paused: "متوقفة مؤقتاً",
-  finished: "منتهية",
-  visiblePatients: "المرضى الظاهرون",
-  currentPatient: "المريض الحالي",
-  noCurrent: "لا يوجد مريض حالي",
-  patientId: "رقم المريض",
-  age: "العمر",
-  appointmentTime: "وقت الموعد",
-  appointmentType: "نوع الموعد",
-  queueNumber: "رقم الانتظار",
-  arrivalState: "حالة الوصول",
-  importantNote: "ملاحظة مهمة",
-  openPatient: "فتح مساحة المريض",
-  openAppointment: "فتح الموعد",
-  nextPatients: "المرضى التاليون",
-  noNext: "لا يوجد مرضى جاهزون تالياً",
-  estimatedWait: "وقت الانتظار المتوقع",
-};
+const ar: DoctorPatientsMessages = {eyebrow:"الطبيب",title:"مرضى اليوم",subtitle:"المعلومات",sessionSummary:"ملخص الجلسة",doctor:"الطبيب",clinic:"العيادة",room:"الغرفة",sessionState:"حالة الجلسة",active:"نشط",paused:"متوقف مؤقتًا",finished:"منتهية",visiblePatients:"المرضى الظاهرون",currentPatient:"المريض الحالي",noCurrent:"لا يوجد مريض حالي",noCurrentBody:"تعذر عرض المعلومات حالياً.",patientId:"رقم المريض",age:"العمر",years:"{age} سنة",appointmentTime:"وقت الموعد",appointmentType:"نوع الموعد",queueNumber:"رقم الدور",arrivalState:"حالة الوصول",importantNote:"ملاحظة مهمة",openPatient:"فتح مساحة عمل المريض",openAppointment:"فتح الموعد",nextPatients:"المرضى التاليون",noNext:"لا يوجد مرضى جاهزون تالياً",noNextBody:"تعذر عرض المعلومات حالياً.",estimatedWait:"وقت الانتظار المتوقع",minutes:"{minutes} دقيقة",unavailable:"غير متاح",unavailableBody:"تعذر عرض المعلومات حالياً."};
 
-const ku: DoctorPatientsMessages = {
-  ...en,
-  eyebrow: "Doktor",
-  title: "Nexweşên îro",
-  sessionSummary: "Kurteya danişînê",
-  doctor: "Doktor",
-  clinic: "Klînîk",
-  room: "Ode",
-  sessionState: "Rewşa danişînê",
-  active: "Çalak",
-  paused: "Rawestiyayî",
-  finished: "Qediya",
-  visiblePatients: "Nexweşên xuya",
-  currentPatient: "Nexweşê niha",
-  noCurrent: "Nexweşekî çalak tune ye",
-  patientId: "Nasnameya nexweşî",
-  age: "Temen",
-  appointmentTime: "Dema randevûyê",
-  appointmentType: "Cureyê randevûyê",
-  queueNumber: "Hejmara rêzê",
-  arrivalState: "Rewşa gihiştinê",
-  importantNote: "Têbîniya girîng",
-  openPatient: "Karê nexweşî veke",
-  openAppointment: "Randevûyê veke",
-  nextPatients: "Nexweşên paşê",
-  noNext: "Nexweşekî din amade tune ye",
-  estimatedWait: "Bendewariya texmînkirî",
-};
+const ku: DoctorPatientsMessages = {eyebrow:"نوژدار",title:"زانیاری",subtitle:"زانیاری",sessionSummary:"زانیاری",doctor:"نوژدار",clinic:"کلینیک",room:"ژوور",sessionState:"زانیاری",active:"چالاک",paused:"بو دەمکی هاتە راگرتن",finished:"دووماهی هات",visiblePatients:"زانیاری",currentPatient:"نەخوشێ نوکە",noCurrent:"هیچ نەخوشەک نینە",noCurrentBody:"نوکە چ پشکنینەک چالاک نینە. نەخوشێن ل چاڤەرێ وەکی خو دمینن.",patientId:"ژمارا نەخوشی",age:"تەمەن",years:"{age} سال",appointmentTime:"دەمێ ژڤانێ",appointmentType:"جورێ ژڤانێ",queueNumber:"ژمارا سرایێ",arrivalState:"زانیاری",importantNote:"تێبینییا گرنگ",openPatient:"جهێ کارێ نەخوشی ڤەکە",openAppointment:"ژڤانی ڤەکە",nextPatients:"نەخوشێن ل دویفرا",noNext:"چ نینە",noNextBody:"نوکە ناهێتە نیشاندان.",estimatedWait:"دەمێ چاڤەرێکرنا پێشبینی کری",minutes:"{minutes} خولەک",unavailable:"بەردەست نینە",unavailableBody:"نوکە ناهێتە نیشاندان."};
 
 export const doctorPatientsMessages = (
   locale: Locale,
