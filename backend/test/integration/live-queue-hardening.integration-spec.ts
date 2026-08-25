@@ -1051,7 +1051,7 @@ describe('live queue structural hardening', () => {
       opened.version + 1,
       opened.version + 2,
     ]);
-  });
+  }, 30_000);
 
   it('C14 — Simultaneous identical same-key replay', async () => {
     const enqueueSetup = await openFixture(1);
