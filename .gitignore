@@ -33,6 +33,8 @@ Thumbs.db
 
 # Node.js
 node_modules/
+.next/
+*.tsbuildinfo
 dist/
 coverage/
 backend/src/generated/prisma/
