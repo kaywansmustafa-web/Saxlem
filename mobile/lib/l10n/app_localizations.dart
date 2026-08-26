@@ -1803,6 +1803,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Record arrival'**
   String get recordArrival;
+
+  /// No description provided for @nextAppointmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your next appointment'**
+  String get nextAppointmentTitle;
+
+  /// No description provided for @patientsAheadCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} patients ahead'**
+  String patientsAheadCount(int count);
+
+  /// No description provided for @estimatedWaitLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated wait: {minutes} minutes'**
+  String estimatedWaitLong(int minutes);
+
+  /// No description provided for @loadingYourLiveQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading your live queue'**
+  String get loadingYourLiveQueue;
+
+  /// No description provided for @queueStatusSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue status: {status}'**
+  String queueStatusSemantic(String status);
+
+  /// No description provided for @queueIsLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue is live'**
+  String get queueIsLive;
+
+  /// No description provided for @queueIsPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue is paused'**
+  String get queueIsPaused;
+
+  /// No description provided for @queueIsClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue is closed'**
+  String get queueIsClosed;
+
+  /// No description provided for @queueConnectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get queueConnectedTitle;
+
+  /// No description provided for @queueConnectedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your queue is live.'**
+  String get queueConnectedBody;
+
+  /// No description provided for @queueReconnectingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnecting'**
+  String get queueReconnectingTitle;
+
+  /// No description provided for @queueReconnectingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing your latest queue update.'**
+  String get queueReconnectingBody;
+
+  /// No description provided for @queueDelayedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update delayed'**
+  String get queueDelayedTitle;
+
+  /// No description provided for @queueDelayedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This information may be out of date.'**
+  String get queueDelayedBody;
+
+  /// No description provided for @queueOfflineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline'**
+  String get queueOfflineTitle;
+
+  /// No description provided for @queueOfflineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing the last queue update saved on this device.'**
+  String get queueOfflineBody;
+
+  /// No description provided for @queuePausedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue is temporarily paused'**
+  String get queuePausedTitle;
+
+  /// No description provided for @queuePausedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your place is safe. We\'ll update you when the queue resumes.'**
+  String get queuePausedBody;
+
+  /// No description provided for @queueClosedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This queue has closed'**
+  String get queueClosedTitle;
+
+  /// No description provided for @queueClosedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'For assistance with your appointment, please contact reception.'**
+  String get queueClosedBody;
 }
 
 class _AppLocalizationsDelegate

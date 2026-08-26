@@ -23,8 +23,7 @@ class LiveQueueEstimateCard extends StatelessWidget {
     return Semantics(
       container: true,
       label:
-          '${copy.estimatedWait} ${snapshot.estimatedWaitLowerMinutes} to '
-          '${snapshot.estimatedWaitUpperMinutes} minutes. '
+          '${copy.estimatedWait}: ${copy.waitRangeFor(snapshot.estimatedWaitLowerMinutes, snapshot.estimatedWaitUpperMinutes)}. '
           '${copy.estimateConfidence}: $confidence. '
           '${copy.doctorStatus}: $status.',
       child: SaxlemCard(
@@ -37,7 +36,10 @@ class LiveQueueEstimateCard extends StatelessWidget {
             AnimatedSwitcher(
               duration: SaxlemMotion.standard,
               child: Text(
-                '${snapshot.estimatedWaitLowerMinutes}–${snapshot.estimatedWaitUpperMinutes} min',
+                copy.waitRangeFor(
+                  snapshot.estimatedWaitLowerMinutes,
+                  snapshot.estimatedWaitUpperMinutes,
+                ),
                 key: ValueKey(
                   '${snapshot.estimatedWaitLowerMinutes}-${snapshot.estimatedWaitUpperMinutes}',
                 ),

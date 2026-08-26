@@ -26,7 +26,12 @@ void main() {
     );
 
     final snapshot = const PatientQueueSnapshotMapper(
-      RuleBasedQueueGuidanceService(),
+      RuleBasedQueueGuidanceService(
+        doctorDelayed: "Doctor is delayed. We'll keep you updated.",
+        headToReception: 'Please head to reception.',
+        leaveSoon: 'Leave in about 10 minutes.',
+        relax: 'Relax, no need to leave yet.',
+      ),
     ).toDomain(dto);
 
     expect(snapshot.guidanceMessage, 'Relax, no need to leave yet.');

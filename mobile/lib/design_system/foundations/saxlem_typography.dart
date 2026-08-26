@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 abstract final class SaxlemTypography {
-  static TextTheme textTheme(TextTheme base, Color primary, Color secondary) {
+  static TextTheme textTheme(
+    TextTheme base,
+    Color primary,
+    Color secondary, {
+    String? fontFamily,
+  }) {
     TextStyle style(
       double size,
       double line,
@@ -10,15 +15,28 @@ abstract final class SaxlemTypography {
       Color color, {
       double spacing = 0,
       bool numeric = false,
-    }) => GoogleFonts.notoSans(
-      fontSize: size,
-      height: line / size,
-      fontWeight: weight,
-      letterSpacing: spacing,
-      color: color,
-      fontFeatures: numeric ? const [FontFeature.tabularFigures()] : null,
-    );
-    return GoogleFonts.notoSansTextTheme(base).copyWith(
+    }) => fontFamily == null
+        ? GoogleFonts.notoSans(
+            fontSize: size,
+            height: line / size,
+            fontWeight: weight,
+            letterSpacing: spacing,
+            color: color,
+            fontFeatures: numeric ? const [FontFeature.tabularFigures()] : null,
+          )
+        : TextStyle(
+            fontFamily: fontFamily,
+            fontSize: size,
+            height: line / size,
+            fontWeight: weight,
+            letterSpacing: spacing,
+            color: color,
+            fontFeatures: numeric ? const [FontFeature.tabularFigures()] : null,
+          );
+    final localizedBase = fontFamily == null
+        ? GoogleFonts.notoSansTextTheme(base)
+        : base.apply(fontFamily: fontFamily);
+    return localizedBase.copyWith(
       displayLarge: style(40, 48, FontWeight.w700, primary, spacing: -.4),
       displayMedium: style(
         38,

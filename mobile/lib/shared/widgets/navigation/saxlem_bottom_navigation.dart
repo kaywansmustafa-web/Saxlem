@@ -20,27 +20,22 @@ class SaxlemBottomNavigation extends StatelessWidget {
 
   static const List<_NavigationItemData> _items = [
     _NavigationItemData(
-      label: 'Home',
       icon: Icons.home_outlined,
       selectedIcon: Icons.home_rounded,
     ),
     _NavigationItemData(
-      label: 'Discover',
       icon: Icons.search_outlined,
       selectedIcon: Icons.search_rounded,
     ),
     _NavigationItemData(
-      label: 'Appointments',
       icon: Icons.calendar_today_outlined,
       selectedIcon: Icons.calendar_month_rounded,
     ),
     _NavigationItemData(
-      label: 'Alerts',
       icon: Icons.notifications_none_rounded,
       selectedIcon: Icons.notifications_rounded,
     ),
     _NavigationItemData(
-      label: 'Profile',
       icon: Icons.person_outline_rounded,
       selectedIcon: Icons.person_rounded,
     ),
@@ -67,13 +62,8 @@ class SaxlemBottomNavigation extends StatelessWidget {
 }
 
 class _NavigationItemData {
-  const _NavigationItemData({
-    required this.label,
-    required this.icon,
-    required this.selectedIcon,
-  });
+  const _NavigationItemData({required this.icon, required this.selectedIcon});
 
-  final String label;
   final IconData icon;
   final IconData selectedIcon;
 }

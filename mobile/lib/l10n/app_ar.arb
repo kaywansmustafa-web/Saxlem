@@ -24,12 +24,12 @@
   "searchHint": "ابحث عن الأطباء أو العيادات أو الاختصاصات",
   "openHealthcareSearch": "فتح البحث الصحي",
   "openSearchFilters": "فتح مرشحات البحث",
-  "liveQueue": "الطابور المباشر",
+  "liveQueue": "قائمة الانتظار المباشرة",
   "live": "مباشر",
   "currentPatient": "المريض الحالي",
   "yourNumber": "رقمك",
   "patientsAhead": "المرضى قبلك",
-  "estimatedWait": "الانتظار المتوقع",
+  "estimatedWait": "وقت الانتظار المتوقع",
   "doctorStatus": "حالة الطبيب",
   "minutesShort": "د",
   "viewLiveQueue": "عرض الطابور المباشر",
@@ -37,10 +37,10 @@
   "recommendedDoctors": "أطباء مقترحون",
   "seeAll": "عرض الكل",
   "book": "احجز",
-  "filters": "المرشحات",
+  "filters": "عوامل التصفية",
   "sortResults": "ترتيب النتائج",
   "tryAgain": "حاول مجدداً",
-  "clearFilters": "مسح المرشحات",
+  "clearFilters": "مسح عوامل التصفية",
   "findRightCare": "اعثر على الرعاية المناسبة",
   "findRightCareBody": "ابحث بكلمات بسيطة وسنساعدك في العثور على الطبيب المناسب.",
   "quickCategories": "فئات سريعة",
@@ -66,24 +66,30 @@
   "bookingUnknownOutcome": "تعذر تأكيد النتيجة. لا تنشئ حجزاً آخر قبل إعادة محاولة هذا الطلب.",
   "bookingSuccessful": "تم حجز موعدك.",
   "appointmentReferenceValue": "مرجع الموعد {reference}",
-  "@appointmentReferenceValue": {"placeholders": {"reference": {"type": "String"}}},
+  "@appointmentReferenceValue": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
   "reviewAppointment": "مراجعة الموعد",
   "confirmAppointment": "تأكيد الموعد",
   "confirmingAppointment": "جارٍ تأكيد الموعد",
   "appointmentConfirmed": "تم تأكيد الموعد",
   "goToAppointments": "الذهاب إلى مواعيدي",
   "viewDoctor": "عرض الطبيب",
-  "returnHome": "العودة للرئيسية",
+  "returnHome": "العودة إلى الرئيسية",
   "loadingBooking": "جارٍ تحميل خيارات الحجز",
   "bookingUnavailable": "الحجز غير متاح",
   "timeUnavailable": "الوقت غير متاح",
   "myAppointments": "مواعيدي",
   "upcoming": "القادمة",
-  "completed": "المكتملة",
-  "cancelled": "الملغاة",
+  "completed": "مكتمل",
+  "cancelled": "ملغى",
   "viewAppointment": "عرض الموعد",
   "rateVisit": "قيّم الزيارة",
-  "bookAgain": "احجز مجدداً",
+  "bookAgain": "احجز مجددًا",
   "actionUnavailable": "سيصبح هذا الإجراء متاحاً في إصدار قادم.",
   "discoverDoctors": "اكتشف الأطباء",
   "firstAppointmentTitle": "رعايتك تبدأ هنا",
@@ -101,15 +107,60 @@
   "queueOpensAppointmentDay": "يفتح الطابور في يوم الموعد.",
   "queueAvailableToday": "الطابور المباشر متاح لموعد اليوم.",
   "queueNotReady": "دخولك إلى الطابور غير جاهز بعد. سنحدّث الموعد عند توفره.",
-  "openLiveQueue": "فتح الطابور المباشر",
+  "openLiveQueue": "فتح قائمة الانتظار المباشرة",
   "loadingAppointments": "جارٍ تحميل مواعيدك",
   "appointmentsLoadFailed": "تعذر تحميل مواعيدك.",
   "consultationMinutes": "استشارة لمدة {minutes} دقيقة",
+  "@consultationMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "estimatedWaitMinutes": "الانتظار المتوقع: {minutes} دقيقة",
-  "tabWithCount": "{label} ({count})",
+  "@estimatedWaitMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "tabWithCount": "معلومات",
+  "@tabWithCount": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "minutesLong": "{minutes} دقيقة",
+  "@minutesLong": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "iqdAmount": "{amount} د.ع",
+  "@iqdAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
   "appointmentIdValue": "رقم الموعد {id}",
+  "@appointmentIdValue": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "informationalScreen": "شاشة معلومات",
   "welcomeTitle": "رعاية صحية أكثر وضوحاً",
   "welcomeBody": "يجمع ساكسلم الرعاية الموثوقة والمواعيد وتحديثات العيادة المباشرة في تجربة هادئة واحدة.",
@@ -121,22 +172,36 @@
   "verifyNumber": "تحقق من رقمي",
   "guestMode": "وضع الضيف",
   "guestModeMessage": "يمكنك استكشاف ساكسلم، لكن الحجز والمواعيد الشخصية تتطلب التحقق.",
-  "phoneTitle": "رقم هاتفك المحمول",
+  "phoneTitle": "رقم هاتفك",
   "phoneBody": "سنرسل رمزاً لمرة واحدة للتحقق من رقمك بأمان.",
   "country": "الدولة",
   "iraq": "العراق",
   "phoneNumber": "رقم الهاتف",
-  "phoneHint": "750 123 4567",
-  "phoneInvalid": "أدخل رقم هاتف عراقي صالحاً.",
+  "phoneHint": "معلومات",
+  "phoneInvalid": "أدخل رقم هاتف عراقي صحيحًا.",
   "sendCode": "إرسال الرمز",
-  "otpTitle": "أدخل الرمز",
+  "otpTitle": "أدخل رمز التحقق",
   "otpBody": "أرسلنا رمزاً من 6 أرقام إلى {phone}.",
-  "otpLabel": "رمز التحقق المكون من 6 أرقام",
+  "@otpBody": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "otpLabel": "رمز تحقق مكوّن من 6 أرقام",
   "otpHint": "أدخل 6 أرقام",
   "verify": "تحقق وتابع",
   "changeNumber": "تغيير الرقم",
   "resendCode": "إعادة إرسال الرمز",
   "resendIn": "إعادة الإرسال خلال {seconds} ث",
+  "@resendIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "otpInvalid": "الرمز غير صحيح. حاول مرة أخرى.",
   "otpExpired": "انتهت صلاحية الرمز. اطلب رمزاً جديداً.",
   "otpLimited": "محاولات كثيرة. اطلب رمزاً جديداً.",
@@ -144,31 +209,109 @@
   "sessionExpiredTitle": "انتهت صلاحية جلستك",
   "sessionExpiredBody": "تحقق من رقمك مرة أخرى للمتابعة بأمان.",
   "developmentCodeHint": "رمز التطوير: {code}",
+  "@developmentCodeHint": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "logOut": "تسجيل الخروج",
   "personalizedFeatureTitle": "التحقق مطلوب",
   "personalizedFeatureBody": "سجل الدخول برقم هاتفك لاستخدام المواعيد وميزات الرعاية الشخصية.",
-  "notifications": "الإشعارات", "unread": "غير مقروء", "today": "اليوم", "earlier": "سابقاً",
-  "unreadNotifications": "{count} غير مقروء", "notificationUpdates": "{count} تحديثات للطابور",
-  "notificationDetails": "تفاصيل الإشعار", "queueUpdates": "تحديثات الطابور",
-  "whatHappened": "ماذا حدث", "whyItHappened": "لماذا", "whatToDoNext": "ماذا تفعل الآن",
-  "viewUpdate": "عرض التحديث", "deleteNotification": "حذف الإشعار",
-  "notificationsEmpty": "أنت على اطلاع بكل شيء", "notificationsEmptyBody": "ستظهر تحديثات المواعيد والعيادة والطابور هنا.",
-  "notificationsUnavailable": "الإشعارات غير متاحة", "notificationsUnavailableBody": "تعذر تحميل تحديثاتك. حاول مرة أخرى.",
-  "notificationBookingConfirmed": "تم تأكيد الموعد", "notificationBookingHappened": "تم تأكيد موعدك مع {doctor}.",
-  "notificationBookingWhy": "وافقت العيادة على طلب الحجز.", "notificationBookingNext": "راجع تفاصيل الموعد واحضر في الوقت الموصى به.",
-  "notificationQueueOpened": "الطابور متاح الآن", "notificationQueueOpenedHappened": "الطابور المباشر لـ {doctor} متاح الآن.",
-  "notificationQueueOpenedWhy": "بدأت العيادة طابور المرضى لهذا اليوم.", "notificationQueueOpenedNext": "افتح الطابور المباشر عندما تكون مستعداً لمتابعة دورك.",
-  "notificationAlmostTurn": "دورك اقترب", "notificationAlmostTurnHappened": "رقمك الحالي هو {number}.",
-  "notificationAlmostTurnWhy": "تقدم الطابور وأصبح دورك قريباً.", "notificationAlmostTurnNext": "يرجى التوجه إلى الاستقبال والبقاء قريباً.",
-  "notificationWelcome": "مرحباً بك في ساكسلم", "notificationWelcomeHappened": "تجربتك في ساكسلم جاهزة.",
-  "notificationWelcomeWhy": "بدأت استخدام ساكسلم على هذا الجهاز.", "notificationWelcomeNext": "اكتشف الأطباء الموثوقين ونظم رعايتك.",
-  "notificationReservedType": "تحديث الموعد", "notificationReservedHappened": "تم تحديث تسجيل وصولك للموعد.",
-  "notificationReservedWhy": "سجلت العيادة وصولك.", "notificationReservedNext": "يرجى انتظار إرشادات الاستقبال.",
-  "notificationGeneralHappened": "هناك تحديث جديد حول رعايتك.", "notificationGeneralWhy": "أصبحت معلومات جديدة متاحة.",
+  "notifications": "الإشعارات",
+  "unread": "غير مقروء",
+  "today": "اليوم",
+  "earlier": "سابقًا",
+  "unreadNotifications": "{count} غير مقروء",
+  "@unreadNotifications": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationUpdates": "{count} تحديثات للطابور",
+  "@notificationUpdates": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationDetails": "تفاصيل الإشعار",
+  "queueUpdates": "تحديثات الطابور",
+  "whatHappened": "ماذا حدث",
+  "whyItHappened": "لماذا",
+  "whatToDoNext": "ماذا تفعل الآن",
+  "viewUpdate": "عرض التحديث",
+  "deleteNotification": "حذف الإشعار",
+  "notificationsEmpty": "أنت على اطلاع بكل شيء",
+  "notificationsEmptyBody": "ستظهر تحديثات المواعيد والعيادة والطابور هنا.",
+  "notificationsUnavailable": "الإشعارات غير متاحة",
+  "notificationsUnavailableBody": "تعذر تحميل تحديثاتك. حاول مرة أخرى.",
+  "notificationBookingConfirmed": "تم تأكيد الموعد",
+  "notificationBookingHappened": "تم تأكيد موعدك مع {doctor}.",
+  "@notificationBookingHappened": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationBookingWhy": "وافقت العيادة على طلب الحجز.",
+  "notificationBookingNext": "راجع تفاصيل الموعد واحضر في الوقت الموصى به.",
+  "notificationQueueOpened": "الطابور متاح الآن",
+  "notificationQueueOpenedHappened": "الطابور المباشر لـ {doctor} متاح الآن.",
+  "@notificationQueueOpenedHappened": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationQueueOpenedWhy": "بدأت العيادة طابور المرضى لهذا اليوم.",
+  "notificationQueueOpenedNext": "افتح الطابور المباشر عندما تكون مستعداً لمتابعة دورك.",
+  "notificationAlmostTurn": "دورك اقترب",
+  "notificationAlmostTurnHappened": "رقمك الحالي هو {number}.",
+  "@notificationAlmostTurnHappened": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationAlmostTurnWhy": "تقدم الطابور وأصبح دورك قريباً.",
+  "notificationAlmostTurnNext": "يرجى التوجه إلى الاستقبال والبقاء قريباً.",
+  "notificationWelcome": "مرحباً بك في ساكسلم",
+  "notificationWelcomeHappened": "تجربتك في ساكسلم جاهزة.",
+  "notificationWelcomeWhy": "بدأت استخدام ساكسلم على هذا الجهاز.",
+  "notificationWelcomeNext": "اكتشف الأطباء الموثوقين ونظم رعايتك.",
+  "notificationReservedType": "تحديث الموعد",
+  "notificationReservedHappened": "تم تحديث تسجيل وصولك للموعد.",
+  "notificationReservedWhy": "سجلت العيادة وصولك.",
+  "notificationReservedNext": "يرجى انتظار إرشادات الاستقبال.",
+  "notificationGeneralHappened": "هناك تحديث جديد حول رعايتك.",
+  "notificationGeneralWhy": "أصبحت معلومات جديدة متاحة.",
   "notificationGeneralNext": "راجع التحديث واتبع التعليمات الظاهرة.",
-  "notificationTimeJustNow": "تم التحديث الآن", "notificationTimeMinutesAgo": "تم التحديث قبل {minutes} دقيقة", "notificationTimeEarlier": "تم التحديث سابقاً",
-  "currentPatient": "المريض الحالي", "choosePatient": "اختر المريض", "bookingFor": "الحجز لـ", "addPatient": "إضافة فرد من العائلة",
-  "firstName": "الاسم الأول", "lastName": "اسم العائلة", "relationship": "صلة القرابة", "gender": "الجنس", "dateOfBirth": "تاريخ الميلاد",
+  "notificationTimeJustNow": "تم التحديث الآن",
+  "notificationTimeMinutesAgo": "تم التحديث قبل {minutes} دقيقة",
+  "@notificationTimeMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationTimeEarlier": "تم التحديث سابقاً",
+  "choosePatient": "اختر المريض",
+  "bookingFor": "الحجز لـ",
+  "addPatient": "إضافة فرد من العائلة",
+  "firstName": "الاسم الأول",
+  "lastName": "اسم العائلة",
+  "relationship": "صلة القرابة",
+  "gender": "الجنس",
+  "dateOfBirth": "تاريخ الميلاد",
   "patientRelationship": "{relationship, select, mother {الأم} father {الأب} wife {الزوجة} husband {الزوج} son {الابن} daughter {الابنة} brother {الأخ} sister {الأخت} grandfather {الجد} grandmother {الجدة} me {أنا} other {أخرى}}",
   "patientGender": "{gender, select, female {أنثى} male {ذكر} other {غير محدد}}",
   "loadingPatientAccount": "جارٍ تحميل حساب المريض",
@@ -186,8 +329,8 @@
   "searchDoctorsLabel": "البحث عن الأطباء",
   "searchDoctorsHint": "اسم الطبيب",
   "clearSearch": "مسح البحث",
-  "applyFilters": "تطبيق المرشحات",
-  "specialtyLabel": "الاختصاص",
+  "applyFilters": "تطبيق عوامل التصفية",
+  "specialtyLabel": "التخصص",
   "languageLabel": "اللغة",
   "soraniKurdish": "الكردية السورانية",
   "turkish": "التركية",
@@ -196,7 +339,13 @@
   "anyOption": "الكل",
   "appliedFilters": "المرشحات المطبقة",
   "doctorResults": "عدد الأطباء: {count}",
-  "@doctorResults": {"placeholders": {"count": {"type": "int"}}},
+  "@doctorResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "noDoctorsTitle": "لم يتم العثور على أطباء",
   "noDoctorsBody": "جرّب اسم طبيب آخر.",
   "noDoctorsFilteredBody": "جرّب إزالة مرشح واحد أو أكثر.",
@@ -218,7 +367,13 @@
   "doctorNotFound": "لم يتم العثور على الطبيب",
   "doctorNotFoundBody": "ملف هذا الطبيب لم يعد متاحاً.",
   "yearsExperience": "سنوات الخبرة: {years}",
-  "@yearsExperience": {"placeholders": {"years": {"type": "int"}}},
+  "@yearsExperience": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
   "genderFemale": "أنثى",
   "genderMale": "ذكر",
   "genderUnspecified": "غير محدد",
@@ -232,13 +387,37 @@
   "acceptingNewPatients": "يستقبل مرضى جدد",
   "notAcceptingNewPatients": "لا يستقبل مرضى جدداً",
   "profileImageLabel": "صورة الملف الشخصي لـ {name}",
-  "@profileImageLabel": {"placeholders": {"name": {"type": "String"}}},
+  "@profileImageLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "profileImageFallback": "لا توجد صورة ملف شخصي لـ {name}",
-  "@profileImageFallback": {"placeholders": {"name": {"type": "String"}}},
+  "@profileImageFallback": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "viewDoctorProfile": "عرض ملف {name}",
-  "@viewDoctorProfile": {"placeholders": {"name": {"type": "String"}}},
+  "@viewDoctorProfile": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "removeAppliedFilter": "إزالة مرشح {label}",
-  "@removeAppliedFilter": {"placeholders": {"label": {"type": "String"}}},
+  "@removeAppliedFilter": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
   "bookingComingSoon": "سيصبح الحجز متاحاً في الإصدار القادم.",
   "scheduled": "مجدول",
   "confirmed": "مؤكد",
@@ -254,12 +433,35 @@
   "appointmentsUnavailable": "المواعيد غير متاحة مؤقتاً.",
   "reload": "إعادة التحميل",
   "patient": "المريض",
-  "appointmentReference": "رقم الموعد",
+  "appointmentReference": "مرجع الموعد",
   "cancellationReason": "سبب الإلغاء",
   "cancelAppointment": "إلغاء الموعد",
-  "rescheduleAppointment": "تغيير موعد الزيارة",
-  "chooseNewDateTime": "اختر تاريخاً ووقتاً جديدين",
+  "rescheduleAppointment": "تغيير الموعد",
+  "chooseNewDateTime": "اختر تاريخًا ووقتًا جديدين",
   "confirmCancellation": "تأكيد الإلغاء",
-  "cancel": "رجوع",
-  "recordArrival": "تسجيل الوصول"
+  "cancel": "إلغاء",
+  "recordArrival": "تسجيل الوصول",
+  "nextAppointmentTitle": "موعدك القادم",
+  "patientsAheadCount": "{count} من المرضى قبلك",
+  "@patientsAheadCount": {"placeholders": {"count": {"type": "int"}}},
+  "estimatedWaitLong": "وقت الانتظار المتوقع: {minutes} دقيقة",
+  "@estimatedWaitLong": {"placeholders": {"minutes": {"type": "int"}}},
+  "loadingYourLiveQueue": "جارٍ تحميل قائمة الانتظار المباشرة",
+  "queueStatusSemantic": "حالة قائمة الانتظار: {status}",
+  "@queueStatusSemantic": {"placeholders": {"status": {"type": "String"}}},
+  "queueIsLive": "قائمة الانتظار مفتوحة",
+  "queueIsPaused": "قائمة الانتظار متوقفة مؤقتًا",
+  "queueIsClosed": "قائمة الانتظار مغلقة",
+  "queueConnectedTitle": "متصل",
+  "queueConnectedBody": "قائمة انتظارك مباشرة الآن.",
+  "queueReconnectingTitle": "جارٍ إعادة الاتصال",
+  "queueReconnectingBody": "نعرض آخر تحديث لقائمة انتظارك.",
+  "queueDelayedTitle": "التحديث متأخر",
+  "queueDelayedBody": "قد لا تكون هذه المعلومات محدثة.",
+  "queueOfflineTitle": "أنت غير متصل",
+  "queueOfflineBody": "نعرض آخر تحديث محفوظ على هذا الجهاز.",
+  "queuePausedTitle": "قائمة الانتظار متوقفة مؤقتًا",
+  "queuePausedBody": "مكانك محفوظ. سنحدّثك عند استئناف قائمة الانتظار.",
+  "queueClosedTitle": "أُغلقت قائمة الانتظار",
+  "queueClosedBody": "للمساعدة بشأن موعدك، يرجى مراجعة الاستقبال."
 }

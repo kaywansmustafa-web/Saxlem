@@ -1,0 +1,324 @@
+# Native Review Residuals
+
+These entries use conservative Arabic-script compositional copy because no exact approved sentence existed. They do not fall back to English and require native review before production release.
+
+- Portal | clinic-portal\src\i18n\index.ts | ar | queueHelp | Delayed and busiest queues appear first.
+- Portal | clinic-portal\src\i18n\index.ts | ar | arrivalHelp | The next expected patients.
+- Portal | clinic-portal\src\i18n\index.ts | ar | updatesHelp | Only updates affecting today's work.
+- Portal | clinic-portal\src\i18n\index.ts | ar | emptyBody | There are no appointments, queues, or arrivals for this shift.
+- Portal | clinic-portal\src\i18n\index.ts | ar | unavailable | Portal session unavailable
+- Portal | clinic-portal\src\i18n\index.ts | ar | unavailableBody | The receptionist demo session is disabled in this environment.
+- Portal | clinic-portal\src\i18n\index.ts | ku | clinicDelayed | Some doctors are delayed
+- Portal | clinic-portal\src\i18n\index.ts | ku | shift | Morning shift · 8:00 AM–4:00 PM
+- Portal | clinic-portal\src\i18n\index.ts | ku | heading | Today at a glance
+- Portal | clinic-portal\src\i18n\index.ts | ku | subheading | The information you need for the current shift.
+- Portal | clinic-portal\src\i18n\index.ts | ku | queueHelp | Delayed and busiest queues appear first.
+- Portal | clinic-portal\src\i18n\index.ts | ku | delay | Delay
+- Portal | clinic-portal\src\i18n\index.ts | ku | arrivalHelp | The next expected patients.
+- Portal | clinic-portal\src\i18n\index.ts | ku | confirm | Confirm arrival at reception
+- Portal | clinic-portal\src\i18n\index.ts | ku | welcome | Welcome patient at reception
+- Portal | clinic-portal\src\i18n\index.ts | ku | queueLoad | Queue load
+- Portal | clinic-portal\src\i18n\index.ts | ku | availability | Next availability
+- Portal | clinic-portal\src\i18n\index.ts | ku | count | {count} patients
+- Portal | clinic-portal\src\i18n\index.ts | ku | viewLiveQueue | View Live Queue
+- Portal | clinic-portal\src\i18n\index.ts | ku | emptyBody | There are no appointments, queues, or arrivals for this shift.
+- Portal | clinic-portal\src\i18n\index.ts | ku | unavailable | Portal session unavailable
+- Portal | clinic-portal\src\i18n\index.ts | ku | unavailableBody | The receptionist demo session is disabled in this environment.
+- Portal | clinic-portal\src\i18n\index.ts | ku | update1 | Dr. Karwan is running 12 minutes late.
+- Portal | clinic-portal\src\i18n\index.ts | ku | update2 | Dr. Shilan's queue is paused for a short break.
+- Portal | clinic-portal\src\i18n\index.ts | ku | update3 | Two appointments need reception review at 2:00 PM.
+- Portal | clinic-portal\src\i18n\index.ts | ar | subtitle | Find a patient and understand what happens next.
+- Portal | clinic-portal\src\i18n\index.ts | ar | noPatientsBody | There are no patients to show.
+- Portal | clinic-portal\src\i18n\index.ts | ar | noResultsBody | Check the name, phone number, or patient ID and try again.
+- Portal | clinic-portal\src\i18n\index.ts | ar | noArrivalsBody | No patients are expected to arrive today.
+- Portal | clinic-portal\src\i18n\index.ts | ar | noRecentBody | Patients you open will appear here.
+- Portal | clinic-portal\src\i18n\index.ts | ar | notFoundBody | This patient workspace is not available.
+- Portal | clinic-portal\src\i18n\index.ts | ku | searchHint | Search by name, phone number, or patient ID
+- Portal | clinic-portal\src\i18n\index.ts | ku | recentlyViewed | Recently Viewed
+- Portal | clinic-portal\src\i18n\index.ts | ku | lastAppointment | Last appointment
+- Portal | clinic-portal\src\i18n\index.ts | ku | noPatientsBody | There are no patients to show.
+- Portal | clinic-portal\src\i18n\index.ts | ku | noArrivals | No arrivals today
+- Portal | clinic-portal\src\i18n\index.ts | ku | noRecentBody | Patients you open will appear here.
+- Portal | clinic-portal\src\i18n\index.ts | ku | recentNotifications | Recent Notifications
+- Portal | clinic-portal\src\i18n\index.ts | ku | queueUpdate | Queue update
+- Portal | clinic-portal\src\i18n\index.ts | ku | viewHistory | View History
+- Portal | clinic-portal\src\i18n\index.ts | ku | backToPatients | Back to Patients
+- Portal | clinic-portal\src\i18n\index.ts | ku | notFound | Patient not found
+- Portal | clinic-portal\src\i18n\index.ts | ku | family | Family
+- Portal | clinic-portal\src\i18n\index.ts | ar | subtitle | Understand today's schedule and what needs attention.
+- Portal | clinic-portal\src\i18n\index.ts | ar | searchLabel | Search appointments
+- Portal | clinic-portal\src\i18n\index.ts | ar | attentionHelp | Resolve the most urgent schedule questions first.
+- Portal | clinic-portal\src\i18n\index.ts | ar | upcomingHelp | The next appointments in chronological order.
+- Portal | clinic-portal\src\i18n\index.ts | ar | noAppointmentsBody | There are no appointments scheduled for today.
+- Portal | clinic-portal\src\i18n\index.ts | ar | noResultsBody | Check the patient, doctor, phone, or appointment ID.
+- Portal | clinic-portal\src\i18n\index.ts | ar | noUpcomingBody | There are no more upcoming appointments in this shift.
+- Portal | clinic-portal\src\i18n\index.ts | ar | nothingAttentionBody | Today's schedule has no unresolved issues.
+- Portal | clinic-portal\src\i18n\index.ts | ku | subtitle | Understand today's schedule and what needs attention.
+- Portal | clinic-portal\src\i18n\index.ts | ku | searchLabel | Search appointments
+- Portal | clinic-portal\src\i18n\index.ts | ku | searchHint | Search by patient, doctor, phone, or appointment ID
+- Portal | clinic-portal\src\i18n\index.ts | ku | todaySchedule | Today's Schedule
+- Portal | clinic-portal\src\i18n\index.ts | ku | waitingArrivals | Waiting arrivals
+- Portal | clinic-portal\src\i18n\index.ts | ku | needsAttention | Needs Attention
+- Portal | clinic-portal\src\i18n\index.ts | ku | attentionHelp | Resolve the most urgent schedule questions first.
+- Portal | clinic-portal\src\i18n\index.ts | ku | upcoming | Upcoming
+- Portal | clinic-portal\src\i18n\index.ts | ku | upcomingHelp | The next appointments in chronological order.
+- Portal | clinic-portal\src\i18n\index.ts | ku | allToday | All Today's Appointments
+- Portal | clinic-portal\src\i18n\index.ts | ku | noAppointmentsBody | There are no appointments scheduled for today.
+- Portal | clinic-portal\src\i18n\index.ts | ku | noUpcomingBody | There are no more upcoming appointments in this shift.
+- Portal | clinic-portal\src\i18n\index.ts | ku | patientLate | Patient is late
+- Portal | clinic-portal\src\i18n\index.ts | ku | conflict | Appointment conflict
+- Portal | clinic-portal\src\i18n\index.ts | ku | duplicate | Possible duplicate booking
+- Portal | clinic-portal\src\i18n\index.ts | ku | missingPhone | Missing phone number
+- Portal | clinic-portal\src\i18n\index.ts | ku | notArrived | Patient has not arrived
+- Portal | clinic-portal\src\i18n\index.ts | ku | appointmentWorkspace | Appointment Workspace
+- Portal | clinic-portal\src\i18n\index.ts | ku | summary | Appointment Summary
+- Portal | clinic-portal\src\i18n\index.ts | ku | workingSession | Working session
+- Portal | clinic-portal\src\i18n\index.ts | ku | timeline | Timeline
+- Portal | clinic-portal\src\i18n\index.ts | ku | queueInformation | Queue Information
+- Portal | clinic-portal\src\i18n\index.ts | ku | queueHealth | Queue health
+- Portal | clinic-portal\src\i18n\index.ts | ku | notes | Notes
+- Portal | clinic-portal\src\i18n\index.ts | ku | notesPlaceholder | Notes will be available in a future Sprint.
+- Portal | clinic-portal\src\i18n\index.ts | ku | viewDoctor | View Doctor
+- Portal | clinic-portal\src\i18n\index.ts | ku | backToAppointments | Back to Appointments
+- Portal | clinic-portal\src\i18n\index.ts | ku | reminderSent | Reminder sent
+- Portal | clinic-portal\src\i18n\index.ts | ku | patientExpected | Patient expected
+- Portal | clinic-portal\src\i18n\index.ts | ku | doctorStarted | Doctor started
+- Portal | clinic-portal\src\i18n\index.ts | ku | pending | Pending
+- Portal | clinic-portal\src\i18n\index.ts | ku | late | Late
+- Portal | clinic-portal\src\i18n\index.ts | ar | title | Record Patient Arrival
+- Portal | clinic-portal\src\i18n\index.ts | ar | subtitle | Confirm the patient and appointment before recording arrival.
+- Portal | clinic-portal\src\i18n\index.ts | ar | failure | Arrival could not be recorded.
+- Portal | clinic-portal\src\i18n\index.ts | ku | title | Record Patient Arrival
+- Portal | clinic-portal\src\i18n\index.ts | ku | subtitle | Confirm the patient and appointment before recording arrival.
+- Portal | clinic-portal\src\i18n\index.ts | ku | success | Patient has arrived
+- Portal | clinic-portal\src\i18n\index.ts | ku | prepareQueue | Prepare for Live Queue
+- Portal | clinic-portal\src\i18n\index.ts | ku | alreadyArrived | Arrival was already recorded
+- Portal | clinic-portal\src\i18n\index.ts | ku | notEligible | This appointment is not eligible for arrival.
+- Portal | clinic-portal\src\i18n\index.ts | ku | notFound | The appointment could not be found.
+- Portal | clinic-portal\src\i18n\index.ts | ku | wrongPatient | The patient does not match this appointment.
+- Portal | clinic-portal\src\i18n\index.ts | ku | stale | The appointment changed before arrival was recorded.
+- Portal | clinic-portal\src\i18n\index.ts | ku | failure | Arrival could not be recorded.
+- Portal | clinic-portal\src\i18n\index.ts | ku | recording | Recording arrival
+- Portal | clinic-portal\src\features\clinical-presentation\messages.ts | ku | scheduled | Scheduled
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ar | subtitle | See who is being seen, who is next, and the action required now.
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ar | healthyHelp | The queue is moving at a comfortable pace.
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ar | busyHelp | More patients are waiting than usual. Keep the queue moving.
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ar | delayedHelp | Patients are waiting longer than expected.
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ar | operationalActions | Operational Actions
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | title | Queue Operations
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | subtitle | See who is being seen, who is next, and the action required now.
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | clinicQueueStatus | Clinic Queue Status
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | queue | Queue
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | queueHealth | Queue Health
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | number | Number
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | elapsed | Elapsed consultation time
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | recallPatient | Recall Patient
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | waitingList | Waiting List
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | queueNumber | Queue #
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | recentActivity | Recent Activity
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | operationalActions | Operational Actions
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | pauseQueue | Pause Queue
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | resumeQueue | Resume Queue
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | confirmComplete | Complete this consultation? The patient will leave the active queue.
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | queueOpened | Queue opened
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | queueResumed | Queue resumed
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | patientRecalled | Patient recalled
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | noResponse | No response recorded
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | success | {change}. Current patient: {current}. Next patient: {next}. Queue health: {health}.
+- Portal | clinic-portal\src\features\live-queue\presentation\messages.ts | ku | queueIsPaused | Resume the queue before continuing.
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ar | unavailable | Settings unavailable
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ar | unavailableBody | Doctor settings cannot be loaded. No profile or preference state was changed.
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | subtitle | Your identity, clinic assignment, session, and future preferences.
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | workingLocation | Working location
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | todaySession | Today's Session
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | sessionState | Session state
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | startedAt | Started at
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | patientsCompleted | Patients completed
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | patientsRemaining | Patients remaining
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | queueHealth | Queue health
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | theme | Theme
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | reducedMotion | Reduced motion
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | followSystem | Follow system setting
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | textSize | Text size
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | rtlStatus | RTL status
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | queueNotifications | Queue notifications
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | scheduleNotifications | Schedule notifications
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | sessionReminders | Session reminders
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | futureRelease | Available in a future release
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | production | Production
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | portalVersion | Portal version
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | mockSession | Mock session
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | repositoryMode | Repository mode
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | mock | Mock repository
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | lastLocalizationUpdate | Last localization update
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | supportPlaceholder | Information link planned for a future release
+- Portal | clinic-portal\src\features\doctor-settings\presentation\messages.ts | ku | unavailable | Settings unavailable
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ar | runningBehindHelp | The queue is currently behind its expected pace.
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ar | largeGapHelp | There is a longer open period between appointments.
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ar | lunchApproachingHelp | A scheduled lunch break appears in today's timeline.
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ar | sessionEndingSoonHelp | The final appointment is close to the end of working hours.
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ar | busyAfternoonHelp | Several appointments are scheduled after midday.
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ar | noWarningsHelp | The schedule has no derived warnings right now.
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ar | noUpcomingHelp | No remaining appointments are scheduled for this doctor.
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ar | unavailable | Schedule unavailable
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ar | unavailableBody | The read-only doctor schedule is unavailable. No appointment state was changed.
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ku | subtitle | A read-only view of today's session.
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ku | todayTimeline | Today's Timeline
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ku | upcomingSessions | Upcoming Sessions
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ku | scheduleAlerts | Schedule Alerts
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ku | upcoming | Upcoming
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ku | runningBehind | Running behind
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ku | largeGapHelp | There is a longer open period between appointments.
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ku | sessionEndingSoon | Session ending soon
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ku | busyAfternoon | Busy afternoon
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ku | busyAfternoonHelp | Several appointments are scheduled after midday.
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ku | noWarningsHelp | The schedule has no derived warnings right now.
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ku | noUpcomingHelp | No remaining appointments are scheduled for this doctor.
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ku | unavailable | Schedule unavailable
+- Portal | clinic-portal\src\features\doctor-schedule\presentation\messages.ts | ku | unavailableBody | The read-only doctor schedule is unavailable. No appointment state was changed.
+- Portal | clinic-portal\src\features\doctor-patients\presentation\messages.ts | ar | subtitle | Your current patient and the next patients prepared for this session.
+- Portal | clinic-portal\src\features\doctor-patients\presentation\messages.ts | ar | noCurrentBody | No consultation is active. The waiting patients remain unchanged.
+- Portal | clinic-portal\src\features\doctor-patients\presentation\messages.ts | ar | noNextBody | Reception has not prepared another patient for this doctor session.
+- Portal | clinic-portal\src\features\doctor-patients\presentation\messages.ts | ar | unavailable | Doctor patients unavailable
+- Portal | clinic-portal\src\features\doctor-patients\presentation\messages.ts | ar | unavailableBody | This doctor session is not enabled. No patient information has been exposed.
+- Portal | clinic-portal\src\features\doctor-patients\presentation\messages.ts | ku | title | Patients Today
+- Portal | clinic-portal\src\features\doctor-patients\presentation\messages.ts | ku | subtitle | Your current patient and the next patients prepared for this session.
+- Portal | clinic-portal\src\features\doctor-patients\presentation\messages.ts | ku | sessionSummary | Session Summary
+- Portal | clinic-portal\src\features\doctor-patients\presentation\messages.ts | ku | sessionState | Session state
+- Portal | clinic-portal\src\features\doctor-patients\presentation\messages.ts | ku | visiblePatients | Visible patients
+- Portal | clinic-portal\src\features\doctor-patients\presentation\messages.ts | ku | arrivalState | Arrival state
+- Portal | clinic-portal\src\features\doctor-patients\presentation\messages.ts | ku | noNext | No patients are ready next
+- Portal | clinic-portal\src\features\doctor-patients\presentation\messages.ts | ku | noNextBody | Reception has not prepared another patient for this doctor session.
+- Portal | clinic-portal\src\features\doctor-patients\presentation\messages.ts | ku | unavailable | Doctor patients unavailable
+- Portal | clinic-portal\src\features\doctor-patients\presentation\messages.ts | ku | unavailableBody | This doctor session is not enabled. No patient information has been exposed.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | patientArrivedDescription | The patient is ready at reception.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | patientArrivedAction | Continue the current consultation. Reception will manage the queue.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | runningBehindDescription | The current queue is behind its expected pace.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | runningBehindAction | Continue safely and review the schedule before the next consultation.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | receptionDescription | Reception shared a read-only session update.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | receptionAction | Open the workspace when the consultation is ready to begin.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | breakDescription | A scheduled break is approaching.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | breakAction | Review the schedule before the break.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | rescheduledDescription | The appointment time was updated.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | rescheduledAction | Review the updated appointment context.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | announcementDescription | Clinic management published a staff notice.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | announcementAction | No action is needed during the current consultation.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | genericTitle | Session update
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | genericDescription | A read-only session update is available.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | genericAction | Review the related workspace when safe.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | unavailable | Notifications unavailable
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | unavailableBody | Doctor notifications cannot be loaded. No notification state was changed.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ar | failure | The notification could not be opened. Existing read state remains safe.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | subtitle | Read-only updates that affect your current clinic session.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | unreadCount | Unread count
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | todayCount | Today's notifications
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | lastUpdated | Last updated
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | unread | Unread Notifications
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | today | Today's Notifications
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | openNotification | Open notification: {title}
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | whatHappened | What happened
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | why | Why
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | recommendedAction | Recommended action
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | relatedLinks | Related links
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | patientArrivedDescription | The patient is ready at reception.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | patientArrivedWhat | Reception recorded the patient's arrival.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | patientArrivedWhy | The appointment is approaching and the patient is ready.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | runningBehind | Session running behind
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | runningBehindDescription | The current queue is behind its expected pace.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | runningBehindWhy | The current session is exceeding its planned pace.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | receptionUpdate | Reception update
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | receptionDescription | Reception shared a read-only session update.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | receptionWhat | Reception confirmed the morning arrival.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | receptionWhy | The doctor may begin the session when ready.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | receptionAction | Open the workspace when the consultation is ready to begin.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | breakReminder | Break reminder
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | breakAction | Review the schedule before the break.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | rescheduledDescription | The appointment time was updated.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | rescheduledWhat | Reception changed the scheduled appointment time.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | rescheduledWhy | The patient requested a different available time.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | rescheduledAction | Review the updated appointment context.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | announcementWhy | Working doctors should be aware of the update.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | announcementAction | No action is needed during the current consultation.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | genericTitle | Session update
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | genericWhat | The clinic session changed.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | genericAction | Review the related workspace when safe.
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | unavailable | Notifications unavailable
+- Portal | clinic-portal\src\features\doctor-notifications\presentation\messages.ts | ku | failure | The notification could not be opened. Existing read state remains safe.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ar | unavailable | Doctor session unavailable
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ar | unavailableBody | This doctor workspace is not enabled. No clinical or queue information has been exposed.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ar | subtitle | Your current consultation and the next safe action.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ar | noActivePatientBody | No consultation is active. The waiting list remains unchanged until reception calls the next patient.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ar | noWaitingBody | There is nothing to call from this workspace. Reception can continue managing arrivals safely.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ar | healthyHelp | The queue is moving at a comfortable pace.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ar | busyHelp | Several patients are waiting. Continue the current consultation normally.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ar | delayedHelp | Patients are waiting longer than expected.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ar | placeholderTitle | Not available in this Sprint
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ar | placeholderBody | This doctor destination is intentionally unavailable. Return to Workspace to continue the active session.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | app | Saxlem Doctor Workspace
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | patientsToday | Patients Today
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | unavailable | Doctor session unavailable
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | unavailableBody | This doctor workspace is not enabled. No clinical or queue information has been exposed.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | returnHome | Return to portal
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | subtitle | Your current consultation and the next safe action.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | sessionStatus | Session Status
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | workingSession | Working session
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | sessionState | Session state
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | queueState | Queue state
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | totalWaiting | Total waiting patients
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | arrivalState | Arrival state
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | openAppointment | Open Appointment Workspace
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | queueHistory | Queue history
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | recentUpdate | Recent update
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | noWaiting | No patients are currently ready
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | noWaitingBody | There is nothing to call from this workspace. Reception can continue managing arrivals safely.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | queueHealth | Queue Health
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | busyHelp | Several patients are waiting. Continue the current consultation normally.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | doctorDelay | Doctor delay
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | recentActivity | Recent Session Activity
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | sessionStarted | Session started
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | patientRecalled | Patient recalled
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | sessionPaused | Session paused
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | sessionResumed | Session resumed
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | pauseSession | Pause Session
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | resumeSession | Resume Session
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | confirmComplete | Complete this consultation? The patient will leave the active queue.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | confirmFinish | Finish this session? No further doctor actions will be available.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | success | {action}. Current patient: {patient}. Queue health: {health}.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | operationFailed | The action could not be completed. Existing queue state remains safe.
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | placeholderTitle | Not available in this Sprint
+- Portal | clinic-portal\src\features\doctor\presentation\messages.ts | ku | placeholderBody | This doctor destination is intentionally unavailable. Return to Workspace to continue the active session.
+- Portal | clinic-portal\src\features\billing\presentation\messages.ts | ar | chooseOrganizationHelp | Select an authoritative organization before viewing global billing.
+- Portal | clinic-portal\src\features\billing\presentation\messages.ts | ar | finalizeTitle | Finalize this statement?
+- Portal | clinic-portal\src\features\billing\presentation\messages.ts | ar | finalizeHelp | The figures will become an immutable snapshot. This is not a payment or settlement action.
+- Portal | clinic-portal\src\features\billing\presentation\messages.ts | ku | overview | Overview
+- Portal | clinic-portal\src\features\billing\presentation\messages.ts | ku | chooseOrganizationHelp | Select an authoritative organization before viewing global billing.
+- Portal | clinic-portal\src\features\billing\presentation\messages.ts | ku | forbidden | You do not have access to this billing information.
+- Portal | clinic-portal\src\features\billing\presentation\messages.ts | ku | period | Period
+- Portal | clinic-portal\src\features\billing\presentation\messages.ts | ku | qualifying | Qualifying appointments
+- Portal | clinic-portal\src\features\billing\presentation\messages.ts | ku | reversalCount | Reversal count
+- Portal | clinic-portal\src\features\billing\presentation\messages.ts | ku | reversed | Reversed
+- Portal | clinic-portal\src\features\billing\presentation\messages.ts | ku | view | View statement
+- Portal | clinic-portal\src\features\billing\presentation\messages.ts | ku | finalizeHelp | The figures will become an immutable snapshot. This is not a payment or settlement action.
+- Portal | clinic-portal\src\features\billing\presentation\messages.ts | ku | planCode | Plan code
+- Portal | clinic-portal\src\features\billing\presentation\messages.ts | ku | planName | Plan name
+- Portal | clinic-portal\src\features\billing\presentation\messages.ts | ku | assigned | Plan assigned.
+- Portal | clinic-portal\src\features\billing\presentation\messages.ts | ku | readOnly | Read-only billing
+- Portal | clinic-portal\src\features\administration\presentation\messages.ts | ku | organizationsHelp | View the organizations currently registered with Saxlem.
+- Portal | clinic-portal\src\features\administration\presentation\messages.ts | ku | viewOrganization | View organization
+- Portal | clinic-portal\src\features\administration\presentation\messages.ts | ku | clinicsHelp | View clinics across registered organizations.
+- Portal | clinic-portal\src\features\administration\presentation\messages.ts | ku | viewClinic | View clinic
+- Portal | clinic-portal\src\features\administration\presentation\messages.ts | ku | maximumLength | The value is too long.
+- Portal | clinic-portal\src\features\administration\presentation\messages.ts | ku | invalidCode | Use 2–32 letters, numbers, underscores, or hyphens.
+- Portal | clinic-portal\src\features\administration\presentation\messages.ts | ku | invalidTimezone | Enter an IANA timezone such as Asia/Baghdad.
+- Portal | clinic-portal\src\features\administration\presentation\messages.ts | ku | duplicateClinicCode | That clinic code is already used in this organization.
+- Portal | clinic-portal\src\features\administration\presentation\messages.ts | ku | unavailable | Saxlem services are temporarily unavailable.
+- Portal | clinic-portal\src\features\administration\presentation\messages.ts | ku | conflict | This information conflicts with an existing record.
+- Portal | clinic-portal\src\features\administration\presentation\messages.ts | ku | validation | Review the highlighted information.
+- Portal | clinic-portal\src\features\administration\presentation\messages.ts | ku | errorSummary | Please correct the following:
+- Portal | clinic-portal\src\features\administration\presentation\messages.ts | ku | backToClinics | Back to clinics
+- Portal | clinic-portal\src\features\live-queue\presentation\production-messages.ts | ku | notStarted | Not started
+- Portal | clinic-portal\src\features\live-queue\presentation\production-messages.ts | ku | entryStatus | Entry status
+- Flutter | mobile\lib\l10n\app_ku.arb | ku | tabWithCount | {label} ({count})
+- Flutter | mobile\lib\l10n\app_ku.arb | ku | phoneHint | 750 123 4567
+- Flutter | mobile\lib\l10n\app_ku.arb | ku | patientRelationship | {relationship, select, mother {Mother} father {Father} wife {Wife} husband {Husband} son {Son} daughter {Daughter} brother {Brother} sister {Sister} grandfather {Grandfather} grandmother {Grandmother} me {Me} other {Other}}
+- Flutter | mobile\lib\l10n\app_ku.arb | ku | patientGender | {gender, select, female {Female} male {Male} other {Not specified}}

@@ -32,3 +32,12 @@ flutter:
 
   assets:
     - assets/images/saxlem_logo.png
+
+  fonts:
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/Cairo-Variable.ttf
+    - family: Rudaw
+      fonts:
+        - asset: assets/fonts/Rudaw-Regular.ttf
+          weight: 400

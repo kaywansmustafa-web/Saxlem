@@ -6,22 +6,32 @@ abstract interface class QueueGuidanceService {
 }
 
 class RuleBasedQueueGuidanceService implements QueueGuidanceService {
-  const RuleBasedQueueGuidanceService();
+  const RuleBasedQueueGuidanceService({
+    required this.doctorDelayed,
+    required this.headToReception,
+    required this.leaveSoon,
+    required this.relax,
+  });
+
+  final String doctorDelayed;
+  final String headToReception;
+  final String leaveSoon;
+  final String relax;
 
   @override
   String guidanceFor(PatientQueueSnapshot snapshot) {
     if (snapshot.sessionStatus == QueueSessionStatus.paused ||
         snapshot.doctorTimingMinutes >= 15) {
-      return "Doctor is delayed. We'll keep you updated.";
+      return doctorDelayed;
     }
     if (snapshot.patientStatus == PatientQueueStatus.called ||
         snapshot.patientsAhead == 0) {
-      return 'Please head to reception.';
+      return headToReception;
     }
     if (snapshot.estimatedWaitLowerMinutes <= 15 &&
         snapshot.patientStatus == PatientQueueStatus.expected) {
-      return 'Leave in about 10 minutes.';
+      return leaveSoon;
     }
-    return 'Relax, no need to leave yet.';
+    return relax;
   }
 }

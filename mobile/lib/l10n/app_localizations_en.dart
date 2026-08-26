@@ -992,4 +992,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recordArrival => 'Record arrival';
+
+  @override
+  String get nextAppointmentTitle => 'Your next appointment';
+
+  @override
+  String patientsAheadCount(int count) {
+    return '$count patients ahead';
+  }
+
+  @override
+  String estimatedWaitLong(int minutes) {
+    return 'Estimated wait: $minutes minutes';
+  }
+
+  @override
+  String get loadingYourLiveQueue => 'Loading your live queue';
+
+  @override
+  String queueStatusSemantic(String status) {
+    return 'Queue status: $status';
+  }
+
+  @override
+  String get queueIsLive => 'Queue is live';
+
+  @override
+  String get queueIsPaused => 'Queue is paused';
+
+  @override
+  String get queueIsClosed => 'Queue is closed';
+
+  @override
+  String get queueConnectedTitle => 'Connected';
+
+  @override
+  String get queueConnectedBody => 'Your queue is live.';
+
+  @override
+  String get queueReconnectingTitle => 'Reconnecting';
+
+  @override
+  String get queueReconnectingBody => 'Showing your latest queue update.';
+
+  @override
+  String get queueDelayedTitle => 'Update delayed';
+
+  @override
+  String get queueDelayedBody => 'This information may be out of date.';
+
+  @override
+  String get queueOfflineTitle => 'You are offline';
+
+  @override
+  String get queueOfflineBody =>
+      'Showing the last queue update saved on this device.';
+
+  @override
+  String get queuePausedTitle => 'The queue is temporarily paused';
+
+  @override
+  String get queuePausedBody =>
+      'Your place is safe. We\'ll update you when the queue resumes.';
+
+  @override
+  String get queueClosedTitle => 'This queue has closed';
+
+  @override
+  String get queueClosedBody =>
+      'For assistance with your appointment, please contact reception.';
 }

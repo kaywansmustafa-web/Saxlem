@@ -164,44 +164,47 @@ class _AppBootstrapState extends State<_AppBootstrap> {
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: controller,
-    builder: (context, _) => MaterialApp(
-      onGenerateTitle: (context) => AppLocalizations.of(context).appName,
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      locale: controller.selectedLocale?.locale,
-      supportedLocales: AppLocalizations.supportedLocales,
-      localizationsDelegates: [
-        ...badiniFrameworkLocalizationsDelegates,
-        ...AppLocalizations.localizationsDelegates,
-      ],
-      home: switch (controller.status) {
-        AppBootstrapStatus.loading => const SplashScreen(),
-        AppBootstrapStatus.needsLocale => LanguageSelectionScreen(
-          controller: controller,
-        ),
-        AppBootstrapStatus.needsAuthentication => AuthenticationFeature(
-          repository: widget.authRepository,
-          onAuthenticated: _authenticated,
-          onGuest: controller.continueAsGuest,
-          developmentOtp: widget.developmentOtp,
-        ),
-        AppBootstrapStatus.sessionExpired => AuthenticationFeature(
-          repository: widget.authRepository,
-          sessionExpired: true,
-          onAuthenticated: _authenticated,
-          onGuest: controller.continueAsGuest,
-          developmentOtp: widget.developmentOtp,
-        ),
-        AppBootstrapStatus.authenticationUnavailable ||
-        AppBootstrapStatus.malformedLocalSession => AuthenticationFeature(
-          repository: widget.authRepository,
-          onAuthenticated: _authenticated,
-          onGuest: controller.continueAsGuest,
-          developmentOtp: widget.developmentOtp,
-        ),
-        AppBootstrapStatus.ready => _readyContent(),
-      },
-    ),
+    builder: (context, _) {
+      final locale = controller.selectedLocale?.locale;
+      return MaterialApp(
+        onGenerateTitle: (context) => AppLocalizations.of(context).appName,
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightFor(locale),
+        locale: locale,
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: [
+          ...badiniFrameworkLocalizationsDelegates,
+          ...AppLocalizations.localizationsDelegates,
+        ],
+        home: switch (controller.status) {
+          AppBootstrapStatus.loading => const SplashScreen(),
+          AppBootstrapStatus.needsLocale => LanguageSelectionScreen(
+            controller: controller,
+          ),
+          AppBootstrapStatus.needsAuthentication => AuthenticationFeature(
+            repository: widget.authRepository,
+            onAuthenticated: _authenticated,
+            onGuest: controller.continueAsGuest,
+            developmentOtp: widget.developmentOtp,
+          ),
+          AppBootstrapStatus.sessionExpired => AuthenticationFeature(
+            repository: widget.authRepository,
+            sessionExpired: true,
+            onAuthenticated: _authenticated,
+            onGuest: controller.continueAsGuest,
+            developmentOtp: widget.developmentOtp,
+          ),
+          AppBootstrapStatus.authenticationUnavailable ||
+          AppBootstrapStatus.malformedLocalSession => AuthenticationFeature(
+            repository: widget.authRepository,
+            onAuthenticated: _authenticated,
+            onGuest: controller.continueAsGuest,
+            developmentOtp: widget.developmentOtp,
+          ),
+          AppBootstrapStatus.ready => _readyContent(),
+        },
+      );
+    },
   );
 
   void _authenticated(AuthSession session) {
