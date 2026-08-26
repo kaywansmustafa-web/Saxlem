@@ -8,7 +8,17 @@ import '../../design_system/foundations/saxlem_typography.dart';
 import '../../design_system/theme/saxlem_colors.dart';
 
 abstract final class AppTheme {
-  static ThemeData get light {
+  static ThemeData get light => lightFor();
+
+  static String? fontFamilyFor(Locale? locale) =>
+      switch (locale?.languageCode) {
+        'ar' => 'Cairo',
+        'ku' => 'Rudaw',
+        _ => null,
+      };
+
+  static ThemeData lightFor([Locale? locale]) {
+    final fontFamily = fontFamilyFor(locale);
     final baseTheme = ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
@@ -20,6 +30,7 @@ abstract final class AppTheme {
         surface: SaxlemColors.light.surfaceRaised,
       ),
       scaffoldBackgroundColor: AppColors.background,
+      fontFamily: fontFamily,
     );
 
     return baseTheme.copyWith(
@@ -28,13 +39,15 @@ abstract final class AppTheme {
         baseTheme.textTheme,
         SaxlemColors.light.textPrimary,
         SaxlemColors.light.textSecondary,
+        fontFamily: fontFamily,
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.background,
         foregroundColor: SaxlemColors.light.textPrimary,
         elevation: 0,
         centerTitle: false,
-        titleTextStyle: GoogleFonts.notoSans(
+        titleTextStyle: _style(
+          fontFamily,
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: SaxlemColors.light.textPrimary,
@@ -51,7 +64,8 @@ abstract final class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(SaxlemRadii.large),
           ),
-          textStyle: GoogleFonts.notoSans(
+          textStyle: _style(
+            fontFamily,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
@@ -79,4 +93,22 @@ abstract final class AppTheme {
       ),
     );
   }
+
+  static TextStyle _style(
+    String? fontFamily, {
+    required double fontSize,
+    required FontWeight fontWeight,
+    Color? color,
+  }) => fontFamily == null
+      ? GoogleFonts.notoSans(
+          fontSize: fontSize,
+          fontWeight: fontWeight,
+          color: color,
+        )
+      : TextStyle(
+          fontFamily: fontFamily,
+          fontSize: fontSize,
+          fontWeight: fontWeight,
+          color: color,
+        );
 }
