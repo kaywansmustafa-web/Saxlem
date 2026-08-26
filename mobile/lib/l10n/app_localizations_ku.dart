@@ -341,7 +341,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String tabWithCount(String label, int count) {
-    return 'زانیاری';
+    return '$label ($count)';
   }
 
   @override
@@ -411,7 +411,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get phoneNumber => 'ژمارا موبایلێ';
 
   @override
-  String get phoneHint => 'زانیاری';
+  String get phoneHint => '750 123 4567';
 
   @override
   String get phoneInvalid => 'ژمارەکا موبایلا ئیراقی یا دروست بنڤیسە';
@@ -660,12 +660,31 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String patientRelationship(String relationship) {
-    return 'زانیاری';
+    String _temp0 = intl.Intl.selectLogic(relationship, {
+      'mother': 'دایک',
+      'father': 'باب',
+      'wife': 'ژین',
+      'husband': 'مێر',
+      'son': 'کور',
+      'daughter': 'کچ',
+      'brother': 'برا',
+      'sister': 'خوشک',
+      'grandfather': 'باپیر',
+      'grandmother': 'داپیر',
+      'me': 'ئەز',
+      'other': 'یێ دی',
+    });
+    return '$_temp0';
   }
 
   @override
   String patientGender(String gender) {
-    return 'زانیاری';
+    String _temp0 = intl.Intl.selectLogic(gender, {
+      'female': 'مێ',
+      'male': 'نێر',
+      'other': 'دیار نەکری',
+    });
+    return '$_temp0';
   }
 
   @override

@@ -25,11 +25,16 @@ void main() {
     final english = maps[0];
     final arabic = maps[1];
     final badini = maps[2];
+    const approvedLocaleInvariantValues = {
+      'appName',
+      'phoneHint',
+      'tabWithCount',
+    };
     for (final key in expected) {
       final englishValue = english[key] as String;
       final arabicValue = arabic[key] as String;
       final badiniValue = badini[key] as String;
-      if (key != 'appName') {
+      if (!approvedLocaleInvariantValues.contains(key)) {
         expect(
           arabicValue,
           isNot(englishValue),

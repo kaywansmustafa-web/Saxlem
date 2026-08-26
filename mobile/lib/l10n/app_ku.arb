@@ -126,7 +126,7 @@
       }
     }
   },
-  "tabWithCount": "زانیاری",
+  "tabWithCount": "{label} ({count})",
   "@tabWithCount": {
     "placeholders": {
       "label": {
@@ -177,7 +177,7 @@
   "country": "وەلات",
   "iraq": "ئیراق",
   "phoneNumber": "ژمارا موبایلێ",
-  "phoneHint": "زانیاری",
+  "phoneHint": "750 123 4567",
   "phoneInvalid": "ژمارەکا موبایلا ئیراقی یا دروست بنڤیسە",
   "sendCode": "کودی فرێکە",
   "otpTitle": "کودێ خو بنڤیسە",
@@ -312,8 +312,8 @@
   "relationship": "پەیوەندی",
   "gender": "رەگەز",
   "dateOfBirth": "رێکەفتا ژدایکبوونێ",
-  "patientRelationship": "زانیاری",
-  "patientGender": "زانیاری",
+  "patientRelationship": "{relationship, select, mother {دایک} father {باب} wife {ژین} husband {مێر} son {کور} daughter {کچ} brother {برا} sister {خوشک} grandfather {باپیر} grandmother {داپیر} me {ئەز} other {یێ دی}}",
+  "patientGender": "{gender, select, female {مێ} male {نێر} other {دیار نەکری}}",
   "loadingPatientAccount": "هەژمارێ نەخۆشی دهێتە بارکرن",
   "profileSetupTitle": "دەربارەی نەخۆشی بێژە مە",
   "profileSetupBody": "زانیاریێن پێویست بۆ چاڤدێریا تایبەت تۆمار بکە.",
