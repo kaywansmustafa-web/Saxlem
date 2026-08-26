@@ -29,6 +29,13 @@ describe("owner architecture", () => {
         /clinic-portal|Mock[A-Z]|mock-data|localStorage|sessionStorage|â|Ã|�/u,
       );
   });
+  it("keeps production CSP free of eval and sends the refresh token to both logout endpoints", () => {
+    const next = readFileSync(resolve(process.cwd(), "next.config.ts"), "utf8");
+    const auth = readFileSync(resolve(root, "infrastructure/auth.ts"), "utf8");
+    expect(next).not.toContain("unsafe-eval");
+    expect(auth).toContain("body: { refreshToken: session.refreshToken }");
+    expect(auth).not.toContain("body: all ? {} :");
+  });
   it("protects every owner workspace and has no patient, clinic manager, doctor, or receptionist authorization branch", () => {
     const layout = readFileSync(
         resolve(root, "app/(protected)/layout.tsx"),

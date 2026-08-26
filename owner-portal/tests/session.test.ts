@@ -63,6 +63,7 @@ describe("owner session", () => {
       "https://evil.test",
       "//evil.test",
       "/api/auth",
+      "/api%2Fauth",
       "/\\evil",
     ])
       expect(safeReturnPath(value)).toBe("/dashboard");

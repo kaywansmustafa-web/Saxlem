@@ -129,7 +129,7 @@ export async function logoutOwner(all: boolean): Promise<void> {
         path: all ? "/api/v1/auth/logout-all" : "/api/v1/auth/logout",
         method: "POST",
         session,
-        body: all ? {} : { refreshToken: session.refreshToken },
+        body: { refreshToken: session.refreshToken },
       });
   } finally {
     (await cookies()).set(

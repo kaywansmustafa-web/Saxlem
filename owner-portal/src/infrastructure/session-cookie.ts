@@ -99,8 +99,11 @@ export function safeReturnPath(value: unknown): string {
     return "/dashboard";
   try {
     const url = new URL(value, "https://owner.saxlem.invalid");
+    const decodedPath = decodeURIComponent(url.pathname);
     return url.origin === "https://owner.saxlem.invalid" &&
-      !url.pathname.startsWith("/api")
+      !url.pathname.startsWith("/api") &&
+      !decodedPath.startsWith("/api") &&
+      !/[\u0000-\u001f\u007f]/u.test(decodedPath)
       ? `${url.pathname}${url.search}`
       : "/dashboard";
   } catch {
