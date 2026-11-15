@@ -1,9 +1,25 @@
 import Link from "next/link";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
-import { listClinics } from "@/data/owner-data";
+import { listClinics, listOrganizations } from "@/data/owner-data";
 import { requireOwnerSession } from "@/infrastructure/auth";
-export default async function ClinicsPage() {
-  const data = await listClinics(await requireOwnerSession());
+export default async function ClinicsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ id?: string }>;
+}) {
+  const { id } = await searchParams;
+  const session = await requireOwnerSession();
+  const [data, organizations] = await Promise.all([
+    listClinics(session),
+    listOrganizations(session),
+  ]);
+  const organizationName = new Map(
+    organizations.items.map((organization) => [
+      organization.id,
+      organization.name,
+    ]),
+  );
+  const items = id ? data.items.filter((item) => item.id === id) : data.items;
   return (
     <>
       <PageHeader
@@ -15,7 +31,13 @@ export default async function ClinicsPage() {
           </Link>
         }
       />
-      {data.items.length ? (
+      {id && (
+        <p className="filter-note">
+          Showing one clinic from search.{" "}
+          <Link href="/clinics">Show all clinics</Link>
+        </p>
+      )}
+      {items.length ? (
         <div className="card table-card">
           <table className="table">
             <thead>
@@ -28,13 +50,16 @@ export default async function ClinicsPage() {
               </tr>
             </thead>
             <tbody>
-              {data.items.map((item) => (
+              {items.map((item) => (
                 <tr key={item.id}>
                   <td>
                     <strong>{item.name}</strong>
                   </td>
                   <td>{item.code}</td>
-                  <td>{item.organizationId}</td>
+                  <td>
+                    {organizationName.get(item.organizationId) ??
+                      item.organizationId}
+                  </td>
                   <td>{item.timezone}</td>
                   <td>
                     <StatusBadge status={item.status} />

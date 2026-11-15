@@ -1032,14 +1032,14 @@ export class PlatformControlService {
         id: x.id,
         label: x.name,
         description: 'Organization',
-        href: `/organizations/${x.id}`,
+        href: `/organizations?id=${x.id}`,
       })),
       ...clinics.map((x) => ({
         category: 'clinic',
         id: x.id,
         label: x.name,
         description: x.code,
-        href: `/clinics/${x.id}`,
+        href: `/clinics?id=${x.id}`,
       })),
       ...doctors.map((x) => ({
         category: 'doctor',
@@ -1067,7 +1067,7 @@ export class PlatformControlService {
         id: x.id,
         label: x.publicReference,
         description: x.status,
-        href: `/appointments/${x.id}`,
+        href: `/appointments?reference=${encodeURIComponent(x.publicReference)}`,
       })),
     ];
   }
@@ -1629,13 +1629,19 @@ export class PlatformControlService {
     const valid = async () => {
       if (
         input.category === 'organization' &&
-        input.entityType === 'organization'
+        input.entityType === 'organization' &&
+        !input.clinicId &&
+        (!input.organizationId || input.organizationId === input.entityId)
       )
         return tx.organization.findUnique({
           where: { id: input.entityId },
           select: { id: true },
         });
-      if (input.category === 'clinic' && input.entityType === 'clinic')
+      if (
+        input.category === 'clinic' &&
+        input.entityType === 'clinic' &&
+        (!input.clinicId || input.clinicId === input.entityId)
+      )
         return tx.clinic.findFirst({
           where: {
             id: input.entityId,

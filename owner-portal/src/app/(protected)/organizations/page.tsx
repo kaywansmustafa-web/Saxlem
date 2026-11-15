@@ -2,8 +2,14 @@ import Link from "next/link";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
 import { listOrganizations } from "@/data/owner-data";
 import { requireOwnerSession } from "@/infrastructure/auth";
-export default async function OrganizationsPage() {
+export default async function OrganizationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ id?: string }>;
+}) {
+  const { id } = await searchParams;
   const data = await listOrganizations(await requireOwnerSession());
+  const items = id ? data.items.filter((item) => item.id === id) : data.items;
   return (
     <>
       <PageHeader
@@ -15,7 +21,13 @@ export default async function OrganizationsPage() {
           </Link>
         }
       />
-      {data.items.length ? (
+      {id && (
+        <p className="filter-note">
+          Showing one organization from search.{" "}
+          <Link href="/organizations">Show all organizations</Link>
+        </p>
+      )}
+      {items.length ? (
         <div className="card table-card">
           <table className="table">
             <thead>
@@ -27,7 +39,7 @@ export default async function OrganizationsPage() {
               </tr>
             </thead>
             <tbody>
-              {data.items.map((item) => (
+              {items.map((item) => (
                 <tr key={item.id}>
                   <td>
                     <strong>{item.name}</strong>

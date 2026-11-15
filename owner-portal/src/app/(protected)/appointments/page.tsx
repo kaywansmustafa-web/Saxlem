@@ -1,18 +1,33 @@
+import Link from "next/link";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
 import { listAppointments } from "@/data/owner-data";
 import { requireOwnerSession } from "@/infrastructure/auth";
-export default async function AppointmentsPage() {
+export default async function AppointmentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ reference?: string }>;
+}) {
+  const { reference } = await searchParams;
   const now = new Date(),
     from = new Date(now.getTime() - 7 * 86400000).toISOString(),
     to = new Date(now.getTime() + 31 * 86400000).toISOString();
   const data = await listAppointments(await requireOwnerSession(), from, to);
+  const items = reference
+    ? data.items.filter((item) => item.reference === reference)
+    : data.items;
   return (
     <>
       <PageHeader
         title="Appointments"
         description="Global administrative oversight without unsafe lifecycle overrides."
       />
-      {data.items.length ? (
+      {reference && (
+        <p className="filter-note">
+          Showing appointment {reference} from search (last 7 days to next 31
+          days). <Link href="/appointments">Show all appointments</Link>
+        </p>
+      )}
+      {items.length ? (
         <div className="card table-card">
           <table className="table">
             <thead>
@@ -27,7 +42,7 @@ export default async function AppointmentsPage() {
               </tr>
             </thead>
             <tbody>
-              {data.items.map((item) => (
+              {items.map((item) => (
                 <tr key={item.id}>
                   <td>{item.reference}</td>
                   <td>
