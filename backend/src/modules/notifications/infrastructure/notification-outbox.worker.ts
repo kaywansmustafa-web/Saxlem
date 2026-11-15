@@ -64,11 +64,15 @@ export class NotificationOutboxWorker
 
   async processTick(): Promise<number> {
     let processed = 0;
+    // An event is attempted at most once per tick. Without this, a failed event
+    // whose short backoff expires mid-tick is reclaimed in the same tick and can
+    // burn through its retry budget almost immediately.
+    const attempted: string[] = [];
     while (
       !this.stopping &&
       processed < this.configuration.notificationWorkerTickLimit
     ) {
-      const outcome = await this.processOne();
+      const outcome = await this.processOne(attempted);
       if (outcome === 'empty') break;
       processed += 1;
     }
@@ -87,7 +91,9 @@ export class NotificationOutboxWorker
     }
   }
 
-  private async processOne(): Promise<'processed' | 'failed' | 'empty'> {
+  private async processOne(
+    attempted: string[] = [],
+  ): Promise<'processed' | 'failed' | 'empty'> {
     let locked: LockedOutboxEvent | undefined;
     try {
       const result = await this.prisma.db.$transaction(async (tx) => {
@@ -97,6 +103,7 @@ export class NotificationOutboxWorker
           WHERE published_at IS NULL
             AND failed_at IS NULL
             AND (next_attempt_at IS NULL OR next_attempt_at <= now())
+            AND NOT (id = ANY(${attempted}::uuid[]))
             AND event_type IN (
               'queue.session.opened', 'queue.session.paused',
               'queue.session.resumed', 'queue.session.closed',
@@ -110,6 +117,7 @@ export class NotificationOutboxWorker
         `;
         locked = rows[0];
         if (!locked) return false;
+        attempted.push(locked.id);
         const event = this.validate(locked);
         const candidates = await this.recipients(tx, event);
         await this.lockRecipients(tx, candidates);
