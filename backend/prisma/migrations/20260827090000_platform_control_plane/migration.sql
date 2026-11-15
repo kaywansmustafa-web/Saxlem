@@ -6,7 +6,7 @@ CREATE TYPE "DocumentCategory" AS ENUM (
 CREATE TYPE "DocumentStatus" AS ENUM ('pendingUpload', 'available', 'deleted');
 
 CREATE TABLE "staff_activation_tokens" (
-  "id" UUID NOT NULL DEFAULT uuidv7(),
+  "id" UUID NOT NULL,
   "staff_account_id" UUID NOT NULL,
   "token_hash" TEXT NOT NULL,
   "expires_at" TIMESTAMPTZ(3) NOT NULL,
@@ -15,13 +15,13 @@ CREATE TABLE "staff_activation_tokens" (
   CONSTRAINT "staff_activation_tokens_pkey" PRIMARY KEY ("id")
 );
 CREATE UNIQUE INDEX "staff_activation_tokens_token_hash_key" ON "staff_activation_tokens"("token_hash");
-CREATE INDEX "staff_activation_tokens_staff_account_id_consumed_at_expires_at_idx" ON "staff_activation_tokens"("staff_account_id", "consumed_at", "expires_at");
+CREATE INDEX "staff_activation_tokens_staff_account_id_consumed_at_expire_idx" ON "staff_activation_tokens"("staff_account_id", "consumed_at", "expires_at");
 ALTER TABLE "staff_activation_tokens" ADD CONSTRAINT "staff_activation_tokens_staff_account_id_fkey"
   FOREIGN KEY ("staff_account_id") REFERENCES "staff_accounts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 REVOKE ALL ON TABLE "staff_activation_tokens" FROM PUBLIC;
 
 CREATE TABLE "document_records" (
-  "id" UUID NOT NULL DEFAULT uuidv7(),
+  "id" UUID NOT NULL,
   "entity_type" TEXT NOT NULL,
   "entity_id" UUID NOT NULL,
   "organization_id" UUID,
@@ -46,7 +46,7 @@ CREATE TABLE "document_records" (
 
 CREATE UNIQUE INDEX "document_records_storage_key_key" ON "document_records"("storage_key");
 CREATE INDEX "document_records_category_status_created_at_idx" ON "document_records"("category", "status", "created_at");
-CREATE INDEX "document_records_organization_id_clinic_id_status_created_at_idx" ON "document_records"("organization_id", "clinic_id", "status", "created_at");
+CREATE INDEX "document_records_organization_id_clinic_id_status_created_a_idx" ON "document_records"("organization_id", "clinic_id", "status", "created_at");
 CREATE INDEX "document_records_entity_type_entity_id_status_idx" ON "document_records"("entity_type", "entity_id", "status");
 
 ALTER TABLE "document_records" ADD CONSTRAINT "document_records_organization_id_fkey"
