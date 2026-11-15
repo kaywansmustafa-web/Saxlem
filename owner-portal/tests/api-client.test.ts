@@ -23,6 +23,23 @@ describe("owner API client", () => {
     ).resolves.toEqual({ status: "ok" });
     expect(transport.mock.calls[0][1].redirect).toBe("error");
   });
+  it("reaches the backend health probes outside the API prefix", async () => {
+    const transport = vi
+        .fn()
+        .mockResolvedValue(
+          new Response(JSON.stringify({ status: "ok" }), {
+            headers: { "content-type": "application/json" },
+          }),
+        ),
+      client = new OwnerApiClient(configuration, transport);
+    await client.request({ path: "/health/live" });
+    expect(String(transport.mock.calls[0][0])).toBe(
+      "https://api.saxlem.test/health/live",
+    );
+    await expect(
+      client.request({ path: "/health/other" as "/health/live" }),
+    ).rejects.toBeInstanceOf(OwnerApiError);
+  });
   it("rejects escaping paths before transport", async () => {
     const transport = vi.fn(),
       client = new OwnerApiClient(configuration, transport);

@@ -25,8 +25,13 @@ export class OwnerApiError extends Error {
   }
 }
 
+// Health probes are served outside the /api/v1 prefix by the backend.
+const healthPaths = new Set(["/health/live", "/health/ready"]);
+export type OwnerApiPath =
+  `/api/v1/${string}` | "/health/live" | "/health/ready";
+
 export interface OwnerApiRequest<T> {
-  readonly path: `/api/v1/${string}`;
+  readonly path: OwnerApiPath;
   readonly method?: "GET" | "POST" | "PATCH" | "DELETE";
   readonly body?: unknown;
   readonly session?: OwnerSession;
@@ -43,8 +48,9 @@ export class OwnerApiClient {
     private readonly transport: typeof fetch = fetch,
   ) {}
   async request<T = undefined>(input: OwnerApiRequest<T>): Promise<T> {
+    const isHealth = healthPaths.has(input.path);
     if (
-      !input.path.startsWith("/api/v1/") ||
+      (!isHealth && !input.path.startsWith("/api/v1/")) ||
       input.path.includes("..") ||
       input.path.includes("\\") ||
       input.path.includes("//") ||
@@ -54,7 +60,9 @@ export class OwnerApiClient {
     const url = new URL(input.path, `${this.configuration.backendUrl.origin}/`);
     if (
       url.origin !== this.configuration.backendUrl.origin ||
-      !url.pathname.startsWith("/api/v1/")
+      (isHealth
+        ? url.pathname !== input.path
+        : !url.pathname.startsWith("/api/v1/"))
     )
       throw new OwnerApiError(500, "OWNER_INVALID_PATH");
     const controller = new AbortController();

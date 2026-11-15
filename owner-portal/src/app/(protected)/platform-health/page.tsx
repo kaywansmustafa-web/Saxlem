@@ -7,11 +7,11 @@ export default async function PlatformHealthPage() {
   const client = ownerApi();
   const [live, ready] = await Promise.allSettled([
     client.request({
-      path: "/api/v1/health/live",
+      path: "/health/live",
       schema: z.object({ status: z.literal("ok") }).strict(),
     }),
     client.request({
-      path: "/api/v1/health/ready",
+      path: "/health/ready",
       schema: z
         .object({ status: z.literal("ready"), checks: z.array(z.string()) })
         .strict(),
