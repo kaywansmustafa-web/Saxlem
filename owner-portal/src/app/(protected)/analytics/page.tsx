@@ -1,6 +1,41 @@
 import { PageHeader } from "@/components/app-shell";
 import { executiveAnalytics } from "@/data/owner-data";
 import { requireOwnerSession } from "@/infrastructure/auth";
+
+const metricLabels: Record<string, string> = {
+  organizations: "Organizations",
+  activeOrganizations: "Active organizations",
+  clinics: "Clinics",
+  activeClinics: "Active clinics",
+  doctors: "Doctors",
+  activeDoctors: "Active doctors",
+  staff: "Staff accounts",
+  patients: "Patient accounts",
+  appointmentsToday: "Appointments today",
+  appointmentsMonth: "Appointments this month",
+  completedAppointments: "Completed appointments",
+  cancelledAppointments: "Cancelled appointments",
+  noShows: "No-shows",
+  arrivals: "Arrivals",
+  liveQueues: "Live queues",
+  waitingPatients: "Patients waiting",
+  grossCommissionIqd: "Gross commission",
+  reversalsIqd: "Reversals",
+  netCommissionIqd: "Net commission",
+  draftStatements: "Draft statements",
+  finalizedStatements: "Finalized statements",
+};
+const label = (key: string) =>
+  metricLabels[key] ??
+  key.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase());
+const formatMetric = (key: string, value: number) =>
+  `${value.toLocaleString("en-IQ")}${key.endsWith("Iqd") ? " IQD" : ""}`;
+const formatDay = (day: unknown) =>
+  new Date(`${String(day)}T00:00:00Z`).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  });
 export default async function AnalyticsPage() {
   const data = await executiveAnalytics(await requireOwnerSession());
   return (
@@ -12,15 +47,19 @@ export default async function AnalyticsPage() {
       <section className="grid metrics" aria-label="Executive metrics">
         {Object.entries(data.totals).map(([key, value]) => (
           <article className="card metric" key={key}>
-            <span>{key.replace(/([A-Z])/g, " $1")}</span>
-            <strong>{value.toLocaleString("en-IQ")}</strong>
+            <span>{label(key)}</span>
+            <strong>{formatMetric(key, value)}</strong>
           </article>
         ))}
       </section>
       <div className="grid split section">
         <Trend title="Appointments by day" items={data.appointmentTrend} />
         <Trend title="Patient growth" items={data.patientGrowth} />
-        <Trend title="Commission by day" items={data.commissionTrend} />
+        <Trend
+          title="Commission by day"
+          items={data.commissionTrend}
+          unit="IQD"
+        />
       </div>
     </>
   );
@@ -28,9 +67,11 @@ export default async function AnalyticsPage() {
 function Trend({
   title,
   items,
+  unit,
 }: {
   title: string;
   items: Record<string, unknown>[];
+  unit?: string;
 }) {
   const max = Math.max(
     1,
@@ -43,7 +84,7 @@ function Trend({
         <div className="bars">
           {items.map((item, index) => (
             <div key={index} className="bar-row">
-              <span>{String(item.day)}</span>
+              <span>{formatDay(item.day)}</span>
               <i
                 style={{
                   width: `${Math.max(2, (Number(item.count ?? item.amountIqd ?? 0) / max) * 100)}%`,
@@ -53,12 +94,13 @@ function Trend({
                 {Number(item.count ?? item.amountIqd ?? 0).toLocaleString(
                   "en-IQ",
                 )}
+                {unit ? ` ${unit}` : ""}
               </strong>
             </div>
           ))}
         </div>
       ) : (
-        <p>No activity in this period.</p>
+        <p className="chart-empty">No activity in this period.</p>
       )}
     </section>
   );

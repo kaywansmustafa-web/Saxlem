@@ -98,12 +98,17 @@ select {
 }
 .nav {
   display: grid;
-  gap: 3px;
+  align-content: start;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: auto;
+  scrollbar-width: thin;
 }
 .nav a {
-  min-height: 42px;
-  padding: 10px 12px;
+  min-height: 36px;
+  padding: 8px 12px;
+  font-size: 0.94rem;
   border-radius: 9px;
   color: #bdcadd;
   font-weight: 600;
@@ -539,5 +544,58 @@ dialog::backdrop {
 
 .filter-note {
   margin: 0 0 16px;
+  color: var(--muted);
+}
+
+/* Quick create: a real button, not a browser disclosure triangle */
+details > summary {
+  list-style: none;
+  cursor: pointer;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details > summary.button::before {
+  content: "+";
+  margin-inline-end: 6px;
+  font-weight: 700;
+}
+
+/* Analytics trend charts */
+.chart {
+  padding: 20px 22px;
+}
+.chart h2 {
+  margin: 0 0 14px;
+  font-size: 1.05rem;
+}
+.bars {
+  display: grid;
+  gap: 8px;
+}
+.bar-row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+}
+.bar-row span {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.bar-row i {
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #438bf3, #31a6a6);
+}
+.bar-row strong {
+  min-width: 2ch;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+.chart-empty {
+  margin: 0;
   color: var(--muted);
 }
