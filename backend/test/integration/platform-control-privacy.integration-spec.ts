@@ -72,7 +72,7 @@ describe('platform control patient privacy', () => {
       action: 'patient.search-viewed',
       metadata: { resultCount: 1 },
     });
-    expect(JSON.stringify(audits[0].metadata)).not.toContain(lastName);
+    expect(JSON.stringify(audits[0]?.metadata)).not.toContain(lastName);
   });
 
   it('requires 7+ phone digits and matches the number ending only', async () => {
@@ -93,13 +93,13 @@ describe('platform control patient privacy', () => {
       'privacy-phone-ending',
     );
     expect(full.items.map((x) => x.accountId)).toContain(account.id);
-    expect(full.items[0].maskedPhone).not.toContain(ending);
+    expect(full.items[0]?.maskedPhone).not.toContain(ending);
     const audits = await auditsFor(admin.userId, 'privacy-phone-ending');
     expect(audits).toHaveLength(1);
     expect(audits[0]).toMatchObject({
       action: 'patient.directory-searched',
       metadata: { searchKind: 'phone' },
     });
-    expect(JSON.stringify(audits[0].metadata)).not.toContain(ending);
+    expect(JSON.stringify(audits[0]?.metadata)).not.toContain(ending);
   });
 });

@@ -33,7 +33,7 @@ describe("temporary dependency reachability controls", () => {
   });
 
   it("accepts no untrusted CSS, source map, glob, or filesystem-path API field", () => {
-    const routes = applicationFiles.filter((file) => /(?:^|\\)app\\api\\.*route\.ts$/u.test(file));
+    const routes = applicationFiles.filter((file) => /(?:^|[\\/])app[\\/]api[\\/].*route\.ts$/u.test(file));
     expect(routes.length).toBeGreaterThan(0);
     const prohibitedInputField = /\b(?:css|stylesheet|sourceMap|sourceMappingURL|glob|globPattern|filePath|filesystemPath|directoryPath)\s*:/u;
     for (const file of routes) {
