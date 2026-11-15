@@ -8502,9 +8502,10 @@
           "inConsultationCount": {
             "type": "integer"
           },
-          "currentPatientName": {
+          "currentPatientInitials": {
             "type": "object",
-            "nullable": true
+            "nullable": true,
+            "description": "Initials of the patient in consultation (for example \"S. A.\"), never a full name."
           },
           "estimatedDelayMinutes": {
             "type": "integer",
@@ -8539,7 +8540,7 @@
           "waitingCount",
           "calledCount",
           "inConsultationCount",
-          "currentPatientName",
+          "currentPatientInitials",
           "estimatedDelayMinutes",
           "health",
           "updatedAt"

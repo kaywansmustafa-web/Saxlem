@@ -25,7 +25,7 @@ export default async function LiveOperationsPage() {
             item.doctorName,
             <StatusBadge key="status" status={item.health} />,
             String(item.waitingCount),
-            item.currentPatientName ?? "No consultation",
+            item.currentPatientInitials ?? "No consultation",
             item.estimatedDelayMinutes === null
               ? "Suspended"
               : `${item.estimatedDelayMinutes} min`,

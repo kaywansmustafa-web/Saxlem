@@ -285,7 +285,7 @@ export const liveOperationSchema = z
     waitingCount: z.number().int(),
     calledCount: z.number().int(),
     inConsultationCount: z.number().int(),
-    currentPatientName: z.string().nullable(),
+    currentPatientInitials: z.string().nullable(),
     estimatedDelayMinutes: z.number().int().nullable(),
     health: z.enum(["healthy", "busy", "delayed", "paused", "closed"]),
     updatedAt: dateTime,

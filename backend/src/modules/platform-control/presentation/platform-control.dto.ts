@@ -194,7 +194,12 @@ export class LiveOperationDto {
   @ApiProperty({ type: 'integer' }) waitingCount!: number;
   @ApiProperty({ type: 'integer' }) calledCount!: number;
   @ApiProperty({ type: 'integer' }) inConsultationCount!: number;
-  @ApiProperty({ nullable: true }) currentPatientName!: string | null;
+  @ApiProperty({
+    nullable: true,
+    description:
+      'Initials of the patient in consultation (for example "S. A."), never a full name.',
+  })
+  currentPatientInitials!: string | null;
   @ApiProperty({ type: 'integer', nullable: true })
   estimatedDelayMinutes!: number | null;
   @ApiProperty({ enum: ['healthy', 'busy', 'delayed', 'paused', 'closed'] })

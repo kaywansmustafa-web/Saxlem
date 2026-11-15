@@ -144,8 +144,7 @@ export class PlatformControlController {
     @Req() req: AuthenticatedRequest,
     @Query() query: PlatformPageQueryDto,
   ) {
-    this.actor(req);
-    return this.service.patients(query);
+    return this.service.patients(this.actor(req), query, req.requestId);
   }
   @Get('patients/:id')
   @ApiOkResponse({ type: PatientDetailResponseDto })
@@ -180,8 +179,7 @@ export class PlatformControlController {
   @Get('search')
   @ApiOkResponse({ type: [SearchResultDto] })
   search(@Req() req: AuthenticatedRequest, @Query() query: SearchQueryDto) {
-    this.actor(req);
-    return this.service.search(query);
+    return this.service.search(this.actor(req), query, req.requestId);
   }
 
   @Get('documents')

@@ -371,18 +371,26 @@ export class PlatformControlService {
     });
   }
 
-  async patients(query: PlatformPageQueryDto) {
+  async patients(
+    actorId: string,
+    query: PlatformPageQueryDto,
+    requestId: string,
+  ) {
+    const searchDigits = query.search?.replace(/\D/g, '') ?? '';
+    // Phone lookups need at least 7 digits and match the number's ending, so a
+    // short fragment cannot be used to enumerate patient phone numbers.
+    const phoneSearch =
+      searchDigits.length >= 7 &&
+      searchDigits.length === query.search?.replace(/[\s+()-]/g, '').length;
     const rows = await this.prisma.db.patientAccount.findMany({
       where: {
         ...(query.search
           ? {
               OR: [
                 ...(this.isUuid(query.search) ? [{ id: query.search }] : []),
-                {
-                  normalizedPhoneNumber: {
-                    contains: query.search.replace(/\s+/g, ''),
-                  },
-                },
+                ...(phoneSearch
+                  ? [{ normalizedPhoneNumber: { endsWith: searchDigits } }]
+                  : []),
                 {
                   profiles: {
                     some: {
@@ -462,6 +470,26 @@ export class PlatformControlService {
         recentByAccount.get(row.id) ?? null,
       ),
     );
+    if (query.search)
+      await this.prisma.db.auditEvent.create({
+        data: {
+          actorUserId: actorId,
+          action: 'patient.directory-searched',
+          targetType: 'patientAccount',
+          outcome: 'succeeded',
+          requestId,
+          occurredAt: new Date(),
+          // The search text itself is never stored: it can contain a name or phone.
+          metadata: {
+            searchKind: this.isUuid(query.search)
+              ? 'id'
+              : phoneSearch
+                ? 'phone'
+                : 'name',
+            resultCount: aggregates.length,
+          },
+        },
+      });
     return {
       items: aggregates,
       nextCursor: rows.length > query.pageSize ? items.at(-1)!.id : null,
@@ -606,7 +634,7 @@ export class PlatformControlService {
         waitingCount: waiting,
         calledCount: count('called'),
         inConsultationCount: count('inConsultation'),
-        currentPatientName: currentProfile
+        currentPatientInitials: currentProfile
           ? `${currentProfile.firstName.slice(0, 1)}. ${currentProfile.lastName.slice(0, 1)}.`
           : null,
         estimatedDelayMinutes:
@@ -911,9 +939,12 @@ export class PlatformControlService {
     };
   }
 
-  async search(query: SearchQueryDto) {
+  async search(actorId: string, query: SearchQueryDto, requestId: string) {
     const q = query.q.trim();
     const take = query.limit;
+    // Patient names are only searched with 3+ characters, and any search that
+    // reveals patients is audited (without the search text).
+    const includePatients = q.length >= 3;
     const [organizations, clinics, doctors, staff, patients, appointments] =
       await Promise.all([
         this.prisma.db.organization.findMany({
@@ -941,23 +972,41 @@ export class PlatformControlService {
           take,
           select: { id: true, email: true },
         }),
-        this.prisma.db.patientProfile.findMany({
-          where: {
-            OR: [
-              { firstName: { contains: q, mode: 'insensitive' } },
-              { lastName: { contains: q, mode: 'insensitive' } },
-            ],
-          },
-          take,
-          distinct: ['patientAccountId'],
-          select: { patientAccountId: true, firstName: true, lastName: true },
-        }),
+        includePatients
+          ? this.prisma.db.patientProfile.findMany({
+              where: {
+                OR: [
+                  { firstName: { contains: q, mode: 'insensitive' } },
+                  { lastName: { contains: q, mode: 'insensitive' } },
+                ],
+              },
+              take,
+              distinct: ['patientAccountId'],
+              select: {
+                patientAccountId: true,
+                firstName: true,
+                lastName: true,
+              },
+            })
+          : Promise.resolve([]),
         this.prisma.db.appointment.findMany({
           where: { publicReference: { contains: q, mode: 'insensitive' } },
           take,
           select: { id: true, publicReference: true, status: true },
         }),
       ]);
+    if (patients.length)
+      await this.prisma.db.auditEvent.create({
+        data: {
+          actorUserId: actorId,
+          action: 'patient.search-viewed',
+          targetType: 'patientAccount',
+          outcome: 'succeeded',
+          requestId,
+          occurredAt: new Date(),
+          metadata: { resultCount: patients.length },
+        },
+      });
     return [
       ...organizations.map((x) => ({
         category: 'organization',
