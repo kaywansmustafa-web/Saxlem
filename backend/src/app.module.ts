@@ -34,6 +34,7 @@ export class AppModule implements NestModule {
                 'req.body.phoneNumber',
                 'req.body.email',
                 'req.body.password',
+                'req.body.activationCredential',
                 'req.body.refreshToken',
                 'res.body.developmentOtp',
                 'res.headers["set-cookie"]',

@@ -11,21 +11,22 @@
 - Global appointment monitoring window without lifecycle overrides
 - Billing plan directory
 - Backend liveness and database-readiness display
+- Global staff administration, status and membership controls, and secure one-time activation
+- Privacy-minimized patient directory and audited detail views without clinical content
+- Read-only global live operations with initials and domain-derived health semantics
+- Executive analytics with real bounded date buckets and Asia/Baghdad business periods
+- Privacy-safe audit log and categorized global search
+- Transactional doctor onboarding, activation, detail, and optimistic editing
+- Commission and statement workspaces with immutable statement finalization
+- Development Document Center upload, private download, lifecycle status, and soft delete
+- Read-only owner settings and environment information
 
-## Intentionally deferred pending backend contracts
+## Production infrastructure deferred
 
-- Global staff directory and membership administration
-- Privacy-minimized global patient directory
-- Read-only global live-queue observation
-- Cross-organization billing aggregates, ledger selection, and statement workflow UI
-- Efficient aggregate analytics
-- Privacy-safe immutable audit viewer
-- Document metadata and object-storage domain
-- Owner-editable platform settings
-- Global search
-- Doctor and staff creation
-
-These sections render explicit explanatory states. They contain no mock totals, demo identities, fake toggles, or simulated mutations.
+- S3-compatible private object storage and production credentials
+- malware scanning, retention, and backup policy for uploaded files
+- secure activation delivery provider (email/SMS or equivalent)
+- production monitoring, deployment, and secret-manager wiring
 
 ## Existing API dependencies
 
@@ -36,5 +37,8 @@ These sections render explicit explanatory states. They contain no mock totals, 
 - `/api/v1/appointments`
 - `/api/v1/billing/plans`
 - `/api/v1/health/live`, `/health/ready`
+- `/api/v1/platform/staff`, `/patients`, `/live-operations`, `/analytics/executive`
+- `/api/v1/platform/audit-events`, `/search`, `/documents`, `/doctors`, `/settings`
+- `/api/v1/auth/staff-activation`
 
-No backend endpoint, OpenAPI contract, Prisma schema, or database migration was added in the foundation slice.
+The control-plane module is additive and versioned under `/api/v1`; stable DTOs are represented in the checked-in OpenAPI document.

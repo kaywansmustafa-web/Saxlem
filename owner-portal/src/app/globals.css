@@ -149,6 +149,37 @@ select {
   padding: 0 13px;
   background: #f9fafc;
 }
+.global-search {
+  position: relative;
+  min-width: min(420px, 40vw);
+}
+.global-search .search {
+  width: 100%;
+}
+.search-results {
+  position: absolute;
+  z-index: 20;
+  inset-inline: 0;
+  top: 42px;
+  padding: 8px;
+  list-style: none;
+  max-height: 420px;
+  overflow: auto;
+  box-shadow: var(--shadow);
+}
+.search-results a {
+  display: grid;
+  padding: 10px;
+  border-radius: 10px;
+  text-decoration: none;
+}
+.search-results a:hover,
+.search-results a:focus-visible {
+  background: var(--canvas);
+}
+.search-results small {
+  color: var(--muted);
+}
 .button {
   min-height: 42px;
   border: 0;
@@ -354,6 +385,63 @@ select {
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 0 12px;
+}
+.field select {
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0 12px;
+  background: var(--surface);
+}
+.detail-card,
+.upload-card {
+  padding: 22px;
+}
+.compact-list {
+  margin-top: 18px;
+}
+.compact-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+.inline-button {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 18px;
+}
+.activation-credential {
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid #b8d5fa;
+  border-radius: 12px;
+  background: #f1f7ff;
+}
+.activation-credential code {
+  display: block;
+  overflow-wrap: anywhere;
+  margin-top: 8px;
+  user-select: all;
+}
+dialog {
+  max-width: min(520px, calc(100vw - 32px));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 24px 80px #0c1d3640;
+  color: var(--ink);
+}
+dialog::backdrop {
+  background: #0c1d3670;
+}
+.dialog-content {
+  padding: 8px;
+}
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
 }
 .form-error {
   color: var(--danger);

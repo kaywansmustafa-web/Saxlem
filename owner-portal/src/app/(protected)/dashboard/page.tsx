@@ -6,12 +6,18 @@ import {
   listDoctors,
   listOrganizations,
   listPlans,
+  executiveAnalytics,
+  listLiveOperations,
   safeWindow,
 } from "@/data/owner-data";
 import { requireOwnerSession } from "@/infrastructure/auth";
 
 export default async function DashboardPage() {
   const session = await requireOwnerSession();
+  const [analytics, liveOperations] = await Promise.all([
+    executiveAnalytics(session),
+    listLiveOperations(session),
+  ]);
   const window = safeWindow();
   const [organizations, clinics, doctors, appointments, plans] =
     await Promise.allSettled([
@@ -21,10 +27,7 @@ export default async function DashboardPage() {
       listAppointments(session, window.from, window.to),
       listPlans(session),
     ]);
-  const orgs =
-    organizations.status === "fulfilled" ? organizations.value.items : [];
   const clinicItems = clinics.status === "fulfilled" ? clinics.value.items : [];
-  const doctorResult = doctors.status === "fulfilled" ? doctors.value : null;
   const appointmentItems =
     appointments.status === "fulfilled" ? appointments.value.items : [];
   const planItems = plans.status === "fulfilled" ? plans.value : [];
@@ -54,25 +57,99 @@ export default async function DashboardPage() {
       )}
       <section className="grid metrics" aria-label="Platform metrics">
         <article className="card metric">
-          <span>Organizations loaded</span>
-          <strong>{orgs.length}</strong>
+          <span>Active organizations</span>
+          <strong>{analytics.totals.activeOrganizations}</strong>
         </article>
         <article className="card metric">
-          <span>Clinics loaded</span>
-          <strong>{clinicItems.length}</strong>
+          <span>Active clinics</span>
+          <strong>{analytics.totals.activeClinics}</strong>
         </article>
         <article className="card metric">
           <span>Active doctors</span>
-          <strong>{doctorResult?.total ?? "—"}</strong>
+          <strong>{analytics.totals.activeDoctors}</strong>
         </article>
         <article className="card metric">
+          <span>Total patients</span>
+          <strong>{analytics.totals.patients}</strong>
+        </article>
+      </section>
+      <section className="grid metrics" aria-label="Operations metrics">
+        <article className="card metric">
           <span>Appointments today</span>
+          <strong>{analytics.totals.appointmentsToday}</strong>
+        </article>
+        <article className="card metric">
+          <span>Live queues</span>
+          <strong>{analytics.totals.liveQueues}</strong>
+        </article>
+        <article className="card metric">
+          <span>Patients waiting</span>
+          <strong>{analytics.totals.waitingPatients}</strong>
+        </article>
+        <article className="card metric">
+          <span>Arrivals</span>
+          <strong>{analytics.totals.arrivals}</strong>
+        </article>
+      </section>
+      <section className="grid metrics" aria-label="Financial metrics">
+        <article className="card metric">
+          <span>Gross commission</span>
           <strong>
-            {appointments.status === "fulfilled"
-              ? appointmentItems.length
-              : "—"}
+            {analytics.totals.grossCommissionIqd.toLocaleString("en-IQ")} IQD
           </strong>
         </article>
+        <article className="card metric">
+          <span>Reversals</span>
+          <strong>
+            {analytics.totals.reversalsIqd.toLocaleString("en-IQ")} IQD
+          </strong>
+        </article>
+        <article className="card metric">
+          <span>Net commission</span>
+          <strong>
+            {analytics.totals.netCommissionIqd.toLocaleString("en-IQ")} IQD
+          </strong>
+        </article>
+        <article className="card metric">
+          <span>Statements</span>
+          <strong>
+            {analytics.totals.draftStatements} draft ·{" "}
+            {analytics.totals.finalizedStatements} finalized
+          </strong>
+        </article>
+      </section>
+      <section className="section">
+        <div className="section-title">
+          <h2>Queues needing attention</h2>
+          <Link href="/live-operations">Open Live Operations</Link>
+        </div>
+        {liveOperations.filter(
+          (item) => item.health === "delayed" || item.health === "paused",
+        ).length ? (
+          <ul className="card list">
+            {liveOperations
+              .filter(
+                (item) => item.health === "delayed" || item.health === "paused",
+              )
+              .slice(0, 6)
+              .map((item) => (
+                <li key={item.queueSessionId}>
+                  <strong>
+                    {item.clinicName} · {item.doctorName}
+                  </strong>
+                  <br />
+                  <small>
+                    {item.health} · {item.waitingCount} waiting
+                  </small>
+                </li>
+              ))}
+          </ul>
+        ) : (
+          <StateView
+            title="Queues are stable"
+            description="No active queue currently meets the attention threshold."
+          />
+        )}
       </section>
       <section className="section">
         <div className="section-title">

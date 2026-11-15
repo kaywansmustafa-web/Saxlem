@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
 import { listDoctors } from "@/data/owner-data";
 import { requireOwnerSession } from "@/infrastructure/auth";
@@ -25,7 +26,11 @@ export default async function DoctorsPage() {
               {data.items.map((item) => (
                 <tr key={item.id}>
                   <td>
-                    <strong>{item.displayName}</strong>
+                    <strong>
+                      <Link href={`/doctors/${item.id}`}>
+                        {item.displayName}
+                      </Link>
+                    </strong>
                     <br />
                     <small>{item.languages.join(", ")}</small>
                   </td>

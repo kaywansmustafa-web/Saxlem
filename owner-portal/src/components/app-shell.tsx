@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ownerConfiguration } from "@/infrastructure/config";
 import { OwnerNavigation } from "./owner-navigation";
+import { GlobalSearch } from "./global-search";
 
 export const navigation = [
   ["Dashboard", "/dashboard"],
@@ -46,34 +47,33 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
       <div className="workspace">
         <header className="topbar">
-          <label>
-            <span className="sr-only">Global search</span>
-            <input
-              className="search"
-              type="search"
-              placeholder="Search the platform"
-              disabled
-              aria-describedby="search-status"
-            />
-          </label>
-          <span id="search-status" className="sr-only">
-            Global search will be enabled when a privacy-safe backend search API
-            is available.
-          </span>
-        <div className="top-actions">
-          {environment !== "production" && (
-            <span className="environment">{environment}</span>
-          )}
-          <details>
-            <summary className="button button-secondary">Quick create</summary>
-            <div className="card" style={{position:"absolute",padding:10,display:"grid",gap:6}}>
-              <Link href="/organizations/new">Organization</Link>
-              <Link href="/clinics/new">Clinic</Link>
-            </div>
-          </details>
-          <form action="/api/auth/logout" method="post">
-            <button className="button button-secondary">Sign out</button>
-          </form>
+          <GlobalSearch />
+          <div className="top-actions">
+            {environment !== "production" && (
+              <span className="environment">{environment}</span>
+            )}
+            <details>
+              <summary className="button button-secondary">
+                Quick create
+              </summary>
+              <div
+                className="card"
+                style={{
+                  position: "absolute",
+                  padding: 10,
+                  display: "grid",
+                  gap: 6,
+                }}
+              >
+                <Link href="/organizations/new">Organization</Link>
+                <Link href="/clinics/new">Clinic</Link>
+                <Link href="/doctors/new">Doctor</Link>
+                <Link href="/staff/new">Staff member</Link>
+              </div>
+            </details>
+            <form action="/api/auth/logout" method="post">
+              <button className="button button-secondary">Sign out</button>
+            </form>
           </div>
         </header>
         <main className="main" id="main">

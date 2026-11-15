@@ -36,7 +36,9 @@ npm run build
 - dependency advisory review before deployment
 - operational error monitoring and availability monitoring
 
-Document upload must not be enabled until production object storage, malware scanning, content-type validation, retention, opaque object keys, and audited authorization are implemented.
+The private local document adapter is intentionally available only in development/test. Production fails closed until an S3-compatible private provider is configured. Before production deployment, add malware scanning, retention and backup policies, provider credentials, and recovery testing. Opaque keys, signature/content-type validation, a 25 MB bound, authorization, and lifecycle auditing are already enforced by the application layer.
+
+Staff/doctor activation credentials are displayed once. Transfer them only through an approved secure channel. Production activation delivery integration is required; never place credentials in URLs, logs, tickets, or persistent documents.
 
 ## Incident response
 

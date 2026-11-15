@@ -21,15 +21,20 @@ The application uses Next.js 16, React 19, strict TypeScript, Zod, JOSE, Vitest,
 - `/dashboard`: executive snapshot using bounded authoritative reads
 - `/organizations`, `/organizations/new`
 - `/clinics`, `/clinics/new`
-- `/doctors`
+- `/doctors`, `/doctors/new`, `/doctors/:id`
+- `/staff`, `/staff/new`, `/staff/:id`
+- `/patients`, `/patients/:id`
+- `/activate`: one-time password setup; no authenticated session is established
 - `/appointments`
 - `/plans`
 - `/platform-health`
-- `/staff`, `/patients`, `/live-operations`, `/billing`, `/commissions`, `/statements`, `/analytics`, `/documents`, `/audit-log`, `/settings`: honest capability states pending missing backend contracts
+- `/live-operations`, `/billing`, `/commissions`, `/statements`, `/analytics`, `/documents`, `/audit-log`, `/settings`
 
 ## Data policy
 
-Bounded pages are never presented as global totals. The dashboard labels bounded organization, clinic, and appointment values as loaded records; only the doctor endpoint's authoritative `total` is presented as a total. Unsupported analytics are not calculated from partial pages.
+Platform totals and trends come from the global control-plane aggregate service. Directory pages use bounded pagination and strict response schemas. Patient data is administrative and privacy-minimized: masked phone values, counts, names required for administration, and bounded appointment references are exposed; clinical notes, diagnoses, and consultation content are excluded.
+
+Document bytes are accessed through a `DocumentStorage` abstraction. The local private-filesystem adapter is development/test only, uses generated opaque keys outside public assets, validates file signatures and size, and fails closed outside permitted environments.
 
 ## Deployment
 

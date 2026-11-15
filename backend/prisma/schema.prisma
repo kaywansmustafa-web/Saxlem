@@ -171,6 +171,7 @@ model Organization {
   billingPlanAssignments   OrganizationPlanAssignment[]
   commissionLedgerEntries  CommissionLedgerEntry[]
   billingStatements        BillingStatement[]
+  documents                DocumentRecord[]
 
   @@map("organizations")
 }
@@ -207,6 +208,7 @@ model Clinic {
   commissionLedgerEntries  CommissionLedgerEntry[]
   billingStatementLines    BillingStatementLine[]
   billingClinicBreakdowns  BillingStatementClinicBreakdown[]
+  documents                DocumentRecord[]
 
   @@unique([organizationId, id])
   @@unique([organizationId, code])
@@ -233,6 +235,7 @@ model User {
   authenticationEvents AuthenticationEvent[]
   billingReversals     CommissionLedgerEntry[]  @relation("BillingReversalActor")
   finalizedStatements  BillingStatement[]       @relation("BillingStatementFinalizer")
+  uploadedDocuments    DocumentRecord[]         @relation("DocumentUploader")
   authorizationVersion Int                      @default(1) @map("authorization_version")
   roleVersion          Int                      @default(1) @map("role_version")
 
@@ -325,8 +328,22 @@ model StaffAccount {
   updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
   user         User     @relation(fields: [userId], references: [id], onDelete: Restrict)
   doctor       Doctor?
+  activations  StaffActivationToken[]
 
   @@map("staff_accounts")
+}
+
+model StaffActivationToken {
+  id             String       @id @default(uuid(7)) @db.Uuid
+  staffAccountId String       @map("staff_account_id") @db.Uuid
+  tokenHash      String       @unique @map("token_hash")
+  expiresAt      DateTime     @map("expires_at") @db.Timestamptz(3)
+  consumedAt     DateTime?    @map("consumed_at") @db.Timestamptz(3)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  staffAccount   StaffAccount @relation(fields: [staffAccountId], references: [id], onDelete: Restrict)
+
+  @@index([staffAccountId, consumedAt, expiresAt])
+  @@map("staff_activation_tokens")
 }
 
 model ClinicMembership {
@@ -1087,4 +1104,50 @@ model AuditEvent {
   @@index([actorUserId, occurredAt])
   @@index([targetType, targetId, occurredAt])
   @@map("audit_events")
+}
+
+enum DocumentCategory {
+  organization
+  clinic
+  doctor
+  license
+  billing
+  statement
+  legal
+  report
+  platform
+}
+
+enum DocumentStatus {
+  pendingUpload
+  available
+  deleted
+}
+
+model DocumentRecord {
+  id               String           @id @default(uuid(7)) @db.Uuid
+  entityType       String           @map("entity_type")
+  entityId         String           @map("entity_id") @db.Uuid
+  organizationId   String?          @map("organization_id") @db.Uuid
+  clinicId         String?          @map("clinic_id") @db.Uuid
+  category         DocumentCategory
+  filename         String
+  storageKey       String           @unique @map("storage_key")
+  contentType      String           @map("content_type")
+  sizeBytes        Int              @map("size_bytes")
+  status           DocumentStatus   @default(pendingUpload)
+  uploadedByUserId String           @map("uploaded_by_user_id") @db.Uuid
+  uploadedAt       DateTime?        @map("uploaded_at") @db.Timestamptz(3)
+  expiresAt        DateTime?        @map("expires_at") @db.Timestamptz(3)
+  deletedAt        DateTime?        @map("deleted_at") @db.Timestamptz(3)
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization     Organization?    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  clinic           Clinic?          @relation(fields: [clinicId], references: [id], onDelete: Restrict)
+  uploadedBy       User             @relation("DocumentUploader", fields: [uploadedByUserId], references: [id], onDelete: Restrict)
+
+  @@index([category, status, createdAt])
+  @@index([organizationId, clinicId, status, createdAt])
+  @@index([entityType, entityId, status])
+  @@map("document_records")
 }

@@ -132,4 +132,108 @@ export class OwnerApiClient {
       clearTimeout(timeout);
     }
   }
+
+  async upload<T>(
+    path: `/api/v1/${string}`,
+    form: FormData,
+    session: OwnerSession,
+    schema: ZodType<T>,
+  ): Promise<T> {
+    const url = this.safeUrl(path);
+    const controller = new AbortController();
+    const timeout = setTimeout(
+      () => controller.abort(),
+      this.configuration.timeoutMs,
+    );
+    try {
+      const response = await this.transport(url, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          authorization: `Bearer ${session.accessToken}`,
+        },
+        body: form,
+        cache: "no-store",
+        redirect: "error",
+        signal: controller.signal,
+      });
+      const raw = await response.json().catch(() => {
+        throw new OwnerApiError(502, "OWNER_INVALID_RESPONSE");
+      });
+      if (!response.ok)
+        throw new OwnerApiError(response.status, `BACKEND_${response.status}`);
+      const parsed = schema.safeParse(raw);
+      if (!parsed.success)
+        throw new OwnerApiError(502, "OWNER_INVALID_RESPONSE");
+      return parsed.data;
+    } catch (error) {
+      if (error instanceof OwnerApiError) throw error;
+      throw new OwnerApiError(
+        error instanceof DOMException && error.name === "AbortError"
+          ? 504
+          : 503,
+        "OWNER_BACKEND_UNAVAILABLE",
+      );
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  async download(
+    path: `/api/v1/${string}`,
+    session: OwnerSession,
+  ): Promise<{ body: ArrayBuffer; contentType: string; disposition: string }> {
+    const url = this.safeUrl(path);
+    const controller = new AbortController();
+    const timeout = setTimeout(
+      () => controller.abort(),
+      this.configuration.timeoutMs,
+    );
+    try {
+      const response = await this.transport(url, {
+        headers: {
+          accept: "application/octet-stream",
+          authorization: `Bearer ${session.accessToken}`,
+        },
+        cache: "no-store",
+        redirect: "error",
+        signal: controller.signal,
+      });
+      if (!response.ok)
+        throw new OwnerApiError(response.status, `BACKEND_${response.status}`);
+      const declared = Number(response.headers.get("content-length") ?? "0");
+      if (declared > 26_214_400)
+        throw new OwnerApiError(502, "OWNER_INVALID_RESPONSE");
+      const body = await response.arrayBuffer();
+      if (body.byteLength > 26_214_400)
+        throw new OwnerApiError(502, "OWNER_INVALID_RESPONSE");
+      return {
+        body,
+        contentType:
+          response.headers.get("content-type") ?? "application/octet-stream",
+        disposition:
+          response.headers.get("content-disposition") ?? "attachment",
+      };
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  private safeUrl(path: `/api/v1/${string}`) {
+    if (
+      !path.startsWith("/api/v1/") ||
+      path.includes("..") ||
+      path.includes("\\") ||
+      path.includes("//") ||
+      /[\u0000-\u001f\u007f]/u.test(path)
+    )
+      throw new OwnerApiError(500, "OWNER_INVALID_PATH");
+    const url = new URL(path, `${this.configuration.backendUrl.origin}/`);
+    if (
+      url.origin !== this.configuration.backendUrl.origin ||
+      !url.pathname.startsWith("/api/v1/")
+    )
+      throw new OwnerApiError(500, "OWNER_INVALID_PATH");
+    return url;
+  }
 }

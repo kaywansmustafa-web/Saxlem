@@ -62,6 +62,25 @@ export const doctorSchema = z
     availability: availabilitySchema,
   })
   .strict();
+export const doctorDetailSchema = doctorSchema
+  .extend({
+    firstName: z.string(),
+    lastName: z.string(),
+    licenseNumber: z.string(),
+    biography: z.string(),
+    specialties: z.array(
+      z
+        .object({
+          id,
+          code: z.string(),
+          displayName: z.string(),
+          isPrimary: z.boolean(),
+        })
+        .strict(),
+    ),
+    version: z.number().int().positive(),
+  })
+  .strict();
 export const doctorPageSchema = z
   .object({
     items: z.array(doctorSchema).max(100),
@@ -117,9 +136,239 @@ export const planSchema = z
     version: z.number().int().positive(),
   })
   .strict();
-export const commissionSchema = z.object({ id, organizationId:id, clinicId:id, appointmentId:id, appointmentReference:z.string(), planCode:z.string(), amountIqd:z.number().int().positive(), currency:z.literal("IQD"), ruleCode:z.string(), ruleVersion:z.number().int().positive(), planVersion:z.number().int().positive(), completedAt:dateTime, recognizedAt:dateTime, status:z.enum(["earned","reversed"]), originalCommissionId:id.nullable() }).strict();
-export const commissionPageSchema = z.object({items:z.array(commissionSchema).max(100),nextCursor:z.string().nullable()}).strict();
-export const statementSchema = z.object({id,organizationId:id,periodStart:dateTime,periodEnd:dateTime,timezone:z.literal("Asia/Baghdad"),status:z.enum(["draft","finalized"]),grossEarnedIqd:z.number().int().nonnegative(),reversalsIqd:z.number().int().nonnegative(),netCommissionIqd:z.number().int(),qualifyingCount:z.number().int().nonnegative(),reversalCount:z.number().int().nonnegative(),version:z.number().int().positive(),finalizedAt:dateTime.nullable()}).strict();
+export const commissionSchema = z
+  .object({
+    id,
+    organizationId: id,
+    clinicId: id,
+    appointmentId: id,
+    appointmentReference: z.string(),
+    planCode: z.string(),
+    amountIqd: z.number().int().positive(),
+    currency: z.literal("IQD"),
+    ruleCode: z.string(),
+    ruleVersion: z.number().int().positive(),
+    planVersion: z.number().int().positive(),
+    completedAt: dateTime,
+    recognizedAt: dateTime,
+    status: z.enum(["earned", "reversed"]),
+    originalCommissionId: id.nullable(),
+  })
+  .strict();
+export const commissionPageSchema = z
+  .object({
+    items: z.array(commissionSchema).max(100),
+    nextCursor: z.string().nullable(),
+  })
+  .strict();
+export const statementSchema = z
+  .object({
+    id,
+    organizationId: id,
+    periodStart: dateTime,
+    periodEnd: dateTime,
+    timezone: z.literal("Asia/Baghdad"),
+    status: z.enum(["draft", "finalized"]),
+    grossEarnedIqd: z.number().int().nonnegative(),
+    reversalsIqd: z.number().int().nonnegative(),
+    netCommissionIqd: z.number().int(),
+    qualifyingCount: z.number().int().nonnegative(),
+    reversalCount: z.number().int().nonnegative(),
+    version: z.number().int().positive(),
+    finalizedAt: dateTime.nullable(),
+  })
+  .strict();
+export const staffSchema = z
+  .object({
+    userId: id,
+    staffAccountId: id,
+    email: z.string().email(),
+    status: z.enum(["active", "inactive"]),
+    roles: z.array(
+      z
+        .object({
+          id,
+          role: z.string(),
+          organizationId: id.nullable(),
+          clinicId: id.nullable(),
+        })
+        .strict(),
+    ),
+    memberships: z.array(
+      z
+        .object({
+          id,
+          organizationId: id,
+          clinicId: id,
+          role: z.string(),
+          status: z.enum(["active", "inactive"]),
+          organizationName: z.string(),
+          clinicName: z.string(),
+        })
+        .strict(),
+    ),
+    doctorId: id.nullable(),
+    doctorName: z.string().nullable(),
+    createdAt: dateTime,
+    updatedAt: dateTime,
+  })
+  .strict();
+export const createStaffResponseSchema = staffSchema
+  .extend({ activationCredential: z.string(), activationExpiresAt: dateTime })
+  .strict();
+export const staffPageSchema = z
+  .object({
+    items: z.array(staffSchema).max(100),
+    nextCursor: z.string().nullable(),
+  })
+  .strict();
+export const patientSchema = z
+  .object({
+    accountId: id,
+    userId: id,
+    maskedPhone: z.string(),
+    status: z.enum(["active", "inactive"]),
+    displayName: z.string(),
+    profileCount: z.number().int().nonnegative(),
+    appointmentCount: z.number().int().nonnegative(),
+    mostRecentAppointmentAt: dateTime.nullable(),
+    createdAt: dateTime,
+  })
+  .strict();
+export const patientPageSchema = z
+  .object({
+    items: z.array(patientSchema).max(100),
+    nextCursor: z.string().nullable(),
+  })
+  .strict();
+export const patientDetailSchema = patientSchema
+  .extend({
+    profiles: z.array(
+      z
+        .object({
+          id,
+          firstName: z.string(),
+          lastName: z.string(),
+          status: z.enum(["active", "inactive"]),
+          relationship: z.string(),
+        })
+        .strict(),
+    ),
+    appointments: z
+      .array(
+        z
+          .object({
+            id,
+            publicReference: z.string(),
+            patientProfileId: id,
+            clinicId: id,
+            startsAt: dateTime,
+            status: z.string(),
+          })
+          .strict(),
+      )
+      .max(50),
+  })
+  .strict();
+export const liveOperationSchema = z
+  .object({
+    queueSessionId: id,
+    organizationId: id,
+    organizationName: z.string(),
+    clinicId: id,
+    clinicName: z.string(),
+    doctorId: id,
+    doctorName: z.string(),
+    operationalDate: z.string(),
+    effectiveTimezone: z.string(),
+    status: z.enum(["notStarted", "open", "paused", "closed"]),
+    waitingCount: z.number().int(),
+    calledCount: z.number().int(),
+    inConsultationCount: z.number().int(),
+    currentPatientName: z.string().nullable(),
+    estimatedDelayMinutes: z.number().int().nullable(),
+    health: z.enum(["healthy", "busy", "delayed", "paused", "closed"]),
+    updatedAt: dateTime,
+  })
+  .strict();
+export const analyticsSchema = z
+  .object({
+    totals: z.record(z.string(), z.number().int()),
+    appointmentTrend: z.array(z.record(z.string(), z.unknown())),
+    commissionTrend: z.array(z.record(z.string(), z.unknown())),
+    patientGrowth: z.array(z.record(z.string(), z.unknown())),
+    clinicGrowth: z.array(z.record(z.string(), z.unknown())),
+    doctorGrowth: z.array(z.record(z.string(), z.unknown())),
+    cancellationTrend: z.array(z.record(z.string(), z.unknown())),
+    noShowTrend: z.array(z.record(z.string(), z.unknown())),
+    busiestClinics: z.array(z.record(z.string(), z.unknown())),
+    busiestDoctors: z.array(z.record(z.string(), z.unknown())),
+  })
+  .strict();
+export const auditSchema = z
+  .object({
+    id,
+    organizationId: id.nullable(),
+    clinicId: id.nullable(),
+    actorUserId: id.nullable(),
+    action: z.string(),
+    targetType: z.string(),
+    targetId: id.nullable(),
+    outcome: z.enum(["succeeded", "denied", "failed"]),
+    requestId: z.string().nullable(),
+    occurredAt: dateTime,
+  })
+  .strict();
+export const auditPageSchema = z
+  .object({
+    items: z.array(auditSchema).max(100),
+    nextCursor: z.string().nullable(),
+  })
+  .strict();
+export const documentSchema = z
+  .object({
+    id,
+    entityType: z.string(),
+    entityId: id,
+    organizationId: id.nullable(),
+    clinicId: id.nullable(),
+    category: z.string(),
+    filename: z.string(),
+    contentType: z.string(),
+    sizeBytes: z.number().int(),
+    status: z.string(),
+    uploadedAt: dateTime.nullable(),
+    expiresAt: dateTime.nullable(),
+    createdAt: dateTime,
+  })
+  .strict();
+export const searchResultSchema = z
+  .object({
+    category: z.string(),
+    id,
+    label: z.string(),
+    description: z.string(),
+    href: z.string(),
+  })
+  .strict();
+export const settingsSchema = z
+  .object({
+    identity: z
+      .object({
+        id,
+        status: z.string(),
+        roles: z.array(z.string()),
+        createdAt: dateTime,
+        updatedAt: dateTime,
+      })
+      .nullable(),
+    apiVersion: z.string(),
+    environment: z.string(),
+  })
+  .strict();
+export const platformSpecialtySchema = z
+  .object({ id, code: z.string(), displayName: z.string() })
+  .strict();
 
 const query = (values: Record<string, string | number | undefined>): string => {
   const params = new URLSearchParams();
@@ -146,6 +395,12 @@ export const listDoctors = (session: OwnerSession, page = 1) =>
     session,
     schema: doctorPageSchema,
   });
+export const doctorDetail = (session: OwnerSession, doctorId: string) =>
+  ownerApi().request({
+    path: `/api/v1/platform/doctors/${doctorId}`,
+    session,
+    schema: doctorDetailSchema,
+  });
 export const listAppointments = (
   session: OwnerSession,
   from: string,
@@ -162,8 +417,87 @@ export const listPlans = (session: OwnerSession) =>
     session,
     schema: z.array(planSchema),
   });
-export const listCommissions=(session:OwnerSession,organizationId:string)=>ownerApi().request({path:`/api/v1/billing/commissions?${query({organizationId,pageSize:100})}`,session,schema:commissionPageSchema});
-export const listStatements=(session:OwnerSession,organizationId:string)=>ownerApi().request({path:`/api/v1/billing/statements?${query({organizationId})}`,session,schema:z.array(statementSchema)});
+export const listCommissions = (
+  session: OwnerSession,
+  organizationId: string,
+) =>
+  ownerApi().request({
+    path: `/api/v1/billing/commissions?${query({ organizationId, pageSize: 100 })}`,
+    session,
+    schema: commissionPageSchema,
+  });
+export const listStatements = (session: OwnerSession, organizationId: string) =>
+  ownerApi().request({
+    path: `/api/v1/billing/statements?${query({ organizationId })}`,
+    session,
+    schema: z.array(statementSchema),
+  });
+export const listStaff = (session: OwnerSession, search?: string) =>
+  ownerApi().request({
+    path: `/api/v1/platform/staff?${query({ pageSize: 50, search })}`,
+    session,
+    schema: staffPageSchema,
+  });
+export const staffDetail = (session: OwnerSession, staffAccountId: string) =>
+  ownerApi().request({
+    path: `/api/v1/platform/staff/${staffAccountId}`,
+    session,
+    schema: staffSchema,
+  });
+export const listPatients = (session: OwnerSession, search?: string) =>
+  ownerApi().request({
+    path: `/api/v1/platform/patients?${query({ pageSize: 50, search })}`,
+    session,
+    schema: patientPageSchema,
+  });
+export const patientDetail = (session: OwnerSession, accountId: string) =>
+  ownerApi().request({
+    path: `/api/v1/platform/patients/${accountId}`,
+    session,
+    schema: patientDetailSchema,
+  });
+export const listLiveOperations = (session: OwnerSession) =>
+  ownerApi().request({
+    path: "/api/v1/platform/live-operations?pageSize=100",
+    session,
+    schema: z.array(liveOperationSchema),
+  });
+export const executiveAnalytics = (session: OwnerSession) =>
+  ownerApi().request({
+    path: "/api/v1/platform/analytics/executive",
+    session,
+    schema: analyticsSchema,
+  });
+export const listAuditEvents = (session: OwnerSession) =>
+  ownerApi().request({
+    path: "/api/v1/platform/audit-events?pageSize=50",
+    session,
+    schema: auditPageSchema,
+  });
+export const listDocuments = (session: OwnerSession) =>
+  ownerApi().request({
+    path: "/api/v1/platform/documents?pageSize=50",
+    session,
+    schema: z.array(documentSchema),
+  });
+export const globalSearch = (session: OwnerSession, q: string) =>
+  ownerApi().request({
+    path: `/api/v1/platform/search?${query({ q, limit: 5 })}`,
+    session,
+    schema: z.array(searchResultSchema).max(60),
+  });
+export const ownerSettings = (session: OwnerSession) =>
+  ownerApi().request({
+    path: "/api/v1/platform/settings",
+    session,
+    schema: settingsSchema,
+  });
+export const listPlatformSpecialties = (session: OwnerSession) =>
+  ownerApi().request({
+    path: "/api/v1/platform/specialties",
+    session,
+    schema: z.array(platformSpecialtySchema),
+  });
 
 export const safeWindow = (): { from: string; to: string } => {
   const now = new Date();
