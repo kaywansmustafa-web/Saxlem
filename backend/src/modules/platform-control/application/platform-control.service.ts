@@ -577,24 +577,43 @@ export class PlatformControlService {
           include: { doctor: { select: { displayName: true } } },
         },
         entries: {
-          include: {
-            patientRegistration: {
-              include: {
-                patientProfile: { select: { firstName: true, lastName: true } },
-              },
-            },
+          select: {
+            status: true,
+            consultationStartedAt: true,
+            completedAt: true,
           },
         },
       },
     });
+    // Names are loaded only for the patient currently in consultation, and only
+    // to derive initials; waiting patients' identities are never read here.
+    const inConsultation = sessions.length
+      ? await this.prisma.db.queueEntry.findMany({
+          where: {
+            queueSessionId: { in: sessions.map((session) => session.id) },
+            status: 'inConsultation',
+          },
+          select: {
+            queueSessionId: true,
+            patientRegistration: {
+              select: {
+                patientProfile: { select: { firstName: true, lastName: true } },
+              },
+            },
+          },
+        })
+      : [];
+    const currentBySession = new Map(
+      inConsultation.map((entry) => [
+        entry.queueSessionId,
+        entry.patientRegistration.patientProfile,
+      ]),
+    );
     return sessions.map((session) => {
       const count = (status: string) =>
         session.entries.filter((entry) => entry.status === status).length;
-      const current = session.entries.find(
-        (entry) => entry.status === 'inConsultation',
-      );
       const waiting = count('waiting');
-      const currentProfile = current?.patientRegistration.patientProfile;
+      const currentProfile = currentBySession.get(session.id);
       const durations = session.entries
         .filter((entry) => entry.consultationStartedAt && entry.completedAt)
         .map(

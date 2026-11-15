@@ -1,9 +1,15 @@
+import { createHash, randomUUID } from 'node:crypto';
+import { PrismaAppointmentQueueCompletionPort } from '../../src/modules/appointments/infrastructure/prisma-appointment-queue-completion.port';
+import { PrismaBillingRepository } from '../../src/modules/billing/infrastructure/prisma-billing.repository';
+import { PrismaQueueRepository } from '../../src/modules/queue/infrastructure/prisma-queue.repository';
 import { PlatformControlService } from '../../src/modules/platform-control/application/platform-control.service';
 import type { PrismaService } from '../../src/infrastructure/database/prisma.service';
 import {
   apiPrisma,
   createApiTenant,
   createRolePrincipal,
+  apiConfiguration,
+  createSeededQueue,
 } from './live-queue-api-fixture';
 
 describe('platform control patient privacy', () => {
@@ -101,5 +107,76 @@ describe('platform control patient privacy', () => {
       metadata: { searchKind: 'phone' },
     });
     expect(JSON.stringify(audits[0]?.metadata)).not.toContain(ending);
+  });
+
+  it('shows only initials for the patient in consultation in live operations', async () => {
+    const seeded = await createSeededQueue(2);
+    const repository = new PrismaQueueRepository(
+      { db: apiPrisma } as unknown as PrismaService,
+      new PrismaAppointmentQueueCompletionPort(
+        new PrismaBillingRepository({
+          db: apiPrisma,
+        } as unknown as PrismaService),
+      ),
+      apiConfiguration,
+    );
+    const access = {
+      actorId: seeded.manager.userId,
+      patient: false,
+      doctor: false,
+      platformAdministrator: false,
+      organizationId: seeded.tenant.organizationId,
+      clinicId: seeded.tenant.clinicId,
+      capabilities: new Set<string>(),
+    };
+    const command = (key: string, scope: string) => ({
+      key,
+      scope,
+      hash: createHash('sha256').update(key).digest('hex'),
+    });
+    const now = new Date('2035-01-01T06:00:00Z');
+    const called = await repository.callNext(
+      access,
+      seeded.session.id,
+      seeded.session.version,
+      now,
+      randomUUID(),
+      command(
+        `privacy-call-${randomUUID()}`,
+        `queue.call-next:${seeded.session.id}`,
+      ),
+    );
+    await repository.transitionEntry(
+      access,
+      seeded.session.id,
+      called.current!.id,
+      'start',
+      called.version,
+      called.current!.version,
+      {
+        recallGraceMinutes: 5,
+        busyThresholdMinutes: 10,
+        delayedThresholdMinutes: 25,
+        fallbackConsultationMinutes: 20,
+      },
+      new Date(now.getTime() + 1000),
+      randomUUID(),
+      command(
+        `privacy-start-${randomUUID()}`,
+        `queue.start:${seeded.session.id}`,
+      ),
+    );
+    const sessions = await service.liveOperations({
+      organizationId: seeded.tenant.organizationId,
+      pageSize: 10,
+    });
+    const session = sessions.find(
+      (x) => x.queueSessionId === seeded.session.id,
+    );
+    expect(session).toMatchObject({
+      currentPatientInitials: 'P. P.',
+      inConsultationCount: 1,
+    });
+    expect(JSON.stringify(sessions)).not.toContain('Private');
   });
 });
