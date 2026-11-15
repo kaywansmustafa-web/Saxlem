@@ -83,11 +83,15 @@ select {
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: linear-gradient(145deg, #438bf3, #31a6a6);
+  flex: none;
+  background: #0056d2;
   display: grid;
   place-items: center;
   color: white;
-  font-weight: 850;
+}
+.brand-mark svg {
+  width: 30px;
+  height: 30px;
 }
 .brand strong {
   display: block;

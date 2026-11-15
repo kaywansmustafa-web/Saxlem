@@ -1,11 +1,12 @@
 import { ActivationForm } from "@/components/activation-form";
+import { BrandMark } from "@/components/brand-mark";
 
 export default function ActivatePage() {
   return (
     <main className="login-shell">
       <section className="login-visual">
         <div className="brand">
-          <span className="brand-mark">S</span>
+          <BrandMark className="brand-mark" />
           <span>
             <strong>Saxlem</strong>
             <small>Secure account setup</small>

@@ -6,6 +6,7 @@ import type { Locale } from "@/i18n";
 import type { PortalStaffRole } from "@/features/authentication/domain/portal-access-types";
 import type { PortalRouteId, RoutePolicy } from "../domain/route-policy";
 import type { FoundationMessages } from "./foundation-messages";
+import { BrandMark } from "@/components/brand-mark";
 
 const labels: Record<PortalRouteId, keyof FoundationMessages> = {
   dashboard: "dashboard",
@@ -127,7 +128,7 @@ export function PortalShell({
         aria-label={m.openMenu}
       >
         <div className="brand">
-          <span className="mark">S</span>
+          <BrandMark className="mark" />
           <strong>Saxlem</strong>
         </div>
         <nav>

@@ -32,6 +32,7 @@ flutter:
 
   assets:
     - assets/images/saxlem_logo.png
+    - assets/images/saxlem_logo_horizontal.png
 
   fonts:
     - family: Cairo

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ownerConfiguration } from "@/infrastructure/config";
 import { OwnerNavigation } from "./owner-navigation";
 import { GlobalSearch } from "./global-search";
+import { BrandMark } from "@/components/brand-mark";
 
 export const navigation = [
   ["Dashboard", "/dashboard"],
@@ -32,7 +33,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </a>
       <aside className="sidebar" aria-label="Owner navigation">
         <Link className="brand" href="/dashboard">
-          <span className="brand-mark">S</span>
+          <BrandMark className="brand-mark" />
           <span className="brand-copy">
             <strong>Saxlem</strong>
             <small>Owner Portal</small>

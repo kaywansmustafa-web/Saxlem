@@ -29,8 +29,8 @@ class WelcomePage extends StatelessWidget {
                 Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: Image.asset(
-                    'assets/images/saxlem_logo.png',
-                    height: 42,
+                    'assets/images/saxlem_logo_horizontal.png',
+                    height: 40,
                     semanticLabel: strings.appName,
                   ),
                 ),
