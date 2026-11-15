@@ -5,7 +5,7 @@ import 'package:saxlem_app/design_system/design_system.dart';
 
 void main() {
   test('foundation tokens preserve the approved contracts', () {
-    expect(SaxlemColors.light.brandPrimary, const Color(0xFF0056D2));
+    expect(SaxlemColors.light.brandPrimary, const Color(0xFF2950F5));
     expect(SaxlemColors.light.brandSecondary, const Color(0xFF087F8C));
     expect(SaxlemSpacing.one, 8);
     expect(SaxlemRadii.card, 24);

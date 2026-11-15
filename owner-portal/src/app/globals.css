@@ -84,14 +84,13 @@ select {
   height: 40px;
   border-radius: 12px;
   flex: none;
-  background: #0056d2;
+  background: rgb(255 255 255 / 0.08);
   display: grid;
   place-items: center;
-  color: white;
 }
 .brand-mark svg {
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
 }
 .brand strong {
   display: block;

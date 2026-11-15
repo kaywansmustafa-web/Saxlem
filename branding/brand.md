@@ -11,46 +11,48 @@ The full brand book (colours, type, components, logo rules) lives in the Saxlem 
 
 Find a doctor, book a visit, know when it's your turn.
 
-## Logo
+## Logo (v2 "Aura", November 2026)
 
-The mark is a winding queue that forms an "S". It is one continuous line, like the rope lines at a clinic desk, and it ends in a saffron dot: you, at the front of the queue.
+Two rounded shapes meet and make an "S": Saxlem Blue above, aqua below, the patient and the doctor. A small plus sits where they touch, the one quiet health cue. Each shape is also a speech bubble, because Saxlem is how patients and clinics talk.
 
 All files are in `branding/logo/`. SVGs are outlined, so no fonts are needed to display them.
 
 | File | Use |
 | --- | --- |
-| `saxlem-logo-horizontal.svg` / `.png` | Default: website, documents, portals |
-| `saxlem-logo-horizontal-ku.svg` | Kurdish-first, right to left (ساخلەم + mark) |
-| `saxlem-logo-horizontal-reversed.svg` | On `navy` or `brand` backgrounds |
+| `saxlem-logo-horizontal.svg` / `.png` | Default on light grounds |
+| `saxlem-logo-horizontal-night.svg` / `.png` | On dark grounds |
+| `saxlem-logo-horizontal-white.svg` | One-colour white |
+| `saxlem-logo-horizontal-ku.svg` / `.png` | Kurdish-first, right to left |
 | `saxlem-logo-bilingual.svg` / `.png` | Signage, posters, splash screens |
-| `saxlem-app-icon.svg` / `.png` | App stores, home screens, favicons |
-| `saxlem-mark.svg` / `-reversed` / `-mono` | Small spaces, single-colour print, stamps |
+| `saxlem-app-icon.svg` / `.png` | App stores and home screens (white mark on the Aura gradient) |
+| `saxlem-app-icon-night.svg` / `.png` | Alternative icon on night |
+| `saxlem-mark.svg` / `-white` / `-mono` | Small spaces, single-colour print |
 
 Rules:
 
-- The line is brand blue `#0056D2` (white on dark). The dot is always saffron `#F5B841`.
-- Clear space equals the dot's diameter. Minimum sizes: 16px for the app icon, 96px wide for the horizontal logo.
-- Never stretch, rotate, recolour the dot, add effects, or place the logo on busy photos.
-- Wordmarks: Inter Display Bold (SIL Open Font License) for **saxlem**; Rudaw for **ساخلەم**.
+- Wordmark: lowercase **saxlem** in Sora SemiBold; **ساخلەم** in Rudaw.
+- Top shape #3B6BFF → #2148F0, bottom shape #14C9C4 → #13B0EA, plus cut out. Wordmark ink #0B1533.
+- Clear space equals the height of the plus. Minimum: 16px app icon, 96px wide horizontal logo.
+- Never rotate, stretch, recolour one half, add effects, or place on busy photos.
 
-The old cross, heartbeat and pin logo is retired.
+The cross-heartbeat-pin logo and the short-lived v1 queue "S" are retired.
 
 ## Colour
 
-| Token | Hex | Use |
-| --- | --- | --- |
-| brand | `#0056D2` | Primary actions, links, the logo line |
-| brand-strong | `#003F9F` | Pressed and hover states |
-| teal | `#087F8C` | Secondary accent |
-| saffron | `#F5B841` | "Your turn" moments and the logo dot only |
-| navy | `#0F2747` | Sidebars, dark surfaces |
-| ink | `#142033` | Body text |
-| muted | `#536174` | Secondary text |
-| canvas | `#F4F7FA` | Page background |
-| positive / caution / critical | `#087A55` / `#9A5A00` / `#B42318` | Status text, each with a light surface |
+| Token | Light | Dark | Use |
+| --- | --- | --- | --- |
+| brand | `#2950F5` | `#7D97FF` | Links, selected states, focus |
+| brand-fill | `#2950F5` | `#2950F5` | Filled buttons (white text 5.9:1) |
+| aura-start → aura-end | `#3B6BFF` → `#14C9C4` | | The Aura gradient: logo, progress. Never under text |
+| brand-fill → teal-fill | `#2950F5` → `#0A7F7A` | | Deep Aura: under white text (called ticket) |
+| night / ink | `#0B1533` | `#EEF2FA` (ink) | Deep ground; primary text |
+| muted | `#5B6680` | `#A3ADC4` | Secondary text |
+| canvas / surface | `#F5F7FB` / `#FFFFFF` | `#070D22` / `#0F1A3A` | Backgrounds and cards |
+| positive / caution / critical | `#0B7A52` / `#9A5600` / `#C8261B` | `#4ADE9F` / `#FFC163` / `#FF8F85` | Status text on its tint |
 
 ## Type
 
-- English: Noto Sans
+- Display (numbers, titles, names): Sora
+- English text: Inter
 - Arabic: Cairo
 - Badini Kurdish (Arabic script): Rudaw. Regular only, so build hierarchy with size, not weight.

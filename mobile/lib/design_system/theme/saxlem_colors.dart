@@ -45,7 +45,7 @@ class SaxlemColors extends ThemeExtension<SaxlemColors> {
   final Color appointment, booking, notification;
 
   static const light = SaxlemColors(
-    brandPrimary: Color(0xFF0056D2),
+    brandPrimary: Color(0xFF2950F5),
     brandSecondary: Color(0xFF087F8C),
     surfaceRaised: Color(0xFFFFFFFF),
     surfaceElevated: Color(0xFFFFFFFF),
