@@ -513,7 +513,20 @@ export class PrismaBillingRepository implements BillingRepository {
     ruleCode: string;
     ruleVersion: number;
     version: number;
-  }) => Object.freeze({ ...row });
+  }) =>
+    // Map field by field: spreading the row leaked createdAt/updatedAt, which
+    // are not in BillingPlanResponseDto and made strict clients reject plans.
+    Object.freeze({
+      id: row.id,
+      code: row.code,
+      displayName: row.displayName,
+      status: row.status,
+      currency: row.currency,
+      commissionAmountIqd: row.commissionAmountIqd,
+      ruleCode: row.ruleCode,
+      ruleVersion: row.ruleVersion,
+      version: row.version,
+    });
   private assignmentRecord = (row: {
     id: string;
     organizationId: string;
