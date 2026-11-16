@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../config/theme/app_colors.dart';
+import '../../design_system/design_system.dart';
 import '../../app/app_controller.dart';
 import '../../core/localization/localization_extensions.dart';
 import '../../core/localization/supported_app_locale.dart';
@@ -26,7 +26,6 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   Widget build(BuildContext context) {
     final strings = context.l10n;
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(24, 32, 24, 24),
@@ -34,6 +33,10 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Spacer(),
+              const Center(
+                child: SaxlemMark(size: 56, semanticLabel: 'Saxlem'),
+              ),
+              const SizedBox(height: 20),
               Text(
                 strings.chooseLanguage,
                 textAlign: TextAlign.center,
@@ -48,6 +51,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               const SizedBox(height: 40),
               _LanguageCard(
                 title: 'کوردی بادینی',
+                titleFont: 'Rudaw',
+                badge: 'ک',
                 subtitle: strings.badiniKurdish,
                 isSelected: selectedLanguage == SupportedAppLocale.badini,
                 onTap: () {
@@ -58,7 +63,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               ),
               const SizedBox(height: 12),
               _LanguageCard(
-                title: strings.english,
+                title: 'English',
+                badge: 'En',
                 subtitle: strings.english,
                 isSelected: selectedLanguage == SupportedAppLocale.english,
                 onTap: () {
@@ -70,6 +76,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               const SizedBox(height: 12),
               _LanguageCard(
                 title: 'العربية',
+                titleFont: 'Cairo',
+                badge: 'ع',
                 subtitle: strings.arabic,
                 isSelected: selectedLanguage == SupportedAppLocale.arabic,
                 onTap: () {
@@ -92,17 +100,12 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                 label: widget.controller.savingLocale
                     ? strings.savingLanguage
                     : null,
-                child: ElevatedButton(
-                  onPressed:
-                      selectedLanguage == null || widget.controller.savingLocale
-                      ? null
-                      : _continueToHome,
-                  child: widget.controller.savingLocale
-                      ? const SizedBox.square(
-                          dimension: 22,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(strings.continueLabel),
+                child: SaxlemButton(
+                  label: strings.continueLabel,
+                  expand: true,
+                  loading: widget.controller.savingLocale,
+                  trailingIcon: Icons.arrow_forward_rounded,
+                  onPressed: selectedLanguage == null ? null : _continueToHome,
                 ),
               ),
             ],
@@ -117,88 +120,101 @@ class _LanguageCard extends StatelessWidget {
   const _LanguageCard({
     required this.title,
     required this.subtitle,
+    required this.badge,
     required this.isSelected,
     required this.onTap,
+    this.titleFont,
   });
 
-  final String title;
-  final String subtitle;
+  final String title, subtitle, badge;
+  final String? titleFont;
   final bool isSelected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: isSelected
-          ? AppColors.primary.withValues(alpha: 0.07)
-          : AppColors.white,
-      borderRadius: BorderRadius.circular(18),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOut,
-          padding: const EdgeInsetsDirectional.symmetric(
-            horizontal: 18,
-            vertical: 18,
-          ),
+    final colors = context.saxlemColors;
+    final theme = Theme.of(context);
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      label: '$title, $subtitle',
+      child: Material(
+        type: MaterialType.transparency,
+        child: Ink(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
+            color: colors.surfaceRaised,
+            borderRadius: BorderRadius.circular(SaxlemRadii.card),
             border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.border,
-              width: isSelected ? 1.5 : 1,
+              color: isSelected ? colors.brandPrimary : colors.border,
+              width: isSelected ? 2 : 1,
             ),
+            boxShadow: SaxlemElevation.level1(colors.night),
           ),
-          child: Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: isSelected ? AppColors.primary : AppColors.background,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.language_rounded,
-                  color: isSelected ? AppColors.white : AppColors.primary,
-                  size: 22,
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(SaxlemRadii.card),
+            child: ExcludeSemantics(
+              child: Padding(
+                padding: const EdgeInsetsDirectional.all(16),
+                child: Row(
                   children: [
-                    Text(
-                      title,
-                      style: Theme.of(
-                        context,
-                      ).textTheme.titleLarge?.copyWith(fontSize: 17),
+                    AnimatedContainer(
+                      duration: SaxlemMotion.standard,
+                      width: 48,
+                      height: 48,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: isSelected ? null : colors.brandTint,
+                        gradient: isSelected ? colors.deepAura : null,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        badge,
+                        style: TextStyle(
+                          fontFamily: titleFont ?? SaxlemTypography.display,
+                          fontSize: titleFont == null ? 16 : 22,
+                          fontWeight: FontWeight.w600,
+                          color: isSelected
+                              ? colors.onFill
+                              : colors.brandPrimary,
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 3),
-                    Text(
-                      subtitle,
-                      style: Theme.of(context).textTheme.bodyMedium,
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontFamily: titleFont,
+                              fontSize: titleFont == null ? 17 : 19,
+                            ),
+                          ),
+                          Text(subtitle, style: theme.textTheme.bodySmall),
+                        ],
+                      ),
+                    ),
+                    AnimatedSwitcher(
+                      duration: SaxlemMotion.fast,
+                      child: isSelected
+                          ? Icon(
+                              Icons.check_circle_rounded,
+                              key: const ValueKey('selected'),
+                              color: colors.brandPrimary,
+                            )
+                          : Icon(
+                              Icons.radio_button_unchecked_rounded,
+                              key: const ValueKey('not-selected'),
+                              color: colors.border,
+                            ),
                     ),
                   ],
                 ),
               ),
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 180),
-                child: isSelected
-                    ? const Icon(
-                        Icons.check_circle_rounded,
-                        key: ValueKey('selected'),
-                        color: AppColors.primary,
-                      )
-                    : const SizedBox(
-                        key: ValueKey('not-selected'),
-                        width: 24,
-                        height: 24,
-                      ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

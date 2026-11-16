@@ -2001,6 +2001,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Doctor'**
   String get doctorLabel;
+
+  /// Section title on the profile tab listing the patient profiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Family members'**
+  String get familyMembersTitle;
 }
 
 class _AppLocalizationsDelegate

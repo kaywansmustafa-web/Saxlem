@@ -337,7 +337,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String tabWithCount(String label, int count) {
-    return 'معلومات';
+    return '$label ($count)';
   }
 
   @override
@@ -406,7 +406,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get phoneNumber => 'رقم الهاتف';
 
   @override
-  String get phoneHint => 'معلومات';
+  String get phoneHint => '750 123 4567';
 
   @override
   String get phoneInvalid => 'أدخل رقم هاتف عراقي صحيحًا.';
@@ -1062,4 +1062,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get doctorLabel => 'الطبيب';
+
+  @override
+  String get familyMembersTitle => 'أفراد العائلة';
 }

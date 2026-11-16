@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/localization_extensions.dart';
-import '../../../../design_system/components/content/saxlem_avatar.dart';
-import '../../../../design_system/components/content/saxlem_card.dart';
-import '../../../../design_system/components/feedback/saxlem_state_view.dart';
-import '../../../../design_system/components/layout/saxlem_responsive_content.dart';
+import '../../../../design_system/design_system.dart';
+import '../widgets/doctor_result_card.dart';
 import '../../domain/entities/doctor_discovery_result.dart';
 import '../controllers/discover_controller.dart';
 import '../state/discover_state.dart';
@@ -138,140 +136,213 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
     );
   }
 
-  Widget _profile(DoctorDiscoveryResult doctor) => SingleChildScrollView(
-    padding: const EdgeInsetsDirectional.symmetric(vertical: 24),
-    child: SaxlemResponsiveContent(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Align(
-            child: SaxlemAvatar(
-              size: 96,
-              imageUrl: doctor.photoUrl,
-              semanticLabel: doctor.photoUrl == null
-                  ? context.l10n.profileImageFallback(doctor.doctorDisplayName)
-                  : context.l10n.profileImageLabel(doctor.doctorDisplayName),
-            ),
-          ),
-          const SizedBox(height: 18),
-          Focus(
-            focusNode: _headingFocus,
-            child: Semantics(
-              header: true,
-              child: Text(
-                doctor.doctorDisplayName,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            doctor.primarySpecialtyDisplayName,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 24),
-          SaxlemCard(
-            child: Column(
-              children: [
-                _DetailRow(
-                  label: context.l10n.experienceLabel,
-                  value: context.l10n.yearsExperience(doctor.yearsOfExperience),
-                ),
-                _DetailRow(
-                  label: context.l10n.gender,
-                  value: _genderLabel(doctor.gender),
-                ),
-              ],
-            ),
-          ),
-          if (doctor.biography case final biography?) ...[
-            const SizedBox(height: 20),
-            _Section(
-              title: context.l10n.biographyLabel,
-              child: Text(biography),
-            ),
-          ],
-          if (doctor.specialties.isNotEmpty) ...[
-            const SizedBox(height: 20),
-            _Section(
-              title: context.l10n.specialtiesLabel,
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: doctor.specialties
-                    .map((item) => Chip(label: Text(item.displayName)))
-                    .toList(),
-              ),
-            ),
-          ],
-          if (doctor.languages.isNotEmpty) ...[
-            const SizedBox(height: 20),
-            _Section(
-              title: context.l10n.languagesLabel,
-              child: Text(
-                doctor.languages
-                    .map((item) => localizedDoctorLanguage(context, item))
-                    .join(', '),
-              ),
-            ),
-          ],
-          if (doctor.clinics.isNotEmpty) ...[
-            const SizedBox(height: 20),
-            _Section(
-              title: context.l10n.clinicsLabel,
+  Widget _profile(DoctorDiscoveryResult doctor) {
+    final colors = context.saxlemColors;
+    final theme = Theme.of(context);
+    final available =
+        doctor.availability.status == DoctorAvailabilityStatus.available;
+    return Column(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 0, 24),
+            child: SaxlemResponsiveContent(
               child: Column(
-                children: doctor.clinics
-                    .map(
-                      (clinic) => ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: const Icon(Icons.local_hospital_outlined),
-                        title: Text(clinic.name),
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    padding: const EdgeInsetsDirectional.all(20),
+                    decoration: BoxDecoration(
+                      color: colors.surfaceRaised,
+                      borderRadius: BorderRadius.circular(SaxlemRadii.hero),
+                      border: Border.all(color: colors.border),
+                      boxShadow: SaxlemElevation.level2(colors.night),
+                    ),
+                    child: Column(
+                      children: [
+                        SaxlemAvatar(
+                          size: 88,
+                          ring: true,
+                          imageUrl: doctor.photoUrl,
+                          initials: doctorInitials(doctor.doctorDisplayName),
+                          semanticLabel: doctor.photoUrl == null
+                              ? context.l10n.profileImageFallback(
+                                  doctor.doctorDisplayName,
+                                )
+                              : context.l10n.profileImageLabel(
+                                  doctor.doctorDisplayName,
+                                ),
+                        ),
+                        const SizedBox(height: 16),
+                        Focus(
+                          focusNode: _headingFocus,
+                          child: Semantics(
+                            header: true,
+                            child: Text(
+                              doctor.doctorDisplayName,
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.headlineSmall,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          doctor.primarySpecialtyDisplayName,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            SaxlemStatusPill(
+                              label: available
+                                  ? context.l10n.doctorAvailable
+                                  : context.l10n.doctorUnavailable,
+                              tone: available
+                                  ? SaxlemStatusTone.positive
+                                  : SaxlemStatusTone.neutral,
+                            ),
+                            SaxlemStatusPill(
+                              label: doctor.availability.acceptingNewPatients
+                                  ? context.l10n.acceptingNewPatients
+                                  : context.l10n.notAcceptingNewPatients,
+                              tone: doctor.availability.acceptingNewPatients
+                                  ? SaxlemStatusTone.informative
+                                  : SaxlemStatusTone.caution,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 18),
+                        Row(
+                          children: [
+                            _Stat(
+                              icon: Icons.work_history_outlined,
+                              label: context.l10n.experienceLabel,
+                              value: context.l10n.yearsExperience(
+                                doctor.yearsOfExperience,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            _Stat(
+                              icon: Icons.person_outline_rounded,
+                              label: context.l10n.gender,
+                              value: _genderLabel(doctor.gender),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (doctor.biography case final biography?) ...[
+                    const SizedBox(height: 14),
+                    _Section(
+                      title: context.l10n.biographyLabel,
+                      child: Text(biography, style: theme.textTheme.bodyLarge),
+                    ),
+                  ],
+                  if (doctor.specialties.isNotEmpty) ...[
+                    const SizedBox(height: 14),
+                    _Section(
+                      title: context.l10n.specialtiesLabel,
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: doctor.specialties
+                            .map((item) => _Tag(item.displayName))
+                            .toList(),
                       ),
-                    )
-                    .toList(),
+                    ),
+                  ],
+                  if (doctor.languages.isNotEmpty) ...[
+                    const SizedBox(height: 14),
+                    _Section(
+                      title: context.l10n.languagesLabel,
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: doctor.languages
+                            .map(
+                              (item) =>
+                                  _Tag(localizedDoctorLanguage(context, item)),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                  ],
+                  if (doctor.clinics.isNotEmpty) ...[
+                    const SizedBox(height: 14),
+                    _Section(
+                      title: context.l10n.clinicsLabel,
+                      child: Column(
+                        children: doctor.clinics
+                            .map(
+                              (clinic) => Padding(
+                                padding: const EdgeInsetsDirectional.symmetric(
+                                  vertical: 6,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: colors.brandTint,
+                                        borderRadius: BorderRadius.circular(
+                                          SaxlemRadii.small,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.local_hospital_outlined,
+                                        size: 20,
+                                        color: colors.brandPrimary,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        clinic.name,
+                                        style: theme.textTheme.titleSmall,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
-          ],
-          const SizedBox(height: 20),
-          _Section(
-            title: context.l10n.availabilityLabel,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  doctor.availability.status ==
-                          DoctorAvailabilityStatus.available
-                      ? context.l10n.doctorAvailable
-                      : context.l10n.doctorUnavailable,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  doctor.availability.acceptingNewPatients
-                      ? context.l10n.acceptingNewPatients
-                      : context.l10n.notAcceptingNewPatients,
-                ),
-              ],
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: colors.surfaceRaised,
+            border: Border(top: BorderSide(color: colors.border)),
+          ),
+          child: SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 20, 12),
+              child: SaxlemButton(
+                label: context.l10n.bookAppointment,
+                leadingIcon: Icons.calendar_month_rounded,
+                expand: true,
+                onPressed: () => _book(doctor),
+              ),
             ),
           ),
-          const SizedBox(height: 24),
-          Semantics(
-            button: true,
-            enabled: true,
-            label: context.l10n.bookAppointment,
-            child: FilledButton.icon(
-              onPressed: () => _book(doctor),
-              icon: const Icon(Icons.calendar_month_outlined),
-              label: Text(context.l10n.bookAppointment),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
+        ),
+      ],
+    );
+  }
 
   Future<void> _book(DoctorDiscoveryResult doctor) async {
     if (widget.guestMode || widget.profilesController == null) {
@@ -315,46 +386,71 @@ class _Section extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SaxlemCard(
+    padding: const EdgeInsetsDirectional.all(18),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Semantics(
           header: true,
-          child: Text(
-            title,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-          ),
+          child: Text(title, style: Theme.of(context).textTheme.titleMedium),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
         child,
       ],
     ),
   );
 }
 
-class _DetailRow extends StatelessWidget {
-  const _DetailRow({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
+class _Tag extends StatelessWidget {
+  const _Tag(this.text);
+  final String text;
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsetsDirectional.symmetric(vertical: 8),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(child: Text(label)),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            value,
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-        ),
-      ],
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsetsDirectional.symmetric(horizontal: 12, vertical: 7),
+    decoration: BoxDecoration(
+      color: context.saxlemColors.brandTint,
+      borderRadius: BorderRadius.circular(SaxlemRadii.full),
+    ),
+    child: Text(
+      text,
+      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+        color: context.saxlemColors.brandPrimary,
+      ),
     ),
   );
+}
+
+class _Stat extends StatelessWidget {
+  const _Stat({required this.icon, required this.label, required this.value});
+  final IconData icon;
+  final String label, value;
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.saxlemColors;
+    final theme = Theme.of(context);
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsetsDirectional.all(12),
+        decoration: BoxDecoration(
+          color: colors.surfaceSunken,
+          borderRadius: BorderRadius.circular(SaxlemRadii.medium),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: colors.brandPrimary),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label, style: theme.textTheme.labelSmall),
+                  Text(value, style: theme.textTheme.titleSmall),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

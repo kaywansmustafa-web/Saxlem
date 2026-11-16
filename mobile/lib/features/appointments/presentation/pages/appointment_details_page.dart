@@ -1,179 +1,12 @@
-/* Legacy in-memory appointment detail retained only for source history.
-import 'package:flutter/material.dart';
-import 'dart:async';
-import 'dart:async';
-import '../../../../config/theme/app_colors.dart';
-import '../../domain/entities/patient_appointment.dart';
-import '../../../../core/localization/localization_extensions.dart';
-import '../../../../core/models/patient_profile.dart';
-import '../../../live_queue/live_queue_feature.dart';
-import '../../../notifications/domain/entities/notification_page.dart';
-import '../../../notifications/domain/entities/notification_page.dart';
-import '../../../../design_system/components/layout/saxlem_responsive_content.dart';
-import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
-import '../../../family_profiles/presentation/widgets/patient_selector.dart';
-
-class AppointmentDetailsPage extends StatelessWidget {
-  const AppointmentDetailsPage({
-    required this.appointment,
-    this.profilesController,
-    super.key,
-  });
-  final PatientAppointment appointment;
-  final PatientProfilesController? profilesController;
-
-  bool _isToday(DateTime value) {
-    final now = DateTime.now();
-    return value.year == now.year &&
-        value.month == now.month &&
-        value.day == now.day;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final localizations = MaterialLocalizations.of(context);
-    final today = _isToday(appointment.scheduledAt);
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(title: Text(context.l10n.appointmentDetails)),
-      body: SafeArea(
-        top: false,
-        child: SingleChildScrollView(
-          padding: const EdgeInsetsDirectional.only(top: 20, bottom: 36),
-          child: SaxlemResponsiveContent(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (profilesController != null) ...[
-                  PatientSelector(
-                    controller: profilesController!,
-                    label: context.l10n.currentPatient,
-                  ),
-                  const SizedBox(height: 18),
-                ],
-                Text(
-                  appointment.doctor.displayName,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                Text(appointment.doctor.specialtyDisplayName),
-                const SizedBox(height: 22),
-                _DetailsCard(
-                  children: [
-                    _Row(context.l10n.clinic, appointment.clinicName),
-                    _Row(
-                      context.l10n.date,
-                      localizations.formatMediumDate(appointment.scheduledAt),
-                    ),
-                    _Row(
-                      context.l10n.time,
-                      localizations.formatTimeOfDay(
-                        TimeOfDay.fromDateTime(appointment.scheduledAt),
-                      ),
-                    ),
-                    _Row(context.l10n.status, _status(context)),
-                    _Row(
-                      context.l10n.fee,
-                      context.l10n.iqdAmount(appointment.feeIqd),
-                    ),
-                    _Row(
-                      context.l10n.duration,
-                      context.l10n.minutesLong(appointment.durationMinutes),
-                    ),
-                    _Row(context.l10n.appointmentId, appointment.id),
-                  ],
-                ),
-                const SizedBox(height: 18),
-                Semantics(
-                  liveRegion: true,
-                  child: Text(
-                    today
-                        ? appointment.queueEntryId == null
-                              ? context.l10n.queueNotReady
-                              : context.l10n.queueAvailableToday
-                        : context.l10n.queueOpensAppointmentDay,
-                  ),
-                ),
-                if (today) ...[
-                  const SizedBox(height: 18),
-                  if (appointment.queueEntryId != null)
-                    FilledButton(
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => LiveQueueFeature(
-                            queueEntryId: appointment.queueEntryId!,
-                          ),
-                        ),
-                      ),
-                      child: Text(context.l10n.openLiveQueue),
-                    ),
-                ],
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  String _status(BuildContext context) => switch (appointment.status) {
-    PatientAppointmentStatus.upcoming => context.l10n.upcoming,
-    PatientAppointmentStatus.completed => context.l10n.completed,
-    PatientAppointmentStatus.cancelled => context.l10n.cancelled,
-  };
-}
-
-class _DetailsCard extends StatelessWidget {
-  const _DetailsCard({required this.children});
-  final List<Widget> children;
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsetsDirectional.all(20),
-    decoration: BoxDecoration(
-      color: Theme.of(context).colorScheme.surface,
-      borderRadius: BorderRadius.circular(24),
-      border: Border.all(color: AppColors.border),
-    ),
-    child: Column(children: children),
-  );
-}
-
-class _Row extends StatelessWidget {
-  const _Row(this.label, this.value);
-  final String label, value;
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsetsDirectional.symmetric(vertical: 8),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Text(label, style: Theme.of(context).textTheme.bodySmall),
-        ),
-        const SizedBox(width: 16),
-        Flexible(
-          child: Text(
-            value,
-            textAlign: TextAlign.end,
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-*/
-
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../../../../config/theme/app_colors.dart';
+import '../../../../design_system/design_system.dart';
+import '../../../booking/presentation/widgets/booking_day_picker.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../../core/models/patient_profile.dart';
 import '../../../../design_system/components/layout/saxlem_responsive_content.dart';
 import '../../../booking/domain/repositories/booking_repository.dart';
 import '../../../booking/domain/services/booking_operation_id.dart';
-import '../../../booking/presentation/widgets/slot_grid.dart';
 import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
 import '../../domain/entities/patient_appointment.dart';
 import '../../domain/repositories/patient_appointments_repository.dart';
@@ -276,7 +109,6 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: AppColors.background,
     appBar: AppBar(title: Text(context.l10n.appointmentDetails)),
     body: SafeArea(
       top: false,
@@ -324,25 +156,19 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
         if (mounted) arrivalController.load();
       });
     }
-    final material = MaterialLocalizations.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsetsDirectional.only(top: 20, bottom: 36),
       child: SaxlemResponsiveContent(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Semantics(
-              header: true,
-              child: Text(
-                item.doctor.displayName,
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
+            _AppointmentHero(
+              appointment: item,
+              statusLabel: _status(item.status),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 16),
             _DetailsCard(
               children: [
-                _DetailRow(context.l10n.appointmentReference, item.reference),
-                _DetailRow(context.l10n.clinic, item.clinicName),
                 _DetailRow(context.l10n.patient, item.patientName),
                 _DetailRow(
                   context.l10n.appointmentType,
@@ -352,17 +178,6 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                 ),
                 _DetailRow(context.l10n.appointmentReason, item.reason),
                 _DetailRow(
-                  context.l10n.date,
-                  material.formatMediumDate(item.startsAt),
-                ),
-                _DetailRow(
-                  context.l10n.time,
-                  material.formatTimeOfDay(
-                    TimeOfDay.fromDateTime(item.startsAt),
-                  ),
-                ),
-                _DetailRow(context.l10n.status, _status(item.status)),
-                _DetailRow(
                   context.l10n.fee,
                   context.l10n.iqdAmount(item.feeIqd),
                 ),
@@ -370,6 +185,7 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                   context.l10n.duration,
                   context.l10n.minutesLong(item.durationMinutes),
                 ),
+                _DetailRow(context.l10n.appointmentReference, item.reference),
                 if (item.cancellationReason case final reason?)
                   _DetailRow(context.l10n.cancellationReason, reason),
               ],
@@ -390,16 +206,24 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
             ],
             if (item.canMutate) ...[
               const SizedBox(height: 20),
-              FilledButton(
-                onPressed: detail.submitting ? null : _cancel,
-                child: Text(context.l10n.cancelAppointment),
-              ),
-              const SizedBox(height: 10),
-              OutlinedButton(
+              SaxlemButton(
+                label: context.l10n.rescheduleAppointment,
+                leadingIcon: Icons.event_repeat_rounded,
+                hierarchy: SaxlemButtonHierarchy.secondary,
+                expand: true,
                 onPressed: detail.submitting
                     ? null
                     : controller.loadRescheduleOptions,
-                child: Text(context.l10n.rescheduleAppointment),
+              ),
+              const SizedBox(height: 8),
+              TextButton.icon(
+                onPressed: detail.submitting ? null : _cancel,
+                style: TextButton.styleFrom(
+                  foregroundColor: context.saxlemColors.criticalContent,
+                  minimumSize: const Size.fromHeight(48),
+                ),
+                icon: const Icon(Icons.event_busy_rounded, size: 20),
+                label: Text(context.l10n.cancelAppointment),
               ),
             ],
             if (detail.loadingAvailability) ...[
@@ -416,25 +240,11 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                 ),
               ),
               const SizedBox(height: 12),
-              ...availability.days.map(
-                (day) => Padding(
-                  padding: const EdgeInsetsDirectional.only(bottom: 18),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(material.formatMediumDate(day.date)),
-                      const SizedBox(height: 8),
-                      if (day.slots.isEmpty)
-                        Text(context.l10n.noAvailableSlots)
-                      else
-                        SlotGrid(
-                          slots: day.slots,
-                          timezone: availability.clinicTimezone,
-                          onSelected: controller.reschedule,
-                        ),
-                    ],
-                  ),
-                ),
+              BookingDayPicker(
+                days: availability.days,
+                timezone: availability.clinicTimezone,
+                emptyLabel: context.l10n.noAvailableSlots,
+                onSelected: controller.reschedule,
               ),
             ],
           ],
@@ -451,9 +261,12 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
       ),
       PatientArrivalFailed() => Semantics(
         liveRegion: true,
-        child: Column(
+        child: _ArrivalPanel(
           children: [
-            Text(context.l10n.queueNotReady),
+            Text(
+              context.l10n.queueNotReady,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
             TextButton(
               onPressed: arrivalController.load,
               child: Text(context.l10n.reload),
@@ -465,32 +278,34 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
         Semantics(
           container: true,
           liveRegion: true,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          child: _ArrivalPanel(
             children: [
               Text(
-                context.l10n.status,
+                context.l10n.queueUpdates,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(height: 8),
-              Text(_arrivalMessage(arrival)),
+              const SizedBox(height: 6),
+              Text(
+                _arrivalMessage(arrival),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
               if (problem != null) Text(context.l10n.appointmentUnknownOutcome),
               if (arrival.eligibility.canArrive) ...[
-                const SizedBox(height: 12),
-                FilledButton(
-                  onPressed: submitting
-                      ? null
-                      : arrivalController.recordArrival,
-                  child: Text(
-                    submitting
-                        ? context.l10n.loadingAppointments
-                        : context.l10n.recordArrival,
-                  ),
+                const SizedBox(height: 14),
+                SaxlemButton(
+                  label: context.l10n.recordArrival,
+                  leadingIcon: Icons.where_to_vote_rounded,
+                  loading: submitting,
+                  expand: true,
+                  onPressed: arrivalController.recordArrival,
                 ),
               ],
               if (arrival.status == ArrivalStatus.queueReady) ...[
-                const SizedBox(height: 12),
-                FilledButton(
+                const SizedBox(height: 14),
+                SaxlemButton(
+                  label: context.l10n.openLiveQueue,
+                  trailingIcon: Icons.arrow_forward_rounded,
+                  expand: true,
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (_) => LiveQueueFeature(
@@ -500,7 +315,6 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                       ),
                     ),
                   ),
-                  child: Text(context.l10n.openLiveQueue),
                 ),
               ],
             ],
@@ -586,36 +400,232 @@ class _DetailsCard extends StatelessWidget {
   const _DetailsCard({required this.children});
   final List<Widget> children;
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsetsDirectional.all(20),
-    decoration: BoxDecoration(
-      color: Theme.of(context).colorScheme.surface,
-      borderRadius: BorderRadius.circular(24),
-      border: Border.all(color: AppColors.border),
-    ),
-    child: Column(children: children),
-  );
+  Widget build(BuildContext context) {
+    final colors = context.saxlemColors;
+    return Container(
+      padding: const EdgeInsetsDirectional.symmetric(
+        horizontal: 18,
+        vertical: 6,
+      ),
+      decoration: BoxDecoration(
+        color: colors.surfaceRaised,
+        borderRadius: BorderRadius.circular(SaxlemRadii.card),
+        border: Border.all(color: colors.border),
+        boxShadow: SaxlemElevation.level1(colors.night),
+      ),
+      child: Column(
+        children: [
+          for (var i = 0; i < children.length; i++) ...[
+            if (i > 0) Divider(height: 1, color: colors.divider),
+            children[i],
+          ],
+        ],
+      ),
+    );
+  }
 }
 
 class _DetailRow extends StatelessWidget {
   const _DetailRow(this.label, this.value);
   final String label, value;
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsetsDirectional.symmetric(vertical: 8),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(child: Text(label)),
-        const SizedBox(width: 16),
-        Flexible(
-          child: Text(
-            value,
-            textAlign: TextAlign.end,
-            style: const TextStyle(fontWeight: FontWeight.w600),
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsetsDirectional.symmetric(vertical: 13),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: Text(label, style: theme.textTheme.bodyMedium)),
+          const SizedBox(width: 16),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: theme.textTheme.titleSmall,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ArrivalPanel extends StatelessWidget {
+  const _ArrivalPanel({required this.children});
+  final List<Widget> children;
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsetsDirectional.all(18),
+    decoration: BoxDecoration(
+      color: context.saxlemColors.brandTint,
+      borderRadius: BorderRadius.circular(SaxlemRadii.card),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: children,
     ),
   );
+}
+
+/// The top of an appointment: doctor, status, date, time and clinic. Upcoming
+/// visits sit on the Deep Aura gradient; past ones on a plain card.
+class _AppointmentHero extends StatelessWidget {
+  const _AppointmentHero({
+    required this.appointment,
+    required this.statusLabel,
+  });
+  final PatientAppointment appointment;
+  final String statusLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.saxlemColors;
+    final theme = Theme.of(context);
+    final material = MaterialLocalizations.of(context);
+    final active = appointment.canMutate;
+    final ink = active ? colors.onFill : colors.textPrimary;
+    final sub = active
+        ? colors.onFill.withValues(alpha: .88)
+        : colors.textSecondary;
+    final initials = appointment.doctor.displayName
+        .replaceFirst(RegExp(r'^(Dr\.?|د\.)\s*', caseSensitive: false), '')
+        .split(RegExp(r'\s+'))
+        .where((p) => p.isNotEmpty)
+        .take(2)
+        .map((p) => p.characters.first.toUpperCase())
+        .join();
+    Widget chip(IconData icon, String text) => Expanded(
+      child: Container(
+        padding: const EdgeInsetsDirectional.all(12),
+        decoration: BoxDecoration(
+          color: active
+              ? colors.onFill.withValues(alpha: .14)
+              : colors.surfaceSunken,
+          borderRadius: BorderRadius.circular(SaxlemRadii.medium),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 18, color: ink),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                text,
+                maxLines: 2,
+                style: theme.textTheme.titleSmall?.copyWith(color: ink),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    return Semantics(
+      header: true,
+      label: '${appointment.doctor.displayName}. $statusLabel',
+      child: Container(
+        padding: const EdgeInsetsDirectional.all(20),
+        decoration: BoxDecoration(
+          color: active ? null : colors.surfaceRaised,
+          gradient: active ? colors.deepAura : null,
+          borderRadius: BorderRadius.circular(SaxlemRadii.hero),
+          border: active ? null : Border.all(color: colors.border),
+          boxShadow: active
+              ? SaxlemElevation.glow(colors.brandPrimary)
+              : SaxlemElevation.level1(colors.night),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: active
+                        ? colors.onFill.withValues(alpha: .2)
+                        : colors.brandTint,
+                  ),
+                  child: Text(
+                    initials,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: active ? colors.onFill : colors.brandPrimary,
+                      fontFamily: theme.textTheme.titleLarge?.fontFamily,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        appointment.doctor.displayName,
+                        style: theme.textTheme.titleLarge?.copyWith(color: ink),
+                      ),
+                      if (appointment.doctor.specialtyDisplayName.isNotEmpty)
+                        Text(
+                          appointment.doctor.specialtyDisplayName,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: sub,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsetsDirectional.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: active ? colors.onFill : colors.surfaceSunken,
+                    borderRadius: BorderRadius.circular(SaxlemRadii.full),
+                  ),
+                  child: Text(
+                    statusLabel,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: active ? colors.night : colors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                chip(
+                  Icons.calendar_today_rounded,
+                  material.formatMediumDate(appointment.startsAt),
+                ),
+                const SizedBox(width: 10),
+                chip(
+                  Icons.schedule_rounded,
+                  material.formatTimeOfDay(
+                    TimeOfDay.fromDateTime(appointment.startsAt),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Icon(Icons.location_on_outlined, size: 18, color: sub),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    appointment.clinicName,
+                    style: theme.textTheme.bodyMedium?.copyWith(color: sub),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

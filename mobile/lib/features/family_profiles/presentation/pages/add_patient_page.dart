@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/localization/localization_extensions.dart';
+import '../../../../core/localization/localized_dates.dart';
 import '../../../../core/models/patient_profile.dart';
 import '../../../../design_system/design_system.dart';
 import '../controllers/patient_profiles_controller.dart';
@@ -35,7 +36,9 @@ class _AddPatientPageState extends State<AddPatientPage> {
             onChanged: (v) => setState(() => last = v),
           ),
           const SizedBox(height: SaxlemSpacing.two),
-          SaxlemCard(
+          SaxlemPickerField(
+            label: context.l10n.relationship,
+            value: context.l10n.patientRelationship(relationship.name),
             onTap: () async {
               final value = await Navigator.of(context)
                   .push<PatientRelationship>(
@@ -51,12 +54,11 @@ class _AddPatientPageState extends State<AddPatientPage> {
                   );
               if (value != null) setState(() => relationship = value);
             },
-            child: Text(
-              '${context.l10n.relationship}: ${context.l10n.patientRelationship(relationship.name)}',
-            ),
           ),
           const SizedBox(height: SaxlemSpacing.two),
-          SaxlemCard(
+          SaxlemPickerField(
+            label: context.l10n.gender,
+            value: context.l10n.patientGender(gender.name),
             onTap: () async {
               final value = await Navigator.of(context).push<PatientGender>(
                 MaterialPageRoute(
@@ -69,12 +71,12 @@ class _AddPatientPageState extends State<AddPatientPage> {
               );
               if (value != null) setState(() => gender = value);
             },
-            child: Text(
-              '${context.l10n.gender}: ${context.l10n.patientGender(gender.name)}',
-            ),
           ),
           const SizedBox(height: SaxlemSpacing.two),
-          SaxlemCard(
+          SaxlemPickerField(
+            label: context.l10n.dateOfBirth,
+            value: formatLocalizedDate(context, birth, 'yMMMd'),
+            icon: Icons.calendar_today_rounded,
             onTap: () async {
               final value = await showDatePicker(
                 context: context,
@@ -84,9 +86,6 @@ class _AddPatientPageState extends State<AddPatientPage> {
               );
               if (value != null) setState(() => birth = value);
             },
-            child: Text(
-              '${context.l10n.dateOfBirth}: ${birth.year}-${birth.month}-${birth.day}',
-            ),
           ),
           const SizedBox(height: SaxlemSpacing.three),
           if (widget.controller.failure != null) ...[

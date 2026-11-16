@@ -348,5 +348,7 @@
   "waitRange": "About {min}–{max} {unit}",
   "@waitRange": {"description": "Estimated wait as a range.", "placeholders": {"min": {"type": "int"}, "max": {"type": "int"}, "unit": {"type": "String"}}},
   "doctorLabel": "Doctor",
-  "@doctorLabel": {"description": "Row label for the doctor on the booking review."}
+  "@doctorLabel": {"description": "Row label for the doctor on the booking review."},
+  "familyMembersTitle": "Family members",
+  "@familyMembersTitle": {"description": "Section title on the profile tab listing the patient profiles."}
 }

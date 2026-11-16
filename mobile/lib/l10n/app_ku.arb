@@ -494,5 +494,6 @@
   "notCheckedInTitle": "ژڤانێ تە ئەڤرۆیە",
   "removedFromQueueTitle": "تو ئێدی د ڤێ رێزێدا نینی",
   "waitRange": "نێزیکی {min}–{max} {unit}",
-  "doctorLabel": "نوژدار"
+  "doctorLabel": "نوژدار",
+  "familyMembersTitle": "ئەندامێن خێزانێ"
 }

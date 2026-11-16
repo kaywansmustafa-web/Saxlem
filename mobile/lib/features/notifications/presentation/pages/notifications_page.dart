@@ -85,13 +85,37 @@ class _Ready extends StatelessWidget {
         .toList();
     return SaxlemResponsiveContent(
       child: ListView(
-        padding: const EdgeInsetsDirectional.symmetric(
-          vertical: SaxlemSpacing.three,
-        ),
+        padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 32),
         children: [
-          Text(
-            context.l10n.notifications,
-            style: Theme.of(context).textTheme.headlineMedium,
+          Row(
+            children: [
+              Expanded(
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    context.l10n.notifications,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                ),
+              ),
+              if (state.unreadCount > 0)
+                Container(
+                  padding: const EdgeInsetsDirectional.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: context.saxlemColors.brandPrimary,
+                    borderRadius: BorderRadius.circular(SaxlemRadii.full),
+                  ),
+                  child: Text(
+                    context.l10n.unreadNotifications(state.unreadCount),
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: context.saxlemColors.onFill,
+                    ),
+                  ),
+                ),
+            ],
           ),
           if (profilesController != null) ...[
             const SizedBox(height: SaxlemSpacing.two),
@@ -100,8 +124,6 @@ class _Ready extends StatelessWidget {
               label: context.l10n.currentPatient,
             ),
           ],
-          const SizedBox(height: SaxlemSpacing.half),
-          Text(context.l10n.unreadNotifications(state.unreadCount)),
           if (controller.connectionState ==
                   NotificationConnectionState.connecting ||
               controller.connectionState ==
@@ -126,13 +148,13 @@ class _Ready extends StatelessWidget {
           if (state.canLoadMore)
             Padding(
               padding: const EdgeInsetsDirectional.only(top: SaxlemSpacing.two),
-              child: OutlinedButton(
+              child: SaxlemButton(
+                label: state.loadingMore
+                    ? context.l10n.loadingMoreAppointments
+                    : context.l10n.loadMore,
+                hierarchy: SaxlemButtonHierarchy.secondary,
+                expand: true,
                 onPressed: state.loadingMore ? null : controller.loadMore,
-                child: Text(
-                  state.loadingMore
-                      ? context.l10n.loadingMoreAppointments
-                      : context.l10n.loadMore,
-                ),
               ),
             ),
         ],
@@ -147,12 +169,20 @@ class _Ready extends StatelessWidget {
   ) {
     if (groups.isEmpty) return const [];
     return [
-      const SizedBox(height: SaxlemSpacing.three),
-      Text(title, style: Theme.of(context).textTheme.titleMedium),
-      const SizedBox(height: SaxlemSpacing.one),
+      const SizedBox(height: 22),
+      Semantics(
+        header: true,
+        child: Text(
+          title.toUpperCase(),
+          style: Theme.of(
+            context,
+          ).textTheme.labelSmall?.copyWith(letterSpacing: .8),
+        ),
+      ),
+      const SizedBox(height: 10),
       ...groups.map(
         (group) => Padding(
-          padding: const EdgeInsetsDirectional.only(bottom: SaxlemSpacing.one),
+          padding: const EdgeInsetsDirectional.only(bottom: 10),
           child: NotificationCard(
             group: group,
             onTap: () async {

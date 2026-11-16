@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../actions/saxlem_button.dart';
 import '../../foundations/saxlem_spacing.dart';
+import '../../theme/saxlem_colors.dart';
 
 enum SaxlemStateKind {
   empty,
@@ -40,18 +41,53 @@ class SaxlemStateView extends StatelessWidget {
         padding: const EdgeInsetsDirectional.all(SaxlemSpacing.four),
         child: Column(
           children: [
-            Icon(icon ?? _icon, size: 56, color: _color(context)),
-            const SizedBox(height: SaxlemSpacing.two),
+            Container(
+              width: 96,
+              height: 96,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  begin: AlignmentDirectional.topStart,
+                  end: AlignmentDirectional.bottomEnd,
+                  colors: [
+                    _color(context).withValues(alpha: .12),
+                    context.saxlemColors.auraEnd.withValues(alpha: .14),
+                  ],
+                ),
+              ),
+              child: Icon(icon ?? _icon, size: 44, color: _color(context)),
+            ),
+            const SizedBox(height: SaxlemSpacing.three),
             Text(
               title,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: SaxlemSpacing.one),
-            Text(message, textAlign: TextAlign.center),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 360),
+              child: Text(
+                message,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: context.saxlemColors.textSecondary,
+                ),
+              ),
+            ),
             if (actionLabel != null && onAction != null) ...[
               const SizedBox(height: SaxlemSpacing.three),
-              SaxlemButton(label: actionLabel!, onPressed: onAction),
+              SaxlemButton(
+                label: actionLabel!,
+                onPressed: onAction,
+                trailingIcon: kind == SaxlemStateKind.empty
+                    ? Icons.arrow_forward_rounded
+                    : null,
+                leadingIcon:
+                    kind == SaxlemStateKind.error ||
+                        kind == SaxlemStateKind.offline
+                    ? Icons.refresh_rounded
+                    : null,
+              ),
             ],
           ],
         ),

@@ -73,4 +73,29 @@ void main() {
     expect(badini['appointments'], 'ژڤان');
     expect(badini['liveQueue'], 'رێزبەندییا زندی');
   });
+
+  test('translations keep every simple placeholder of the English message', () {
+    Map<String, dynamic> read(String name) =>
+        jsonDecode(File('lib/l10n/$name').readAsStringSync())
+            as Map<String, dynamic>;
+    final english = read('app_en.arb');
+    final placeholder = RegExp(r'\{(\w+)\}');
+    for (final name in ['app_ar.arb', 'app_ku.arb']) {
+      final translated = read(name);
+      for (final entry in english.entries) {
+        if (entry.key.startsWith('@') || entry.value is! String) continue;
+        final source = entry.value as String;
+        if (source.contains(', select,') || source.contains(', plural,')) {
+          continue;
+        }
+        for (final match in placeholder.allMatches(source)) {
+          expect(
+            (translated[entry.key] as String).contains('{${match.group(1)}}'),
+            isTrue,
+            reason: '$name ${entry.key} lost {${match.group(1)}}',
+          );
+        }
+      }
+    }
+  });
 }

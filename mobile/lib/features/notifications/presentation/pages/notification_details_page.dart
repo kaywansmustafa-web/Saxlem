@@ -5,6 +5,7 @@ import '../../domain/entities/notification_snapshot.dart';
 import '../../domain/entities/notification_types.dart';
 import '../controllers/notifications_controller.dart';
 import '../notification_copy.dart';
+import '../widgets/notification_card.dart';
 import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
 import '../../../family_profiles/presentation/widgets/patient_selector.dart';
 
@@ -39,17 +40,57 @@ class NotificationDetailsPage extends StatelessWidget {
               const SizedBox(height: SaxlemSpacing.two),
             ],
             SaxlemCard(
+              radius: SaxlemRadii.hero,
+              padding: const EdgeInsetsDirectional.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    copy.title,
-                    style: Theme.of(context).textTheme.headlineSmall,
+                  Builder(
+                    builder: (context) {
+                      final (tint, ink) = notificationCategoryColors(
+                        context,
+                        item.category,
+                      );
+                      return Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: tint,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          notificationCategoryIcon(item.category),
+                          color: ink,
+                          size: 28,
+                        ),
+                      );
+                    },
                   ),
-                  const SizedBox(height: SaxlemSpacing.three),
-                  _Part(label: strings.whatHappened, value: copy.happened),
-                  _Part(label: strings.whyItHappened, value: copy.why),
-                  _Part(label: strings.whatToDoNext, value: copy.next),
+                  const SizedBox(height: 14),
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      copy.title,
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  _Part(
+                    icon: Icons.info_outline_rounded,
+                    label: strings.whatHappened,
+                    value: copy.happened,
+                  ),
+                  _Part(
+                    icon: Icons.help_outline_rounded,
+                    label: strings.whyItHappened,
+                    value: copy.why,
+                  ),
+                  _Part(
+                    icon: Icons.arrow_circle_right_outlined,
+                    label: strings.whatToDoNext,
+                    value: copy.next,
+                    emphasized: true,
+                  ),
                 ],
               ),
             ),
@@ -85,18 +126,52 @@ class NotificationDetailsPage extends StatelessWidget {
 }
 
 class _Part extends StatelessWidget {
-  const _Part({required this.label, required this.value});
+  const _Part({
+    required this.icon,
+    required this.label,
+    required this.value,
+    this.emphasized = false,
+  });
+  final IconData icon;
   final String label, value;
+  final bool emphasized;
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsetsDirectional.only(bottom: SaxlemSpacing.two),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: Theme.of(context).textTheme.labelLarge),
-        const SizedBox(height: SaxlemSpacing.half),
-        Text(value),
-      ],
-    ),
-  );
+  Widget build(BuildContext context) {
+    final colors = context.saxlemColors;
+    final theme = Theme.of(context);
+    return Container(
+      margin: const EdgeInsetsDirectional.only(bottom: 10),
+      padding: const EdgeInsetsDirectional.all(14),
+      decoration: BoxDecoration(
+        color: emphasized ? colors.brandTint : colors.surfaceSunken,
+        borderRadius: BorderRadius.circular(SaxlemRadii.medium),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            icon,
+            size: 20,
+            color: emphasized ? colors.brandPrimary : colors.textSecondary,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: theme.textTheme.labelMedium),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

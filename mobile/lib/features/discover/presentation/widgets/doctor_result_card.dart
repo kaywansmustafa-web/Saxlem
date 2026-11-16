@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/localization_extensions.dart';
-import '../../../../design_system/components/content/saxlem_avatar.dart';
-import '../../../../design_system/components/content/saxlem_card.dart';
+import '../../../../design_system/design_system.dart';
 import '../../domain/entities/doctor_discovery_result.dart';
 import 'applied_doctor_filters.dart';
 
@@ -31,12 +30,15 @@ class DoctorResultCard extends StatelessWidget {
           ? strings.profileImageFallback(doctor.doctorDisplayName)
           : strings.profileImageLabel(doctor.doctorDisplayName),
     ];
+    final colors = context.saxlemColors;
+    final theme = Theme.of(context);
+    final available =
+        doctor.availability.status == DoctorAvailabilityStatus.available;
     return SaxlemCard(
-      elevation: SaxlemCardElevation.low,
       onTap: onProfile,
       semanticLabel:
           '${semanticParts.join('. ')}. ${strings.viewDoctorProfile(doctor.doctorDisplayName)}',
-      padding: const EdgeInsetsDirectional.all(18),
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 8),
       child: ExcludeSemantics(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,13 +47,15 @@ class DoctorResultCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SaxlemAvatar(
-                  size: 60,
+                  size: 56,
+                  ring: true,
                   imageUrl: doctor.photoUrl,
+                  initials: doctorInitials(doctor.doctorDisplayName),
                   semanticLabel: doctor.photoUrl == null
                       ? strings.profileImageFallback(doctor.doctorDisplayName)
                       : strings.profileImageLabel(doctor.doctorDisplayName),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,20 +64,33 @@ class DoctorResultCard extends StatelessWidget {
                         doctor.doctorDisplayName,
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w700),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontFamily: theme.textTheme.titleLarge?.fontFamily,
+                        ),
                       ),
                       const SizedBox(height: 2),
-                      Text(doctor.primarySpecialtyDisplayName),
+                      Text(
+                        doctor.primarySpecialtyDisplayName,
+                        style: theme.textTheme.bodySmall,
+                      ),
                     ],
                   ),
+                ),
+                const SizedBox(width: 8),
+                SaxlemStatusPill(
+                  label: available
+                      ? strings.doctorAvailable
+                      : strings.doctorUnavailable,
+                  tone: available
+                      ? SaxlemStatusTone.positive
+                      : SaxlemStatusTone.neutral,
                 ),
               ],
             ),
             const SizedBox(height: 14),
             Wrap(
-              spacing: 12,
-              runSpacing: 10,
+              spacing: 8,
+              runSpacing: 8,
               children: [
                 _Info(
                   icon: Icons.work_history_outlined,
@@ -81,40 +98,56 @@ class DoctorResultCard extends StatelessWidget {
                 ),
                 if (doctor.languages.isNotEmpty)
                   _Info(
-                    icon: Icons.language_rounded,
+                    icon: Icons.translate_rounded,
                     text: doctor.languages
                         .map((item) => localizedDoctorLanguage(context, item))
-                        .join(', '),
+                        .join(' · '),
                   ),
                 if (doctor.clinics.isNotEmpty)
                   _Info(
-                    icon: Icons.local_hospital_outlined,
+                    icon: Icons.location_on_outlined,
                     text: doctor.clinics.map((item) => item.name).join(', '),
                   ),
               ],
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 8),
+            Divider(height: 16, color: colors.divider),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Flexible(
                   child: Text(
                     strings.viewProfile,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: colors.brandPrimary,
                     ),
                   ),
                 ),
-                const SizedBox(width: 6),
-                const Icon(Icons.arrow_forward_rounded, size: 20),
+                const SizedBox(width: 4),
+                Icon(
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.arrow_back_rounded
+                      : Icons.arrow_forward_rounded,
+                  size: 18,
+                  color: colors.brandPrimary,
+                ),
               ],
             ),
+            const SizedBox(height: 6),
           ],
         ),
       ),
     );
   }
 }
+
+String doctorInitials(String name) => name
+    .replaceFirst(RegExp(r'^(Dr\.?|د\.)\s*', caseSensitive: false), '')
+    .split(RegExp(r'\s+'))
+    .where((p) => p.isNotEmpty)
+    .take(2)
+    .map((p) => p.characters.first.toUpperCase())
+    .join();
 
 class _Info extends StatelessWidget {
   const _Info({required this.icon, required this.text});
@@ -123,18 +156,36 @@ class _Info extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => ConstrainedBox(
-    constraints: const BoxConstraints(maxWidth: 280),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 17),
-        const SizedBox(width: 5),
-        Flexible(
-          child: Text(text, style: Theme.of(context).textTheme.bodySmall),
+  Widget build(BuildContext context) {
+    final colors = context.saxlemColors;
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 300),
+      child: Container(
+        padding: const EdgeInsetsDirectional.symmetric(
+          horizontal: 10,
+          vertical: 6,
         ),
-      ],
-    ),
-  );
+        decoration: BoxDecoration(
+          color: colors.surfaceSunken,
+          borderRadius: BorderRadius.circular(SaxlemRadii.small),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 15, color: colors.textSecondary),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                text,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

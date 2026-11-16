@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../design_system/design_system.dart';
 import '../../domain/entities/booking_confirmation.dart';
 import '../booking_copy.dart';
 import '../../../../core/localization/localization_extensions.dart';
@@ -15,64 +16,156 @@ class BookingSuccessPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const copy = BookingCopy();
+    final colors = context.saxlemColors;
+    final theme = Theme.of(context);
+    final date = copy.date(
+      confirmation.startsAt,
+      timezone: confirmation.clinicTimezone,
+    );
+    final time = copy.time(
+      confirmation.startsAt,
+      timezone: confirmation.clinicTimezone,
+    );
     return SingleChildScrollView(
-      padding: const EdgeInsetsDirectional.fromSTEB(24, 32, 24, 36),
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 28, 20, 36),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Icon(
-            Icons.check_circle_rounded,
-            size: 76,
-            color: Theme.of(context).colorScheme.primary,
+          Center(
+            child: Container(
+              width: 88,
+              height: 88,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: colors.aura,
+                boxShadow: SaxlemElevation.glow(colors.brandPrimary),
+              ),
+              child: Icon(Icons.check_rounded, size: 48, color: colors.onFill),
+            ),
           ),
           const SizedBox(height: 20),
-          Text(
-            context.l10n.appointmentConfirmed,
-            textAlign: TextAlign.center,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+          Semantics(
+            header: true,
+            liveRegion: true,
+            child: Text(
+              context.l10n.appointmentConfirmed,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.headlineMedium,
+            ),
           ),
-          const SizedBox(height: 8),
-          Text(context.l10n.bookingSuccessful, textAlign: TextAlign.center),
-          const SizedBox(height: 26),
+          const SizedBox(height: 6),
+          Text(
+            context.l10n.bookingSuccessful,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: colors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: 24),
           Container(
-            padding: const EdgeInsetsDirectional.all(18),
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(24),
+              color: colors.surfaceRaised,
+              borderRadius: BorderRadius.circular(SaxlemRadii.hero),
+              border: Border.all(color: colors.border),
+              boxShadow: SaxlemElevation.level2(colors.night),
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  context.l10n.appointmentReferenceValue(
-                    confirmation.reference,
+                Container(
+                  padding: const EdgeInsetsDirectional.all(20),
+                  decoration: BoxDecoration(gradient: colors.deepAura),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        confirmation.doctorName,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: colors.onFill,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        confirmation.clinicName,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: colors.onFill.withValues(alpha: .88),
+                        ),
+                      ),
+                    ],
                   ),
-                  style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
-                const Divider(height: 28),
-                Text(confirmation.doctorName),
-                Text(confirmation.clinicName),
-                Text(
-                  '${copy.date(confirmation.startsAt, timezone: confirmation.clinicTimezone)} · '
-                  '${copy.time(confirmation.startsAt, timezone: confirmation.clinicTimezone)}',
+                Padding(
+                  padding: const EdgeInsetsDirectional.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _Fact(label: context.l10n.date, value: date),
+                          ),
+                          Expanded(
+                            child: _Fact(label: context.l10n.time, value: time),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Divider(height: 1, color: colors.divider),
+                      const SizedBox(height: 14),
+                      Text(
+                        context.l10n.appointmentReferenceValue(
+                          confirmation.reference,
+                        ),
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: colors.textSecondary,
+                          fontFeatures: const [FontFeature.tabularFigures()],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 24),
-          OutlinedButton(
+          SaxlemButton(
+            label: context.l10n.viewDoctor,
+            hierarchy: SaxlemButtonHierarchy.secondary,
+            expand: true,
             onPressed: onViewDoctor,
-            child: Text(context.l10n.viewDoctor),
           ),
-          const SizedBox(height: 10),
-          TextButton(
+          const SizedBox(height: 8),
+          SaxlemButton(
+            label: context.l10n.returnHome,
+            hierarchy: SaxlemButtonHierarchy.tertiary,
+            expand: true,
             onPressed: onReturnHome,
-            child: Text(context.l10n.returnHome),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _Fact extends StatelessWidget {
+  const _Fact({required this.label, required this.value});
+  final String label, value;
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: theme.textTheme.labelSmall),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontFeatures: const [FontFeature.tabularFigures()],
+          ),
+        ),
+      ],
     );
   }
 }

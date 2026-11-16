@@ -126,7 +126,7 @@
       }
     }
   },
-  "tabWithCount": "معلومات",
+  "tabWithCount": "{label} ({count})",
   "@tabWithCount": {
     "placeholders": {
       "label": {
@@ -177,7 +177,7 @@
   "country": "الدولة",
   "iraq": "العراق",
   "phoneNumber": "رقم الهاتف",
-  "phoneHint": "معلومات",
+  "phoneHint": "750 123 4567",
   "phoneInvalid": "أدخل رقم هاتف عراقي صحيحًا.",
   "sendCode": "إرسال الرمز",
   "otpTitle": "أدخل رمز التحقق",
@@ -476,5 +476,6 @@
   "notCheckedInTitle": "موعدك اليوم",
   "removedFromQueueTitle": "لم تعد في قائمة الانتظار",
   "waitRange": "حوالي {min}–{max} {unit}",
-  "doctorLabel": "الطبيب"
+  "doctorLabel": "الطبيب",
+  "familyMembersTitle": "أفراد العائلة"
 }

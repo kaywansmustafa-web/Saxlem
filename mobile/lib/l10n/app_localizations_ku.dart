@@ -1075,4 +1075,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get doctorLabel => 'نوژدار';
+
+  @override
+  String get familyMembersTitle => 'ئەندامێن خێزانێ';
 }
