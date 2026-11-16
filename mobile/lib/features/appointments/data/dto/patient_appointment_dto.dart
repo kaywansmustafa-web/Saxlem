@@ -33,9 +33,16 @@ class PatientAppointmentDto {
       'cancellationReason',
       'version',
     };
-    if (json.keys.length != keys.length ||
-        json.keys.toSet().difference(keys).isNotEmpty ||
-        keys.difference(json.keys.toSet()).isNotEmpty) {
+    // `origin` (app, phone or walk-in) is optional so older and newer
+    // backends both parse.
+    final present = json.keys.toSet()..remove('origin');
+    final origin = json['origin'];
+    if (present.length != keys.length ||
+        present.difference(keys).isNotEmpty ||
+        keys.difference(present).isNotEmpty ||
+        (origin != null &&
+            !const ['patientBooked', 'clinicCreated', 'walkIn']
+                .contains(origin))) {
       throw const FormatException();
     }
     final id = _uuidValue(json, 'id');

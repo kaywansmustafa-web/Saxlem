@@ -1115,9 +1115,6 @@ class AppLocalizationsKu extends AppLocalizations {
   String get paymentOpenFib => 'FIB ڤەکە بۆ پارەدانێ';
 
   @override
-  String get paymentOrUseCode => 'یان ڤی کۆدی د ئەپێ FIB دا بنڤیسە';
-
-  @override
   String get paymentScanQr => 'ژ مۆبایلەکێ دی پارەی ددەی؟ ڤی کۆدی سکان بکە.';
 
   @override
@@ -1192,9 +1189,6 @@ class AppLocalizationsKu extends AppLocalizations {
       'تشتەک د پارەدانێ دا خەلەت چوو. ژڤانا تە هێشتا یا گرتییە.';
 
   @override
-  String get paymentCodeCopied => 'کۆد هاتە کۆپیکرن';
-
-  @override
   String get paymentBookedPayNext =>
       'هاتە گرتن! پێنگاڤا دووماهیێ: پارەیێ سەرەدانا خو بدە.';
 
@@ -1206,4 +1200,8 @@ class AppLocalizationsKu extends AppLocalizations {
   String paymentLinkValidUntil(String time) {
     return 'لینک تا $time دەربازە';
   }
+
+  @override
+  String get paymentFibNotOpened =>
+      'مە نەشیا FIB ڤەکەین. ئەپێ FIB دابەزینە یان نوی بکە، یان کۆدێ QR ژ مۆبایلەکێ دی سکان بکە.';
 }

@@ -1102,9 +1102,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get paymentOpenFib => 'افتح FIB للدفع';
 
   @override
-  String get paymentOrUseCode => 'أو أدخل هذا الرمز في تطبيق FIB';
-
-  @override
   String get paymentScanQr => 'تدفع من هاتف آخر؟ امسح هذا الرمز.';
 
   @override
@@ -1178,9 +1175,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get paymentProblemGeneric => 'حدث خطأ في الدفع. موعدك ما زال محجوزاً.';
 
   @override
-  String get paymentCodeCopied => 'تم نسخ الرمز';
-
-  @override
   String get paymentBookedPayNext => 'تم الحجز! خطوة أخيرة: ادفع ثمن زيارتك.';
 
   @override
@@ -1191,4 +1185,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String paymentLinkValidUntil(String time) {
     return 'الرابط صالح حتى $time';
   }
+
+  @override
+  String get paymentFibNotOpened =>
+      'تعذّر فتح FIB. ثبّت تطبيق FIB أو حدّثه، أو امسح رمز QR من هاتف آخر.';
 }

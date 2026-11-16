@@ -507,7 +507,6 @@
   "paymentTitle": "الدفع",
   "paymentAmountDue": "المبلغ المطلوب",
   "paymentOpenFib": "افتح FIB للدفع",
-  "paymentOrUseCode": "أو أدخل هذا الرمز في تطبيق FIB",
   "paymentScanQr": "تدفع من هاتف آخر؟ امسح هذا الرمز.",
   "paymentWaiting": "بانتظار دفعتك…",
   "paymentWaitingBody": "وافق على الدفع في FIB ثم عد إلى هنا. تتحدث هذه الشاشة تلقائياً.",
@@ -531,8 +530,8 @@
   "paymentProblemUnavailable": "الدفع عبر التطبيق غير متاح الآن. يمكنك الدفع في العيادة.",
   "paymentProblemNotAccepted": "لا يمكن تغيير هذه الدفعة الآن.",
   "paymentProblemGeneric": "حدث خطأ في الدفع. موعدك ما زال محجوزاً.",
-  "paymentCodeCopied": "تم نسخ الرمز",
   "paymentBookedPayNext": "تم الحجز! خطوة أخيرة: ادفع ثمن زيارتك.",
   "paymentSecureNote": "تذهب أموالك مباشرة إلى حساب العيادة المصرفي. لا يرى ساخلەم بياناتك المصرفية أبداً.",
-  "paymentLinkValidUntil": "الرابط صالح حتى {time}"
+  "paymentLinkValidUntil": "الرابط صالح حتى {time}",
+  "paymentFibNotOpened": "تعذّر فتح FIB. ثبّت تطبيق FIB أو حدّثه، أو امسح رمز QR من هاتف آخر."
 }

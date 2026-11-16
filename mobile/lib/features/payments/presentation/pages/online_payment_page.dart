@@ -96,7 +96,7 @@ class _OnlinePaymentPageState extends State<OnlinePaymentPage>
     if (!opened && mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(context.l10n.paymentOrUseCode)));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.paymentFibNotOpened)));
     }
   }
 
@@ -260,12 +260,9 @@ class _Waiting extends StatelessWidget {
               ),
               const SizedBox(height: 16),
             ],
-            if (online?.readableCode != null)
-              _CodeCard(code: online!.readableCode!),
-            if (online?.qrCode != null) ...[
-              const SizedBox(height: 12),
-              _QrCard(dataUrl: online!.qrCode!),
-            ],
+            // FIB patients pay by opening the app (same phone) or scanning the
+            // QR (another phone). The FIB app has no field to type a code.
+            if (online?.qrCode != null) _QrCard(dataUrl: online!.qrCode!),
             if (validUntil != null) ...[
               const SizedBox(height: 10),
               Text(
@@ -474,66 +471,6 @@ class _PulseBeaconState extends State<_PulseBeacon>
             size: 28,
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _CodeCard extends StatelessWidget {
-  const _CodeCard({required this.code});
-  final String code;
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.saxlemColors;
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsetsDirectional.fromSTEB(18, 14, 8, 14),
-      decoration: BoxDecoration(
-        color: colors.surfaceRaised,
-        borderRadius: BorderRadius.circular(SaxlemRadii.card),
-        border: Border.all(color: colors.border),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  context.l10n.paymentOrUseCode,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Directionality(
-                  textDirection: TextDirection.ltr,
-                  child: Text(
-                    code,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontFamily: SaxlemTypography.display,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2,
-                      fontFeatures: const [FontFeature.tabularFigures()],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            tooltip: MaterialLocalizations.of(context).copyButtonLabel,
-            icon: Icon(Icons.copy_rounded, color: colors.brandPrimary),
-            onPressed: () async {
-              await Clipboard.setData(ClipboardData(text: code));
-              if (!context.mounted) return;
-              HapticFeedback.lightImpact();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(context.l10n.paymentCodeCopied)),
-              );
-            },
-          ),
-        ],
       ),
     );
   }

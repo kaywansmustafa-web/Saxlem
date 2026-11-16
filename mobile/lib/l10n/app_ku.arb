@@ -507,7 +507,6 @@
   "paymentTitle": "پارەدان",
   "paymentAmountDue": "بڕێ پارەی",
   "paymentOpenFib": "FIB ڤەکە بۆ پارەدانێ",
-  "paymentOrUseCode": "یان ڤی کۆدی د ئەپێ FIB دا بنڤیسە",
   "paymentScanQr": "ژ مۆبایلەکێ دی پارەی ددەی؟ ڤی کۆدی سکان بکە.",
   "paymentWaiting": "چاڤەڕێی پارەدانا تەینە...",
   "paymentWaitingBody": "پارەدانێ د FIB دا قەبویل بکە و ڤەگەڕە. ئەڤ پەڕە ب خۆ نوی دبیت.",
@@ -531,8 +530,8 @@
   "paymentProblemUnavailable": "پارەدان ب ئەپێ نوکە نینە. دشێی ل کلینیکێ پارەی بدەی.",
   "paymentProblemNotAccepted": "ئەڤ پارەدانە نوکە ناهێتە گوهۆڕین.",
   "paymentProblemGeneric": "تشتەک د پارەدانێ دا خەلەت چوو. ژڤانا تە هێشتا یا گرتییە.",
-  "paymentCodeCopied": "کۆد هاتە کۆپیکرن",
   "paymentBookedPayNext": "هاتە گرتن! پێنگاڤا دووماهیێ: پارەیێ سەرەدانا خو بدە.",
   "paymentSecureNote": "پارێ تە راستەوخۆ دچیتە هەژمارا بانکێ یا کلینیکێ. ساخلەم چو جاران زانیاریێن بانکا تە نابینیت.",
-  "paymentLinkValidUntil": "لینک تا {time} دەربازە"
+  "paymentLinkValidUntil": "لینک تا {time} دەربازە",
+  "paymentFibNotOpened": "مە نەشیا FIB ڤەکەین. ئەپێ FIB دابەزینە یان نوی بکە، یان کۆدێ QR ژ مۆبایلەکێ دی سکان بکە."
 }

@@ -1142,9 +1142,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paymentOpenFib => 'Open FIB to pay';
 
   @override
-  String get paymentOrUseCode => 'Or enter this code in your FIB app';
-
-  @override
   String get paymentScanQr => 'Paying from another phone? Scan this code.';
 
   @override
@@ -1220,9 +1217,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Something went wrong with the payment. Your appointment is still booked.';
 
   @override
-  String get paymentCodeCopied => 'Code copied';
-
-  @override
   String get paymentBookedPayNext =>
       'Booked! One last step: pay for your visit.';
 
@@ -1234,4 +1228,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String paymentLinkValidUntil(String time) {
     return 'Link valid until $time';
   }
+
+  @override
+  String get paymentFibNotOpened =>
+      'We couldn\'t open FIB. Install or update the FIB app, or scan the QR code from another phone.';
 }

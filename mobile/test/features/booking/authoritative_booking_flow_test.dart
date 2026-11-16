@@ -85,7 +85,7 @@ void main() {
     expect(repository.createCalls, 1);
     expect(payments.chosen, [PaymentMethod.online]);
     expect(find.text('Waiting for your payment…'), findsOneWidget);
-    expect(find.text('AB12-CD34'), findsOneWidget);
+    expect(find.text('Open FIB to pay'), findsOneWidget);
 
     payments.paid = true;
     await tester.pump(const Duration(seconds: 4));

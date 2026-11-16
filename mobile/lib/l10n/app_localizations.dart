@@ -2074,12 +2074,6 @@ abstract class AppLocalizations {
   /// **'Open FIB to pay'**
   String get paymentOpenFib;
 
-  /// No description provided for @paymentOrUseCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Or enter this code in your FIB app'**
-  String get paymentOrUseCode;
-
   /// No description provided for @paymentScanQr.
   ///
   /// In en, this message translates to:
@@ -2218,12 +2212,6 @@ abstract class AppLocalizations {
   /// **'Something went wrong with the payment. Your appointment is still booked.'**
   String get paymentProblemGeneric;
 
-  /// No description provided for @paymentCodeCopied.
-  ///
-  /// In en, this message translates to:
-  /// **'Code copied'**
-  String get paymentCodeCopied;
-
   /// No description provided for @paymentBookedPayNext.
   ///
   /// In en, this message translates to:
@@ -2241,6 +2229,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Link valid until {time}'**
   String paymentLinkValidUntil(String time);
+
+  /// No description provided for @paymentFibNotOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t open FIB. Install or update the FIB app, or scan the QR code from another phone.'**
+  String get paymentFibNotOpened;
 }
 
 class _AppLocalizationsDelegate
