@@ -16,7 +16,7 @@ export default async function PatientDetailPage({
     <>
       <PageHeader
         title={patient.displayName}
-        description="Privacy-minimized administrative account detail. Clinical records are not exposed."
+        description="Account details only. Medical records are never shown here."
       />
       <div className="grid split">
         <section className="card detail-card">

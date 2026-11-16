@@ -47,8 +47,8 @@ export function FinalizeStatement({
         <section className="dialog-content">
           <h2>Finalize statement?</h2>
           <p>
-            This makes the statement immutable. It does not settle or transfer
-            money.
+            After this the statement can no longer change. It does not settle or
+            transfer money.
           </p>
           <dl>
             <dt>Period</dt>

@@ -38,7 +38,7 @@ export function OrganizationFilter({
           ))}
         </select>
       </div>
-      <button className="button button-primary">Load authoritative data</button>
+      <button className="button button-primary">Show</button>
     </form>
   );
 }

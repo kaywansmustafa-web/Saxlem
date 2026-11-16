@@ -7,7 +7,7 @@ export default async function PlansPage() {
     <>
       <PageHeader
         title="Billing Plans"
-        description="Effective billing rules and immutable commission policy versions."
+        description="The pricing plans clinics can be on."
       />
       {data.length ? (
         <div className="card table-card">
@@ -47,7 +47,7 @@ export default async function PlansPage() {
       ) : (
         <StateView
           title="No billing plans"
-          description="No authoritative billing plan records are available."
+          description="No billing plans yet."
         />
       )}
     </>

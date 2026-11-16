@@ -10,7 +10,7 @@ export default async function DocumentsPage() {
     <>
       <PageHeader
         title="Document Center"
-        description="Authorized document metadata and lifecycle. Production object storage is required before deployment."
+        description="Contracts, licences and other platform files."
       />
       <DocumentUpload />
       {items.length ? (
@@ -42,7 +42,7 @@ export default async function DocumentsPage() {
       ) : (
         <StateView
           title="No documents"
-          description="No uploaded document records match this scope."
+          description="Uploaded files will appear here."
         />
       )}
     </>

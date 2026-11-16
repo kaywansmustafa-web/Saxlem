@@ -1,3 +1,4 @@
+import { humanize } from "@/domain/labels";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
 import { DataTable } from "@/components/data-table";
 import { listAuditEvents } from "@/data/owner-data";
@@ -8,17 +9,17 @@ export default async function AuditPage() {
     <>
       <PageHeader
         title="Audit Log"
-        description="Immutable, privacy-safe privileged activity."
+        description="A permanent record of every sensitive action. Personal data is masked."
       />
       {data.items.length ? (
         <DataTable
-          headers={["Time", "Action", "Target", "Outcome", "Request"]}
+          headers={["Time", "Action", "Record", "Result", "Request ID"]}
           rows={data.items.map((item) => [
             new Date(item.occurredAt).toLocaleString("en-IQ", {
               timeZone: "Asia/Baghdad",
             }),
-            item.action,
-            item.targetType,
+            humanize(item.action),
+            humanize(item.targetType),
             <StatusBadge key="status" status={item.outcome} />,
             item.requestId ?? "—",
           ])}

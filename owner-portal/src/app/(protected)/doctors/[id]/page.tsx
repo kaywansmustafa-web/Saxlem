@@ -16,7 +16,7 @@ export default async function DoctorPage({
     <>
       <PageHeader
         title={doctor.displayName}
-        description="Authoritative professional profile and allowed administrative fields."
+        description="Professional profile and the details you can edit."
       />
       <div className="grid split">
         <section className="card detail-card">

@@ -1,3 +1,4 @@
+import { humanize } from "@/domain/labels";
 import Link from "next/link";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
 import { listAppointments } from "@/data/owner-data";
@@ -19,7 +20,7 @@ export default async function AppointmentsPage({
     <>
       <PageHeader
         title="Appointments"
-        description="Global administrative oversight without unsafe lifecycle overrides."
+        description="Every booking across all clinics."
       />
       {reference && (
         <p className="filter-note">
@@ -53,7 +54,7 @@ export default async function AppointmentsPage({
                   <td>{item.patientName}</td>
                   <td>{item.doctorName}</td>
                   <td>{item.clinicName}</td>
-                  <td>{item.type}</td>
+                  <td>{humanize(item.type)}</td>
                   <td>
                     <StatusBadge status={item.status} />
                   </td>

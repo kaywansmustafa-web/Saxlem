@@ -10,7 +10,7 @@ export default async function NewClinicPage() {
     <>
       <PageHeader
         title="Create Clinic"
-        description="Create an active clinic under an active organization."
+        description="Add a clinic to an existing organization."
       />
       <CreateForm kind="clinic" organizations={organizations} />
     </>

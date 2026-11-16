@@ -24,7 +24,12 @@ export function BrandMark({ className }: { className: string }) {
           d="M256 432 H128 A48 48 0 0 1 80 384 V344 A88 88 0 0 1 168 256 H344 V344 A88 88 0 0 1 256 432Z"
           fill="url(#sx-mark-bottom)"
         />
-        <path d="M256 226 V286 M226 256 H286" stroke="#FFFFFF" strokeWidth="19" strokeLinecap="round" />
+        <path
+          d="M256 226 V286 M226 256 H286"
+          stroke="#FFFFFF"
+          strokeWidth="19"
+          strokeLinecap="round"
+        />
       </svg>
     </span>
   );

@@ -12,7 +12,7 @@ export default async function NewStaffPage() {
     <>
       <PageHeader
         title="Create staff member"
-        description="Create a scoped inactive identity without an insecure default password."
+        description="They get an invitation to set their own password. No default password is ever created."
       />
       <PlatformCreateForm
         kind="staff"

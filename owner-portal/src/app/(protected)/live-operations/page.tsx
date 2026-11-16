@@ -8,7 +8,7 @@ export default async function LiveOperationsPage() {
     <>
       <PageHeader
         title="Live Operations"
-        description="Read-only global queue health. Patient identity is reduced to initials."
+        description="Queues running right now. Patients are shown by initials only."
       />
       {items.length ? (
         <DataTable
@@ -34,7 +34,7 @@ export default async function LiveOperationsPage() {
       ) : (
         <StateView
           title="No active queues"
-          description="No open or paused queue sessions are currently active."
+          description="No clinic has an open queue right now."
         />
       )}
     </>

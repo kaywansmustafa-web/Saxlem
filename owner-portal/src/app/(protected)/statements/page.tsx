@@ -18,7 +18,7 @@ export default async function StatementsPage({
     <>
       <PageHeader
         title="Statements"
-        description="Draft and immutable finalized organization statements in Asia/Baghdad periods."
+        description="Monthly statements per organization. Finalized statements never change."
       />
       <OrganizationFilter
         organizations={organizations}
@@ -58,7 +58,7 @@ export default async function StatementsPage({
                       {item.status === "draft" ? (
                         <FinalizeStatement statement={item} />
                       ) : (
-                        "Immutable"
+                        "Locked"
                       )}
                     </td>
                   </tr>
@@ -75,7 +75,7 @@ export default async function StatementsPage({
       ) : (
         <StateView
           title="Choose an organization"
-          description="Select an organization to retrieve its authoritative statements."
+          description="Pick an organization above to see its statements."
         />
       )}
     </>

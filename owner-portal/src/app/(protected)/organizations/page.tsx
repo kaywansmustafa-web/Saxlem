@@ -14,7 +14,7 @@ export default async function OrganizationsPage({
     <>
       <PageHeader
         title="Organizations"
-        description="Manage the healthcare organizations operating on Saxlem."
+        description="The healthcare companies and groups using Saxlem."
         action={
           <Link className="button button-primary" href="/organizations/new">
             Create organization

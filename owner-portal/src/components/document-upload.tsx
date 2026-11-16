@@ -49,9 +49,9 @@ export function DocumentUpload() {
       </label>
       <p>
         <small>
-          PDF, JPEG, PNG, or text. Maximum 25 MB. Development storage is private
-          local disk; production object storage and malware scanning remain
-          required.
+          PDF, JPEG, PNG or text, up to 25 MB. For now files stay on this
+          server; cloud storage with virus scanning must be connected before
+          launch.
         </small>
       </p>
       {message && <p role="status">{message}</p>}

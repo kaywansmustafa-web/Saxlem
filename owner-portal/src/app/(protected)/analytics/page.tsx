@@ -42,7 +42,7 @@ export default async function AnalyticsPage() {
     <>
       <PageHeader
         title="Analytics"
-        description="Bounded authoritative platform and financial metrics."
+        description="Growth, bookings and revenue across the platform."
       />
       <section className="grid metrics" aria-label="Executive metrics">
         {Object.entries(data.totals).map(([key, value]) => (

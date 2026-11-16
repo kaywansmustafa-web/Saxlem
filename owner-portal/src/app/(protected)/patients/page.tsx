@@ -9,7 +9,7 @@ export default async function PatientsPage() {
     <>
       <PageHeader
         title="Patients"
-        description="Privacy-minimized administrative account oversight."
+        description="Patient accounts, with phone numbers masked for privacy."
       />
       {data.items.length ? (
         <DataTable

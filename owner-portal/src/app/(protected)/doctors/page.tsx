@@ -1,3 +1,4 @@
+import { humanize } from "@/domain/labels";
 import Link from "next/link";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
 import { listDoctors } from "@/data/owner-data";
@@ -8,7 +9,7 @@ export default async function DoctorsPage() {
     <>
       <PageHeader
         title="Doctors"
-        description="Global professional directory using authoritative doctor profiles and clinic assignments."
+        description="Every doctor on Saxlem, their specialty and where they work."
       />
       {data.items.length ? (
         <div className="card table-card">
@@ -32,7 +33,7 @@ export default async function DoctorsPage() {
                       </Link>
                     </strong>
                     <br />
-                    <small>{item.languages.join(", ")}</small>
+                    <small>{item.languages.map(humanize).join(" · ")}</small>
                   </td>
                   <td>{item.specialty}</td>
                   <td>
@@ -50,7 +51,7 @@ export default async function DoctorsPage() {
       ) : (
         <StateView
           title="No doctors"
-          description="No doctor profiles match the current authoritative directory query."
+          description="Doctors appear here once they are onboarded with a specialty and a clinic."
         />
       )}
     </>

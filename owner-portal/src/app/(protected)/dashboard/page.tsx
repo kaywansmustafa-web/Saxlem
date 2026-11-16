@@ -42,7 +42,7 @@ export default async function DashboardPage() {
     <>
       <PageHeader
         title="Executive Dashboard"
-        description="Authoritative platform activity and administration at a glance."
+        description="Everything happening on Saxlem, at a glance."
         action={
           <Link className="button button-primary" href="/organizations/new">
             Create organization
@@ -147,7 +147,7 @@ export default async function DashboardPage() {
         ) : (
           <StateView
             title="Queues are stable"
-            description="No active queue currently meets the attention threshold."
+            description="No queue needs your attention right now."
           />
         )}
       </section>

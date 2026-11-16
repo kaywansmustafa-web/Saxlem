@@ -17,7 +17,7 @@ export default async function NewDoctorPage() {
     <>
       <PageHeader
         title="Onboard doctor"
-        description="Create the identity, clinic assignment, profile, and specialty in one transaction."
+        description="Add the doctor, their clinic and specialty in one step."
       />
       <PlatformCreateForm
         kind="doctor"

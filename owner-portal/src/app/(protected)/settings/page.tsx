@@ -1,3 +1,4 @@
+import { humanize } from "@/domain/labels";
 import { PageHeader } from "@/components/app-shell";
 import { ownerSettings } from "@/data/owner-data";
 import { requireOwnerSession } from "@/infrastructure/auth";
@@ -7,16 +8,16 @@ export default async function SettingsPage() {
     <>
       <PageHeader
         title="Settings"
-        description="Backed owner identity, session controls, and platform information."
+        description="Your account, your sessions and platform information."
       />
       <div className="grid split">
         <section className="card detail-card">
           <h2>Owner account</h2>
           <dl>
             <dt>Status</dt>
-            <dd>{data.identity?.status}</dd>
+            <dd>{humanize(data.identity?.status)}</dd>
             <dt>Role</dt>
-            <dd>{data.identity?.roles.join(", ")}</dd>
+            <dd>{data.identity?.roles.map(humanize).join(", ")}</dd>
             <dt>Created</dt>
             <dd>
               {data.identity
@@ -29,7 +30,7 @@ export default async function SettingsPage() {
           <h2>Platform</h2>
           <dl>
             <dt>Environment</dt>
-            <dd>{data.environment}</dd>
+            <dd>{humanize(data.environment)}</dd>
             <dt>API version</dt>
             <dd>{data.apiVersion}</dd>
           </dl>

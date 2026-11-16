@@ -35,7 +35,7 @@ export default async function BillingPage({
     <>
       <PageHeader
         title="Billing"
-        description="Organization-scoped commission accounting under the existing Saxlem billing policy."
+        description="What each organization owes Saxlem, based on its plan."
       />
       <OrganizationFilter
         organizations={organizations}
@@ -69,7 +69,7 @@ export default async function BillingPage({
       ) : (
         <StateView
           title="Choose an organization"
-          description="Billing records are tenant-bound. Select an organization to retrieve its authoritative ledger and statements."
+          description="Pick an organization above to see its billing."
         />
       )}
     </>

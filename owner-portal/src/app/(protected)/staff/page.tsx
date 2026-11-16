@@ -1,3 +1,4 @@
+import { humanize } from "@/domain/labels";
 import Link from "next/link";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
 import { DataTable } from "@/components/data-table";
@@ -9,7 +10,7 @@ export default async function StaffPage() {
     <>
       <PageHeader
         title="Staff"
-        description="Global staff identities, scoped roles, memberships, and account status."
+        description="Everyone who works on Saxlem, their role and where they work."
         action={
           <Link className="button button-primary" href="/staff/new">
             Create staff member
@@ -23,7 +24,7 @@ export default async function StaffPage() {
             <Link key="account" href={`/staff/${item.staffAccountId}`}>
               {item.email}
             </Link>,
-            item.roles.map((role) => role.role).join(", "),
+            item.roles.map((role) => humanize(role.role)).join(", "),
             item.memberships
               .map((membership) => membership.clinicName)
               .join(", ") || "Global",
@@ -33,7 +34,7 @@ export default async function StaffPage() {
       ) : (
         <StateView
           title="No staff accounts"
-          description="No authoritative staff identities match this scope."
+          description="No staff members yet."
         />
       )}
     </>

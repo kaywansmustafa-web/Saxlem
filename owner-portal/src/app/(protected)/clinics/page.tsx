@@ -24,7 +24,7 @@ export default async function ClinicsPage({
     <>
       <PageHeader
         title="Clinics"
-        description="Review every clinic, its organization, timezone, and operational status."
+        description="Every clinic, who owns it and whether it is live."
         action={
           <Link className="button button-primary" href="/clinics/new">
             Create clinic

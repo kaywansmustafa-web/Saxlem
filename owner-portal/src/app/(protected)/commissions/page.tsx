@@ -17,7 +17,7 @@ export default async function CommissionsPage({
     <>
       <PageHeader
         title="Commissions"
-        description="Immutable earned and reversed commission ledger records."
+        description="Every commission earned or reversed, per organization."
       />
       <OrganizationFilter
         organizations={organizations}
@@ -67,7 +67,7 @@ export default async function CommissionsPage({
       ) : (
         <StateView
           title="Choose an organization"
-          description="Select an organization to retrieve its tenant-bound immutable commission ledger."
+          description="Pick an organization above to see its commissions."
         />
       )}
     </>

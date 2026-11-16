@@ -3,6 +3,8 @@ import { ownerConfiguration } from "@/infrastructure/config";
 import { OwnerNavigation } from "./owner-navigation";
 import { GlobalSearch } from "./global-search";
 import { BrandMark } from "@/components/brand-mark";
+import { humanize, statusTone } from "@/domain/labels";
+import { NavIcon } from "./nav-icon";
 
 export const navigation = [
   ["Dashboard", "/dashboard"],
@@ -24,6 +26,54 @@ export const navigation = [
   ["Settings", "/settings"],
 ] as const;
 
+const icons: Record<string, string> = {
+  "/dashboard": "dashboard",
+  "/organizations": "organizations",
+  "/clinics": "clinics",
+  "/doctors": "doctors",
+  "/staff": "staff",
+  "/patients": "patients",
+  "/appointments": "appointments",
+  "/live-operations": "live",
+  "/billing": "billing",
+  "/commissions": "commissions",
+  "/statements": "statements",
+  "/plans": "plans",
+  "/analytics": "analytics",
+  "/documents": "documents",
+  "/audit-log": "audit",
+  "/platform-health": "health",
+  "/settings": "settings",
+};
+const groupOf = (href: string) =>
+  ["/dashboard", "/analytics"].includes(href)
+    ? "Overview"
+    : [
+          "/organizations",
+          "/clinics",
+          "/doctors",
+          "/staff",
+          "/patients",
+        ].includes(href)
+      ? "Network"
+      : ["/appointments", "/live-operations"].includes(href)
+        ? "Operations"
+        : ["/billing", "/commissions", "/statements", "/plans"].includes(href)
+          ? "Money"
+          : "System";
+export const navigationGroups = [
+  "Overview",
+  "Network",
+  "Operations",
+  "Money",
+  "System",
+].map((title) => ({
+  title,
+  items: navigation
+    .filter(([, href]) => groupOf(href) === title)
+    .map(([label, href]) => [label, href, icons[href]] as const),
+}));
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const environment = ownerConfiguration().environment;
   return (
@@ -39,11 +89,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <small>Owner Portal</small>
           </span>
         </Link>
-        <OwnerNavigation items={navigation} />
+        <OwnerNavigation groups={navigationGroups} />
         <div className="side-foot">
-          <strong>Platform administrator</strong>
-          <br />
-          <span>Global administration</span>
+          <span className="side-foot-avatar" aria-hidden="true">
+            <NavIcon name="audit" />
+          </span>
+          <span>
+            <strong>Platform administrator</strong>
+            <small>All organizations</small>
+          </span>
         </div>
       </aside>
       <div className="workspace">
@@ -57,15 +111,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <summary className="button button-secondary">
                 Quick create
               </summary>
-              <div
-                className="card"
-                style={{
-                  position: "absolute",
-                  padding: 10,
-                  display: "grid",
-                  gap: 6,
-                }}
-              >
+              <div className="card quick-menu">
                 <Link href="/organizations/new">Organization</Link>
                 <Link href="/clinics/new">Clinic</Link>
                 <Link href="/doctors/new">Doctor</Link>
@@ -96,7 +142,11 @@ export function PageHeader({
 }) {
   return (
     <>
-      <div className="breadcrumbs">Owner Portal / {title}</div>
+      <div className="breadcrumbs">
+        <span>Owner Portal</span>
+        <span aria-hidden="true">›</span>
+        <span>{title}</span>
+      </div>
       <header className="page-header">
         <div>
           <h1>{title}</h1>
@@ -109,10 +159,9 @@ export function PageHeader({
 }
 
 export const StatusBadge = ({ status }: { status: string }) => (
-  <span
-    className={`badge ${status === "active" || status === "completed" || status === "finalized" ? "badge-success" : status === "inactive" || status === "cancelled" ? "badge-danger" : "badge-warning"}`}
-  >
-    {status}
+  <span className={`badge badge-${statusTone(status)}`}>
+    <span className="badge-dot" aria-hidden="true" />
+    {humanize(status)}
   </span>
 );
 
@@ -126,6 +175,9 @@ export function StateView({
   return (
     <section className="card state" role="status">
       <div>
+        <span className="state-icon" aria-hidden="true">
+          <NavIcon name="plans" />
+        </span>
         <h2>{title}</h2>
         <p>{description}</p>
       </div>
