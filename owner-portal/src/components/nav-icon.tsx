@@ -73,6 +73,13 @@ const paths: Record<string, React.ReactNode> = {
       <path d="m3 13 9 5 9-5" />
     </>
   ),
+  payments: (
+    <>
+      <path d="M4 7a2 2 0 0 1 2-2h11a1 1 0 0 1 1 1v2" />
+      <path d="M4 7v10a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1H6a2 2 0 0 1-2-2" />
+      <circle cx="16" cy="13.5" r="1.2" />
+    </>
+  ),
   analytics: (
     <>
       <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />

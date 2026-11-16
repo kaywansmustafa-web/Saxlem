@@ -32,7 +32,7 @@ export type OwnerApiPath =
 
 export interface OwnerApiRequest<T> {
   readonly path: OwnerApiPath;
-  readonly method?: "GET" | "POST" | "PATCH" | "DELETE";
+  readonly method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   readonly body?: unknown;
   readonly session?: OwnerSession;
   readonly schema?: ZodType<T>;

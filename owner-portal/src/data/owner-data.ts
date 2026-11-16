@@ -507,3 +507,24 @@ export const safeWindow = (): { from: string; to: string } => {
   to.setUTCDate(to.getUTCDate() + 1);
   return { from: from.toISOString(), to: to.toISOString() };
 };
+
+export const paymentAccountSchema = z
+  .object({
+    organizationId: z.string().uuid(),
+    connected: z.boolean(),
+    provider: z.enum(["fib", "simulated"]).nullable(),
+    environment: z.string().nullable(),
+    clientIdHint: z.string().nullable(),
+    onlineEnabled: z.boolean(),
+    platformOnlineEnabled: z.boolean(),
+    updatedAt: z.string().datetime({ offset: true }).nullable(),
+  })
+  .strict();
+export type PaymentAccount = z.infer<typeof paymentAccountSchema>;
+
+export const paymentAccount = (session: OwnerSession, organizationId: string) =>
+  ownerApi().request({
+    path: `/api/v1/platform/organizations/${encodeURIComponent(organizationId)}/payment-account`,
+    session,
+    schema: paymentAccountSchema,
+  });
