@@ -48,7 +48,9 @@ void main() {
       }
       expect(arabicValue, isNot(contains('????')));
       expect(badiniValue, isNot(contains('????')));
+      // FIB (First Iraqi Bank) is a brand name and appears as in its own app.
       final badiniPresentationText = badiniValue
+          .replaceAll(RegExp(r'\bFIB\b'), '')
           .replaceAll(
             RegExp(r'\{[A-Za-z_][A-Za-z0-9_]*(?:,\s*(?:select|plural))?'),
             '',

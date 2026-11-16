@@ -26,6 +26,8 @@ import '../features/live_queue/data/repositories/live_queue_repository_impl.dart
 import '../features/notifications/domain/repositories/notifications_repository.dart';
 import '../features/notifications/data/repositories/backend_notifications_repository.dart';
 import '../features/notifications/data/stream/authenticated_notification_sse_transport.dart';
+import '../features/payments/data/backend_payments_repository.dart';
+import '../features/payments/domain/payments_repository.dart';
 
 class AppDependencies {
   const AppDependencies({
@@ -39,6 +41,7 @@ class AppDependencies {
     this.arrivalRepository = const UnavailablePatientArrivalRepository(),
     this.liveQueueRepository = const UnavailableLiveQueueRepository(),
     this.notificationsRepository = const UnavailableNotificationsRepository(),
+    this.paymentsRepository = const UnavailablePaymentsRepository(),
     this.developmentOtp,
   });
 
@@ -92,6 +95,7 @@ class AppDependencies {
         authenticatedApi,
       ),
       arrivalRepository: BackendPatientArrivalRepository(authenticatedApi),
+      paymentsRepository: BackendPaymentsRepository(authenticatedApi),
       liveQueueRepository: BackendLiveQueueRepository(authenticatedApi),
       notificationsRepository: BackendNotificationsRepository(
         authenticatedApi,
@@ -112,5 +116,6 @@ class AppDependencies {
   final PatientArrivalRepository arrivalRepository;
   final LiveQueueRepository liveQueueRepository;
   final NotificationsRepository notificationsRepository;
+  final PaymentsRepository paymentsRepository;
   final String? developmentOtp;
 }

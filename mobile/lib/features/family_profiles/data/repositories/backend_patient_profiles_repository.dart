@@ -53,7 +53,7 @@ class BackendPatientProfilesRepository implements PatientProfilesRepository {
         },
       );
       PatientProfileDto.fromJson(response.body);
-      return load();
+      return await load();
     } on ApiFailure catch (failure) {
       final mapped = _mapFailure(failure);
       if (mapped.isTerminalAuthentication) _snapshot = null;

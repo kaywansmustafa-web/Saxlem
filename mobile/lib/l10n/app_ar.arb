@@ -443,12 +443,30 @@
   "recordArrival": "تسجيل الوصول",
   "nextAppointmentTitle": "موعدك القادم",
   "patientsAheadCount": "{count} من المرضى قبلك",
-  "@patientsAheadCount": {"placeholders": {"count": {"type": "int"}}},
+  "@patientsAheadCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "estimatedWaitLong": "وقت الانتظار المتوقع: {minutes} دقيقة",
-  "@estimatedWaitLong": {"placeholders": {"minutes": {"type": "int"}}},
+  "@estimatedWaitLong": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "loadingYourLiveQueue": "جارٍ تحميل قائمة الانتظار المباشرة",
   "queueStatusSemantic": "حالة قائمة الانتظار: {status}",
-  "@queueStatusSemantic": {"placeholders": {"status": {"type": "String"}}},
+  "@queueStatusSemantic": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
   "queueIsLive": "قائمة الانتظار مفتوحة",
   "queueIsPaused": "قائمة الانتظار متوقفة مؤقتًا",
   "queueIsClosed": "قائمة الانتظار مغلقة",
@@ -477,5 +495,44 @@
   "removedFromQueueTitle": "لم تعد في قائمة الانتظار",
   "waitRange": "حوالي {min}–{max} {unit}",
   "doctorLabel": "الطبيب",
-  "familyMembersTitle": "أفراد العائلة"
+  "familyMembersTitle": "أفراد العائلة",
+  "paymentHowToPay": "كيف تريد الدفع؟",
+  "paymentAtCounterTitle": "الدفع في العيادة",
+  "paymentAtCounterBody": "ادفع لموظف الاستقبال عند وصولك.",
+  "paymentOnlineTitle": "ادفع الآن عبر التطبيق",
+  "paymentOnlineBody": "ادفع بأمان من تطبيق FIB ولا تنتظر عند الاستقبال.",
+  "paymentOnlineUnavailable": "هذه العيادة تقبل الدفع في العيادة فقط حالياً.",
+  "paymentRecommended": "الأسرع",
+  "paymentConfirmAndPay": "تأكيد والدفع",
+  "paymentTitle": "الدفع",
+  "paymentAmountDue": "المبلغ المطلوب",
+  "paymentOpenFib": "افتح FIB للدفع",
+  "paymentOrUseCode": "أو أدخل هذا الرمز في تطبيق FIB",
+  "paymentScanQr": "تدفع من هاتف آخر؟ امسح هذا الرمز.",
+  "paymentWaiting": "بانتظار دفعتك…",
+  "paymentWaitingBody": "وافق على الدفع في FIB ثم عد إلى هنا. تتحدث هذه الشاشة تلقائياً.",
+  "paymentPaidTitle": "تم استلام الدفعة",
+  "paymentPaidBody": "كل شيء جاهز. لا يوجد ما تدفعه في العيادة.",
+  "paymentExpiredTitle": "لم تكتمل هذه الدفعة",
+  "paymentExpiredBody": "ابدأ دفعة جديدة أو ادفع في العيادة. موعدك ما زال محجوزاً.",
+  "paymentTryAgain": "بدء دفعة جديدة",
+  "paymentSwitchToCounter": "الدفع في العيادة بدلاً من ذلك",
+  "paymentLater": "سأدفع لاحقاً",
+  "paymentStatusDueAtCounter": "الدفع في العيادة",
+  "paymentStatusPending": "الدفع قيد الانتظار",
+  "paymentStatusPaid": "مدفوع",
+  "paymentStatusRefunded": "تم الاسترداد",
+  "paymentStatusRefundPending": "الاسترداد قيد التنفيذ",
+  "paymentStatusRefundFailed": "ستعيد العيادة المبلغ إليك",
+  "paymentStatusExpired": "لم يكتمل الدفع",
+  "paymentStatusVoid": "لا يوجد ما تدفعه",
+  "paymentPayNow": "ادفع الآن",
+  "paymentProblemOffline": "أنت غير متصل. تحقق من الاتصال وحاول مجدداً.",
+  "paymentProblemUnavailable": "الدفع عبر التطبيق غير متاح الآن. يمكنك الدفع في العيادة.",
+  "paymentProblemNotAccepted": "لا يمكن تغيير هذه الدفعة الآن.",
+  "paymentProblemGeneric": "حدث خطأ في الدفع. موعدك ما زال محجوزاً.",
+  "paymentCodeCopied": "تم نسخ الرمز",
+  "paymentBookedPayNext": "تم الحجز! خطوة أخيرة: ادفع ثمن زيارتك.",
+  "paymentSecureNote": "تذهب أموالك مباشرة إلى حساب العيادة المصرفي. لا يرى ساخلەم بياناتك المصرفية أبداً.",
+  "paymentLinkValidUntil": "الرابط صالح حتى {time}"
 }

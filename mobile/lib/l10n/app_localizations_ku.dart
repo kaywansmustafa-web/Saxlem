@@ -822,7 +822,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get discoveryErrorBody => 'دیسان هەول بدە.';
 
   @override
-  String get discoveryAuthTitle => 'بچۆ ژوور بۆ دیتنا نوژداران';
+  String get discoveryAuthTitle => 'چوونا ژوور بۆ دیتنا نوژداران';
 
   @override
   String get discoveryAuthBody =>
@@ -911,7 +911,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get loadMore => 'پتر بار بکە';
 
   @override
-  String get loadingMoreAppointments => 'ژڤانێن پتر دهێنە بارکرن…';
+  String get loadingMoreAppointments => 'ژڤانێن پتر دهێنە بارکرن...';
 
   @override
   String get appointmentTimeout =>
@@ -1078,4 +1078,132 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get familyMembersTitle => 'ئەندامێن خێزانێ';
+
+  @override
+  String get paymentHowToPay => 'دێ چاوا پارەی دەی؟';
+
+  @override
+  String get paymentAtCounterTitle => 'پارەدان ل کلینیکێ';
+
+  @override
+  String get paymentAtCounterBody => 'دەمێ دگەهیە کلینیکێ پارەی بدە پێشوازیێ.';
+
+  @override
+  String get paymentOnlineTitle => 'نوکە ب ئەپێ پارەی بدە';
+
+  @override
+  String get paymentOnlineBody =>
+      'ب ئەپێ FIB ب پارێزراوی پارەی بدە و ل بەر پێشوازیێ نەراوەستە.';
+
+  @override
+  String get paymentOnlineUnavailable =>
+      'ئەڤ کلینیکە نوکە تنێ پارەدانا ل کلینیکێ وەردگریت.';
+
+  @override
+  String get paymentRecommended => 'یێ هەری لەز';
+
+  @override
+  String get paymentConfirmAndPay => 'پشتراست بکە و پارەی بدە';
+
+  @override
+  String get paymentTitle => 'پارەدان';
+
+  @override
+  String get paymentAmountDue => 'بڕێ پارەی';
+
+  @override
+  String get paymentOpenFib => 'FIB ڤەکە بۆ پارەدانێ';
+
+  @override
+  String get paymentOrUseCode => 'یان ڤی کۆدی د ئەپێ FIB دا بنڤیسە';
+
+  @override
+  String get paymentScanQr => 'ژ مۆبایلەکێ دی پارەی ددەی؟ ڤی کۆدی سکان بکە.';
+
+  @override
+  String get paymentWaiting => 'چاڤەڕێی پارەدانا تەینە...';
+
+  @override
+  String get paymentWaitingBody =>
+      'پارەدانێ د FIB دا قەبویل بکە و ڤەگەڕە. ئەڤ پەڕە ب خۆ نوی دبیت.';
+
+  @override
+  String get paymentPaidTitle => 'پارە گەهشت';
+
+  @override
+  String get paymentPaidBody => 'هەمی ب رێکە. چ پارە ل کلینیکێ نینن بدەی.';
+
+  @override
+  String get paymentExpiredTitle => 'ئەڤ پارەدانە ب دووماهی نەهات';
+
+  @override
+  String get paymentExpiredBody =>
+      'پارەدانەکا نوی دەستپێبکە یان ل کلینیکێ پارەی بدە. ژڤانا تە هێشتا یا گرتییە.';
+
+  @override
+  String get paymentTryAgain => 'پارەدانەکا نوی دەستپێبکە';
+
+  @override
+  String get paymentSwitchToCounter => 'ل شوینێ ل کلینیکێ پارەی بدە';
+
+  @override
+  String get paymentLater => 'پاشی دێ پارەی دەم';
+
+  @override
+  String get paymentStatusDueAtCounter => 'پارەدان ل کلینیکێ';
+
+  @override
+  String get paymentStatusPending => 'پارەدان ل چاڤەڕێیێ';
+
+  @override
+  String get paymentStatusPaid => 'پارە هاتیە دان';
+
+  @override
+  String get paymentStatusRefunded => 'پارە زڤڕی';
+
+  @override
+  String get paymentStatusRefundPending => 'زڤڕاندنا پارەی ل رێیێ';
+
+  @override
+  String get paymentStatusRefundFailed => 'کلینیک دێ پارەی بۆ تە زڤڕینیت';
+
+  @override
+  String get paymentStatusExpired => 'پارەدان ب دووماهی نەهات';
+
+  @override
+  String get paymentStatusVoid => 'چ پارە نینن';
+
+  @override
+  String get paymentPayNow => 'نوکە پارەی بدە';
+
+  @override
+  String get paymentProblemOffline =>
+      'تو نە د سەرهێلێ دای. پەیوەندیا خو بپشکنە و دیسان هەول بدە.';
+
+  @override
+  String get paymentProblemUnavailable =>
+      'پارەدان ب ئەپێ نوکە نینە. دشێی ل کلینیکێ پارەی بدەی.';
+
+  @override
+  String get paymentProblemNotAccepted => 'ئەڤ پارەدانە نوکە ناهێتە گوهۆڕین.';
+
+  @override
+  String get paymentProblemGeneric =>
+      'تشتەک د پارەدانێ دا خەلەت چوو. ژڤانا تە هێشتا یا گرتییە.';
+
+  @override
+  String get paymentCodeCopied => 'کۆد هاتە کۆپیکرن';
+
+  @override
+  String get paymentBookedPayNext =>
+      'هاتە گرتن! پێنگاڤا دووماهیێ: پارەیێ سەرەدانا خو بدە.';
+
+  @override
+  String get paymentSecureNote =>
+      'پارێ تە راستەوخۆ دچیتە هەژمارا بانکێ یا کلینیکێ. ساخلەم چو جاران زانیاریێن بانکا تە نابینیت.';
+
+  @override
+  String paymentLinkValidUntil(String time) {
+    return 'لینک تا $time دەربازە';
+  }
 }

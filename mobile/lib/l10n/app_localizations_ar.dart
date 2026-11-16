@@ -1065,4 +1065,130 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get familyMembersTitle => 'أفراد العائلة';
+
+  @override
+  String get paymentHowToPay => 'كيف تريد الدفع؟';
+
+  @override
+  String get paymentAtCounterTitle => 'الدفع في العيادة';
+
+  @override
+  String get paymentAtCounterBody => 'ادفع لموظف الاستقبال عند وصولك.';
+
+  @override
+  String get paymentOnlineTitle => 'ادفع الآن عبر التطبيق';
+
+  @override
+  String get paymentOnlineBody =>
+      'ادفع بأمان من تطبيق FIB ولا تنتظر عند الاستقبال.';
+
+  @override
+  String get paymentOnlineUnavailable =>
+      'هذه العيادة تقبل الدفع في العيادة فقط حالياً.';
+
+  @override
+  String get paymentRecommended => 'الأسرع';
+
+  @override
+  String get paymentConfirmAndPay => 'تأكيد والدفع';
+
+  @override
+  String get paymentTitle => 'الدفع';
+
+  @override
+  String get paymentAmountDue => 'المبلغ المطلوب';
+
+  @override
+  String get paymentOpenFib => 'افتح FIB للدفع';
+
+  @override
+  String get paymentOrUseCode => 'أو أدخل هذا الرمز في تطبيق FIB';
+
+  @override
+  String get paymentScanQr => 'تدفع من هاتف آخر؟ امسح هذا الرمز.';
+
+  @override
+  String get paymentWaiting => 'بانتظار دفعتك…';
+
+  @override
+  String get paymentWaitingBody =>
+      'وافق على الدفع في FIB ثم عد إلى هنا. تتحدث هذه الشاشة تلقائياً.';
+
+  @override
+  String get paymentPaidTitle => 'تم استلام الدفعة';
+
+  @override
+  String get paymentPaidBody => 'كل شيء جاهز. لا يوجد ما تدفعه في العيادة.';
+
+  @override
+  String get paymentExpiredTitle => 'لم تكتمل هذه الدفعة';
+
+  @override
+  String get paymentExpiredBody =>
+      'ابدأ دفعة جديدة أو ادفع في العيادة. موعدك ما زال محجوزاً.';
+
+  @override
+  String get paymentTryAgain => 'بدء دفعة جديدة';
+
+  @override
+  String get paymentSwitchToCounter => 'الدفع في العيادة بدلاً من ذلك';
+
+  @override
+  String get paymentLater => 'سأدفع لاحقاً';
+
+  @override
+  String get paymentStatusDueAtCounter => 'الدفع في العيادة';
+
+  @override
+  String get paymentStatusPending => 'الدفع قيد الانتظار';
+
+  @override
+  String get paymentStatusPaid => 'مدفوع';
+
+  @override
+  String get paymentStatusRefunded => 'تم الاسترداد';
+
+  @override
+  String get paymentStatusRefundPending => 'الاسترداد قيد التنفيذ';
+
+  @override
+  String get paymentStatusRefundFailed => 'ستعيد العيادة المبلغ إليك';
+
+  @override
+  String get paymentStatusExpired => 'لم يكتمل الدفع';
+
+  @override
+  String get paymentStatusVoid => 'لا يوجد ما تدفعه';
+
+  @override
+  String get paymentPayNow => 'ادفع الآن';
+
+  @override
+  String get paymentProblemOffline =>
+      'أنت غير متصل. تحقق من الاتصال وحاول مجدداً.';
+
+  @override
+  String get paymentProblemUnavailable =>
+      'الدفع عبر التطبيق غير متاح الآن. يمكنك الدفع في العيادة.';
+
+  @override
+  String get paymentProblemNotAccepted => 'لا يمكن تغيير هذه الدفعة الآن.';
+
+  @override
+  String get paymentProblemGeneric => 'حدث خطأ في الدفع. موعدك ما زال محجوزاً.';
+
+  @override
+  String get paymentCodeCopied => 'تم نسخ الرمز';
+
+  @override
+  String get paymentBookedPayNext => 'تم الحجز! خطوة أخيرة: ادفع ثمن زيارتك.';
+
+  @override
+  String get paymentSecureNote =>
+      'تذهب أموالك مباشرة إلى حساب العيادة المصرفي. لا يرى ساخلەم بياناتك المصرفية أبداً.';
+
+  @override
+  String paymentLinkValidUntil(String time) {
+    return 'الرابط صالح حتى $time';
+  }
 }

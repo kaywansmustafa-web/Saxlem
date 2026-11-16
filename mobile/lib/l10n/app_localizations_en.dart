@@ -1105,4 +1105,133 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get familyMembersTitle => 'Family members';
+
+  @override
+  String get paymentHowToPay => 'How would you like to pay?';
+
+  @override
+  String get paymentAtCounterTitle => 'Pay at the clinic';
+
+  @override
+  String get paymentAtCounterBody => 'Pay the receptionist when you arrive.';
+
+  @override
+  String get paymentOnlineTitle => 'Pay now in the app';
+
+  @override
+  String get paymentOnlineBody =>
+      'Pay securely with your FIB app and skip the counter.';
+
+  @override
+  String get paymentOnlineUnavailable =>
+      'This clinic takes payment at the clinic only for now.';
+
+  @override
+  String get paymentRecommended => 'Fastest';
+
+  @override
+  String get paymentConfirmAndPay => 'Confirm and pay';
+
+  @override
+  String get paymentTitle => 'Payment';
+
+  @override
+  String get paymentAmountDue => 'Amount to pay';
+
+  @override
+  String get paymentOpenFib => 'Open FIB to pay';
+
+  @override
+  String get paymentOrUseCode => 'Or enter this code in your FIB app';
+
+  @override
+  String get paymentScanQr => 'Paying from another phone? Scan this code.';
+
+  @override
+  String get paymentWaiting => 'Waiting for your payment…';
+
+  @override
+  String get paymentWaitingBody =>
+      'Approve the payment in FIB, then come back. This screen updates on its own.';
+
+  @override
+  String get paymentPaidTitle => 'Payment received';
+
+  @override
+  String get paymentPaidBody =>
+      'You\'re all set. There\'s nothing to pay at the clinic.';
+
+  @override
+  String get paymentExpiredTitle => 'This payment wasn\'t completed';
+
+  @override
+  String get paymentExpiredBody =>
+      'Start a new payment, or pay at the clinic. Your appointment is still booked.';
+
+  @override
+  String get paymentTryAgain => 'Start a new payment';
+
+  @override
+  String get paymentSwitchToCounter => 'Pay at the clinic instead';
+
+  @override
+  String get paymentLater => 'I\'ll pay later';
+
+  @override
+  String get paymentStatusDueAtCounter => 'Pay at clinic';
+
+  @override
+  String get paymentStatusPending => 'Payment pending';
+
+  @override
+  String get paymentStatusPaid => 'Paid';
+
+  @override
+  String get paymentStatusRefunded => 'Refunded';
+
+  @override
+  String get paymentStatusRefundPending => 'Refund in progress';
+
+  @override
+  String get paymentStatusRefundFailed => 'Clinic will refund you';
+
+  @override
+  String get paymentStatusExpired => 'Payment not completed';
+
+  @override
+  String get paymentStatusVoid => 'Nothing to pay';
+
+  @override
+  String get paymentPayNow => 'Pay now';
+
+  @override
+  String get paymentProblemOffline =>
+      'You\'re offline. Check your connection and try again.';
+
+  @override
+  String get paymentProblemUnavailable =>
+      'Online payment is unavailable right now. You can pay at the clinic.';
+
+  @override
+  String get paymentProblemNotAccepted => 'This payment can\'t be changed now.';
+
+  @override
+  String get paymentProblemGeneric =>
+      'Something went wrong with the payment. Your appointment is still booked.';
+
+  @override
+  String get paymentCodeCopied => 'Code copied';
+
+  @override
+  String get paymentBookedPayNext =>
+      'Booked! One last step: pay for your visit.';
+
+  @override
+  String get paymentSecureNote =>
+      'Your money goes straight to the clinic\'s bank account. Saxlem never sees your bank details.';
+
+  @override
+  String paymentLinkValidUntil(String time) {
+    return 'Link valid until $time';
+  }
 }

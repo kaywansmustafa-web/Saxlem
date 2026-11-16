@@ -26,7 +26,7 @@ class AppController extends ChangeNotifier {
   AuthSession session = const AuthSession.initializing();
   bool guestMode = false;
 
-  static const minimumSplashDuration = Duration(milliseconds: 1200);
+  static const minimumSplashDuration = Duration(milliseconds: 2000);
 
   Future<void> load() async {
     final startedAt = DateTime.now();

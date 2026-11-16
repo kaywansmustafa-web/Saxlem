@@ -1,3 +1,5 @@
+import 'features/payments/domain/payments_repository.dart';
+import 'features/payments/payments_scope.dart';
 import 'package:flutter/material.dart';
 
 import 'config/theme/app_theme.dart';
@@ -56,6 +58,7 @@ void main() {
       arrivalRepository: dependencies.arrivalRepository,
       liveQueueRepository: dependencies.liveQueueRepository,
       notificationsRepository: dependencies.notificationsRepository,
+      paymentsRepository: dependencies.paymentsRepository,
     ),
   );
 }
@@ -74,8 +77,10 @@ class SaxlemApp extends StatelessWidget {
     this.arrivalRepository = const UnavailablePatientArrivalRepository(),
     this.liveQueueRepository = const UnavailableLiveQueueRepository(),
     this.notificationsRepository = const UnavailableNotificationsRepository(),
+    this.paymentsRepository = const UnavailablePaymentsRepository(),
     super.key,
   });
+  final PaymentsRepository paymentsRepository;
   final LocaleRepository? localeRepository;
   final AuthRepository authRepository;
   final String? developmentOtp;
@@ -89,17 +94,21 @@ class SaxlemApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _AppBootstrap(
-      localeRepository: localeRepository ?? SharedPreferencesLocaleRepository(),
-      authRepository: authRepository,
-      developmentOtp: developmentOtp,
-      patientProfilesRepository: patientProfilesRepository,
-      doctorDiscoveryRepository: doctorDiscoveryRepository,
-      bookingRepository: bookingRepository,
-      appointmentsRepository: appointmentsRepository,
-      arrivalRepository: arrivalRepository,
-      liveQueueRepository: liveQueueRepository,
-      notificationsRepository: notificationsRepository,
+    return PaymentsScope(
+      repository: paymentsRepository,
+      child: _AppBootstrap(
+        localeRepository:
+            localeRepository ?? SharedPreferencesLocaleRepository(),
+        authRepository: authRepository,
+        developmentOtp: developmentOtp,
+        patientProfilesRepository: patientProfilesRepository,
+        doctorDiscoveryRepository: doctorDiscoveryRepository,
+        bookingRepository: bookingRepository,
+        appointmentsRepository: appointmentsRepository,
+        arrivalRepository: arrivalRepository,
+        liveQueueRepository: liveQueueRepository,
+        notificationsRepository: notificationsRepository,
+      ),
     );
   }
 }

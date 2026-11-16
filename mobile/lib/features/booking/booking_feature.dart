@@ -5,6 +5,7 @@ import 'domain/services/booking_operation_id.dart';
 import 'presentation/controllers/booking_controller.dart';
 import 'presentation/pages/booking_flow_page.dart';
 import '../family_profiles/presentation/controllers/patient_profiles_controller.dart';
+import '../payments/payments_scope.dart';
 
 class BookingFeature extends StatefulWidget {
   const BookingFeature({
@@ -30,6 +31,7 @@ class _BookingFeatureState extends State<BookingFeature> {
       repository: widget.repository,
       operationIds: SecureBookingOperationIdGenerator(),
       profileId: widget.profilesController.activeProfileId,
+      payments: PaymentsScope.read(context),
     )..load();
     widget.profilesController.addListener(_profileChanged);
   }

@@ -26,7 +26,7 @@
   "openSearchFilters": "Open search filters",
   "liveQueue": "Live queue",
   "live": "LIVE",
-  "currentPatient": "Current patient",
+  "currentPatient": "Current Patient",
   "yourNumber": "Your Number",
   "patientsAhead": "Patients ahead",
   "estimatedWait": "Estimated wait",
@@ -66,7 +66,13 @@
   "bookingUnknownOutcome": "We could not confirm the result. Do not submit another booking until you retry this request.",
   "bookingSuccessful": "Your appointment is booked.",
   "appointmentReferenceValue": "Appointment reference {reference}",
-  "@appointmentReferenceValue": {"placeholders": {"reference": {"type": "String"}}},
+  "@appointmentReferenceValue": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
   "reviewAppointment": "Review appointment",
   "confirmAppointment": "Confirm appointment",
   "confirmingAppointment": "Confirming appointment",
@@ -105,17 +111,56 @@
   "loadingAppointments": "Loading your appointments",
   "appointmentsLoadFailed": "We could not load your appointments.",
   "consultationMinutes": "{minutes} min consultation",
-  "@consultationMinutes": {"placeholders": {"minutes": {"type": "int"}}},
+  "@consultationMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "estimatedWaitMinutes": "Estimated wait: {minutes} min",
-  "@estimatedWaitMinutes": {"placeholders": {"minutes": {"type": "int"}}},
+  "@estimatedWaitMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "tabWithCount": "{label} ({count})",
-  "@tabWithCount": {"placeholders": {"label": {"type": "String"}, "count": {"type": "int"}}},
+  "@tabWithCount": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "minutesLong": "{minutes} minutes",
-  "@minutesLong": {"placeholders": {"minutes": {"type": "int"}}},
+  "@minutesLong": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "iqdAmount": "{amount} IQD",
-  "@iqdAmount": {"placeholders": {"amount": {"type": "int"}}},
+  "@iqdAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
   "appointmentIdValue": "Appointment ID {id}",
-  "@appointmentIdValue": {"placeholders": {"id": {"type": "String"}}},
+  "@appointmentIdValue": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "informationalScreen": "Informational screen",
   "welcomeTitle": "Healthcare, made clearer",
   "welcomeBody": "Saxlem brings trusted care, appointments, and live clinic updates into one calm experience.",
@@ -137,14 +182,26 @@
   "sendCode": "Send code",
   "otpTitle": "Enter your code",
   "otpBody": "We sent a 6-digit code to {phone}.",
-  "@otpBody": {"placeholders": {"phone": {"type": "String"}}},
+  "@otpBody": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
   "otpLabel": "6-digit verification code",
   "otpHint": "Enter 6 digits",
   "verify": "Verify and continue",
   "changeNumber": "Change number",
   "resendCode": "Resend code",
   "resendIn": "Resend in {seconds}s",
-  "@resendIn": {"placeholders": {"seconds": {"type": "int"}}},
+  "@resendIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "otpInvalid": "That code is not correct. Please try again.",
   "otpExpired": "This code has expired. Request a new one.",
   "otpLimited": "Too many attempts. Please request a new code.",
@@ -152,7 +209,13 @@
   "sessionExpiredTitle": "Your session has expired",
   "sessionExpiredBody": "Verify your number again to continue securely.",
   "developmentCodeHint": "Development code: {code}",
-  "@developmentCodeHint": {"placeholders": {"code": {"type": "String"}}},
+  "@developmentCodeHint": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "logOut": "Log out",
   "personalizedFeatureTitle": "Verification required",
   "personalizedFeatureBody": "Sign in with your mobile number to use appointments and other personalized care features.",
@@ -161,9 +224,21 @@
   "today": "Today",
   "earlier": "Earlier",
   "unreadNotifications": "{count} unread",
-  "@unreadNotifications": {"placeholders": {"count": {"type": "int"}}},
+  "@unreadNotifications": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "notificationUpdates": "{count} queue updates",
-  "@notificationUpdates": {"placeholders": {"count": {"type": "int"}}},
+  "@notificationUpdates": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "notificationDetails": "Notification details",
   "queueUpdates": "Queue updates",
   "whatHappened": "What happened",
@@ -177,17 +252,35 @@
   "notificationsUnavailableBody": "We couldn't load your updates. Please try again.",
   "notificationBookingConfirmed": "Appointment confirmed",
   "notificationBookingHappened": "Your appointment with {doctor} is confirmed.",
-  "@notificationBookingHappened": {"placeholders": {"doctor": {"type": "String"}}},
+  "@notificationBookingHappened": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
   "notificationBookingWhy": "The clinic accepted your booking request.",
   "notificationBookingNext": "Review the appointment details and arrive at the recommended time.",
   "notificationQueueOpened": "Your queue is open",
   "notificationQueueOpenedHappened": "The live queue for {doctor} is now available.",
-  "@notificationQueueOpenedHappened": {"placeholders": {"doctor": {"type": "String"}}},
+  "@notificationQueueOpenedHappened": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
   "notificationQueueOpenedWhy": "The clinic has started today's patient queue.",
   "notificationQueueOpenedNext": "Open Live Queue when you are ready to follow your place.",
   "notificationAlmostTurn": "You're almost next",
   "notificationAlmostTurnHappened": "Your current number is {number}.",
-  "@notificationAlmostTurnHappened": {"placeholders": {"number": {"type": "int"}}},
+  "@notificationAlmostTurnHappened": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "notificationAlmostTurnWhy": "The queue has moved closer to your turn.",
   "notificationAlmostTurnNext": "Please head to reception and stay nearby.",
   "notificationWelcome": "Welcome to Saxlem",
@@ -203,10 +296,22 @@
   "notificationGeneralNext": "Review the update and follow any instructions shown.",
   "notificationTimeJustNow": "Updated just now",
   "notificationTimeMinutesAgo": "Updated {minutes} minutes ago",
-  "@notificationTimeMinutesAgo": {"placeholders": {"minutes": {"type": "int"}}},
+  "@notificationTimeMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "notificationTimeEarlier": "Updated earlier",
-  "currentPatient": "Current Patient", "choosePatient": "Choose Patient", "bookingFor": "Booking For", "addPatient": "Add family member",
-  "firstName": "First name", "lastName": "Last name", "relationship": "Relationship", "gender": "Gender", "dateOfBirth": "Date of birth",
+  "choosePatient": "Choose Patient",
+  "bookingFor": "Booking For",
+  "addPatient": "Add family member",
+  "firstName": "First name",
+  "lastName": "Last name",
+  "relationship": "Relationship",
+  "gender": "Gender",
+  "dateOfBirth": "Date of birth",
   "patientRelationship": "{relationship, select, mother {Mother} father {Father} wife {Wife} husband {Husband} son {Son} daughter {Daughter} brother {Brother} sister {Sister} grandfather {Grandfather} grandmother {Grandmother} me {Me} other {Other}}",
   "patientGender": "{gender, select, female {Female} male {Male} other {Not specified}}",
   "loadingPatientAccount": "Loading your patient account",
@@ -234,7 +339,13 @@
   "anyOption": "Any",
   "appliedFilters": "Applied filters",
   "doctorResults": "{count, plural, =0 {No doctors} =1 {1 doctor} other {{count} doctors}}",
-  "@doctorResults": {"placeholders": {"count": {"type": "int"}}},
+  "@doctorResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "noDoctorsTitle": "No doctors found",
   "noDoctorsBody": "Try another doctor name.",
   "noDoctorsFilteredBody": "Try removing one or more filters.",
@@ -256,7 +367,13 @@
   "doctorNotFound": "Doctor not found",
   "doctorNotFoundBody": "This doctor profile is no longer available.",
   "yearsExperience": "{years, plural, =0 {New to practice} =1 {1 year of experience} other {{years} years of experience}}",
-  "@yearsExperience": {"placeholders": {"years": {"type": "int"}}},
+  "@yearsExperience": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
   "genderFemale": "Female",
   "genderMale": "Male",
   "genderUnspecified": "Not specified",
@@ -270,13 +387,37 @@
   "acceptingNewPatients": "Accepting new patients",
   "notAcceptingNewPatients": "Not accepting new patients",
   "profileImageLabel": "Profile image for {name}",
-  "@profileImageLabel": {"placeholders": {"name": {"type": "String"}}},
+  "@profileImageLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "profileImageFallback": "No profile image for {name}",
-  "@profileImageFallback": {"placeholders": {"name": {"type": "String"}}},
+  "@profileImageFallback": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "viewDoctorProfile": "View profile for {name}",
-  "@viewDoctorProfile": {"placeholders": {"name": {"type": "String"}}},
+  "@viewDoctorProfile": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "removeAppliedFilter": "Remove {label} filter",
-  "@removeAppliedFilter": {"placeholders": {"label": {"type": "String"}}},
+  "@removeAppliedFilter": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
   "bookingComingSoon": "Booking will be available in the next release.",
   "scheduled": "Scheduled",
   "confirmed": "Confirmed",
@@ -302,12 +443,30 @@
   "recordArrival": "Record arrival",
   "nextAppointmentTitle": "Your next appointment",
   "patientsAheadCount": "{count} patients ahead",
-  "@patientsAheadCount": {"placeholders": {"count": {"type": "int"}}},
+  "@patientsAheadCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "estimatedWaitLong": "Estimated wait: {minutes} minutes",
-  "@estimatedWaitLong": {"placeholders": {"minutes": {"type": "int"}}},
+  "@estimatedWaitLong": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "loadingYourLiveQueue": "Loading your live queue",
   "queueStatusSemantic": "Queue status: {status}",
-  "@queueStatusSemantic": {"placeholders": {"status": {"type": "String"}}},
+  "@queueStatusSemantic": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
   "queueIsLive": "Queue is live",
   "queueIsPaused": "Queue is paused",
   "queueIsClosed": "Queue is closed",
@@ -324,31 +483,120 @@
   "queueClosedTitle": "This queue has closed",
   "queueClosedBody": "For assistance with your appointment, please contact reception.",
   "itsYourTurn": "It's your turn",
-  "@itsYourTurn": {"description": "Shown on the live ticket when the clinic calls the patient's number."},
+  "@itsYourTurn": {
+    "description": "Shown on the live ticket when the clinic calls the patient's number."
+  },
   "aheadShort": "ahead",
-  "@aheadShort": {"description": "Under the count of patients ahead, inside the progress ring."},
+  "@aheadShort": {
+    "description": "Under the count of patients ahead, inside the progress ring."
+  },
   "queueStepBooked": "Booked",
-  "@queueStepBooked": {"description": "Live ticket progress step 1."},
+  "@queueStepBooked": {
+    "description": "Live ticket progress step 1."
+  },
   "queueStepArrived": "Arrived",
-  "@queueStepArrived": {"description": "Live ticket progress step 2."},
+  "@queueStepArrived": {
+    "description": "Live ticket progress step 2."
+  },
   "queueStepWaiting": "Waiting",
-  "@queueStepWaiting": {"description": "Live ticket progress step 3."},
+  "@queueStepWaiting": {
+    "description": "Live ticket progress step 3."
+  },
   "queueStepYourTurn": "Your turn",
-  "@queueStepYourTurn": {"description": "Live ticket progress step 4."},
+  "@queueStepYourTurn": {
+    "description": "Live ticket progress step 4."
+  },
   "withDoctorTitle": "You're with the doctor",
-  "@withDoctorTitle": {"description": "Live ticket title during the consultation."},
+  "@withDoctorTitle": {
+    "description": "Live ticket title during the consultation."
+  },
   "visitCompleteTitle": "Visit complete",
-  "@visitCompleteTitle": {"description": "Live ticket title after the consultation."},
+  "@visitCompleteTitle": {
+    "description": "Live ticket title after the consultation."
+  },
   "calledNoResponseTitle": "We called your number",
-  "@calledNoResponseTitle": {"description": "Live ticket title when the patient was called but did not respond."},
+  "@calledNoResponseTitle": {
+    "description": "Live ticket title when the patient was called but did not respond."
+  },
   "notCheckedInTitle": "You're booked for today",
-  "@notCheckedInTitle": {"description": "Live ticket title before the patient has arrived at the clinic."},
+  "@notCheckedInTitle": {
+    "description": "Live ticket title before the patient has arrived at the clinic."
+  },
   "removedFromQueueTitle": "You're no longer in this queue",
-  "@removedFromQueueTitle": {"description": "Live ticket title when the clinic removed the entry."},
+  "@removedFromQueueTitle": {
+    "description": "Live ticket title when the clinic removed the entry."
+  },
   "waitRange": "About {min}–{max} {unit}",
-  "@waitRange": {"description": "Estimated wait as a range.", "placeholders": {"min": {"type": "int"}, "max": {"type": "int"}, "unit": {"type": "String"}}},
+  "@waitRange": {
+    "description": "Estimated wait as a range.",
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
   "doctorLabel": "Doctor",
-  "@doctorLabel": {"description": "Row label for the doctor on the booking review."},
+  "@doctorLabel": {
+    "description": "Row label for the doctor on the booking review."
+  },
   "familyMembersTitle": "Family members",
-  "@familyMembersTitle": {"description": "Section title on the profile tab listing the patient profiles."}
+  "@familyMembersTitle": {
+    "description": "Section title on the profile tab listing the patient profiles."
+  },
+  "paymentHowToPay": "How would you like to pay?",
+  "paymentAtCounterTitle": "Pay at the clinic",
+  "paymentAtCounterBody": "Pay the receptionist when you arrive.",
+  "paymentOnlineTitle": "Pay now in the app",
+  "paymentOnlineBody": "Pay securely with your FIB app and skip the counter.",
+  "paymentOnlineUnavailable": "This clinic takes payment at the clinic only for now.",
+  "paymentRecommended": "Fastest",
+  "paymentConfirmAndPay": "Confirm and pay",
+  "paymentTitle": "Payment",
+  "paymentAmountDue": "Amount to pay",
+  "paymentOpenFib": "Open FIB to pay",
+  "paymentOrUseCode": "Or enter this code in your FIB app",
+  "paymentScanQr": "Paying from another phone? Scan this code.",
+  "paymentWaiting": "Waiting for your payment…",
+  "paymentWaitingBody": "Approve the payment in FIB, then come back. This screen updates on its own.",
+  "paymentPaidTitle": "Payment received",
+  "paymentPaidBody": "You're all set. There's nothing to pay at the clinic.",
+  "paymentExpiredTitle": "This payment wasn't completed",
+  "paymentExpiredBody": "Start a new payment, or pay at the clinic. Your appointment is still booked.",
+  "paymentTryAgain": "Start a new payment",
+  "paymentSwitchToCounter": "Pay at the clinic instead",
+  "paymentLater": "I'll pay later",
+  "paymentStatusDueAtCounter": "Pay at clinic",
+  "paymentStatusPending": "Payment pending",
+  "paymentStatusPaid": "Paid",
+  "paymentStatusRefunded": "Refunded",
+  "paymentStatusRefundPending": "Refund in progress",
+  "paymentStatusRefundFailed": "Clinic will refund you",
+  "paymentStatusExpired": "Payment not completed",
+  "paymentStatusVoid": "Nothing to pay",
+  "paymentPayNow": "Pay now",
+  "paymentProblemOffline": "You're offline. Check your connection and try again.",
+  "paymentProblemUnavailable": "Online payment is unavailable right now. You can pay at the clinic.",
+  "paymentProblemNotAccepted": "This payment can't be changed now.",
+  "paymentProblemGeneric": "Something went wrong with the payment. Your appointment is still booked.",
+  "paymentCodeCopied": "Code copied",
+  "paymentBookedPayNext": "Booked! One last step: pay for your visit.",
+  "paymentSecureNote": "Your money goes straight to the clinic's bank account. Saxlem never sees your bank details.",
+  "paymentLinkValidUntil": "Link valid until {time}",
+  "@paymentLinkValidUntil": {
+    "description": "Shown under the online payment code.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@paymentOnlineBody": {
+    "description": "FIB is First Iraqi Bank's app; keep the name as is."
+  }
 }

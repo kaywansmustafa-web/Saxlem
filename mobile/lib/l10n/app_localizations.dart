@@ -2007,6 +2007,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Family members'**
   String get familyMembersTitle;
+
+  /// No description provided for @paymentHowToPay.
+  ///
+  /// In en, this message translates to:
+  /// **'How would you like to pay?'**
+  String get paymentHowToPay;
+
+  /// No description provided for @paymentAtCounterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay at the clinic'**
+  String get paymentAtCounterTitle;
+
+  /// No description provided for @paymentAtCounterBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay the receptionist when you arrive.'**
+  String get paymentAtCounterBody;
+
+  /// No description provided for @paymentOnlineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay now in the app'**
+  String get paymentOnlineTitle;
+
+  /// FIB is First Iraqi Bank's app; keep the name as is.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay securely with your FIB app and skip the counter.'**
+  String get paymentOnlineBody;
+
+  /// No description provided for @paymentOnlineUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This clinic takes payment at the clinic only for now.'**
+  String get paymentOnlineUnavailable;
+
+  /// No description provided for @paymentRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Fastest'**
+  String get paymentRecommended;
+
+  /// No description provided for @paymentConfirmAndPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm and pay'**
+  String get paymentConfirmAndPay;
+
+  /// No description provided for @paymentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get paymentTitle;
+
+  /// No description provided for @paymentAmountDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount to pay'**
+  String get paymentAmountDue;
+
+  /// No description provided for @paymentOpenFib.
+  ///
+  /// In en, this message translates to:
+  /// **'Open FIB to pay'**
+  String get paymentOpenFib;
+
+  /// No description provided for @paymentOrUseCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Or enter this code in your FIB app'**
+  String get paymentOrUseCode;
+
+  /// No description provided for @paymentScanQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Paying from another phone? Scan this code.'**
+  String get paymentScanQr;
+
+  /// No description provided for @paymentWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for your payment…'**
+  String get paymentWaiting;
+
+  /// No description provided for @paymentWaitingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve the payment in FIB, then come back. This screen updates on its own.'**
+  String get paymentWaitingBody;
+
+  /// No description provided for @paymentPaidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment received'**
+  String get paymentPaidTitle;
+
+  /// No description provided for @paymentPaidBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all set. There\'s nothing to pay at the clinic.'**
+  String get paymentPaidBody;
+
+  /// No description provided for @paymentExpiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This payment wasn\'t completed'**
+  String get paymentExpiredTitle;
+
+  /// No description provided for @paymentExpiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a new payment, or pay at the clinic. Your appointment is still booked.'**
+  String get paymentExpiredBody;
+
+  /// No description provided for @paymentTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a new payment'**
+  String get paymentTryAgain;
+
+  /// No description provided for @paymentSwitchToCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay at the clinic instead'**
+  String get paymentSwitchToCounter;
+
+  /// No description provided for @paymentLater.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ll pay later'**
+  String get paymentLater;
+
+  /// No description provided for @paymentStatusDueAtCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay at clinic'**
+  String get paymentStatusDueAtCounter;
+
+  /// No description provided for @paymentStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment pending'**
+  String get paymentStatusPending;
+
+  /// No description provided for @paymentStatusPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get paymentStatusPaid;
+
+  /// No description provided for @paymentStatusRefunded.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded'**
+  String get paymentStatusRefunded;
+
+  /// No description provided for @paymentStatusRefundPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund in progress'**
+  String get paymentStatusRefundPending;
+
+  /// No description provided for @paymentStatusRefundFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic will refund you'**
+  String get paymentStatusRefundFailed;
+
+  /// No description provided for @paymentStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment not completed'**
+  String get paymentStatusExpired;
+
+  /// No description provided for @paymentStatusVoid.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to pay'**
+  String get paymentStatusVoid;
+
+  /// No description provided for @paymentPayNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay now'**
+  String get paymentPayNow;
+
+  /// No description provided for @paymentProblemOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline. Check your connection and try again.'**
+  String get paymentProblemOffline;
+
+  /// No description provided for @paymentProblemUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Online payment is unavailable right now. You can pay at the clinic.'**
+  String get paymentProblemUnavailable;
+
+  /// No description provided for @paymentProblemNotAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'This payment can\'t be changed now.'**
+  String get paymentProblemNotAccepted;
+
+  /// No description provided for @paymentProblemGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong with the payment. Your appointment is still booked.'**
+  String get paymentProblemGeneric;
+
+  /// No description provided for @paymentCodeCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Code copied'**
+  String get paymentCodeCopied;
+
+  /// No description provided for @paymentBookedPayNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked! One last step: pay for your visit.'**
+  String get paymentBookedPayNext;
+
+  /// No description provided for @paymentSecureNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your money goes straight to the clinic\'s bank account. Saxlem never sees your bank details.'**
+  String get paymentSecureNote;
+
+  /// Shown under the online payment code.
+  ///
+  /// In en, this message translates to:
+  /// **'Link valid until {time}'**
+  String paymentLinkValidUntil(String time);
 }
 
 class _AppLocalizationsDelegate

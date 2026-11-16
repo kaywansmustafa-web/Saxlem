@@ -4,7 +4,6 @@ import '../../../../design_system/design_system.dart';
 import '../../../booking/presentation/widgets/booking_day_picker.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../../core/models/patient_profile.dart';
-import '../../../../design_system/components/layout/saxlem_responsive_content.dart';
 import '../../../booking/domain/repositories/booking_repository.dart';
 import '../../../booking/domain/services/booking_operation_id.dart';
 import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
@@ -19,6 +18,7 @@ import '../../../arrival/presentation/state/patient_arrival_state.dart';
 import '../../../live_queue/domain/repositories/live_queue_repository.dart';
 import '../../../live_queue/live_queue_feature.dart';
 import '../../../notifications/domain/entities/notification_page.dart';
+import '../../../payments/presentation/widgets/appointment_payment_card.dart';
 
 class AppointmentDetailsPage extends StatefulWidget {
   const AppointmentDetailsPage({
@@ -189,6 +189,12 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                 if (item.cancellationReason case final reason?)
                   _DetailRow(context.l10n.cancellationReason, reason),
               ],
+            ),
+            const SizedBox(height: 16),
+            AppointmentPaymentCard(
+              appointmentId: item.id,
+              title: item.doctor.displayName,
+              subtitle: item.clinicName,
             ),
             if (item.canMutate) ...[
               const SizedBox(height: 20),
