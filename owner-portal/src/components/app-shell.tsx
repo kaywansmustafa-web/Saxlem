@@ -19,7 +19,7 @@ export const navigation = [
   ["Commissions", "/commissions"],
   ["Statements", "/statements"],
   ["Plans", "/plans"],
-  ["Online payments", "/payments"],
+  ["Payments", "/payments"],
   ["Analytics", "/analytics"],
   ["Documents", "/documents"],
   ["Audit Log", "/audit-log"],

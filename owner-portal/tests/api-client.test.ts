@@ -7,13 +7,11 @@ const configuration = {
 };
 describe("owner API client", () => {
   it("validates JSON and never follows redirects", async () => {
-    const transport = vi
-        .fn()
-        .mockResolvedValue(
-          new Response(JSON.stringify({ status: "ok" }), {
-            headers: { "content-type": "application/json" },
-          }),
-        ),
+    const transport = vi.fn().mockResolvedValue(
+        new Response(JSON.stringify({ status: "ok" }), {
+          headers: { "content-type": "application/json" },
+        }),
+      ),
       client = new OwnerApiClient(configuration, transport);
     await expect(
       client.request({
@@ -24,13 +22,11 @@ describe("owner API client", () => {
     expect(transport.mock.calls[0][1].redirect).toBe("error");
   });
   it("reaches the backend health probes outside the API prefix", async () => {
-    const transport = vi
-        .fn()
-        .mockResolvedValue(
-          new Response(JSON.stringify({ status: "ok" }), {
-            headers: { "content-type": "application/json" },
-          }),
-        ),
+    const transport = vi.fn().mockResolvedValue(
+        new Response(JSON.stringify({ status: "ok" }), {
+          headers: { "content-type": "application/json" },
+        }),
+      ),
       client = new OwnerApiClient(configuration, transport);
     await client.request({ path: "/health/live" });
     expect(String(transport.mock.calls[0][0])).toBe(
@@ -49,13 +45,11 @@ describe("owner API client", () => {
     expect(transport).not.toHaveBeenCalled();
   });
   it("does not forward tenant headers for the global owner", async () => {
-    const transport = vi
-        .fn()
-        .mockResolvedValue(
-          new Response(JSON.stringify({ ok: true }), {
-            headers: { "content-type": "application/json" },
-          }),
-        ),
+    const transport = vi.fn().mockResolvedValue(
+        new Response(JSON.stringify({ ok: true }), {
+          headers: { "content-type": "application/json" },
+        }),
+      ),
       client = new OwnerApiClient(configuration, transport);
     await client.request({
       path: "/api/v1/test",

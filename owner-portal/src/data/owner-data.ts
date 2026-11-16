@@ -101,6 +101,7 @@ export const appointmentSchema = z
     patientProfileId: id,
     patientName: z.string(),
     type: z.enum(["initial", "followUp"]),
+    origin: z.enum(["patientBooked", "clinicCreated", "walkIn"]).optional(),
     reason: z.string(),
     startsAt: dateTime,
     endsAt: dateTime,
@@ -527,4 +528,166 @@ export const paymentAccount = (session: OwnerSession, organizationId: string) =>
     path: `/api/v1/platform/organizations/${encodeURIComponent(organizationId)}/payment-account`,
     session,
     schema: paymentAccountSchema,
+  });
+
+export const paymentSettingsSchema = z
+  .object({
+    collectionMode: z.enum(["platform", "clinic"]),
+    onlineEnabled: z.boolean(),
+    platformAccount: z
+      .object({
+        provider: z.enum(["fib", "simulated"]),
+        environment: z.string(),
+        clientIdHint: z.string(),
+      })
+      .strict()
+      .nullable(),
+    providerFeeBps: z.number().int(),
+    feePassedToClinic: z.boolean(),
+  })
+  .strict();
+export type PaymentSettings = z.infer<typeof paymentSettingsSchema>;
+
+const ledgerEntrySchema = z
+  .object({
+    id: z.string().uuid(),
+    appointmentId: z.string().uuid(),
+    appointmentReference: z.string(),
+    organizationId: z.string().uuid(),
+    organizationName: z.string(),
+    clinicId: z.string().uuid(),
+    clinicName: z.string(),
+    doctorId: z.string().uuid(),
+    doctorName: z.string(),
+    patientName: z.string(),
+    bookedAt: z.string(),
+    appointmentStartsAt: z.string(),
+    method: z.enum(["counter", "online"]),
+    amountIqd: z.number().int(),
+    status: z.string(),
+    collectedBy: z.enum(["platform", "organization"]).nullable(),
+    provider: z.enum(["fib", "simulated"]).nullable(),
+    payerName: z.string().nullable(),
+    paidAt: z.string().nullable(),
+    refundedAt: z.string().nullable(),
+    payoutId: z.string().uuid().nullable(),
+  })
+  .strict();
+export const ledgerSchema = z
+  .object({
+    items: z.array(ledgerEntrySchema),
+    nextCursor: z.string().uuid().nullable(),
+  })
+  .strict();
+export type LedgerEntry = z.infer<typeof ledgerEntrySchema>;
+
+export const payoutSchema = z
+  .object({
+    organizationId: z.string().uuid(),
+    organizationName: z.string(),
+    periodStart: z.string(),
+    periodEnd: z.string(),
+    status: z.enum(["open", "ready", "settled"]),
+    grossCollectedIqd: z.number().int(),
+    clawbackIqd: z.number().int(),
+    providerFeeIqd: z.number().int(),
+    commissionIqd: z.number().int(),
+    netPayableIqd: z.number().int(),
+    paymentCount: z.number().int(),
+    settlement: z
+      .object({
+        id: z.string().uuid(),
+        reference: z.string(),
+        note: z.string().nullable(),
+        settledAt: z.string(),
+      })
+      .strict()
+      .nullable(),
+    payoutAccount: z
+      .object({ name: z.string().nullable(), numberHint: z.string() })
+      .strict()
+      .nullable(),
+    doctors: z
+      .array(
+        z
+          .object({
+            doctorId: z.string().uuid(),
+            doctorName: z.string(),
+            paymentCount: z.number().int(),
+            grossIqd: z.number().int(),
+          })
+          .strict(),
+      )
+      .optional(),
+  })
+  .strict();
+export type Payout = z.infer<typeof payoutSchema>;
+const payoutSummarySchema = z
+  .object({
+    month: z.string(),
+    periodStart: z.string(),
+    periodEnd: z.string(),
+    monthEnded: z.boolean(),
+    items: z.array(payoutSchema),
+  })
+  .strict();
+
+export const payoutProfileSchema = z
+  .object({
+    organizationId: z.string().uuid(),
+    onlinePaymentsEnabled: z.boolean(),
+    payoutAccountName: z.string().nullable(),
+    payoutAccountNumberHint: z.string().nullable(),
+    version: z.number().int(),
+  })
+  .strict();
+export type PayoutProfile = z.infer<typeof payoutProfileSchema>;
+
+export const paymentSettings = (session: OwnerSession) =>
+  ownerApi().request({
+    path: "/api/v1/platform/payments/settings",
+    session,
+    schema: paymentSettingsSchema,
+  });
+
+export const paymentLedger = (
+  session: OwnerSession,
+  month: string,
+  options: { organizationId?: string; method?: string; cursor?: string } = {},
+) => {
+  const query = new URLSearchParams({ month, pageSize: "100" });
+  if (options.organizationId)
+    query.set("organizationId", options.organizationId);
+  if (options.method) query.set("method", options.method);
+  if (options.cursor) query.set("cursor", options.cursor);
+  return ownerApi().request({
+    path: `/api/v1/platform/payments/ledger?${query}`,
+    session,
+    schema: ledgerSchema,
+  });
+};
+
+export const payoutSummary = (session: OwnerSession, month: string) =>
+  ownerApi().request({
+    path: `/api/v1/platform/payouts?month=${encodeURIComponent(month)}`,
+    session,
+    schema: payoutSummarySchema,
+  });
+
+export const payoutDetail = (
+  session: OwnerSession,
+  organizationId: string,
+  month: string,
+) =>
+  ownerApi().request({
+    path: `/api/v1/platform/organizations/${encodeURIComponent(organizationId)}/payouts?month=${encodeURIComponent(month)}`,
+    session,
+    schema: payoutSchema,
+  });
+
+export const payoutProfile = (session: OwnerSession, organizationId: string) =>
+  ownerApi().request({
+    path: `/api/v1/platform/organizations/${encodeURIComponent(organizationId)}/payout-profile`,
+    session,
+    schema: payoutProfileSchema,
   });

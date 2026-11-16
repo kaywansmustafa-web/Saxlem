@@ -4,7 +4,9 @@ import {
   OwnerSessionCookie,
   safeReturnPath,
 } from "@/infrastructure/session-cookie";
-const secret = Buffer.from(Array.from({ length: 32 }, (_, index) => index + 1)).toString("base64url");
+const secret = Buffer.from(
+  Array.from({ length: 32 }, (_, index) => index + 1),
+).toString("base64url");
 const configuration = {
   environment: "production" as const,
   backendUrl: new URL("https://api.saxlem.test"),
@@ -13,7 +15,8 @@ const configuration = {
 };
 function token(role: string) {
   const now = Math.floor(Date.now() / 1000);
-  const encode = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
+  const encode = (value: unknown) =>
+    Buffer.from(JSON.stringify(value)).toString("base64url");
   return `${encode({ alg: "HS256", typ: "JWT" })}.${encode({ sub: "11111111-1111-4111-8111-111111111111", sid: "22222222-2222-4222-8222-222222222222", typ: "access", role, iss: "saxlem", aud: "saxlem-clients", iat: now, exp: now + 900 })}.${"x".repeat(43)}`;
 }
 describe("owner session", () => {
