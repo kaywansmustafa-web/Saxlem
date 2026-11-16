@@ -481,5 +481,18 @@
   "queuePausedTitle": "رێزبەندی بو دەمکی هاتیە راگرتن",
   "queuePausedBody": "جهێ تە پاراستییە. دەمێ رێزبەندی دیسان دەستپێدکەت دێ تە ئاگەهدار کەین.",
   "queueClosedTitle": "ئەڤ رێزبەندییە گرتییە",
-  "queueClosedBody": "بو هاریکاریا ژڤانا خۆ، بچۆ پێشوازیێ."
+  "queueClosedBody": "بو هاریکاریا ژڤانا خۆ، بچۆ پێشوازیێ.",
+  "itsYourTurn": "نوکە دۆرا تەیە",
+  "aheadShort": "بەری تە",
+  "queueStepBooked": "هاتە گرتن",
+  "queueStepArrived": "گەهشتی",
+  "queueStepWaiting": "چاڤەڕێ",
+  "queueStepYourTurn": "دۆرا تە",
+  "withDoctorTitle": "تو نوکە ل دەڤ نوژداری",
+  "visitCompleteTitle": "سەرەدان ب دوماهی هات",
+  "calledNoResponseTitle": "ژمارا تە هاتە گازیکرن",
+  "notCheckedInTitle": "ژڤانێ تە ئەڤرۆیە",
+  "removedFromQueueTitle": "تو ئێدی د ڤێ رێزێدا نینی",
+  "waitRange": "نێزیکی {min}–{max} {unit}",
+  "doctorLabel": "نوژدار"
 }

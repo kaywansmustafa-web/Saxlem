@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+/// v2 "Aura" type: Sora for display (numbers, titles, names) and Inter for
+/// reading text in English; Cairo (Arabic) and Rudaw (Badini) replace both in
+/// their locales. All families are bundled, so no font is fetched at runtime.
 abstract final class SaxlemTypography {
+  static const display = 'Sora';
+  static const text = 'Inter';
+
   static TextTheme textTheme(
     TextTheme base,
     Color primary,
@@ -15,55 +20,82 @@ abstract final class SaxlemTypography {
       Color color, {
       double spacing = 0,
       bool numeric = false,
-    }) => fontFamily == null
-        ? GoogleFonts.notoSans(
-            fontSize: size,
-            height: line / size,
-            fontWeight: weight,
-            letterSpacing: spacing,
-            color: color,
-            fontFeatures: numeric ? const [FontFeature.tabularFigures()] : null,
-          )
-        : TextStyle(
-            fontFamily: fontFamily,
-            fontSize: size,
-            height: line / size,
-            fontWeight: weight,
-            letterSpacing: spacing,
-            color: color,
-            fontFeatures: numeric ? const [FontFeature.tabularFigures()] : null,
-          );
-    final localizedBase = fontFamily == null
-        ? GoogleFonts.notoSansTextTheme(base)
-        : base.apply(fontFamily: fontFamily);
+      bool isDisplay = false,
+    }) => TextStyle(
+      fontFamily: fontFamily ?? (isDisplay ? display : text),
+      fontSize: size,
+      height: line / size,
+      fontWeight: weight,
+      // Tight tracking suits Sora and Inter, not Arabic-script fonts.
+      letterSpacing: fontFamily == null ? spacing : 0,
+      color: color,
+      fontFeatures: numeric ? const [FontFeature.tabularFigures()] : null,
+    );
+    final localizedBase = base.apply(fontFamily: fontFamily ?? text);
     return localizedBase.copyWith(
-      displayLarge: style(40, 48, FontWeight.w700, primary, spacing: -.4),
+      displayLarge: style(
+        40,
+        46,
+        FontWeight.w600,
+        primary,
+        spacing: -1.2,
+        isDisplay: true,
+      ),
       displayMedium: style(
-        38,
+        40,
         44,
-        FontWeight.w800,
+        FontWeight.w700,
+        primary,
+        spacing: -1.4,
+        numeric: true,
+        isDisplay: true,
+      ),
+      headlineLarge: style(
+        32,
+        38,
+        FontWeight.w600,
+        primary,
+        spacing: -.9,
+        isDisplay: true,
+      ),
+      headlineMedium: style(
+        28,
+        34,
+        FontWeight.w600,
+        primary,
+        spacing: -.6,
+        isDisplay: true,
+      ),
+      headlineSmall: style(
+        24,
+        30,
+        FontWeight.w600,
+        primary,
+        spacing: -.4,
+        isDisplay: true,
+      ),
+      titleLarge: style(
+        20,
+        26,
+        FontWeight.w600,
         primary,
         spacing: -.3,
-        numeric: true,
+        isDisplay: true,
       ),
-      headlineLarge: style(32, 40, FontWeight.w700, primary, spacing: -.3),
-      headlineMedium: style(28, 36, FontWeight.w700, primary, spacing: -.2),
-      headlineSmall: style(24, 32, FontWeight.w700, primary, spacing: -.1),
-      titleLarge: style(22, 30, FontWeight.w700, primary),
-      titleMedium: style(18, 26, FontWeight.w600, primary),
-      titleSmall: style(16, 24, FontWeight.w600, primary),
-      bodyLarge: style(17, 26, FontWeight.w400, primary),
-      bodyMedium: style(15, 23, FontWeight.w400, secondary),
+      titleMedium: style(17, 24, FontWeight.w600, primary, spacing: -.1),
+      titleSmall: style(16, 22, FontWeight.w600, primary),
+      bodyLarge: style(16, 24, FontWeight.w400, primary),
+      bodyMedium: style(15, 22, FontWeight.w400, secondary),
       bodySmall: style(14, 20, FontWeight.w400, secondary),
-      labelLarge: style(15, 20, FontWeight.w600, primary, spacing: .1),
-      labelMedium: style(14, 18, FontWeight.w600, primary, spacing: .1),
-      labelSmall: style(12, 16, FontWeight.w600, secondary, spacing: .2),
+      labelLarge: style(16, 20, FontWeight.w600, primary, spacing: -.1),
+      labelMedium: style(14, 18, FontWeight.w600, primary),
+      labelSmall: style(12, 16, FontWeight.w600, secondary, spacing: .1),
     );
   }
 
   static TextStyle numeric(BuildContext context, {bool emphasized = false}) {
     final theme = Theme.of(context).textTheme;
-    return (emphasized ? theme.displayMedium : theme.titleMedium)!.copyWith(
+    return (emphasized ? theme.displayMedium : theme.titleLarge)!.copyWith(
       fontFeatures: const [FontFeature.tabularFigures()],
     );
   }

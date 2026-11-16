@@ -35,6 +35,24 @@ flutter:
     - assets/images/saxlem_logo_horizontal.png
 
   fonts:
+    - family: Sora
+      fonts:
+        - asset: assets/fonts/Sora-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Sora-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Sora-Bold.ttf
+          weight: 700
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700
     - family: Cairo
       fonts:
         - asset: assets/fonts/Cairo-Variable.ttf

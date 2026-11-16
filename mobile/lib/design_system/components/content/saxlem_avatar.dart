@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../foundations/saxlem_radii.dart';
 import '../../theme/saxlem_colors.dart';
 
 class SaxlemAvatar extends StatelessWidget {
@@ -9,6 +8,7 @@ class SaxlemAvatar extends StatelessWidget {
     this.imageUrl,
     this.size = 56,
     this.icon = Icons.person_rounded,
+    this.ring = false,
     super.key,
   });
   final String semanticLabel;
@@ -16,6 +16,9 @@ class SaxlemAvatar extends StatelessWidget {
   final String? imageUrl;
   final double size;
   final IconData icon;
+
+  /// Adds the aqua ring used for doctors on cards and tickets.
+  final bool ring;
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +28,11 @@ class SaxlemAvatar extends StatelessWidget {
         : Center(
             child: Text(
               initials!,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(color: colors.brandPrimary),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: colors.brandPrimary,
+                fontFamily: Theme.of(context).textTheme.titleLarge?.fontFamily,
+                fontSize: size * .32,
+              ),
             ),
           );
     return Semantics(
@@ -38,8 +43,14 @@ class SaxlemAvatar extends StatelessWidget {
         height: size,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: colors.infoSurface,
-          borderRadius: BorderRadius.circular(SaxlemRadii.large),
+          color: colors.brandTint,
+          shape: BoxShape.circle,
+          boxShadow: ring
+              ? [
+                  BoxShadow(color: colors.surfaceRaised, spreadRadius: 2),
+                  BoxShadow(color: colors.auraEnd, spreadRadius: 4),
+                ]
+              : null,
         ),
         child: imageUrl == null
             ? fallback

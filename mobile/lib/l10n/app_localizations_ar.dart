@@ -1021,4 +1021,45 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get queueClosedBody => 'للمساعدة بشأن موعدك، يرجى مراجعة الاستقبال.';
+
+  @override
+  String get itsYourTurn => 'حان دورك';
+
+  @override
+  String get aheadShort => 'قبلك';
+
+  @override
+  String get queueStepBooked => 'تم الحجز';
+
+  @override
+  String get queueStepArrived => 'وصلت';
+
+  @override
+  String get queueStepWaiting => 'الانتظار';
+
+  @override
+  String get queueStepYourTurn => 'دورك';
+
+  @override
+  String get withDoctorTitle => 'أنت مع الطبيب الآن';
+
+  @override
+  String get visitCompleteTitle => 'اكتملت الزيارة';
+
+  @override
+  String get calledNoResponseTitle => 'تم النداء على رقمك';
+
+  @override
+  String get notCheckedInTitle => 'موعدك اليوم';
+
+  @override
+  String get removedFromQueueTitle => 'لم تعد في قائمة الانتظار';
+
+  @override
+  String waitRange(int min, int max, String unit) {
+    return 'حوالي $min–$max $unit';
+  }
+
+  @override
+  String get doctorLabel => 'الطبيب';
 }

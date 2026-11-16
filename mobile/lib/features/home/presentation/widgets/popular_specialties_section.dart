@@ -19,33 +19,35 @@ class PopularSpecialtiesSection extends StatelessWidget {
   final ValueChanged<Specialty>? onSpecialtySelected;
 
   @override
-  Widget build(BuildContext context) {
-    final textScale = MediaQuery.textScalerOf(context).scale(1).clamp(1, 2);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        DashboardSectionHeader(title: title),
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 112 + ((textScale - 1) * 36),
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.zero,
-            itemCount: specialties.length,
-            separatorBuilder: (context, index) => const SizedBox(width: 12),
-            itemBuilder: (context, index) {
-              final specialty = specialties[index];
-              return SpecialtyCard(
-                specialty: specialty,
-                semanticLabel: semanticLabelBuilder(specialty),
-                onTap: onSpecialtySelected == null
-                    ? null
-                    : () => onSpecialtySelected!(specialty),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      DashboardSectionHeader(title: title),
+      const SizedBox(height: 12),
+      LayoutBuilder(
+        builder: (context, constraints) {
+          const gap = 10.0;
+          final columns = constraints.maxWidth >= 520 ? 5 : 3;
+          final width = (constraints.maxWidth - gap * (columns - 1)) / columns;
+          return Wrap(
+            spacing: gap,
+            runSpacing: gap,
+            children: [
+              for (final specialty in specialties)
+                SizedBox(
+                  width: width,
+                  child: SpecialtyCard(
+                    specialty: specialty,
+                    semanticLabel: semanticLabelBuilder(specialty),
+                    onTap: onSpecialtySelected == null
+                        ? null
+                        : () => onSpecialtySelected!(specialty),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+    ],
+  );
 }

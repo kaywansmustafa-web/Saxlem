@@ -3,7 +3,6 @@ import '../../foundations/saxlem_elevation.dart';
 import '../../foundations/saxlem_motion.dart';
 import '../../foundations/saxlem_radii.dart';
 import '../../foundations/saxlem_sizes.dart';
-import '../../foundations/saxlem_spacing.dart';
 import '../../theme/saxlem_colors.dart';
 
 class SaxlemNavigationDestination {
@@ -20,6 +19,9 @@ class SaxlemNavigationDestination {
   final String? badgeSemanticLabel;
 }
 
+/// Floating bottom navigation (v2 "Aura"): a rounded bar above the home
+/// indicator. Every item keeps its label, so people new to phones always know
+/// where a tab goes; the current item's icon sits in a Saxlem Blue pill.
 class SaxlemNavigationBar extends StatelessWidget {
   const SaxlemNavigationBar({
     required this.destinations,
@@ -34,21 +36,26 @@ class SaxlemNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.saxlemColors;
+    final theme = Theme.of(context);
     return SafeArea(
       top: false,
       child: Container(
-        margin: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 12),
-        padding: const EdgeInsetsDirectional.all(SaxlemSpacing.one),
+        margin: const EdgeInsetsDirectional.fromSTEB(12, 0, 12, 10),
+        padding: const EdgeInsetsDirectional.symmetric(
+          horizontal: 4,
+          vertical: 6,
+        ),
         decoration: BoxDecoration(
           color: colors.surfaceElevated,
-          borderRadius: BorderRadius.circular(SaxlemRadii.card),
+          borderRadius: BorderRadius.circular(SaxlemRadii.hero),
           border: Border.all(color: colors.border),
-          boxShadow: SaxlemElevation.level3(Colors.black),
+          boxShadow: SaxlemElevation.level2(colors.night),
         ),
         child: Row(
           children: List.generate(destinations.length, (index) {
             final item = destinations[index];
             final selected = index == selectedIndex;
+            final tint = selected ? colors.brandPrimary : colors.textMuted;
             return Expanded(
               child: Semantics(
                 button: true,
@@ -58,55 +65,69 @@ class SaxlemNavigationBar extends StatelessWidget {
                     : item.label,
                 child: InkWell(
                   onTap: () => onSelected(index),
-                  borderRadius: BorderRadius.circular(SaxlemRadii.large),
-                  child: AnimatedContainer(
-                    duration: SaxlemMotion.standard,
+                  borderRadius: BorderRadius.circular(SaxlemRadii.extraLarge),
+                  child: ConstrainedBox(
                     constraints: const BoxConstraints(
-                      minHeight: SaxlemSizes.minimumTouchTarget,
-                    ),
-                    padding: const EdgeInsetsDirectional.symmetric(
-                      horizontal: 4,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: selected
-                          ? colors.brandPrimary.withValues(alpha: .1)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(SaxlemRadii.large),
+                      minHeight: SaxlemSizes.minimumTouchTarget + 8,
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Badge(
-                          isLabelVisible: item.badgeCount > 0,
-                          label: AnimatedSwitcher(
-                            duration: SaxlemMotion.fast,
-                            child: Text(
-                              item.badgeCount > 99
-                                  ? '99+'
-                                  : '${item.badgeCount}',
-                              key: ValueKey(item.badgeCount),
-                            ),
-                          ),
-                          child: Icon(
-                            selected ? item.selectedIcon : item.icon,
-                            size: 24,
+                        AnimatedContainer(
+                          duration: SaxlemMotion.standard,
+                          curve: SaxlemMotion.standardCurve,
+                          width: selected ? 52 : 40,
+                          height: 32,
+                          decoration: BoxDecoration(
                             color: selected
                                 ? colors.brandPrimary
-                                : colors.textMuted,
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(
+                              SaxlemRadii.full,
+                            ),
+                            boxShadow: selected
+                                ? SaxlemElevation.glow(colors.brandPrimary)
+                                : null,
+                          ),
+                          child: Center(
+                            child: Badge(
+                              isLabelVisible: item.badgeCount > 0,
+                              label: AnimatedSwitcher(
+                                duration: SaxlemMotion.fast,
+                                child: Text(
+                                  item.badgeCount > 99
+                                      ? '99+'
+                                      : '${item.badgeCount}',
+                                  key: ValueKey(item.badgeCount),
+                                ),
+                              ),
+                              child: Icon(
+                                selected ? item.selectedIcon : item.icon,
+                                size: 22,
+                                color: selected ? colors.onFill : tint,
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          item.label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.labelSmall
-                              ?.copyWith(
-                                color: selected
-                                    ? colors.brandPrimary
-                                    : colors.textMuted,
+                        Padding(
+                          padding: const EdgeInsetsDirectional.symmetric(
+                            horizontal: 2,
+                          ),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              item.label,
+                              maxLines: 1,
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: tint,
+                                fontWeight: selected
+                                    ? FontWeight.w700
+                                    : FontWeight.w600,
                               ),
+                            ),
+                          ),
                         ),
                       ],
                     ),

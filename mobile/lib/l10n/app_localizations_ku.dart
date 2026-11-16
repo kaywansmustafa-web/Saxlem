@@ -1034,4 +1034,45 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get queueClosedBody => 'بو هاریکاریا ژڤانا خۆ، بچۆ پێشوازیێ.';
+
+  @override
+  String get itsYourTurn => 'نوکە دۆرا تەیە';
+
+  @override
+  String get aheadShort => 'بەری تە';
+
+  @override
+  String get queueStepBooked => 'هاتە گرتن';
+
+  @override
+  String get queueStepArrived => 'گەهشتی';
+
+  @override
+  String get queueStepWaiting => 'چاڤەڕێ';
+
+  @override
+  String get queueStepYourTurn => 'دۆرا تە';
+
+  @override
+  String get withDoctorTitle => 'تو نوکە ل دەڤ نوژداری';
+
+  @override
+  String get visitCompleteTitle => 'سەرەدان ب دوماهی هات';
+
+  @override
+  String get calledNoResponseTitle => 'ژمارا تە هاتە گازیکرن';
+
+  @override
+  String get notCheckedInTitle => 'ژڤانێ تە ئەڤرۆیە';
+
+  @override
+  String get removedFromQueueTitle => 'تو ئێدی د ڤێ رێزێدا نینی';
+
+  @override
+  String waitRange(int min, int max, String unit) {
+    return 'نێزیکی $min–$max $unit';
+  }
+
+  @override
+  String get doctorLabel => 'نوژدار';
 }

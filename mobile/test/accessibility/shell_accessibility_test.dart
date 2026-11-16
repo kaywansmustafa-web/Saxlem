@@ -43,15 +43,18 @@ void main() {
   test(
     'SharedPreferences is isolated to the locale repository implementation',
     () {
-      final offenders = Directory('lib')
-          .listSync(recursive: true)
-          .whereType<File>()
-          .where((file) => file.path.endsWith('.dart'))
-          .where(
-            (file) => file.readAsStringSync().contains('shared_preferences'),
-          )
-          .map((file) => file.path.replaceAll('\\', '/'))
-          .toList();
+      final offenders =
+          Directory('lib')
+              .listSync(recursive: true)
+              .whereType<File>()
+              .where((file) => file.path.endsWith('.dart'))
+              .where(
+                (file) =>
+                    file.readAsStringSync().contains('shared_preferences'),
+              )
+              .map((file) => file.path.replaceAll('\\', '/'))
+              .toList()
+            ..sort();
       expect(offenders, [
         'lib/features/language/data/repositories/shared_preferences_locale_repository.dart',
         'lib/main.dart',

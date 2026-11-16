@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../../config/theme/app_colors.dart';
 import '../controllers/booking_controller.dart';
 import '../state/booking_state.dart';
-import '../widgets/slot_grid.dart';
+import '../widgets/booking_day_picker.dart';
+import '../../../../design_system/components/actions/saxlem_button.dart';
+import '../../../../design_system/components/content/saxlem_avatar.dart';
+import '../../../../design_system/foundations/saxlem_radii.dart';
+import '../../../../design_system/theme/saxlem_colors.dart';
 import 'booking_review_page.dart';
 import 'booking_success_page.dart';
 import '../../../../core/localization/localization_extensions.dart';
@@ -25,7 +28,6 @@ class BookingFlowPage extends StatelessWidget {
   final PatientProfilesController? profilesController;
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: AppColors.background,
     appBar: AppBar(title: Text(context.l10n.bookAppointment)),
     body: SafeArea(
       top: false,
@@ -37,7 +39,7 @@ class BookingFlowPage extends StatelessWidget {
                 controller.state is! BookingConfirming &&
                 controller.state is! BookingSuccess)
               Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(24, 12, 24, 0),
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 20, 0),
                 child: PatientSelector(
                   controller: profilesController!,
                   label: context.l10n.bookingFor,
@@ -46,6 +48,11 @@ class BookingFlowPage extends StatelessWidget {
             Expanded(
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 220),
+                layoutBuilder: (current, previous) => Stack(
+                  alignment: AlignmentDirectional.topStart,
+                  fit: StackFit.expand,
+                  children: [...previous, ?current],
+                ),
                 child: _body(context, controller.state),
               ),
             ),
@@ -62,39 +69,20 @@ class BookingFlowPage extends StatelessWidget {
       ),
     ),
     BookingSetup(:final doctor) => _setup(context, doctor),
-    BookingOptionsReady(:final availability) => _scroll(
-      context,
-      context.l10n.chooseTime,
-      availability.clinicName,
-      availability.days
-          .map(
-            (day) => Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Semantics(
-                  header: true,
-                  child: Text(
-                    MaterialLocalizations.of(
-                      context,
-                    ).formatMediumDate(day.date),
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                if (day.slots.isEmpty)
-                  Text(context.l10n.noAvailableSlots)
-                else
-                  SlotGrid(
-                    slots: day.slots,
-                    timezone: availability.clinicTimezone,
-                    onSelected: controller.selectSlot,
-                  ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          )
-          .toList(),
-    ),
+    BookingOptionsReady(:final availability) =>
+      _scroll(context, context.l10n.chooseTime, availability.clinicName, [
+        _DoctorStrip(
+          name: availability.doctorName,
+          detail: availability.clinicName,
+        ),
+        const SizedBox(height: 20),
+        BookingDayPicker(
+          days: availability.days,
+          timezone: availability.clinicTimezone,
+          emptyLabel: context.l10n.noAvailableSlots,
+          onSelected: controller.selectSlot,
+        ),
+      ], showSubtitle: false),
     BookingEmpty() => _error(
       context,
       context.l10n.bookingUnavailable,
@@ -127,10 +115,12 @@ class BookingFlowPage extends StatelessWidget {
 
   Widget _setup(BuildContext context, BookingDoctorReference doctor) =>
       SingleChildScrollView(
-        padding: const EdgeInsetsDirectional.fromSTEB(24, 18, 24, 36),
+        padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 36),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            _DoctorStrip(name: doctor.displayName),
+            const SizedBox(height: 24),
             Semantics(
               header: true,
               child: Text(
@@ -138,7 +128,7 @@ class BookingFlowPage extends StatelessWidget {
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             DropdownButtonFormField<BookingClinicOption>(
               autofocus: controller.clinic == null,
               initialValue: controller.clinic,
@@ -191,9 +181,11 @@ class BookingFlowPage extends StatelessWidget {
               onChanged: controller.setReason,
             ),
             const SizedBox(height: 20),
-            FilledButton(
+            SaxlemButton(
+              label: context.l10n.checkAvailability,
+              trailingIcon: Icons.arrow_forward_rounded,
+              expand: true,
               onPressed: controller.loadOptions,
-              child: Text(context.l10n.checkAvailability),
             ),
           ],
         ),
@@ -216,24 +208,19 @@ class BookingFlowPage extends StatelessWidget {
     BuildContext context,
     String title,
     String subtitle,
-    List<Widget> children,
-  ) => SingleChildScrollView(
-    padding: const EdgeInsetsDirectional.fromSTEB(24, 18, 24, 36),
+    List<Widget> children, {
+    bool showSubtitle = true,
+  }) => SingleChildScrollView(
+    padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 36),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Semantics(
           header: true,
-          child: Text(
-            title,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
-          ),
+          child: Text(title, style: Theme.of(context).textTheme.headlineSmall),
         ),
-        const SizedBox(height: 5),
-        Text(subtitle),
-        const SizedBox(height: 22),
+        if (showSubtitle) ...[const SizedBox(height: 5), Text(subtitle)],
+        const SizedBox(height: 18),
         ...children,
       ],
     ),
@@ -265,4 +252,57 @@ class BookingFlowPage extends StatelessWidget {
       ),
     ),
   );
+}
+
+class _DoctorStrip extends StatelessWidget {
+  const _DoctorStrip({required this.name, this.detail});
+  final String name;
+  final String? detail;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.saxlemColors;
+    final theme = Theme.of(context);
+    final initials = name
+        .replaceFirst(RegExp(r'^(Dr\.?|د\.)\s*', caseSensitive: false), '')
+        .split(RegExp(r'\s+'))
+        .where((p) => p.isNotEmpty)
+        .take(2)
+        .map((p) => p.characters.first.toUpperCase())
+        .join();
+    return Container(
+      padding: const EdgeInsetsDirectional.all(14),
+      decoration: BoxDecoration(
+        color: colors.surfaceRaised,
+        borderRadius: BorderRadius.circular(SaxlemRadii.card),
+        border: Border.all(color: colors.border),
+      ),
+      child: Row(
+        children: [
+          SaxlemAvatar(
+            semanticLabel: name,
+            initials: initials,
+            size: 48,
+            ring: true,
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontFamily: theme.textTheme.titleLarge?.fontFamily,
+                  ),
+                ),
+                if (detail != null)
+                  Text(detail!, style: theme.textTheme.bodySmall),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

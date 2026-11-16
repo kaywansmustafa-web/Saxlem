@@ -1061,4 +1061,45 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get queueClosedBody =>
       'For assistance with your appointment, please contact reception.';
+
+  @override
+  String get itsYourTurn => 'It\'s your turn';
+
+  @override
+  String get aheadShort => 'ahead';
+
+  @override
+  String get queueStepBooked => 'Booked';
+
+  @override
+  String get queueStepArrived => 'Arrived';
+
+  @override
+  String get queueStepWaiting => 'Waiting';
+
+  @override
+  String get queueStepYourTurn => 'Your turn';
+
+  @override
+  String get withDoctorTitle => 'You\'re with the doctor';
+
+  @override
+  String get visitCompleteTitle => 'Visit complete';
+
+  @override
+  String get calledNoResponseTitle => 'We called your number';
+
+  @override
+  String get notCheckedInTitle => 'You\'re booked for today';
+
+  @override
+  String get removedFromQueueTitle => 'You\'re no longer in this queue';
+
+  @override
+  String waitRange(int min, int max, String unit) {
+    return 'About $min–$max $unit';
+  }
+
+  @override
+  String get doctorLabel => 'Doctor';
 }

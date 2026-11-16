@@ -463,5 +463,18 @@
   "queuePausedTitle": "قائمة الانتظار متوقفة مؤقتًا",
   "queuePausedBody": "مكانك محفوظ. سنحدّثك عند استئناف قائمة الانتظار.",
   "queueClosedTitle": "أُغلقت قائمة الانتظار",
-  "queueClosedBody": "للمساعدة بشأن موعدك، يرجى مراجعة الاستقبال."
+  "queueClosedBody": "للمساعدة بشأن موعدك، يرجى مراجعة الاستقبال.",
+  "itsYourTurn": "حان دورك",
+  "aheadShort": "قبلك",
+  "queueStepBooked": "تم الحجز",
+  "queueStepArrived": "وصلت",
+  "queueStepWaiting": "الانتظار",
+  "queueStepYourTurn": "دورك",
+  "withDoctorTitle": "أنت مع الطبيب الآن",
+  "visitCompleteTitle": "اكتملت الزيارة",
+  "calledNoResponseTitle": "تم النداء على رقمك",
+  "notCheckedInTitle": "موعدك اليوم",
+  "removedFromQueueTitle": "لم تعد في قائمة الانتظار",
+  "waitRange": "حوالي {min}–{max} {unit}",
+  "doctorLabel": "الطبيب"
 }

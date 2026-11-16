@@ -1923,6 +1923,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'For assistance with your appointment, please contact reception.'**
   String get queueClosedBody;
+
+  /// Shown on the live ticket when the clinic calls the patient's number.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s your turn'**
+  String get itsYourTurn;
+
+  /// Under the count of patients ahead, inside the progress ring.
+  ///
+  /// In en, this message translates to:
+  /// **'ahead'**
+  String get aheadShort;
+
+  /// Live ticket progress step 1.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked'**
+  String get queueStepBooked;
+
+  /// Live ticket progress step 2.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrived'**
+  String get queueStepArrived;
+
+  /// Live ticket progress step 3.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get queueStepWaiting;
+
+  /// Live ticket progress step 4.
+  ///
+  /// In en, this message translates to:
+  /// **'Your turn'**
+  String get queueStepYourTurn;
+
+  /// Live ticket title during the consultation.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re with the doctor'**
+  String get withDoctorTitle;
+
+  /// Live ticket title after the consultation.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit complete'**
+  String get visitCompleteTitle;
+
+  /// Live ticket title when the patient was called but did not respond.
+  ///
+  /// In en, this message translates to:
+  /// **'We called your number'**
+  String get calledNoResponseTitle;
+
+  /// Live ticket title before the patient has arrived at the clinic.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re booked for today'**
+  String get notCheckedInTitle;
+
+  /// Live ticket title when the clinic removed the entry.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re no longer in this queue'**
+  String get removedFromQueueTitle;
+
+  /// Estimated wait as a range.
+  ///
+  /// In en, this message translates to:
+  /// **'About {min}–{max} {unit}'**
+  String waitRange(int min, int max, String unit);
+
+  /// Row label for the doctor on the booking review.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor'**
+  String get doctorLabel;
 }
 
 class _AppLocalizationsDelegate

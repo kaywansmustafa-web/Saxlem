@@ -10,13 +10,14 @@ class SaxlemCard extends StatelessWidget {
   const SaxlemCard({
     required this.child,
     this.padding = const EdgeInsetsDirectional.all(SaxlemSpacing.twoAndHalf),
-    this.elevation = SaxlemCardElevation.flat,
+    this.elevation = SaxlemCardElevation.low,
     this.onTap,
     this.semanticLabel,
     this.backgroundColor,
     this.borderColor,
     this.radius = SaxlemRadii.card,
     this.width,
+    this.gradient,
     super.key,
   });
   final Widget child;
@@ -27,6 +28,10 @@ class SaxlemCard extends StatelessWidget {
   final Color? backgroundColor, borderColor;
   final double radius;
   final double? width;
+
+  /// Paints the card with a gradient instead of [backgroundColor]
+  /// (for example `context.saxlemColors.deepAura`).
+  final Gradient? gradient;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +45,10 @@ class SaxlemCard extends StatelessWidget {
       width: width,
       padding: padding,
       decoration: BoxDecoration(
-        color: backgroundColor ?? colors.surfaceRaised,
+        color: gradient == null
+            ? (backgroundColor ?? colors.surfaceRaised)
+            : null,
+        gradient: gradient,
         borderRadius: BorderRadius.circular(radius),
         border: Border.all(color: borderColor ?? colors.border),
         boxShadow: shadows,

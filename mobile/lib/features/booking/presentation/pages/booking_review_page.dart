@@ -35,7 +35,7 @@ class BookingReviewPage extends StatelessWidget {
             const SizedBox(height: 20),
             _Summary(
               rows: [
-                (context.l10n.viewDoctor, d.options.doctorName),
+                (context.l10n.doctorLabel, d.options.doctorName),
                 (context.l10n.clinic, d.options.clinicName),
                 (
                   context.l10n.date,

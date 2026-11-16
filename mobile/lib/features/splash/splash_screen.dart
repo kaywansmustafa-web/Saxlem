@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../config/theme/app_colors.dart';
+import '../../design_system/components/content/saxlem_mark.dart';
+import '../../design_system/foundations/saxlem_typography.dart';
+import '../../design_system/theme/saxlem_colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -45,18 +47,49 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.saxlemColors;
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Center(
-          child: FadeTransition(
-            opacity: _fadeAnimation,
-            child: ScaleTransition(
-              scale: _scaleAnimation,
-              child: Image.asset(
-                'assets/images/saxlem_logo.png',
-                width: 190,
-                fit: BoxFit.contain,
+      body: DecoratedBox(
+        decoration: BoxDecoration(gradient: colors.deepAura),
+        child: SafeArea(
+          child: Center(
+            child: FadeTransition(
+              opacity: _fadeAnimation,
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SaxlemMark(
+                      size: 88,
+                      color: colors.onFill,
+                      semanticLabel: 'Saxlem',
+                    ),
+                    const SizedBox(height: 20),
+                    ExcludeSemantics(
+                      child: Text(
+                        'saxlem',
+                        style: TextStyle(
+                          fontFamily: SaxlemTypography.display,
+                          fontSize: 38,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -1.2,
+                          color: colors.onFill,
+                        ),
+                      ),
+                    ),
+                    ExcludeSemantics(
+                      child: Text(
+                        'ساخلەم',
+                        style: TextStyle(
+                          fontFamily: 'Rudaw',
+                          fontSize: 26,
+                          color: colors.onFill.withValues(alpha: .9),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

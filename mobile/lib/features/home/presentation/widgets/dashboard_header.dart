@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../config/theme/app_colors.dart';
+import '../../../../design_system/foundations/saxlem_elevation.dart';
+import '../../../../design_system/theme/saxlem_colors.dart';
 
 class DashboardHeader extends StatelessWidget {
   const DashboardHeader({
@@ -11,7 +12,10 @@ class DashboardHeader extends StatelessWidget {
     super.key,
   });
 
+  /// The large line (the patient's first name, or the greeting itself).
   final String userName;
+
+  /// The small line above it; empty to hide.
   final String greeting;
   final String notificationLabel;
   final VoidCallback? onNotificationPressed;
@@ -19,30 +23,31 @@ class DashboardHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = theme.colorScheme;
+    final colors = context.saxlemColors;
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                greeting,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: colors.onSurfaceVariant,
-                  fontWeight: FontWeight.w500,
+              if (greeting.isNotEmpty) ...[
+                Text(
+                  greeting,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: colors.textSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                userName,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                  color: colors.onSurface,
+                const SizedBox(height: 2),
+              ],
+              Semantics(
+                header: true,
+                child: Text(
+                  userName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.headlineMedium,
                 ),
               ),
             ],
@@ -53,21 +58,24 @@ class DashboardHeader extends StatelessWidget {
           button: true,
           label: notificationLabel,
           child: Material(
-            color: colors.surface,
-            borderRadius: BorderRadius.circular(16),
-            child: InkWell(
-              onTap: onNotificationPressed,
-              borderRadius: BorderRadius.circular(16),
-              child: Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.border),
-                ),
-                child: Icon(
-                  Icons.notifications_none_rounded,
-                  color: colors.onSurface,
+            type: MaterialType.transparency,
+            child: Ink(
+              decoration: BoxDecoration(
+                color: colors.surfaceRaised,
+                shape: BoxShape.circle,
+                border: Border.all(color: colors.border),
+                boxShadow: SaxlemElevation.level1(colors.night),
+              ),
+              child: InkWell(
+                onTap: onNotificationPressed,
+                customBorder: const CircleBorder(),
+                child: SizedBox(
+                  width: 52,
+                  height: 52,
+                  child: Icon(
+                    Icons.notifications_none_rounded,
+                    color: colors.textPrimary,
+                  ),
                 ),
               ),
             ),
