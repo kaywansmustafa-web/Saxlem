@@ -162,3 +162,19 @@ dialog h2{font-size:1.3rem;font-weight:650;letter-spacing:-.02em}
 .doctor-current-actions a:hover,.doctor-actions button.secondary:hover{border-color:var(--blue);color:var(--blue)}
 .doctor-next-list article{border:1px solid var(--line);border-radius:var(--r-md)}
 .doctor-safe-state{border-radius:var(--r-lg)}
+
+/* Appointment payment */
+.payment-card{padding:20px 22px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);box-shadow:var(--elevation)}
+.payment-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.payment-head h2{margin:0}
+.payment-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:16px 0}
+.payment-facts>div{padding:12px 14px;border-radius:var(--r-md);background:var(--surface-soft)}
+.payment-facts dt{font-size:.8rem;font-weight:650;color:var(--muted)}
+.payment-facts dd{margin:4px 0 0;font-size:1.1rem;font-weight:650;font-variant-numeric:tabular-nums}
+.payment-card .primary{display:inline-flex;align-items:center;justify-content:center;border:0;min-height:46px;padding:0 22px;border-radius:var(--r-md);font-weight:650;cursor:pointer;box-shadow:var(--glow)}
+.payment-warning{padding:12px 14px;border-radius:var(--r-md);background:var(--warning-bg);color:var(--warning);font-weight:600}
+.row-actions button.secondary{background:var(--surface);color:var(--text);border:1.5px solid var(--line);box-shadow:none}
+dialog[open]{position:fixed;inset:0;margin:auto;width:min(480px,calc(100vw - 32px));max-height:calc(100vh - 48px);height:fit-content;overflow:auto}
+dialog h2{margin-top:0}
+dialog .row-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+dialog .row-actions button{min-height:46px;padding:0 20px;border:0}

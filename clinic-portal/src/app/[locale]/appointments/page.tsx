@@ -38,10 +38,10 @@ export default async function Page({
     );
   const { from, to, fromInstant, toInstant } = range,
     { cursor, trail } = navigation;
-  let page;
+  let page, composition;
   try {
-    const { appointments } = await clinicalComposition(locale);
-    page = await appointments.list({
+    composition = await clinicalComposition(locale);
+    page = await composition.appointments.list({
       from: fromInstant,
       to: toInstant,
       status,
@@ -50,9 +50,14 @@ export default async function Page({
   } catch (error) {
     return <ClinicalState kind={kind(error)} m={m} />;
   }
+  // Payment status is helpful but not essential: the list still shows without it.
+  const payments = await composition.payments
+    .list(page.items.map((item) => item.id))
+    .catch(() => undefined);
   return (
     <AppointmentsPage
       page={page}
+      payments={payments}
       locale={locale}
       m={m}
       filters={{ from, to, status, cursor, trail }}

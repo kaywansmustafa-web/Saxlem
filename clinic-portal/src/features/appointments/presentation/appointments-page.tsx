@@ -5,6 +5,11 @@ import type {
   BackendAppointmentStatus,
 } from "../data/backend-appointment-repository";
 import type { ClinicalMessages } from "@/features/clinical-presentation/messages";
+import type { BackendPayment } from "@/features/payments/data/backend-payment-repository";
+import {
+  paymentMessages,
+  paymentTone,
+} from "@/features/payments/presentation/messages";
 
 const statuses: readonly BackendAppointmentStatus[] = [
   "scheduled",
@@ -15,12 +20,14 @@ const statuses: readonly BackendAppointmentStatus[] = [
 ];
 export function AppointmentsPage({
   page,
+  payments,
   locale,
   m,
   filters,
   validationMessage,
 }: {
   page: AppointmentPage;
+  payments?: ReadonlyMap<string, BackendPayment>;
   locale: Locale;
   m: ClinicalMessages;
   filters: {
@@ -32,6 +39,7 @@ export function AppointmentsPage({
   };
   validationMessage?: string;
 }) {
+  const pm = paymentMessages(locale);
   const link = (cursor?: string, trail: readonly string[] = []) => {
     const q = new URLSearchParams({ from: filters.from, to: filters.to });
     if (filters.status) q.set("status", filters.status);
@@ -79,6 +87,7 @@ export function AppointmentsPage({
                 <th>{m.patient}</th>
                 <th>{m.doctor}</th>
                 <th>{m.status}</th>
+                {payments && <th>{pm.payment}</th>}
                 <th>{m.reference}</th>
                 <th>{m.actions}</th>
               </tr>
@@ -96,6 +105,20 @@ export function AppointmentsPage({
                   <td>
                     <span className="pill info">{m[a.status]}</span>
                   </td>
+                  {payments && (
+                    <td>
+                      {(() => {
+                        const status =
+                          payments.get(a.id)?.status ??
+                          (a.status === "cancelled" ? "void" : "dueAtCounter");
+                        return (
+                          <span className={`pill ${paymentTone(status)}`}>
+                            {pm[status]}
+                          </span>
+                        );
+                      })()}
+                    </td>
+                  )}
                   <td>
                     <bdi>{a.reference}</bdi>
                   </td>

@@ -5,6 +5,8 @@ import type { ClinicalMessages } from "@/features/clinical-presentation/messages
 import { AppointmentMutations } from "./appointment-mutations";
 import type { BackendArrival } from "@/features/arrivals/data/backend-arrival-repository";
 import type { ArrivalMessages } from "@/features/arrivals/presentation/messages";
+import type { BackendPayment } from "@/features/payments/data/backend-payment-repository";
+import { PaymentSection } from "@/features/payments/presentation/payment-section";
 
 export function AppointmentWorkspace({
   appointment: a,
@@ -13,7 +15,11 @@ export function AppointmentWorkspace({
   arrival,
   arrivalError,
   arrivalMessages: am,
+  payment,
+  paymentError,
 }: {
+  payment?: BackendPayment;
+  paymentError?: boolean;
   appointment: BackendAppointment;
   locale: Locale;
   m: ClinicalMessages;
@@ -66,6 +72,13 @@ export function AppointmentWorkspace({
           {m.patientDetails}
         </Link>
       </section>
+      <PaymentSection
+        payment={payment}
+        failed={paymentError}
+        locale={locale}
+        appointmentId={a.id}
+        appointmentStatus={a.status}
+      />
       {am && (
         <section className="section" aria-labelledby="arrival-state">
           <h2 id="arrival-state">{am.arrival}</h2>

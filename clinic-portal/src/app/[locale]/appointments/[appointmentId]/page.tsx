@@ -6,6 +6,7 @@ import { AppointmentWorkspace } from "@/features/appointments/presentation/appoi
 import { ClinicalState } from "@/features/clinical-presentation/clinical-state";
 import { clinicalMessages } from "@/features/clinical-presentation/messages";
 import { arrivalMessages } from "@/features/arrivals/presentation/messages";
+import type { BackendPayment } from "@/features/payments/data/backend-payment-repository";
 export default async function Page({
   params,
 }: {
@@ -44,8 +45,19 @@ export default async function Page({
   } catch {
     arrivalError = true;
   }
+  let payment: BackendPayment | undefined,
+    paymentError = false;
+  try {
+    payment = await (
+      await clinicalComposition(locale)
+    ).payments.get(appointmentId);
+  } catch {
+    paymentError = true;
+  }
   return (
     <AppointmentWorkspace
+      payment={payment}
+      paymentError={paymentError}
       appointment={appointment}
       locale={locale}
       m={m}
