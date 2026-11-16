@@ -40,7 +40,6 @@ export function PortalShell({
   role,
   current,
   navigation,
-  context,
   children,
 }: {
   locale: Locale;
@@ -48,6 +47,7 @@ export function PortalShell({
   role: PortalStaffRole;
   current: PortalRouteId;
   navigation: readonly RoutePolicy[];
+  /** Tenant scope; kept for callers, no longer printed as raw IDs. */
   context: { organizationId?: string; clinicId?: string };
   children: React.ReactNode;
 }) {
@@ -145,12 +145,6 @@ export function PortalShell({
         </nav>
         <div className="safe-context">
           <strong>{m[roleLabels[role]]}</strong>
-          {context.organizationId && (
-            <small>
-              {m.context}: {context.organizationId.slice(0, 8)}… /{" "}
-              {context.clinicId?.slice(0, 8)}…
-            </small>
-          )}
         </div>
         <button onClick={() => void logout(false)}>{m.logout}</button>
         <button onClick={() => void logout(true)}>{m.logoutAll}</button>
