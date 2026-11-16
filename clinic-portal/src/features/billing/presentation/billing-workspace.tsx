@@ -217,7 +217,7 @@ export function BillingWorkspace({
   return (
     <section className="billing-workspace" aria-labelledby="billing-title">
       <header>
-        <p className="eyebrow">{platform ? "Platform" : "Clinic"}</p>
+        <p className="eyebrow">{platform ? m.platform : m.clinic}</p>
         <h1 id="billing-title">{m.billing}</h1>
         <p>
           {platform ? (selected?.name ?? m.chooseOrganization) : m.readOnly}
@@ -254,14 +254,32 @@ export function BillingWorkspace({
         </div>
       )}
       <nav className="billing-tabs" aria-label={m.billing}>
-        <Link href={`/${locale}/billing${query}`}>{m.overview}</Link>
-        <Link href={`/${locale}/billing/commissions${query}`}>
+        <Link
+          href={`/${locale}/billing${query}`}
+          aria-current={mode === "overview" ? "page" : undefined}
+        >
+          {m.overview}
+        </Link>
+        <Link
+          href={`/${locale}/billing/commissions${query}`}
+          aria-current={mode === "commissions" ? "page" : undefined}
+        >
           {m.commissions}
         </Link>
-        <Link href={`/${locale}/billing/statements${query}`}>
+        <Link
+          href={`/${locale}/billing/statements${query}`}
+          aria-current={mode === "statements" ? "page" : undefined}
+        >
           {m.statements}
         </Link>
-        {platform && <Link href={`/${locale}/billing/plans`}>{m.plans}</Link>}
+        {platform && (
+          <Link
+            href={`/${locale}/billing/plans`}
+            aria-current={mode === "plans" ? "page" : undefined}
+          >
+            {m.plans}
+          </Link>
+        )}
         {organizationId && (
           <Link
             href={`/${locale}/billing/organizations/${organizationId}/plan`}

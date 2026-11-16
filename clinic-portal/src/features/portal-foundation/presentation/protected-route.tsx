@@ -38,14 +38,29 @@ export async function ProtectedRoute({
   if (!session) redirect(login);
   if (accessTokenNeedsRefresh(session))
     redirect(`/api/auth/continue?returnPath=${encodeURIComponent(path)}`);
-  if (!allowed(route, session.role))
+  if (!allowed(route, session.role)) {
+    const navigation = navigationFor(session.role),
+      home = navigation[0];
     return (
-      <PortalStateView
-        kind="forbidden"
+      <PortalShell
+        locale={locale}
         m={foundationMessages(locale)}
-        actionHref={`/${locale}/login`}
-      />
+        role={session.role}
+        current={home?.id ?? route}
+        navigation={navigation}
+        context={{
+          organizationId: session.context?.organizationId,
+          clinicId: session.context?.clinicId,
+        }}
+      >
+        <PortalStateView
+          kind="forbidden"
+          m={foundationMessages(locale)}
+          actionHref={home ? routePath(locale, home.id) : `/${locale}/login`}
+        />
+      </PortalShell>
     );
+  }
   const m = foundationMessages(locale),
     integrated =
       route === "appointments" ||

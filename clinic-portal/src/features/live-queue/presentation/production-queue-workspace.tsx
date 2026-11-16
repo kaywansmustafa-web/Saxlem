@@ -159,6 +159,26 @@ export function ProductionQueueWorkspace({
         </label>
         <button>{m.choose}</button>
       </form>
+      {!doctorId && (
+        <section className="choose-hint">
+          <span className="placeholder-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              width="30"
+              height="30"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M4 6h10M4 12h16M4 18h7" />
+              <circle cx="19" cy="6" r="2" />
+            </svg>
+          </span>
+          <p>{m.chooseHint}</p>
+        </section>
+      )}
       {doctorId && !queue ? (
         <section className="section">
           <h2>{selected?.displayName}</h2>

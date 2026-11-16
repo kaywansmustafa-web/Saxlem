@@ -42,6 +42,7 @@ const en = {
   context: "Current clinic context",
   featureUnavailable: "Not available yet",
   futureOwner: "Planned for {owner}.",
+  comingSoonBody: "We are building this part of the portal. Everything else keeps working as usual.",
   loading: "Loading secure portal",
   unauthorized: "Sign in required",
   forbidden: "You do not have access to this area.",
@@ -50,6 +51,7 @@ const en = {
   failure: "Something went wrong.",
   notFound: "Page not found",
   retry: "Try again",
+  goHome: "Back to home",
   goLogin: "Go to sign in",
 };
 export type FoundationMessages = typeof en & { readonly skip?: string };
@@ -96,6 +98,7 @@ const ar: FoundationMessages = {
   context: "سياق العيادة الحالي",
   featureUnavailable: "غير متاح بعد",
   futureOwner: "مخطط له في {owner}.",
+  comingSoonBody: "نعمل على بناء هذا القسم من البوابة. كل الأقسام الأخرى تعمل كالمعتاد.",
   loading: "جارٍ تحميل البوابة الآمنة",
   unauthorized: "تسجيل الدخول مطلوب",
   forbidden: "ليس لديك صلاحية للوصول إلى هذه المنطقة.",
@@ -104,6 +107,7 @@ const ar: FoundationMessages = {
   failure: "حدث خطأ ما.",
   notFound: "الصفحة غير موجودة",
   retry: "حاول مجددًا",
+  goHome: "العودة إلى الرئيسية",
   goLogin: "الذهاب إلى تسجيل الدخول",
 };
 const ku: FoundationMessages = {
@@ -149,6 +153,7 @@ const ku: FoundationMessages = {
   context: "چوارچۆڤەیا کلینیکا نوکە",
   featureUnavailable: "هێشتا بەردەست نینە",
   futureOwner: "بۆ {owner} هاتیە پلانکرن.",
+  comingSoonBody: "ئەم ڤێ بەشا پۆرتالێ ئاڤا دکەین. هەمی بەشێن دی وەک هەردەم کار دکەن.",
   loading: "پۆرتالا پارێزراو دهێتە بارکرن",
   unauthorized: "چوونەژوورەوە پێدڤیە",
   forbidden: "دەستگەیشتن بۆ ڤێ بەشێ نینە.",
@@ -157,6 +162,7 @@ const ku: FoundationMessages = {
   failure: "کێشەیەک روو دا.",
   notFound: "پەڕە نەهاتە دیتن",
   retry: "دیسان هەول بدە",
+  goHome: "ڤەگەڕە بو سەرەکی",
   goLogin: "بچۆ چوونەژوورەوە",
 };
 export const foundationMessages = (locale: Locale): FoundationMessages => ({

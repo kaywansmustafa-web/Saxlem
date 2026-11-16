@@ -1,8 +1,5 @@
 import type { RoutePolicy } from "../domain/route-policy";
-import {
-  foundationFormat,
-  type FoundationMessages,
-} from "./foundation-messages";
+import type { FoundationMessages } from "./foundation-messages";
 const labels: Record<RoutePolicy["id"], keyof FoundationMessages> = {
   dashboard: "dashboard",
   patients: "patients",
@@ -23,6 +20,9 @@ const labels: Record<RoutePolicy["id"], keyof FoundationMessages> = {
   clinics: "clinics",
   billing: "billing",
 };
+/** A calm "coming soon" card for sections that are not built yet. It names
+ * the section and says plainly that it is not available; no internal plan
+ * names, no controls that pretend to work. */
 export function HonestPlaceholder({
   route,
   m,
@@ -32,9 +32,23 @@ export function HonestPlaceholder({
 }) {
   return (
     <section className="honest-placeholder">
+      <span className="placeholder-icon" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          width="30"
+          height="30"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" />
+        </svg>
+      </span>
       <h1>{m[labels[route.id]]}</h1>
-      <p>{m.featureUnavailable}</p>
-      <p>{foundationFormat(m.futureOwner, { owner: route.owner })}</p>
+      <p className="placeholder-pill">{m.featureUnavailable}</p>
+      <p>{m.comingSoonBody}</p>
     </section>
   );
 }
