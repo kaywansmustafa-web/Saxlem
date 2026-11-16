@@ -7,6 +7,7 @@ import type { BackendArrival } from "@/features/arrivals/data/backend-arrival-re
 import type { ArrivalMessages } from "@/features/arrivals/presentation/messages";
 import type { BackendPayment } from "@/features/payments/data/backend-payment-repository";
 import { PaymentSection } from "@/features/payments/presentation/payment-section";
+import { bookingMessages, originLabel } from "./booking-messages";
 
 export function AppointmentWorkspace({
   appointment: a,
@@ -54,6 +55,10 @@ export function AppointmentWorkspace({
             [m.doctor, a.doctorName],
             [m.clinic, a.clinicName],
             [m.status, m[a.status]],
+            [
+              bookingMessages(locale).source,
+              originLabel(a.origin, bookingMessages(locale)) ?? "-",
+            ],
             [m.reason, a.reason],
             [m.duration, `${a.durationMinutes}`],
             [m.fee, new Intl.NumberFormat(locale).format(a.feeIqd) + " IQD"],

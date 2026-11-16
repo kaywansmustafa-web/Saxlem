@@ -10,6 +10,7 @@ import {
   paymentMessages,
   paymentTone,
 } from "@/features/payments/presentation/messages";
+import { bookingMessages, originLabel } from "./booking-messages";
 
 const statuses: readonly BackendAppointmentStatus[] = [
   "scheduled",
@@ -40,6 +41,7 @@ export function AppointmentsPage({
   validationMessage?: string;
 }) {
   const pm = paymentMessages(locale);
+  const bm = bookingMessages(locale);
   const link = (cursor?: string, trail: readonly string[] = []) => {
     const q = new URLSearchParams({ from: filters.from, to: filters.to });
     if (filters.status) q.set("status", filters.status);
@@ -53,6 +55,20 @@ export function AppointmentsPage({
         <p className="eyebrow">{m.appointments}</p>
         <h1>{m.appointments}</h1>
         <p>{m.appointmentHelp}</p>
+        <div className="heading-actions">
+          <Link
+            className="button-link primary"
+            href={`/${locale}/appointments/new?mode=phone`}
+          >
+            {bm.newBooking}
+          </Link>
+          <Link
+            className="button-link secondary"
+            href={`/${locale}/appointments/new?mode=walkIn`}
+          >
+            {bm.walkIn}
+          </Link>
+        </div>
       </header>
       <form className="clinical-filters" method="get">
         <label>
@@ -86,6 +102,7 @@ export function AppointmentsPage({
                 <th>{m.date}</th>
                 <th>{m.patient}</th>
                 <th>{m.doctor}</th>
+                <th>{bm.source}</th>
                 <th>{m.status}</th>
                 {payments && <th>{pm.payment}</th>}
                 <th>{m.reference}</th>
@@ -102,6 +119,7 @@ export function AppointmentsPage({
                   </td>
                   <td>{a.patientName}</td>
                   <td>{a.doctorName}</td>
+                  <td>{originLabel(a.origin, bm) ?? "-"}</td>
                   <td>
                     <span className="pill info">{m[a.status]}</span>
                   </td>
