@@ -16,6 +16,8 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'notifications:read',
     'notifications:stream',
     'notifications:mark-read',
+    'payment:read',
+    'payment:choose',
   ],
   receptionist: [
     'clinic:operations:read',
@@ -42,6 +44,8 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'notifications:read',
     'notifications:stream',
     'notifications:mark-read',
+    'payment:read',
+    'payment:record',
   ],
   doctor: [
     'doctor:workspace:read',
@@ -90,6 +94,8 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'notifications:stream',
     'notifications:mark-read',
     'billing:read',
+    'payment:read',
+    'payment:record',
   ],
   platformAdministrator: [
     'platform:administration',
@@ -108,6 +114,8 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'billing:read',
     'billing:plan:manage',
     'billing:statement:finalize',
+    'payment:read',
+    'payment:account:manage',
   ],
 };
 

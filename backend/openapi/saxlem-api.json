@@ -4757,6 +4757,712 @@
         ]
       }
     },
+    "/api/v1/payments/options": {
+      "get": {
+        "description": "Shown before booking. \"counter\" is always available; \"online\" only when the clinic has connected its own merchant account.",
+        "operationId": "PaymentsController_options",
+        "parameters": [
+          {
+            "name": "clinicId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentOptionsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Payment methods a clinic accepts",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/api/v1/payments": {
+      "get": {
+        "description": "Appointments without a payment record are paid at the counter.",
+        "operationId": "PaymentsController_list",
+        "parameters": [
+          {
+            "name": "appointmentId",
+            "required": true,
+            "in": "query",
+            "description": "Appointment ids (1 to 100). Repeat the parameter.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentListResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Payments for a set of appointments (clinic staff)",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/api/v1/appointments/{id}/payment": {
+      "get": {
+        "operationId": "PaymentsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Read an appointment payment",
+        "tags": [
+          "payments"
+        ]
+      },
+      "post": {
+        "description": "Pay at the counter, or pay online. Online returns a payment code, QR and app links; an unexpired link is reused, so repeating the call is safe.",
+        "operationId": "PaymentsController_choose",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChoosePaymentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Choose how to pay (patient)",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/api/v1/appointments/{id}/payment/refresh": {
+      "post": {
+        "operationId": "PaymentsController_refresh",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Re-check an online payment with the provider",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/api/v1/appointments/{id}/payment/counter": {
+      "post": {
+        "description": "Repeating the call is safe. Conflicts if the patient already paid in the app.",
+        "operationId": "PaymentsController_recordCounter",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Record a counter payment (reception)",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/api/v1/platform/organizations/{organizationId}/payment-account": {
+      "get": {
+        "operationId": "PaymentsController_account",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentAccountResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Read an organization’s online payment account",
+        "tags": [
+          "payments"
+        ]
+      },
+      "put": {
+        "description": "Credentials are checked with the provider before saving and stored encrypted. The secret is never returned.",
+        "operationId": "PaymentsController_saveAccount",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavePaymentAccountDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentAccountResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Connect an organization’s own merchant account",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/api/v1/payments/fib/callback/{token}": {
+      "post": {
+        "description": "Public. The body is ignored: the status is always confirmed with FIB before anything changes.",
+        "operationId": "PaymentCallbackController_callback",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "summary": "FIB status callback",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
     "/api/v1/queue-sessions/{id}": {
       "get": {
         "operationId": "QueueController_get",
@@ -10843,6 +11549,291 @@
         },
         "required": [
           "version"
+        ]
+      },
+      "PaymentOptionsResponseDto": {
+        "type": "object",
+        "properties": {
+          "clinicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "methods": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "counter",
+                "online"
+              ]
+            }
+          },
+          "onlineProvider": {
+            "type": "string",
+            "enum": [
+              "fib",
+              "simulated"
+            ],
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "IQD"
+            ]
+          }
+        },
+        "required": [
+          "clinicId",
+          "methods",
+          "onlineProvider",
+          "currency"
+        ]
+      },
+      "PaymentOnlineDetailsDto": {
+        "type": "object",
+        "properties": {
+          "readableCode": {
+            "type": "string",
+            "nullable": true,
+            "example": "AB12-CD34"
+          },
+          "qrCode": {
+            "type": "string",
+            "nullable": true,
+            "description": "PNG data URL to scan with the provider app."
+          },
+          "personalAppLink": {
+            "type": "string",
+            "nullable": true
+          },
+          "businessAppLink": {
+            "type": "string",
+            "nullable": true
+          },
+          "validUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "readableCode",
+          "qrCode",
+          "personalAppLink",
+          "businessAppLink",
+          "validUntil"
+        ]
+      },
+      "PaymentResponseDto": {
+        "type": "object",
+        "properties": {
+          "appointmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "counter",
+              "online"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "dueAtCounter",
+              "pending",
+              "paid",
+              "expired",
+              "cancelled",
+              "refundPending",
+              "refunded",
+              "refundFailed",
+              "void"
+            ]
+          },
+          "amountIqd": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "IQD"
+            ]
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "fib",
+              "simulated"
+            ],
+            "nullable": true
+          },
+          "onlineAvailable": {
+            "type": "boolean",
+            "description": "Whether paying in the app is possible now."
+          },
+          "online": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaymentOnlineDetailsDto"
+              }
+            ]
+          },
+          "paidAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "refundedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "0 when the patient has not chosen yet (defaults to the counter)."
+          }
+        },
+        "required": [
+          "appointmentId",
+          "method",
+          "status",
+          "amountIqd",
+          "currency",
+          "provider",
+          "onlineAvailable",
+          "online",
+          "paidAt",
+          "refundedAt",
+          "version"
+        ]
+      },
+      "PaymentListResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentResponseDto"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "ChoosePaymentDto": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "counter",
+              "online"
+            ],
+            "description": "counter: pay the receptionist in person. online: pay in the app into the clinic’s own account."
+          }
+        },
+        "required": [
+          "method"
+        ]
+      },
+      "PaymentAccountResponseDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "connected": {
+            "type": "boolean"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "fib",
+              "simulated"
+            ],
+            "nullable": true
+          },
+          "environment": {
+            "type": "string",
+            "nullable": true
+          },
+          "clientIdHint": {
+            "type": "string",
+            "nullable": true,
+            "description": "Last four characters of the client id. Secrets are never returned."
+          },
+          "onlineEnabled": {
+            "type": "boolean"
+          },
+          "platformOnlineEnabled": {
+            "type": "boolean",
+            "description": "Whether online payments are switched on for the platform."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "organizationId",
+          "connected",
+          "provider",
+          "environment",
+          "clientIdHint",
+          "onlineEnabled",
+          "platformOnlineEnabled",
+          "updatedAt"
+        ]
+      },
+      "SavePaymentAccountDto": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "enum": [
+              "fib",
+              "simulated"
+            ]
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "stage",
+              "prod",
+              "simulated"
+            ]
+          },
+          "clientId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "clientSecret": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 500,
+            "writeOnly": true
+          },
+          "onlineEnabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "provider",
+          "environment",
+          "clientId",
+          "clientSecret",
+          "onlineEnabled"
         ]
       },
       "StaffQueueEntryResponseDto": {

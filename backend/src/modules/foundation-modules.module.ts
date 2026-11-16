@@ -1,3 +1,4 @@
+import { PaymentsModule } from './payments/payments.module';
 import { Module } from '@nestjs/common';
 import { IdentityModule } from './identity/identity.module';
 import { PatientsModule } from './patients/patients.module';
@@ -31,6 +32,7 @@ export class AuditModule {}
     PatientsModule,
     AppointmentsModule,
     ArrivalsModule,
+    PaymentsModule,
     DoctorAvailabilityModule,
     QueueModule,
     NotificationsModule,

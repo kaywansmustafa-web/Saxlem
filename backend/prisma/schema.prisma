@@ -168,6 +168,8 @@ model Organization {
   doctorLeaves             DoctorLeave[]
   doctorHolidays           DoctorHoliday[]
   doctorScheduleExceptions DoctorScheduleException[]
+  paymentAccount           OrganizationPaymentAccount?
+  appointmentPayments      AppointmentPayment[]
   billingPlanAssignments   OrganizationPlanAssignment[]
   commissionLedgerEntries  CommissionLedgerEntry[]
   billingStatements        BillingStatement[]
@@ -238,6 +240,7 @@ model User {
   uploadedDocuments    DocumentRecord[]         @relation("DocumentUploader")
   authorizationVersion Int                      @default(1) @map("authorization_version")
   roleVersion          Int                      @default(1) @map("role_version")
+  recordedPayments     AppointmentPayment[]
 
   @@map("users")
 }
@@ -320,13 +323,13 @@ model PatientAccountActiveProfile {
 }
 
 model StaffAccount {
-  id           String   @id @default(uuid(7)) @db.Uuid
-  userId       String   @unique @map("user_id") @db.Uuid
-  email        String   @unique
-  passwordHash String?  @map("password_hash")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
-  user         User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  id           String                 @id @default(uuid(7)) @db.Uuid
+  userId       String                 @unique @map("user_id") @db.Uuid
+  email        String                 @unique
+  passwordHash String?                @map("password_hash")
+  createdAt    DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime               @updatedAt @map("updated_at") @db.Timestamptz(3)
+  user         User                   @relation(fields: [userId], references: [id], onDelete: Restrict)
   doctor       Doctor?
   activations  StaffActivationToken[]
 
@@ -628,6 +631,7 @@ model Appointment {
   queueEntries        QueueEntry[]
   commissionEntries   CommissionLedgerEntry[]
   statementLines      BillingStatementLine[]
+  payment             AppointmentPayment?
 
   @@unique([organizationId, clinicId, id])
   @@unique([organizationId, clinicId, id, patientProfileId])
@@ -1150,4 +1154,78 @@ model DocumentRecord {
   @@index([organizationId, clinicId, status, createdAt])
   @@index([entityType, entityId, status])
   @@map("document_records")
+}
+
+enum PaymentMethod {
+  counter
+  online
+}
+
+enum PaymentProvider {
+  fib
+  simulated
+}
+
+enum PaymentStatus {
+  dueAtCounter
+  pending
+  paid
+  expired
+  cancelled
+  refundPending
+  refunded
+  refundFailed
+  void
+}
+
+/// The clinic organization's own merchant account. Money paid online goes
+/// straight to this account; Saxlem never holds patient funds.
+model OrganizationPaymentAccount {
+  id                     String          @id @default(uuid(7)) @db.Uuid
+  organizationId         String          @unique @map("organization_id") @db.Uuid
+  provider               PaymentProvider
+  environment            String
+  clientId               String          @map("client_id")
+  clientSecretCiphertext String          @map("client_secret_ciphertext")
+  onlineEnabled          Boolean         @default(true) @map("online_enabled")
+  version                Int             @default(1)
+  createdAt              DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt              DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization           Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@map("organization_payment_accounts")
+}
+
+model AppointmentPayment {
+  id                String           @id @default(uuid(7)) @db.Uuid
+  organizationId    String           @map("organization_id") @db.Uuid
+  clinicId          String           @map("clinic_id") @db.Uuid
+  appointmentId     String           @unique @map("appointment_id") @db.Uuid
+  method            PaymentMethod
+  provider          PaymentProvider?
+  status            PaymentStatus
+  amountIqd         Int              @map("amount_iqd")
+  providerPaymentId String?          @unique @map("provider_payment_id")
+  readableCode      String?          @map("readable_code")
+  qrCode            String?          @map("qr_code")
+  personalAppLink   String?          @map("personal_app_link")
+  businessAppLink   String?          @map("business_app_link")
+  validUntil        DateTime?        @map("valid_until") @db.Timestamptz(3)
+  paidAt            DateTime?        @map("paid_at") @db.Timestamptz(3)
+  recordedByUserId  String?          @map("recorded_by_user_id") @db.Uuid
+  refundedAt        DateTime?        @map("refunded_at") @db.Timestamptz(3)
+  failureReason     String?          @map("failure_reason")
+  callbackToken     String           @unique @map("callback_token")
+  lastCheckedAt     DateTime?        @map("last_checked_at") @db.Timestamptz(3)
+  version           Int              @default(1)
+  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization      Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  appointment       Appointment      @relation(fields: [organizationId, clinicId, appointmentId], references: [organizationId, clinicId, id], onDelete: Restrict)
+  recordedBy        User?            @relation(fields: [recordedByUserId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, clinicId, appointmentId])
+  @@index([status, lastCheckedAt])
+  @@index([organizationId, clinicId, createdAt])
+  @@map("appointment_payments")
 }

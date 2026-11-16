@@ -131,6 +131,17 @@ const configurationSchema = z
       .min(1)
       .max(10000)
       .default(1000),
+    PAYMENTS_ONLINE_ENABLED: truthy.default(false),
+    PAYMENT_CREDENTIALS_KEY: cryptographicSecret.optional(),
+    PAYMENT_PUBLIC_CALLBACK_BASE_URL: z.string().url().optional(),
+    PAYMENT_LINK_MINUTES: z.coerce.number().int().min(6).max(2880).default(30),
+    PAYMENT_WORKER_ENABLED: truthy.default(false),
+    PAYMENT_WORKER_POLL_INTERVAL_MS: z.coerce
+      .number()
+      .int()
+      .min(1000)
+      .max(3600000)
+      .default(15000),
     ACCESS_TOKEN_SECRET: cryptographicSecret,
     REFRESH_TOKEN_SECRET: cryptographicSecret,
     OTP_SECRET: cryptographicSecret,
@@ -143,6 +154,13 @@ const configurationSchema = z
       input.OTP_SECRET,
       input.AUDIT_HASH_SECRET,
     ];
+    if (input.PAYMENT_CREDENTIALS_KEY)
+      secrets.push(input.PAYMENT_CREDENTIALS_KEY);
+    if (input.PAYMENTS_ONLINE_ENABLED && !input.PAYMENT_CREDENTIALS_KEY)
+      context.addIssue({
+        code: 'custom',
+        message: 'Online payments require PAYMENT_CREDENTIALS_KEY.',
+      });
     if (new Set(secrets).size !== secrets.length)
       context.addIssue({
         code: 'custom',
@@ -216,6 +234,12 @@ const configurationSchema = z
       notificationSsePageSize: input.NOTIFICATION_SSE_PAGE_SIZE,
       notificationSseMaxReconnectBacklog:
         input.NOTIFICATION_SSE_MAX_RECONNECT_BACKLOG,
+      paymentsOnlineEnabled: input.PAYMENTS_ONLINE_ENABLED,
+      paymentCredentialsKey: input.PAYMENT_CREDENTIALS_KEY,
+      paymentPublicCallbackBaseUrl: input.PAYMENT_PUBLIC_CALLBACK_BASE_URL,
+      paymentLinkMinutes: input.PAYMENT_LINK_MINUTES,
+      paymentWorkerEnabled: input.PAYMENT_WORKER_ENABLED,
+      paymentWorkerPollIntervalMs: input.PAYMENT_WORKER_POLL_INTERVAL_MS,
       accessTokenSecret: input.ACCESS_TOKEN_SECRET,
       refreshTokenSecret: input.REFRESH_TOKEN_SECRET,
       otpSecret: input.OTP_SECRET,
