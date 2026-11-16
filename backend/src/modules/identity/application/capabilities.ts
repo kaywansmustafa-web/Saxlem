@@ -22,9 +22,11 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
   receptionist: [
     'clinic:operations:read',
     'patient:directory:read',
+    'patient:register',
     'doctor:directory:read',
     'doctor:availability:read',
     'doctor:schedule:read',
+    'appointment:slots:read',
     'appointment:read',
     'appointment:create',
     'appointment:update',
@@ -68,10 +70,12 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
   clinicManager: [
     'clinic:management:read',
     'patient:directory:read',
+    'patient:register',
     'doctor:directory:read',
     'doctor:availability:read',
     'doctor:schedule:read',
     'clinic:hours:read',
+    'appointment:slots:read',
     'appointment:read',
     'appointment:create',
     'appointment:update',
@@ -116,6 +120,7 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'billing:statement:finalize',
     'payment:read',
     'payment:account:manage',
+    'payment:payout:manage',
   ],
 };
 

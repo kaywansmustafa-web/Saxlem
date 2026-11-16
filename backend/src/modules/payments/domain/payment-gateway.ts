@@ -24,7 +24,12 @@ export interface GatewayPayment {
 }
 
 export type GatewayPaymentState =
-  | { readonly status: 'paid'; readonly paidAt: Date }
+  | {
+      readonly status: 'paid';
+      readonly paidAt: Date;
+      /** Name on the paying FIB account, when the provider shares it. */
+      readonly payerName?: string | null;
+    }
   | { readonly status: 'unpaid'; readonly validUntil: Date | null }
   | {
       readonly status: 'declined';

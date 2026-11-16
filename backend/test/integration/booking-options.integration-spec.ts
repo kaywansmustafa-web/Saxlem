@@ -8,6 +8,7 @@ import { PrismaAppointmentRepository } from '../../src/modules/appointments/infr
 import { DoctorScheduleService } from '../../src/modules/doctors/application/doctor-schedule.service';
 import { TimezoneService } from '../../src/modules/doctors/application/timezone.service';
 import { PrismaDoctorScheduleRepository } from '../../src/modules/doctors/infrastructure/prisma-doctor-schedule.repository';
+import { PrismaPatientRepository } from '../../src/modules/patients/infrastructure/prisma-patient.repository';
 
 const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.TEST_DATABASE_URL! }),
@@ -152,6 +153,171 @@ describe('patient booking options database integration', () => {
       data: { status: 'inactive' },
     });
     await expect(request()).rejects.toBeInstanceOf(ForbiddenException);
+  }, 30_000);
+
+  it('keeps app, phone and walk-in bookings on one calendar', async () => {
+    const fixture = await setup();
+    const service = appointmentService();
+    const patientAccess = {
+      actorId: fixture.patientUserId,
+      patient: true,
+      doctor: false,
+      platformAdministrator: false,
+    };
+    const staffAccess = {
+      actorId: fixture.patientUserId,
+      patient: false,
+      doctor: false,
+      platformAdministrator: false,
+      organizationId: fixture.organizationId,
+      clinicId: fixture.clinicId,
+    };
+    const patients = new PrismaPatientRepository({
+      db: prisma,
+    } as unknown as PrismaService);
+    const directory = {
+      actorId: fixture.patientUserId,
+      organizationId: fixture.organizationId,
+      clinicId: fixture.clinicId,
+    };
+    const phone = `+9647${Date.now().toString().slice(-9)}`;
+    const caller = await patients.registerClinicPatient(
+      directory,
+      {
+        firstName: 'Phone',
+        lastName: 'Caller',
+        phoneNumber: phone,
+        gender: 'unspecified',
+      },
+      'register-caller',
+    );
+    expect(caller.created).toBe(true);
+    // Saving the same person twice returns the first record.
+    await expect(
+      patients.registerClinicPatient(
+        directory,
+        {
+          firstName: 'phone',
+          lastName: 'CALLER',
+          phoneNumber: phone,
+          gender: 'unspecified',
+        },
+        'register-caller-again',
+      ),
+    ).resolves.toMatchObject({
+      patientProfileId: caller.patientProfileId,
+      created: false,
+    });
+    const found = await patients.searchDirectory(
+      directory,
+      { q: phone.slice(-6), pageSize: 10 },
+      undefined,
+      'search-caller',
+    );
+    expect(found.items.map((item) => item.patientProfileId)).toContain(
+      caller.patientProfileId,
+    );
+
+    const window = (
+      access: typeof staffAccess | typeof patientAccess,
+      id: string,
+    ) =>
+      service.bookingOptions(
+        access,
+        fixture.doctorId,
+        fixture.clinicId,
+        id,
+        'initial',
+        '2030-07-22',
+        '2030-07-22',
+        'calendar-request',
+      );
+    const slot = (index: number) =>
+      [
+        '2030-07-22T05:00:00.000Z',
+        '2030-07-22T06:00:00.000Z',
+        '2030-07-22T06:30:00.000Z',
+      ][index]!;
+    const book = (
+      access: typeof staffAccess | typeof patientAccess,
+      patientProfileId: string,
+      startsAt: string,
+      key: string,
+    ) =>
+      service.create(
+        access,
+        {
+          organizationId: fixture.organizationId,
+          clinicId: fixture.clinicId,
+          doctorId: fixture.doctorId,
+          patientProfileId,
+          type: 'initial',
+          reason: 'Calendar check',
+          startsAt: new Date(startsAt),
+          startsAtSource: startsAt,
+          durationMinutes: 30,
+        },
+        key,
+        key,
+      );
+
+    // The app books 08:00; reception no longer sees it.
+    const appBooking = await book(
+      patientAccess,
+      fixture.profileId,
+      slot(0),
+      'calendar-app-0001',
+    );
+    expect(appBooking.origin).toBe('patientBooked');
+    const staffView = await window(staffAccess, caller.patientProfileId);
+    expect(staffView.days[0]!.slots.map((item) => item.startsAt)).not.toContain(
+      slot(0),
+    );
+    // Reception books 09:00 for the caller; the app no longer sees it.
+    const phoneBooking = await book(
+      staffAccess,
+      caller.patientProfileId,
+      slot(1),
+      'calendar-phone-01',
+    );
+    expect(phoneBooking).toMatchObject({
+      origin: 'clinicCreated',
+      patientName: 'Phone Caller',
+    });
+    const appView = await window(patientAccess, fixture.profileId);
+    expect(appView.days[0]!.slots.map((item) => item.startsAt)).not.toContain(
+      slot(1),
+    );
+    // Reception cannot double-book the app's slot either.
+    await expect(
+      book(staffAccess, caller.patientProfileId, slot(0), 'calendar-clash-1'),
+    ).rejects.toBeInstanceOf(ConflictException);
+    // Staff of another clinic cannot read this calendar.
+    await expect(
+      window(
+        { ...staffAccess, clinicId: fixture.organizationId },
+        caller.patientProfileId,
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  }, 30_000);
+
+  it('enforces the clinic-registered patient shape in the database', async () => {
+    const fixture = await setup();
+    await expect(
+      prisma.patientProfile.create({
+        data: {
+          firstName: 'Bad',
+          lastName: 'Phone',
+          registeredByOrganizationId: fixture.organizationId,
+          contactPhoneNumber: '0750123',
+        },
+      }),
+    ).rejects.toThrow(/patient_profiles_app_profile_check/);
+    await expect(
+      prisma.patientProfile.create({
+        data: { firstName: 'No', lastName: 'Owner' },
+      }),
+    ).rejects.toThrow(/patient_profiles_app_profile_check/);
   }, 30_000);
 });
 

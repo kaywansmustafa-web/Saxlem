@@ -2,6 +2,8 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { Prisma, type RecordStatus } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/database/prisma.service';
 import type {
+  ClinicPatientInput,
+  ClinicPatientRegistration,
   AccountRecord,
   PatientDirectoryAccess,
   PatientDirectoryCursorProjection,
@@ -221,6 +223,79 @@ export class PrismaPatientRepository implements PatientRepository {
     });
   }
 
+  async registerClinicPatient(
+    access: PatientDirectoryAccess,
+    input: ClinicPatientInput,
+    requestId: string,
+  ): Promise<ClinicPatientRegistration> {
+    return this.prisma.db.$transaction(async (tx) => {
+      // Serialize registrations for the same phone within an organization
+      // so a double-tapped "Save" cannot create two records.
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`${access.organizationId}:${input.phoneNumber}`}))`;
+      const existing = await tx.patientProfile.findMany({
+        where: {
+          patientAccountId: null,
+          registeredByOrganizationId: access.organizationId,
+          contactPhoneNumber: input.phoneNumber,
+          status: 'active',
+        },
+        select: { id: true, firstName: true, lastName: true },
+      });
+      const same = existing.find(
+        (profile) =>
+          profile.firstName.toLowerCase() === input.firstName.toLowerCase() &&
+          profile.lastName.toLowerCase() === input.lastName.toLowerCase(),
+      );
+      if (same) {
+        await tx.organizationPatientProfile.upsert({
+          where: {
+            organizationId_patientProfileId: {
+              organizationId: access.organizationId,
+              patientProfileId: same.id,
+            },
+          },
+          create: {
+            organizationId: access.organizationId,
+            patientProfileId: same.id,
+          },
+          update: { status: 'active' },
+        });
+        return Object.freeze({
+          patientProfileId: same.id,
+          displayName: `${same.firstName} ${same.lastName}`.trim(),
+          created: false,
+        });
+      }
+      const profile = await tx.patientProfile.create({
+        data: {
+          firstName: input.firstName,
+          lastName: input.lastName,
+          gender: input.gender,
+          contactPhoneNumber: input.phoneNumber,
+          registeredByOrganizationId: access.organizationId,
+          organizationRegistrations: {
+            create: { organizationId: access.organizationId },
+          },
+        },
+        select: { id: true, firstName: true, lastName: true },
+      });
+      await this.audit(
+        tx,
+        access.actorId,
+        'patient.clinic_registered',
+        profile.id,
+        requestId,
+        { origin: 'clinic' },
+        access,
+      );
+      return Object.freeze({
+        patientProfileId: profile.id,
+        displayName: `${profile.firstName} ${profile.lastName}`.trim(),
+        created: true,
+      });
+    });
+  }
+
   async searchDirectory(
     access: PatientDirectoryAccess,
     query: PatientDirectoryQuery,
@@ -234,7 +309,7 @@ export class PrismaPatientRepository implements PatientRepository {
     const identifierPattern = `${this.escapeLike(normalizedQuery)}%`;
     const search = Prisma.sql`(
       LOWER(CONCAT(pp.first_name, ' ', pp.last_name)) LIKE ${namePattern} ESCAPE '\\'
-      ${phone ? Prisma.sql`OR pa.normalized_phone_number LIKE ${phonePattern} ESCAPE '\\'` : Prisma.empty}
+      ${phone ? Prisma.sql`OR COALESCE(pa.normalized_phone_number, pp.contact_phone_number) LIKE ${phonePattern} ESCAPE '\\'` : Prisma.empty}
       ${/^[0-9a-f-]+$/iu.test(normalizedQuery) ? Prisma.sql`OR pp.id::text LIKE ${identifierPattern} ESCAPE '\\'` : Prisma.empty}
     )`;
     const boundary = cursor
@@ -262,19 +337,27 @@ export class PrismaPatientRepository implements PatientRepository {
             WHERE a.starts_at >= NOW() AND a.status IN ('scheduled', 'confirmed')
           ) AS next_appointment_at
         FROM patient_profiles pp
-        INNER JOIN patient_accounts pa ON pa.id = pp.patient_account_id
-        INNER JOIN users u ON u.id = pa.user_id AND u.status = 'active'
+        LEFT JOIN patient_accounts pa ON pa.id = pp.patient_account_id
+        LEFT JOIN users u ON u.id = pa.user_id
         INNER JOIN organization_patient_profiles opp
           ON opp.patient_profile_id = pp.id
           AND opp.organization_id = ${access.organizationId}::uuid
           AND opp.status = 'active'
         INNER JOIN organizations o
           ON o.id = opp.organization_id AND o.status = 'active'
-        INNER JOIN appointments a
+        LEFT JOIN appointments a
           ON a.organization_id = opp.organization_id
           AND a.patient_profile_id = pp.id
           AND a.clinic_id = ${access.clinicId}::uuid
         WHERE pp.status = 'active'
+          AND (
+            u.status = 'active'
+            OR (pp.patient_account_id IS NULL AND pp.registered_by_organization_id = ${access.organizationId}::uuid)
+          )
+          AND (
+            a.id IS NOT NULL
+            OR pp.registered_by_organization_id = ${access.organizationId}::uuid
+          )
           AND ${search}
           ${boundary}
         GROUP BY pp.id, pp.first_name, pp.last_name, pp.status
@@ -331,15 +414,30 @@ export class PrismaPatientRepository implements PatientRepository {
         where: {
           id: profileId,
           status: 'active',
-          patientAccount: { user: { status: 'active' } },
-          organizationRegistrations: {
-            some: {
-              organizationId: access.organizationId,
-              status: 'active',
-              organization: { status: 'active' },
-              appointments: { some: { clinicId: access.clinicId } },
+          OR: [
+            {
+              patientAccount: { user: { status: 'active' } },
+              organizationRegistrations: {
+                some: {
+                  organizationId: access.organizationId,
+                  status: 'active',
+                  organization: { status: 'active' },
+                  appointments: { some: { clinicId: access.clinicId } },
+                },
+              },
             },
-          },
+            {
+              patientAccountId: null,
+              registeredByOrganizationId: access.organizationId,
+              organizationRegistrations: {
+                some: {
+                  organizationId: access.organizationId,
+                  status: 'active',
+                  organization: { status: 'active' },
+                },
+              },
+            },
+          ],
         },
         select: {
           id: true,
@@ -456,6 +554,10 @@ export class PrismaPatientRepository implements PatientRepository {
     const relationship = profile.relationships[0]?.relationship;
     if (!relationship)
       throw new Error('Patient profile relationship invariant is broken.');
+    // App profiles always belong to an account and carry a date of birth;
+    // the database enforces this (patient_profiles_app_profile_check).
+    if (!profile.patientAccountId || !profile.dateOfBirth)
+      throw new Error('Patient profile account invariant is broken.');
     return {
       id: profile.id,
       patientAccountId: profile.patientAccountId,

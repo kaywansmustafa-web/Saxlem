@@ -38,6 +38,16 @@ describe('appointment payments architecture', () => {
     );
   });
 
+  it('keeps payout totals consistent in the database', () => {
+    const migration = source(
+      'prisma/migrations/20261117090000_platform_collection_payouts/migration.sql',
+    );
+    expect(migration).toContain('"net_payable_iqd" = "gross_collected_iqd"');
+    expect(migration).toContain(
+      'organization_payouts_organization_id_period_start_key',
+    );
+  });
+
   it('encodes the payment invariants in the database', () => {
     const migration = source(
       'prisma/migrations/20261116090000_appointment_payments/migration.sql',
@@ -63,6 +73,11 @@ describe('appointment payments architecture', () => {
       '/api/v1/appointments/{id}/payment/counter',
       '/api/v1/payments/fib/callback/{token}',
       '/api/v1/platform/organizations/{organizationId}/payment-account',
+      '/api/v1/platform/payments/settings',
+      '/api/v1/platform/payments/ledger',
+      '/api/v1/platform/payouts',
+      '/api/v1/platform/organizations/{organizationId}/payouts',
+      '/api/v1/platform/organizations/{organizationId}/payout-profile',
     ])
       expect(document.paths).toHaveProperty(route);
   });

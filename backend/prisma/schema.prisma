@@ -170,6 +170,9 @@ model Organization {
   doctorScheduleExceptions DoctorScheduleException[]
   paymentAccount           OrganizationPaymentAccount?
   appointmentPayments      AppointmentPayment[]
+  payoutProfile            OrganizationPayoutProfile?
+  clinicRegisteredPatients PatientProfile[]             @relation("ClinicRegisteredPatients")
+  payouts                  OrganizationPayout[]
   billingPlanAssignments   OrganizationPlanAssignment[]
   commissionLedgerEntries  CommissionLedgerEntry[]
   billingStatements        BillingStatement[]
@@ -241,6 +244,7 @@ model User {
   authorizationVersion Int                      @default(1) @map("authorization_version")
   roleVersion          Int                      @default(1) @map("role_version")
   recordedPayments     AppointmentPayment[]
+  organizationPayouts  OrganizationPayout[]
 
   @@map("users")
 }
@@ -276,25 +280,31 @@ model PatientAccount {
 }
 
 model PatientProfile {
-  id                        String                       @id @default(uuid(7)) @db.Uuid
-  patientAccountId          String                       @map("patient_account_id") @db.Uuid
-  firstName                 String                       @map("first_name")
-  lastName                  String                       @map("last_name")
-  dateOfBirth               DateTime                     @map("date_of_birth") @db.Date
-  gender                    PatientGender                @default(unspecified)
-  status                    RecordStatus                 @default(active)
-  version                   Int                          @default(1)
-  createdAt                 DateTime                     @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt                 DateTime                     @updatedAt @map("updated_at") @db.Timestamptz(3)
-  patientAccount            PatientAccount               @relation(fields: [patientAccountId], references: [id], onDelete: Restrict)
-  relationships             FamilyRelationship[]
-  organizationRegistrations OrganizationPatientProfile[]
-  appointmentArrivals       AppointmentArrival[]
-  activeForAccount          PatientAccountActiveProfile?
+  id                         String                       @id @default(uuid(7)) @db.Uuid
+  /// Null for patients a clinic registered by phone or at the desk, who
+  /// have no Saxlem app account.
+  patientAccountId           String?                      @map("patient_account_id") @db.Uuid
+  registeredByOrganizationId String?                      @map("registered_by_organization_id") @db.Uuid
+  contactPhoneNumber         String?                      @map("contact_phone_number")
+  firstName                  String                       @map("first_name")
+  lastName                   String                       @map("last_name")
+  dateOfBirth                DateTime?                    @map("date_of_birth") @db.Date
+  gender                     PatientGender                @default(unspecified)
+  status                     RecordStatus                 @default(active)
+  version                    Int                          @default(1)
+  createdAt                  DateTime                     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt                  DateTime                     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  patientAccount             PatientAccount?              @relation(fields: [patientAccountId], references: [id], onDelete: Restrict)
+  registeredByOrganization   Organization?                @relation("ClinicRegisteredPatients", fields: [registeredByOrganizationId], references: [id], onDelete: Restrict)
+  relationships              FamilyRelationship[]
+  organizationRegistrations  OrganizationPatientProfile[]
+  appointmentArrivals        AppointmentArrival[]
+  activeForAccount           PatientAccountActiveProfile?
 
   @@unique([patientAccountId, id])
   @@index([patientAccountId])
   @@index([patientAccountId, status])
+  @@index([registeredByOrganizationId, contactPhoneNumber], map: "patient_profiles_clinic_contact_idx")
   @@map("patient_profiles")
 }
 
@@ -1161,6 +1171,11 @@ enum PaymentMethod {
   online
 }
 
+enum PaymentCollector {
+  platform
+  organization
+}
+
 enum PaymentProvider {
   fib
   simulated
@@ -1197,35 +1212,87 @@ model OrganizationPaymentAccount {
 }
 
 model AppointmentPayment {
-  id                String           @id @default(uuid(7)) @db.Uuid
-  organizationId    String           @map("organization_id") @db.Uuid
-  clinicId          String           @map("clinic_id") @db.Uuid
-  appointmentId     String           @unique @map("appointment_id") @db.Uuid
+  id                String              @id @default(uuid(7)) @db.Uuid
+  organizationId    String              @map("organization_id") @db.Uuid
+  clinicId          String              @map("clinic_id") @db.Uuid
+  appointmentId     String              @unique @map("appointment_id") @db.Uuid
   method            PaymentMethod
   provider          PaymentProvider?
   status            PaymentStatus
-  amountIqd         Int              @map("amount_iqd")
-  providerPaymentId String?          @unique @map("provider_payment_id")
-  readableCode      String?          @map("readable_code")
-  qrCode            String?          @map("qr_code")
-  personalAppLink   String?          @map("personal_app_link")
-  businessAppLink   String?          @map("business_app_link")
-  validUntil        DateTime?        @map("valid_until") @db.Timestamptz(3)
-  paidAt            DateTime?        @map("paid_at") @db.Timestamptz(3)
-  recordedByUserId  String?          @map("recorded_by_user_id") @db.Uuid
-  refundedAt        DateTime?        @map("refunded_at") @db.Timestamptz(3)
-  failureReason     String?          @map("failure_reason")
-  callbackToken     String           @unique @map("callback_token")
-  lastCheckedAt     DateTime?        @map("last_checked_at") @db.Timestamptz(3)
-  version           Int              @default(1)
-  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt         DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
-  organization      Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  appointment       Appointment      @relation(fields: [organizationId, clinicId, appointmentId], references: [organizationId, clinicId, id], onDelete: Restrict)
-  recordedBy        User?            @relation(fields: [recordedByUserId], references: [id], onDelete: Restrict)
+  amountIqd         Int                 @map("amount_iqd")
+  providerPaymentId String?             @unique @map("provider_payment_id")
+  readableCode      String?             @map("readable_code")
+  qrCode            String?             @map("qr_code")
+  personalAppLink   String?             @map("personal_app_link")
+  businessAppLink   String?             @map("business_app_link")
+  validUntil        DateTime?           @map("valid_until") @db.Timestamptz(3)
+  paidAt            DateTime?           @map("paid_at") @db.Timestamptz(3)
+  recordedByUserId  String?             @map("recorded_by_user_id") @db.Uuid
+  refundedAt        DateTime?           @map("refunded_at") @db.Timestamptz(3)
+  failureReason     String?             @map("failure_reason")
+  collectedBy       PaymentCollector?   @map("collected_by")
+  payerName         String?             @map("payer_name")
+  payoutId          String?             @map("payout_id") @db.Uuid
+  clawbackPayoutId  String?             @map("clawback_payout_id") @db.Uuid
+  callbackToken     String              @unique @map("callback_token")
+  lastCheckedAt     DateTime?           @map("last_checked_at") @db.Timestamptz(3)
+  version           Int                 @default(1)
+  createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization      Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  appointment       Appointment         @relation(fields: [organizationId, clinicId, appointmentId], references: [organizationId, clinicId, id], onDelete: Restrict)
+  recordedBy        User?               @relation(fields: [recordedByUserId], references: [id], onDelete: Restrict)
+  payout            OrganizationPayout? @relation("PayoutPayments", fields: [payoutId], references: [id], onDelete: Restrict)
+  clawbackPayout    OrganizationPayout? @relation("PayoutClawbacks", fields: [clawbackPayoutId], references: [id], onDelete: Restrict)
 
   @@unique([organizationId, clinicId, appointmentId])
+  @@index([organizationId, payoutId, status])
+  @@index([paidAt])
   @@index([status, lastCheckedAt])
   @@index([organizationId, clinicId, createdAt])
   @@map("appointment_payments")
+}
+
+/// Platform-collection mode: whether an organization takes online payments
+/// into Saxlem's account, and where Saxlem sends its monthly payout.
+model OrganizationPayoutProfile {
+  organizationId        String       @id @map("organization_id") @db.Uuid
+  onlinePaymentsEnabled Boolean      @default(false) @map("online_payments_enabled")
+  payoutAccountName     String?      @map("payout_account_name")
+  payoutAccountNumber   String?      @map("payout_account_number")
+  version               Int          @default(1)
+  createdAt             DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization          Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@map("organization_payout_profiles")
+}
+
+/// A monthly settlement Saxlem recorded with an organization: online money
+/// collected for it, minus refunds already paid out, provider fees and the
+/// month's commission.
+model OrganizationPayout {
+  id                String               @id @default(uuid(7)) @db.Uuid
+  organizationId    String               @map("organization_id") @db.Uuid
+  periodStart       DateTime             @map("period_start") @db.Timestamptz(3)
+  periodEnd         DateTime             @map("period_end") @db.Timestamptz(3)
+  grossCollectedIqd Int                  @map("gross_collected_iqd")
+  clawbackIqd       Int                  @map("clawback_iqd")
+  providerFeeIqd    Int                  @map("provider_fee_iqd")
+  commissionIqd     Int                  @map("commission_iqd")
+  netPayableIqd     Int                  @map("net_payable_iqd")
+  paymentCount      Int                  @map("payment_count")
+  reference         String
+  note              String?
+  settledAt         DateTime             @map("settled_at") @db.Timestamptz(3)
+  settledById       String               @map("settled_by_id") @db.Uuid
+  createdAt         DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  organization      Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  settledBy         User                 @relation(fields: [settledById], references: [id], onDelete: Restrict)
+  payments          AppointmentPayment[] @relation("PayoutPayments")
+  clawbacks         AppointmentPayment[] @relation("PayoutClawbacks")
+
+  @@unique([organizationId, periodStart])
+  @@index([periodStart])
+  @@map("organization_payouts")
 }

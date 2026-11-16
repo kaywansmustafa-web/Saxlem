@@ -155,6 +155,82 @@ describe('AppointmentService', () => {
     );
     expect(empty.days).toEqual([{ date: '2030-07-22', slots: [] }]);
   });
+  it('lets staff of the same clinic read slots but not staff of another clinic', async () => {
+    const { service, schedules } = fixture();
+    schedules.schedule.mockResolvedValue({
+      ...schedule(),
+      clinics: [{ ...schedule().clinics[0]!, weeklySchedule: [] }],
+    });
+    const staff = {
+      actorId: 'reception',
+      patient: false,
+      doctor: false,
+      platformAdministrator: false,
+      organizationId: 'org',
+      clinicId: 'clinic',
+    };
+    await expect(
+      service.bookingOptions(
+        staff,
+        'doctor',
+        'clinic',
+        'patient',
+        'initial',
+        '2030-07-22',
+        '2030-07-22',
+        'request',
+      ),
+    ).resolves.toMatchObject({ days: [{ date: '2030-07-22', slots: [] }] });
+    await expect(
+      service.bookingOptions(
+        { ...staff, clinicId: 'other-clinic' },
+        'doctor',
+        'clinic',
+        'patient',
+        'initial',
+        '2030-07-22',
+        '2030-07-22',
+        'request',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+  it('records walk-ins as walkIn and phone bookings as clinicCreated', async () => {
+    const { service, create } = fixture();
+    const staff = {
+      actorId: 'reception',
+      patient: false,
+      doctor: false,
+      platformAdministrator: false,
+      organizationId: 'org',
+      clinicId: 'clinic',
+    };
+    const soon = new Date(Date.now() + 10 * 60_000);
+    await service.create(
+      staff,
+      { ...input, startsAt: soon, walkIn: true },
+      'idem-key-walk-1',
+      'request',
+    );
+    expect(create.mock.calls[0]?.[1].origin).toBe('walkIn');
+    await service.create(staff, input, 'idem-key-phone-1', 'request');
+    expect(create.mock.calls[1]?.[1].origin).toBe('clinicCreated');
+    await expect(
+      service.create(
+        staff,
+        { ...input, walkIn: true },
+        'idem-key-walk-2',
+        'request',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    await expect(
+      service.create(
+        access,
+        { ...input, startsAt: soon, walkIn: true },
+        'idem-key-walk-3',
+        'request',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
   it('applies leave and working-exception precedence without exposing causes', async () => {
     jest.useFakeTimers().setSystemTime(new Date('2030-07-21T12:00:00.000Z'));
     const { service, schedules } = fixture();
@@ -253,6 +329,7 @@ function fixture() {
     patientProfileId: 'patient',
     patientName: 'Patient',
     type: 'initial' as const,
+    origin: 'patientBooked' as const,
     reason: 'Consultation',
     startsAt: new Date().toISOString(),
     endsAt: new Date().toISOString(),

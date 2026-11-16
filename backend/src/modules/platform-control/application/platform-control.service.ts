@@ -994,6 +994,9 @@ export class PlatformControlService {
         includePatients
           ? this.prisma.db.patientProfile.findMany({
               where: {
+                // Owner search covers app accounts; clinic-registered
+                // patients stay inside their clinic's directory.
+                patientAccountId: { not: null },
                 OR: [
                   { firstName: { contains: q, mode: 'insensitive' } },
                   { lastName: { contains: q, mode: 'insensitive' } },

@@ -427,8 +427,10 @@ export class NotificationOutboxWorker
       },
     });
     for (const entry of entries) {
-      const userId =
-        entry.patientRegistration.patientProfile.patientAccount.userId;
+      // Clinic-registered patients have no app account to notify.
+      const account = entry.patientRegistration.patientProfile.patientAccount;
+      if (!account) continue;
+      const userId = account.userId;
       recipients.set(userId, {
         userId,
         patientProfileId: entry.patientProfileId,

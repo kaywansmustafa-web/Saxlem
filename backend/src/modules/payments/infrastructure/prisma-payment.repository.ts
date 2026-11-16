@@ -67,6 +67,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
       const data = {
         method: write.method,
         provider: write.provider,
+        collectedBy: write.collectedBy,
         status: write.status,
         amountIqd: write.amountIqd,
         providerPaymentId: write.providerPaymentId,
@@ -207,6 +208,14 @@ export class PrismaPaymentRepository implements PaymentRepository {
     return saved;
   }
 
+  async onlinePaymentsEnabled(organizationId: string) {
+    const profile = await this.prisma.db.organizationPayoutProfile.findUnique({
+      where: { organizationId },
+      select: { onlinePaymentsEnabled: true },
+    });
+    return profile?.onlinePaymentsEnabled ?? false;
+  }
+
   async organizationExists(organizationId: string) {
     return (
       (await this.prisma.db.organization.count({
@@ -258,9 +267,13 @@ export class PrismaPaymentRepository implements PaymentRepository {
       appointmentStatus: row.appointment.status,
       method: row.method,
       provider: row.provider,
+      collectedBy: row.collectedBy,
       status: row.status,
       amountIqd: row.amountIqd,
       providerPaymentId: row.providerPaymentId,
+      payerName: row.payerName,
+      payoutId: row.payoutId,
+      clawbackPayoutId: row.clawbackPayoutId,
       readableCode: row.readableCode,
       qrCode: row.qrCode,
       personalAppLink: row.personalAppLink,

@@ -85,7 +85,15 @@ export class FibPaymentGateway implements PaymentGateway {
     const status = this.text(json, 'status');
     if (status === 'PAID') {
       const paidAt = new Date(this.optionalText(json, 'paidAt') ?? Date.now());
-      return { status: 'paid', paidAt };
+      // FIB returns paidBy { name, iban }. Only the name is kept.
+      const paidBy = json.paidBy;
+      const payerName =
+        paidBy && typeof paidBy === 'object' && 'name' in paidBy
+          ? typeof paidBy.name === 'string'
+            ? paidBy.name.slice(0, 200)
+            : null
+          : null;
+      return { status: 'paid', paidAt, payerName };
     }
     if (status === 'UNPAID') {
       const raw = this.optionalText(json, 'validUntil');

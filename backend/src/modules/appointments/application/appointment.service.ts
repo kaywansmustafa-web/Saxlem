@@ -38,6 +38,8 @@ export interface CreateAppointmentInput {
   startsAt: Date;
   startsAtSource?: string;
   durationMinutes: number;
+  /** Staff only: the patient is standing at the desk without a booking. */
+  walkIn?: boolean;
 }
 @Injectable()
 export class AppointmentService {
@@ -59,10 +61,25 @@ export class AppointmentService {
     dateTo: string,
     requestId: string,
   ): Promise<BookingOptionsProjection> {
-    if (!access.patient)
-      throw new ForbiddenException('Booking options are patient-only.');
+    const staff =
+      !access.patient &&
+      !access.platformAdministrator &&
+      !!access.organizationId &&
+      access.clinicId === clinicId;
+    if (!access.patient && !staff)
+      throw new ForbiddenException(
+        'Booking options are limited to patients and staff of this clinic.',
+      );
     this.dateWindow(dateFrom, dateTo);
     const generatedAt = new Date();
+    // Reception may still book the slot that has just begun (a walk-in at
+    // 10:03 takes the 10:00 slot); the app only offers slots in the future.
+    const earliestStart = staff
+      ? new Date(
+          generatedAt.getTime() -
+            this.configuration.appointmentPastToleranceMinutes * 60_000,
+        )
+      : generatedAt;
     const scheduleAt = new Date(`${dateFrom}T12:00:00.000Z`);
     const schedule = await this.schedules.schedule(
       this.doctorAccess(access),
@@ -158,7 +175,7 @@ export class AppointmentService {
           if (
             !start ||
             !end ||
-            start <= generatedAt ||
+            start <= earliestStart ||
             !this.scheduleAllows(clinic, weekday, minute, start, end) ||
             conflicts.some(
               (item) =>
@@ -396,6 +413,15 @@ export class AppointmentService {
         'Appointment duration does not match booking configuration.',
       );
     this.reason(input.reason);
+    if (input.walkIn) {
+      if (access.patient || access.platformAdministrator)
+        throw new ForbiddenException('Only clinic staff can record walk-ins.');
+      const lead = input.startsAt.getTime() - Date.now();
+      if (lead > 60 * 60_000)
+        throw new BadRequestException(
+          'A walk-in must start within the next hour; book it as an appointment instead.',
+        );
+    }
     if (
       !access.patient &&
       !access.platformAdministrator &&
@@ -411,7 +437,11 @@ export class AppointmentService {
       doctorId: input.doctorId,
       patientProfileId: input.patientProfileId,
       type: input.type,
-      origin: access.patient ? 'patientBooked' : 'clinicCreated',
+      origin: access.patient
+        ? 'patientBooked'
+        : input.walkIn
+          ? 'walkIn'
+          : 'clinicCreated',
       reason: input.reason.trim(),
       startsAt: input.startsAt,
       durationMinutes: input.durationMinutes,

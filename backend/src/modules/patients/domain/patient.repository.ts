@@ -90,7 +90,27 @@ export interface PatientDirectoryDetailProjection {
   };
 }
 
+export interface ClinicPatientInput {
+  readonly firstName: string;
+  readonly lastName: string;
+  /** Normalized +9647XXXXXXXXX. */
+  readonly phoneNumber: string;
+  readonly gender: PatientGender;
+}
+
+export interface ClinicPatientRegistration {
+  readonly patientProfileId: string;
+  readonly displayName: string;
+  /** False when the same name and phone were already registered here. */
+  readonly created: boolean;
+}
+
 export interface PatientRepository {
+  registerClinicPatient(
+    access: PatientDirectoryAccess,
+    input: ClinicPatientInput,
+    requestId: string,
+  ): Promise<ClinicPatientRegistration>;
   accountForUser(userId: string): Promise<AccountRecord | null>;
   profiles(accountId: string): Promise<readonly ProfileRecord[]>;
   profile(accountId: string, profileId: string): Promise<ProfileRecord | null>;

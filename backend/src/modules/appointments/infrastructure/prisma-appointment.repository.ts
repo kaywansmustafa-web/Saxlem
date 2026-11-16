@@ -441,6 +441,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       patientProfileId: row.patientProfileId,
       patientName: `${row.patientRegistration.patientProfile.firstName} ${row.patientRegistration.patientProfile.lastName}`,
       type: row.type,
+      origin: row.origin ?? 'clinicCreated',
       reason: row.reason,
       startsAt: row.startsAt.toISOString(),
       endsAt: row.endsAt.toISOString(),

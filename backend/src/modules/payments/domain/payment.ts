@@ -2,6 +2,7 @@ import type { AppointmentAccess } from '../../appointments/domain/appointment';
 
 export type PaymentMethod = 'counter' | 'online';
 export type PaymentProvider = 'fib' | 'simulated';
+export type PaymentCollector = 'platform' | 'organization';
 export type PaymentStatus =
   | 'dueAtCounter'
   | 'pending'
@@ -24,9 +25,13 @@ export interface PaymentRecord {
   readonly appointmentStatus: string;
   readonly method: PaymentMethod;
   readonly provider: PaymentProvider | null;
+  readonly collectedBy: PaymentCollector | null;
   readonly status: PaymentStatus;
   readonly amountIqd: number;
   readonly providerPaymentId: string | null;
+  readonly payerName: string | null;
+  readonly payoutId: string | null;
+  readonly clawbackPayoutId: string | null;
   readonly readableCode: string | null;
   readonly qrCode: string | null;
   readonly personalAppLink: string | null;

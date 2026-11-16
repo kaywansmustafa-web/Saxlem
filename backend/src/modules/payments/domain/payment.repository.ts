@@ -1,4 +1,5 @@
 import type {
+  PaymentCollector,
   PaymentAccess,
   PaymentAccountRecord,
   PaymentMethod,
@@ -10,6 +11,7 @@ import type {
 export interface PaymentWrite {
   readonly method: PaymentMethod;
   readonly provider: PaymentProvider | null;
+  readonly collectedBy: PaymentCollector | null;
   readonly status: PaymentStatus;
   readonly amountIqd: number;
   readonly providerPaymentId: string | null;
@@ -30,6 +32,7 @@ export interface PaymentPatch {
   readonly failureReason?: string | null;
   readonly validUntil?: Date | null;
   readonly lastCheckedAt?: Date;
+  readonly payerName?: string | null;
 }
 
 export interface PaymentAudit {
@@ -84,6 +87,7 @@ export interface PaymentRepository {
     audit: PaymentAudit,
   ): Promise<PaymentAccountRecord>;
   organizationExists(organizationId: string): Promise<boolean>;
+  onlinePaymentsEnabled(organizationId: string): Promise<boolean>;
 }
 
 export const PAYMENT_REPOSITORY = Symbol('PAYMENT_REPOSITORY');

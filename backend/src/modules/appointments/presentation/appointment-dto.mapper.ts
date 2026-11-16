@@ -14,6 +14,7 @@ export class AppointmentDtoMapper {
       patientProfileId: source.patientProfileId,
       patientName: source.patientName,
       type: source.type,
+      origin: source.origin,
       reason: source.reason,
       startsAt: source.startsAt,
       endsAt: source.endsAt,

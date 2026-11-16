@@ -133,6 +133,20 @@ const configurationSchema = z
       .default(1000),
     PAYMENTS_ONLINE_ENABLED: truthy.default(false),
     PAYMENT_CREDENTIALS_KEY: cryptographicSecret.optional(),
+    PAYMENT_COLLECTION_MODE: z.enum(['platform', 'clinic']).default('platform'),
+    PAYMENT_PLATFORM_PROVIDER: z.enum(['fib', 'simulated']).default('fib'),
+    PAYMENT_PLATFORM_FIB_ENVIRONMENT: z
+      .enum(['stage', 'prod'])
+      .default('stage'),
+    PAYMENT_PLATFORM_CLIENT_ID: z.string().trim().min(1).max(200).optional(),
+    PAYMENT_PLATFORM_CLIENT_SECRET: z.string().min(8).max(500).optional(),
+    PAYMENT_PROVIDER_FEE_BPS: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(1000)
+      .default(50),
+    PAYMENT_FEE_PASSED_TO_CLINIC: truthy.default(true),
     PAYMENT_PUBLIC_CALLBACK_BASE_URL: z.string().url().optional(),
     PAYMENT_LINK_MINUTES: z.coerce.number().int().min(6).max(2880).default(30),
     PAYMENT_WORKER_ENABLED: truthy.default(false),
@@ -156,10 +170,26 @@ const configurationSchema = z
     ];
     if (input.PAYMENT_CREDENTIALS_KEY)
       secrets.push(input.PAYMENT_CREDENTIALS_KEY);
-    if (input.PAYMENTS_ONLINE_ENABLED && !input.PAYMENT_CREDENTIALS_KEY)
+    if (
+      input.PAYMENTS_ONLINE_ENABLED &&
+      input.PAYMENT_COLLECTION_MODE === 'clinic' &&
+      !input.PAYMENT_CREDENTIALS_KEY
+    )
       context.addIssue({
         code: 'custom',
-        message: 'Online payments require PAYMENT_CREDENTIALS_KEY.',
+        message:
+          'Clinic-collected online payments require PAYMENT_CREDENTIALS_KEY.',
+      });
+    if (
+      input.PAYMENTS_ONLINE_ENABLED &&
+      input.PAYMENT_COLLECTION_MODE === 'platform' &&
+      (!input.PAYMENT_PLATFORM_CLIENT_ID ||
+        !input.PAYMENT_PLATFORM_CLIENT_SECRET)
+    )
+      context.addIssue({
+        code: 'custom',
+        message:
+          'Saxlem-collected online payments require PAYMENT_PLATFORM_CLIENT_ID and PAYMENT_PLATFORM_CLIENT_SECRET.',
       });
     if (new Set(secrets).size !== secrets.length)
       context.addIssue({
@@ -236,6 +266,21 @@ const configurationSchema = z
         input.NOTIFICATION_SSE_MAX_RECONNECT_BACKLOG,
       paymentsOnlineEnabled: input.PAYMENTS_ONLINE_ENABLED,
       paymentCredentialsKey: input.PAYMENT_CREDENTIALS_KEY,
+      paymentCollectionMode: input.PAYMENT_COLLECTION_MODE,
+      paymentPlatformAccount:
+        input.PAYMENT_PLATFORM_CLIENT_ID && input.PAYMENT_PLATFORM_CLIENT_SECRET
+          ? Object.freeze({
+              provider: input.PAYMENT_PLATFORM_PROVIDER,
+              environment:
+                input.PAYMENT_PLATFORM_PROVIDER === 'simulated'
+                  ? 'simulated'
+                  : input.PAYMENT_PLATFORM_FIB_ENVIRONMENT,
+              clientId: input.PAYMENT_PLATFORM_CLIENT_ID,
+              clientSecret: input.PAYMENT_PLATFORM_CLIENT_SECRET,
+            })
+          : undefined,
+      paymentProviderFeeBps: input.PAYMENT_PROVIDER_FEE_BPS,
+      paymentFeePassedToClinic: input.PAYMENT_FEE_PASSED_TO_CLINIC,
       paymentPublicCallbackBaseUrl: input.PAYMENT_PUBLIC_CALLBACK_BASE_URL,
       paymentLinkMinutes: input.PAYMENT_LINK_MINUTES,
       paymentWorkerEnabled: input.PAYMENT_WORKER_ENABLED,

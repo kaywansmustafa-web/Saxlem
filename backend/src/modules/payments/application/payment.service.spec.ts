@@ -56,6 +56,7 @@ function appointment(status = 'scheduled'): AppointmentProjection {
     patientProfileId: 'pp',
     patientName: 'P',
     type: 'initial',
+    origin: 'patientBooked',
     reason: 'General consultation',
     startsAt: '2026-12-01T09:00:00.000Z',
     endsAt: '2026-12-01T09:30:00.000Z',
@@ -100,6 +101,9 @@ class FakeRepository implements PaymentRepository {
       appointmentId: appt.id,
       appointmentStatus: this.appointmentStatus,
       ...write,
+      payerName: null,
+      payoutId: null,
+      clawbackPayoutId: null,
       refundedAt: null,
       callbackToken,
       lastCheckedAt: null,
@@ -142,6 +146,10 @@ class FakeRepository implements PaymentRepository {
     this.audits.push(audit.action);
     return Promise.resolve(this.accountRecord);
   }
+  onlineEnabledFlag = true;
+  onlinePaymentsEnabled() {
+    return Promise.resolve(this.onlineEnabledFlag);
+  }
   organizationExists(id: string) {
     return Promise.resolve(id === 'org');
   }
@@ -183,7 +191,12 @@ class FakeGateway implements PaymentGateway {
 }
 
 function setup(
-  options: { online?: boolean; account?: boolean; status?: string } = {},
+  options: {
+    online?: boolean;
+    account?: boolean;
+    status?: string;
+    mode?: 'platform' | 'clinic';
+  } = {},
 ) {
   const repository = new FakeRepository();
   const gateway = new FakeGateway();
@@ -194,6 +207,13 @@ function setup(
   const configuration = {
     environment: 'development',
     paymentsOnlineEnabled: options.online ?? true,
+    paymentCollectionMode: options.mode ?? 'clinic',
+    paymentPlatformAccount: {
+      provider: 'fib',
+      environment: 'stage',
+      clientId: 'saxlem-client',
+      clientSecret: 'saxlem-secret',
+    },
     paymentCredentialsKey: key,
     paymentLinkMinutes: 30,
     paymentWorkerPollIntervalMs: 15000,
@@ -374,6 +394,34 @@ describe('PaymentService', () => {
     expect(repository.record?.status).toBe('pending');
     await service.handleCallback(repository.record!.callbackToken, 'req');
     expect(repository.record?.status).toBe('paid');
+  });
+
+  it('collects into the Saxlem account in platform mode, per clinic opt-in', async () => {
+    const { service, repository } = setup({ mode: 'platform', account: false });
+    repository.onlineEnabledFlag = false;
+    expect((await service.options('clinic')).methods).toEqual(['counter']);
+    repository.onlineEnabledFlag = true;
+    expect((await service.options('clinic')).methods).toEqual([
+      'counter',
+      'online',
+    ]);
+    await service.choose(patient, 'appt', 'online', 'req');
+    expect(repository.record?.collectedBy).toBe('platform');
+  });
+
+  it('keeps refunding into the account a payment was collected by', async () => {
+    const { service, gateway, repository } = setup({ mode: 'platform' });
+    await service.choose(patient, 'appt', 'online', 'req');
+    gateway.state = {
+      status: 'paid',
+      paidAt: new Date(),
+      payerName: 'Avin K.',
+    };
+    await service.refresh(patient, 'appt', 'req');
+    expect(repository.record?.payerName).toBe('Avin K.');
+    repository.appointmentStatus = 'cancelled';
+    await service.reconcile();
+    expect(repository.record?.status).toBe('refunded');
   });
 
   it('stores account secrets encrypted and never returns them', async () => {

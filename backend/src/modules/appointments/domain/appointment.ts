@@ -13,6 +13,8 @@ export interface AppointmentProjection {
   readonly patientProfileId: string;
   readonly patientName: string;
   readonly type: AppointmentType;
+  /** How the booking reached the clinic: the app, a phone call, or the desk. */
+  readonly origin: AppointmentOrigin;
   readonly reason: string;
   readonly startsAt: string;
   readonly endsAt: string;

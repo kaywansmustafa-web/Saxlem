@@ -34,6 +34,7 @@ import { RequireCapabilities } from '../../identity/presentation/require-capabil
 import {
   ActivatePatientProfileDto,
   ArchivePatientProfileDto,
+  ClinicPatientRegistrationResponseDto,
   CreatePatientProfileDto,
   PatientDirectoryPageResponseDto,
   PatientDirectoryProfileDetailResponseDto,
@@ -42,6 +43,7 @@ import {
   PatientAccountResponseDto,
   PatientProfileParamsDto,
   PatientProfileResponseDto,
+  RegisterClinicPatientDto,
   UpdatePatientProfileDto,
 } from './patient.dto';
 
@@ -77,6 +79,30 @@ export class PatientsController {
         q: query.q,
         pageSize: query.pageSize ?? 10,
         ...(query.cursor ? { cursor: query.cursor } : {}),
+      },
+      request.requestId,
+    );
+  }
+
+  @Post('directory')
+  @HttpCode(200)
+  @RequireCapabilities('patient:register')
+  @ApiOperation({
+    summary:
+      'Register a patient who phoned or walked in without the Saxlem app',
+  })
+  @ApiOkResponse({ type: ClinicPatientRegistrationResponseDto })
+  registerClinicPatient(
+    @Req() request: AuthenticatedRequest,
+    @Body() body: RegisterClinicPatientDto,
+  ) {
+    return this.patients.registerClinicPatient(
+      this.directoryAccess(request),
+      {
+        firstName: body.firstName,
+        lastName: body.lastName,
+        phoneNumber: body.phoneNumber,
+        gender: body.gender ?? 'unspecified',
       },
       request.requestId,
     );

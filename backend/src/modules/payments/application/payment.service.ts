@@ -21,6 +21,7 @@ import {
   type PaymentAccess,
   type PaymentAccountRecord,
   type PaymentMethod,
+  type PaymentCollector,
   type PaymentProvider,
   type PaymentRecord,
 } from '../domain/payment';
@@ -71,13 +72,13 @@ export class PaymentService {
   async options(clinicId: string) {
     const organizationId = await this.repository.clinicOrganization(clinicId);
     if (!organizationId) throw new NotFoundException('Clinic was not found.');
-    const account = await this.usableAccount(organizationId);
+    const account = await this.accountForNewPayment(organizationId);
     return Object.freeze({
       clinicId,
       methods: account
         ? (['counter', 'online'] as const)
         : (['counter'] as const),
-      onlineProvider: account?.provider ?? null,
+      onlineProvider: account?.credentials.provider ?? null,
       currency: 'IQD' as const,
     });
   }
@@ -137,20 +138,23 @@ export class PaymentService {
 
     if (record && isUsableLink(record, now))
       return this.project(appointment, record);
-    const account = await this.usableAccount(appointment.organizationId);
+    const account = await this.accountForNewPayment(appointment.organizationId);
     if (!account)
       throw new ConflictException(
         'This clinic does not accept online payment yet.',
       );
     if (record?.status === 'pending') await this.closeAtProvider(record);
     const callbackToken = randomBytes(24).toString('base64url');
-    const credentials = this.credentials(account);
+    const { credentials } = account;
     const created = await this.gatewayCall(() =>
-      this.gateway(account.provider).create(credentials, {
+      this.gateway(credentials.provider).create(credentials, {
         amountIqd: appointment.feeIqd,
         description: `Saxlem ${appointment.reference}`,
         expiresInMinutes: this.configuration.paymentLinkMinutes,
-        statusCallbackUrl: this.callbackUrl(account.provider, callbackToken),
+        statusCallbackUrl: this.callbackUrl(
+          credentials.provider,
+          callbackToken,
+        ),
       }),
     );
     const saved = await this.repository.save(
@@ -158,7 +162,8 @@ export class PaymentService {
       record?.version ?? 0,
       {
         method: 'online',
-        provider: account.provider,
+        provider: credentials.provider,
+        collectedBy: account.collectedBy,
         status: 'pending',
         amountIqd: appointment.feeIqd,
         providerPaymentId: created.providerPaymentId,
@@ -179,7 +184,7 @@ export class PaymentService {
       },
     );
     if (!saved) {
-      await this.gateway(account.provider)
+      await this.gateway(credentials.provider)
         .cancel(credentials, created.providerPaymentId)
         .catch(() => undefined);
       throw new ConflictException('The payment changed. Please try again.');
@@ -403,8 +408,8 @@ export class PaymentService {
   }
 
   private async refund(record: PaymentRecord, now: Date, requestId: string) {
-    const account = await this.repository.account(record.organizationId);
-    if (!account || !record.provider || !record.providerPaymentId) {
+    const credentials = await this.credentialsForRecord(record);
+    if (!credentials || !record.provider || !record.providerPaymentId) {
       await this.repository.patch(record, {
         status: 'refundFailed',
         failureReason: 'accountMissing',
@@ -413,7 +418,7 @@ export class PaymentService {
     }
     try {
       await this.gateway(record.provider).refund(
-        this.credentials(account),
+        credentials,
         record.providerPaymentId,
       );
       await this.repository.patch(
@@ -448,11 +453,11 @@ export class PaymentService {
     requestId: string,
   ): Promise<PaymentRecord> {
     if (!record.provider || !record.providerPaymentId) return record;
-    const account = await this.repository.account(record.organizationId);
-    if (!account) return record;
+    const credentials = await this.credentialsForRecord(record);
+    if (!credentials) return record;
     const state = await this.gatewayCall(() =>
       this.gateway(record.provider as PaymentProvider).status(
-        this.credentials(account),
+        credentials,
         record.providerPaymentId as string,
       ),
     );
@@ -481,7 +486,12 @@ export class PaymentService {
     if (state.status === 'paid')
       return this.repository.patch(
         record,
-        { status: 'paid', paidAt: state.paidAt, lastCheckedAt: now },
+        {
+          status: 'paid',
+          paidAt: state.paidAt,
+          payerName: state.payerName ?? null,
+          lastCheckedAt: now,
+        },
         { actorUserId: null, action: 'payment.online_paid', requestId },
       );
     if (state.status === 'declined')
@@ -501,11 +511,11 @@ export class PaymentService {
 
   private async closeAtProvider(record: PaymentRecord) {
     if (!record.provider || !record.providerPaymentId) return;
-    const account = await this.repository.account(record.organizationId);
-    if (!account) return;
+    const credentials = await this.credentialsForRecord(record);
+    if (!credentials) return;
     await this.gatewayCall(() =>
       this.gateway(record.provider as PaymentProvider).cancel(
-        this.credentials(account),
+        credentials,
         record.providerPaymentId as string,
       ),
     ).catch((error: unknown) => {
@@ -537,6 +547,7 @@ export class PaymentService {
     return {
       method: 'counter',
       provider: null,
+      collectedBy: null,
       status: 'dueAtCounter',
       amountIqd: appointment.feeIqd,
       providerPaymentId: null,
@@ -557,7 +568,7 @@ export class PaymentService {
   ) {
     const online =
       bookableAppointmentStatuses.has(appointment.status) &&
-      (await this.usableAccount(appointment.organizationId)) !== null;
+      (await this.accountForNewPayment(appointment.organizationId)) !== null;
     return projectPayment({
       appointmentId: appointment.id,
       feeIqd: appointment.feeIqd,
@@ -566,16 +577,48 @@ export class PaymentService {
     });
   }
 
-  private async usableAccount(organizationId: string) {
-    if (!this.configuration.paymentsOnlineEnabled || !this.cipher) return null;
+  /** Where a new online payment would be collected, or null when the
+   * clinic cannot take online payment right now. */
+  private async accountForNewPayment(organizationId: string): Promise<{
+    collectedBy: PaymentCollector;
+    credentials: GatewayCredentials;
+  } | null> {
+    if (!this.configuration.paymentsOnlineEnabled) return null;
+    if (this.configuration.paymentCollectionMode === 'platform') {
+      const platform = this.configuration.paymentPlatformAccount;
+      if (!platform || !this.providerAllowed(platform.provider)) return null;
+      if (!(await this.repository.onlinePaymentsEnabled(organizationId)))
+        return null;
+      return { collectedBy: 'platform', credentials: { ...platform } };
+    }
+    if (!this.cipher) return null;
     const account = await this.repository.account(organizationId);
-    if (!account?.onlineEnabled) return null;
-    if (
-      account.provider === 'simulated' &&
-      this.configuration.environment === 'production'
-    )
+    if (!account?.onlineEnabled || !this.providerAllowed(account.provider))
       return null;
-    return account;
+    return {
+      collectedBy: 'organization',
+      credentials: this.credentials(account),
+    };
+  }
+
+  /** The account a payment was actually collected into, whatever the
+   * current mode, so refunds and status checks reach the right account. */
+  private async credentialsForRecord(
+    record: PaymentRecord,
+  ): Promise<GatewayCredentials | null> {
+    if (record.collectedBy === 'platform') {
+      const platform = this.configuration.paymentPlatformAccount;
+      return platform ? { ...platform } : null;
+    }
+    const account = await this.repository.account(record.organizationId);
+    return account && this.cipher ? this.credentials(account) : null;
+  }
+
+  private providerAllowed(provider: PaymentProvider) {
+    return !(
+      provider === 'simulated' &&
+      this.configuration.environment === 'production'
+    );
   }
 
   private credentials(account: PaymentAccountRecord): GatewayCredentials {
