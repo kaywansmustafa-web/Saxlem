@@ -2,10 +2,13 @@ export function OrganizationFilter({
   organizations,
   selected,
   action,
+  allowAll = false,
 }: {
   organizations: readonly { id: string; name: string }[];
   selected?: string;
   action: string;
+  /** Offer "All organizations" instead of forcing a choice. */
+  allowAll?: boolean;
 }) {
   return (
     <form
@@ -25,11 +28,11 @@ export function OrganizationFilter({
         <select
           id="organizationId"
           name="organizationId"
-          required
+          required={!allowAll}
           defaultValue={selected ?? ""}
         >
-          <option value="" disabled>
-            Choose an organization
+          <option value="" disabled={!allowAll}>
+            {allowAll ? "All organizations" : "Choose an organization"}
           </option>
           {organizations.map((item) => (
             <option key={item.id} value={item.id}>

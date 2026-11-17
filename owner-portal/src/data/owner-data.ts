@@ -131,7 +131,7 @@ export const planSchema = z
     displayName: z.string(),
     status: z.enum(["active", "inactive"]),
     currency: z.literal("IQD"),
-    commissionAmountIqd: z.number().int().positive(),
+    commissionAmountIqd: z.number().int().nonnegative(),
     ruleCode: z.string(),
     ruleVersion: z.number().int().positive(),
     version: z.number().int().positive(),
@@ -156,6 +156,7 @@ export const commissionSchema = z
     recognizedAt: dateTime,
     status: z.enum(["earned", "reversed"]),
     originalCommissionId: id.nullable(),
+    reason: z.string().nullable(),
   })
   .strict();
 export const commissionPageSchema = z
@@ -609,47 +610,6 @@ export const ledgerSchema = z
   .strict();
 export type LedgerEntry = z.infer<typeof ledgerEntrySchema>;
 
-export const payoutSchema = z
-  .object({
-    organizationId: z.string().uuid(),
-    organizationName: z.string(),
-    doctorId: z.string().uuid(),
-    doctorName: z.string(),
-    periodStart: z.string(),
-    periodEnd: z.string(),
-    status: z.enum(["open", "ready", "settled"]),
-    grossCollectedIqd: z.number().int(),
-    clawbackIqd: z.number().int(),
-    providerFeeIqd: z.number().int(),
-    commissionIqd: z.number().int(),
-    netPayableIqd: z.number().int(),
-    paymentCount: z.number().int(),
-    settlement: z
-      .object({
-        id: z.string().uuid(),
-        reference: z.string(),
-        note: z.string().nullable(),
-        settledAt: z.string(),
-      })
-      .strict()
-      .nullable(),
-    payoutAccount: z
-      .object({ name: z.string().nullable(), numberHint: z.string() })
-      .strict()
-      .nullable(),
-  })
-  .strict();
-export type Payout = z.infer<typeof payoutSchema>;
-const payoutSummarySchema = z
-  .object({
-    month: z.string(),
-    periodStart: z.string(),
-    periodEnd: z.string(),
-    monthEnded: z.boolean(),
-    items: z.array(payoutSchema),
-  })
-  .strict();
-
 export const payoutProfileSchema = z
   .object({
     organizationId: z.string().uuid(),
@@ -696,25 +656,6 @@ export const paymentLedger = (
   });
 };
 
-export const payoutSummary = (session: OwnerSession, month: string) =>
-  ownerApi().request({
-    path: `/api/v1/platform/payouts?month=${encodeURIComponent(month)}`,
-    session,
-    schema: payoutSummarySchema,
-  });
-
-export const payoutDetail = (
-  session: OwnerSession,
-  organizationId: string,
-  doctorId: string,
-  month: string,
-) =>
-  ownerApi().request({
-    path: `/api/v1/platform/organizations/${encodeURIComponent(organizationId)}/doctors/${encodeURIComponent(doctorId)}/payouts?month=${encodeURIComponent(month)}`,
-    session,
-    schema: payoutSchema,
-  });
-
 export const doctorPayoutProfile = (
   session: OwnerSession,
   organizationId: string,
@@ -731,4 +672,173 @@ export const payoutProfile = (session: OwnerSession, organizationId: string) =>
     path: `/api/v1/platform/organizations/${encodeURIComponent(organizationId)}/payout-profile`,
     session,
     schema: payoutProfileSchema,
+  });
+
+const assignmentSchema = z
+  .object({
+    id,
+    organizationId: id,
+    effectiveFrom: dateTime,
+    effectiveTo: dateTime.nullable(),
+    version: z.number().int().positive(),
+    plan: planSchema,
+  })
+  .strict();
+const doctorAssignmentSchema = z
+  .object({
+    id,
+    doctorId: id,
+    effectiveFrom: dateTime,
+    effectiveTo: dateTime.nullable(),
+    plan: planSchema,
+  })
+  .strict();
+export const billingSetupSchema = z
+  .object({
+    organizationId: id,
+    organizationName: z.string(),
+    cycleStart: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    currentCycle: z
+      .object({
+        number: z.number().int().positive(),
+        start: dateTime,
+        end: dateTime,
+      })
+      .strict(),
+    plan: assignmentSchema.nullable(),
+    upcomingPlan: assignmentSchema.nullable(),
+    doctors: z.array(
+      z
+        .object({
+          doctorId: id,
+          doctorName: z.string(),
+          ownPlan: doctorAssignmentSchema.nullable(),
+          upcomingOwnPlan: doctorAssignmentSchema.nullable(),
+          effectivePlan: planSchema.nullable(),
+        })
+        .strict(),
+    ),
+  })
+  .strict();
+export type BillingSetup = z.infer<typeof billingSetupSchema>;
+export const billingSetup = (session: OwnerSession, organizationId: string) =>
+  ownerApi().request({
+    path: `/api/v1/billing/organizations/${organizationId}/setup`,
+    session,
+    schema: billingSetupSchema,
+  });
+
+const money = z.number().int();
+export const statementSummarySchema = z
+  .object({
+    organizationId: id,
+    organizationName: z.string(),
+    doctorId: id,
+    doctorName: z.string(),
+    cycleNumber: z.number().int().positive(),
+    statementNumber: z.string(),
+    periodStart: dateTime,
+    periodEnd: dateTime,
+    status: z.enum(["open", "due", "waiting", "settled"]),
+    canSettle: z.boolean(),
+    direction: z.enum(["saxlemPays", "doctorPays", "even"]),
+    grossCollectedIqd: money,
+    clawbackIqd: money,
+    providerFeeIqd: money,
+    commissionIqd: money,
+    netPayableIqd: money,
+    paymentCount: money,
+    chargeCount: money.nullable(),
+    settlement: z
+      .object({
+        method: z.enum(["fib", "cash"]),
+        settledAt: dateTime,
+        reference: z.string().nullable().optional(),
+        counterpartyName: z.string().nullable().optional(),
+        note: z.string().nullable().optional(),
+        settledByName: z.string().optional(),
+      })
+      .strict()
+      .nullable(),
+  })
+  .strict();
+export type StatementSummary = z.infer<typeof statementSummarySchema>;
+const statementMoneySchema = z
+  .object({
+    id,
+    at: dateTime,
+    appointmentReference: z.string(),
+    amountIqd: money,
+  })
+  .strict();
+export const statementDocumentSchema = statementSummarySchema
+  .extend({
+    issuedAt: dateTime,
+    cycleStart: z.string(),
+    clinicNames: z.array(z.string()),
+    providerFeeBps: money,
+    payoutAccount: z
+      .object({ name: z.string().nullable(), numberHint: z.string() })
+      .strict()
+      .nullable(),
+    visits: z
+      .object({
+        total: money,
+        completed: money,
+        noShow: money,
+        cancelled: money,
+        upcoming: money,
+        app: money,
+        phone: money,
+        walkIn: money,
+      })
+      .strict(),
+    revenue: z
+      .object({
+        totalIqd: money,
+        counterIqd: money,
+        counterCount: money,
+        onlineIqd: money,
+        onlineCount: money,
+      })
+      .strict(),
+    charges: z.array(
+      z
+        .object({
+          id,
+          recognizedAt: dateTime,
+          appointmentReference: z.string(),
+          appointmentStartsAt: dateTime,
+          clinicName: z.string(),
+          planName: z.string(),
+          amountIqd: money,
+          kind: z.enum(["charge", "credit"]),
+          reason: z.string().nullable(),
+        })
+        .strict(),
+    ),
+    onlinePayments: z.array(statementMoneySchema),
+    refunds: z.array(statementMoneySchema),
+  })
+  .strict();
+export type StatementDocument = z.infer<typeof statementDocumentSchema>;
+export const listBillingStatements = (
+  session: OwnerSession,
+  organizationId?: string,
+) =>
+  ownerApi().request({
+    path: `/api/v1/statements${organizationId ? `?organizationId=${organizationId}` : ""}`,
+    session,
+    schema: z.object({ items: z.array(statementSummarySchema) }).strict(),
+  });
+export const statementDocument = (
+  session: OwnerSession,
+  organizationId: string,
+  doctorId: string,
+  cycleNumber: number,
+) =>
+  ownerApi().request({
+    path: `/api/v1/statements/${organizationId}/${doctorId}/${cycleNumber}`,
+    session,
+    schema: statementDocumentSchema,
   });

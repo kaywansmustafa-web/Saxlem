@@ -16,7 +16,7 @@ vi.mock("@/infrastructure/request-security", async () => {
       r.headers.get("origin") === "https://owner.example",
   };
 });
-import { POST as settle } from "@/app/api/platform/payouts/[organizationId]/[doctorId]/route";
+import { POST as billingAction } from "@/app/api/platform/billing-actions/route";
 import { PUT as saveProfile } from "@/app/api/platform/payout-profiles/[organizationId]/route";
 import { PUT as saveDoctorAccount } from "@/app/api/platform/doctor-payout-profiles/[organizationId]/[doctorId]/route";
 import { currentMonth, iqd } from "@/domain/money";
@@ -29,6 +29,14 @@ type Handler = (
     params: Promise<{ organizationId: string; doctorId: string }>;
   },
 ) => Promise<Response>;
+const post = (body: unknown, origin = "https://owner.example") =>
+  billingAction(
+    new Request("https://owner.example/api/platform/billing-actions", {
+      method: "POST",
+      headers: { origin, "content-type": "application/json" },
+      body: JSON.stringify(body),
+    }),
+  );
 const send = (
   handler: Handler,
   method: string,
@@ -50,35 +58,98 @@ describe("payout routes", () => {
     restoreOwnerSession.mockReset();
   });
 
-  it("forwards a doctor's settlement with the amount the operator saw", async () => {
+  it("forwards a statement settlement with the amount the operator saw", async () => {
     restoreOwnerSession.mockResolvedValue({ accessToken: "t" });
     request.mockResolvedValue({ status: "settled" });
     const body = {
-      month: "2026-10",
-      expectedNetPayableIqd: 24875,
-      reference: "FIB-TX-1",
+      action: "settle",
+      organizationId,
+      doctorId,
+      cycleNumber: 3,
+      method: "cash",
+      expectedNetPayableIqd: -2500,
+      counterpartyName: "Reception",
     };
-    expect((await send(settle, "POST", body)).status).toBe(200);
+    expect((await post(body)).status).toBe(200);
     expect(request).toHaveBeenCalledWith(
       expect.objectContaining({
         method: "POST",
-        path: `/api/v1/platform/organizations/${organizationId}/doctors/${doctorId}/payouts`,
-        body,
+        path: `/api/v1/platform/organizations/${organizationId}/doctors/${doctorId}/statements/3/settlement`,
+        body: {
+          method: "cash",
+          expectedNetPayableIqd: -2500,
+          counterpartyName: "Reception",
+        },
       }),
     );
   });
 
-  it("rejects bad months, other origins and missing references", async () => {
+  it("maps plan, credit and cycle actions and shows the backend's rule", async () => {
     restoreOwnerSession.mockResolvedValue({ accessToken: "t" });
-    const body = { month: "2026-10", expectedNetPayableIqd: 1, reference: "R" };
+    request.mockResolvedValue({});
+    await post({
+      action: "createPlan",
+      displayName: "Pilot",
+      commissionAmountIqd: 0,
+    });
+    expect(request).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        path: "/api/v1/billing/plans",
+        method: "POST",
+      }),
+    );
+    await post({
+      action: "doctorPlan",
+      organizationId,
+      doctorId,
+      planId: null,
+      from: "2026-11-18",
+    });
+    expect(request).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        path: `/api/v1/billing/organizations/${organizationId}/doctors/${doctorId}/plan`,
+        body: { planId: null, from: "2026-11-18" },
+      }),
+    );
+    const { OwnerApiError } = await import("@/infrastructure/api-client");
+    request.mockRejectedValue(
+      new OwnerApiError(
+        409,
+        "CONFLICT",
+        undefined,
+        "Settle statement SX-1-001 first.",
+      ),
+    );
+    const response = await post({
+      action: "credit",
+      commissionId: doctorId,
+      reason: "Goodwill",
+    });
+    expect(response.status).toBe(409);
+    expect(await response.json()).toMatchObject({
+      error: { message: "Settle statement SX-1-001 first." },
+    });
+  });
+
+  it("rejects bad actions and other origins", async () => {
+    restoreOwnerSession.mockResolvedValue({ accessToken: "t" });
     expect(
-      (await send(settle, "POST", { ...body, month: "2026-13" })).status,
+      (
+        await post({
+          action: "createPlan",
+          displayName: "X",
+          commissionAmountIqd: -1,
+        })
+      ).status,
     ).toBe(400);
+    expect((await post({ action: "drop tables" })).status).toBe(400);
     expect(
-      (await send(settle, "POST", { ...body, reference: "" })).status,
-    ).toBe(400);
-    expect(
-      (await send(settle, "POST", body, "https://evil.example")).status,
+      (
+        await post(
+          { action: "createPlan", displayName: "X", commissionAmountIqd: 1 },
+          "https://evil.example",
+        )
+      ).status,
     ).toBe(403);
     expect(request).not.toHaveBeenCalled();
   });

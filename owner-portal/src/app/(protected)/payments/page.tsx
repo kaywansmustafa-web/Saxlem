@@ -9,23 +9,18 @@ import {
   paymentLedger,
   paymentSettings,
   payoutProfile,
-  payoutSummary,
+  listBillingStatements,
+  doctorPayoutProfile,
   type PaymentSettings,
 } from "@/data/owner-data";
-import {
-  baghdadDateTime as when,
-  currentMonth,
-  iqd,
-  payoutStatusLabel,
-} from "@/domain/money";
+import { baghdadDateTime as when, currentMonth, iqd } from "@/domain/money";
 import type { OwnerSession } from "@/domain/session";
 import { requireOwnerSession } from "@/infrastructure/auth";
 import { ownerConfiguration } from "@/infrastructure/config";
 
-type Tab = "ledger" | "payouts" | "clinics";
+type Tab = "ledger" | "clinics";
 const tabs: readonly [Tab, string][] = [
   ["ledger", "Payments"],
-  ["payouts", "Monthly payouts"],
   ["clinics", "Clinics and doctors"],
 ];
 
@@ -35,9 +30,7 @@ export default async function PaymentsPage({
   searchParams: Promise<{ tab?: string; month?: string; method?: string }>;
 }) {
   const query = await searchParams;
-  const tab: Tab = (["ledger", "payouts", "clinics"] as const).includes(
-    query.tab as Tab,
-  )
+  const tab: Tab = (["ledger", "clinics"] as const).includes(query.tab as Tab)
     ? (query.tab as Tab)
     : "ledger";
   const month = /^\d{4}-(0[1-9]|1[0-2])$/.test(query.month ?? "")
@@ -51,7 +44,7 @@ export default async function PaymentsPage({
         title="Payments"
         description={
           settings.collectionMode === "platform"
-            ? "Online payments go into Saxlem’s FIB account. Every payment is recorded here, and Saxlem pays each doctor once a month."
+            ? "Online payments go into Saxlem’s FIB account. Every payment is recorded here, and Saxlem settles with each doctor every 30 days (see Statements)."
             : "Online payments go into each clinic’s own FIB account. Every payment is recorded here."
         }
       />
@@ -90,7 +83,6 @@ export default async function PaymentsPage({
       {tab === "ledger" && (
         <Ledger session={session} month={month} method={query.method} />
       )}
-      {tab === "payouts" && <Payouts session={session} month={month} />}
       {tab === "clinics" && <Clinics session={session} settings={settings} />}
     </>
   );
@@ -204,113 +196,6 @@ async function Ledger({
   );
 }
 
-async function Payouts({
-  session,
-  month,
-}: {
-  session: OwnerSession;
-  month: string;
-}) {
-  const summary = await payoutSummary(session, month);
-  const active = summary.items.filter(
-    (item) =>
-      item.status === "settled" ||
-      item.paymentCount > 0 ||
-      item.clawbackIqd > 0 ||
-      item.commissionIqd !== 0,
-  );
-  const totalNet = active
-    .filter((item) => item.status !== "settled")
-    .reduce((sum, item) => sum + Math.max(item.netPayableIqd, 0), 0);
-  return (
-    <>
-      {!summary.monthEnded && (
-        <p className="filter-note">
-          This month is still running. Amounts can still change; payouts can be
-          recorded once it ends.
-        </p>
-      )}
-      {active.length ? (
-        <>
-          <p className="ledger-total">
-            Still to pay doctors for this month:{" "}
-            <strong>{iqd(totalNet)}</strong>
-          </p>
-          <div className="card table-card" tabIndex={0} aria-label="Payouts">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Doctor</th>
-                  <th>Payments</th>
-                  <th>Collected</th>
-                  <th>Refunds back</th>
-                  <th>FIB fee</th>
-                  <th>Commission</th>
-                  <th>Net</th>
-                  <th>Status</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {active.map((item) => (
-                  <tr key={`${item.organizationId}:${item.doctorId}`}>
-                    <td>
-                      <strong>{item.doctorName}</strong>
-                      <small>{item.organizationName}</small>
-                      {item.payoutAccount ? (
-                        <small>
-                          {item.payoutAccount.name ?? "Account"}{" "}
-                          {item.payoutAccount.numberHint}
-                        </small>
-                      ) : (
-                        <small>No payout account yet</small>
-                      )}
-                    </td>
-                    <td className="numeric">{item.paymentCount}</td>
-                    <td className="numeric">{iqd(item.grossCollectedIqd)}</td>
-                    <td className="numeric">{iqd(item.clawbackIqd)}</td>
-                    <td className="numeric">{iqd(item.providerFeeIqd)}</td>
-                    <td className="numeric">{iqd(item.commissionIqd)}</td>
-                    <td className="numeric">
-                      <strong>{iqd(item.netPayableIqd)}</strong>
-                      <small>
-                        {item.netPayableIqd >= 0
-                          ? "Saxlem pays doctor"
-                          : "Doctor owes Saxlem"}
-                      </small>
-                    </td>
-                    <td>
-                      <span
-                        className={`badge badge-${payoutStatusLabel[item.status][1]}`}
-                      >
-                        <span className="badge-dot" aria-hidden="true" />
-                        {payoutStatusLabel[item.status][0]}
-                      </span>
-                    </td>
-                    <td>
-                      <Link
-                        className="button button-secondary"
-                        href={`/payments/payouts/${item.organizationId}/${item.doctorId}?month=${month}`}
-                      >
-                        {item.status === "ready" ? "Review and pay" : "View"}
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </>
-      ) : (
-        <StateView
-          title="Nothing to settle"
-          description="No online payments or commission for this month yet."
-        />
-      )}
-    </>
-  );
-}
-
 async function Clinics({
   session,
   settings,
@@ -366,15 +251,43 @@ async function Clinics({
       </div>
     );
   }
-  const [profiles, payees] = await Promise.all([
+  const [profiles, statements] = await Promise.all([
     Promise.all(
       organizations.map((o) => payoutProfile(session, o.id).catch(() => null)),
     ),
-    // Every working doctor appears in this month's payouts list.
-    payoutSummary(session, currentMonth())
-      .then((summary) => summary.items)
+    // Every billed doctor has a running statement.
+    listBillingStatements(session)
+      .then((list) => list.items)
       .catch(() => []),
   ]);
+  const seen = new Set<string>();
+  const billed = statements.filter((item) => {
+    const key = `${item.organizationId}:${item.doctorId}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  const accounts = await Promise.all(
+    billed.map((item) =>
+      doctorPayoutProfile(session, item.organizationId, item.doctorId).catch(
+        () => null,
+      ),
+    ),
+  );
+  const payees = billed.map((item, index) => {
+    const account = accounts[index];
+    return {
+      organizationId: item.organizationId,
+      doctorId: item.doctorId,
+      doctorName: item.doctorName,
+      payoutAccount: account?.payoutAccountNumberHint
+        ? {
+            name: account.payoutAccountName,
+            numberHint: account.payoutAccountNumberHint,
+          }
+        : null,
+    };
+  });
   return (
     <div className="payment-accounts">
       {organizations.map((organization, index) => {

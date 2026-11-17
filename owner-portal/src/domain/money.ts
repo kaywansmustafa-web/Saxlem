@@ -15,9 +15,3 @@ export function currentMonth(now = new Date()) {
   const baghdad = new Date(now.getTime() + 3 * 3_600_000);
   return `${baghdad.getUTCFullYear()}-${String(baghdad.getUTCMonth() + 1).padStart(2, "0")}`;
 }
-
-export const payoutStatusLabel = {
-  open: ["Month running", "info"],
-  ready: ["Ready to pay", "warning"],
-  settled: ["Paid", "success"],
-} as const;

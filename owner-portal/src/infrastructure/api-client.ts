@@ -9,6 +9,8 @@ export class OwnerApiError extends Error {
     readonly status: number,
     readonly code: string,
     readonly requestId?: string,
+    /** The backend's own explanation (shown only for 400/409 business rules). */
+    readonly detail?: string,
   ) {
     super(
       status === 401
@@ -111,7 +113,15 @@ export class OwnerApiClient {
       if (!response.ok) {
         const envelope =
           raw && typeof raw === "object" && "error" in raw
-            ? (raw as { error?: { code?: unknown; requestId?: unknown } }).error
+            ? (
+                raw as {
+                  error?: {
+                    code?: unknown;
+                    requestId?: unknown;
+                    message?: unknown;
+                  };
+                }
+              ).error
             : undefined;
         throw new OwnerApiError(
           response.status,
@@ -120,6 +130,9 @@ export class OwnerApiClient {
             : `BACKEND_${response.status}`,
           typeof envelope?.requestId === "string"
             ? envelope.requestId
+            : undefined,
+          typeof envelope?.message === "string"
+            ? envelope.message.slice(0, 300)
             : undefined,
         );
       }
