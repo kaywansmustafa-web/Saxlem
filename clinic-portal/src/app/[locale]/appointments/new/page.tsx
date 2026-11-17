@@ -18,7 +18,18 @@ export default async function Page({
 }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  const mode = (await searchParams).mode === "walkIn" ? "walkIn" : "phone";
+  const query = await searchParams;
+  const mode = query.mode === "walkIn" ? "walkIn" : "phone";
+  const text = (value: unknown, pattern: RegExp) =>
+    typeof value === "string" && pattern.test(value) ? value : undefined;
+  const preset = {
+    doctorId: text(query.doctorId, /^[0-9a-f-]{36}$/i),
+    date: text(query.date, /^\d{4}-\d{2}-\d{2}$/),
+    startsAt: text(
+      query.startsAt,
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/,
+    ),
+  };
   const m = bookingMessages(locale);
   let doctors;
   try {
@@ -30,8 +41,8 @@ export default async function Page({
   return (
     <>
       <header className="heading booking-heading">
-        <Link className="link" href={`/${locale}/appointments`}>
-          {m.back}
+        <Link className="link" href={`/${locale}/appointments/board`}>
+          {m.dayBoard}
         </Link>
         <h1>{mode === "walkIn" ? m.walkInTitle : m.phoneTitle}</h1>
         <p>{mode === "walkIn" ? m.walkInHelp : m.phoneHelp}</p>
@@ -58,6 +69,7 @@ export default async function Page({
         timezone="Asia/Baghdad"
         locale={locale}
         m={m}
+        preset={preset}
       />
     </>
   );

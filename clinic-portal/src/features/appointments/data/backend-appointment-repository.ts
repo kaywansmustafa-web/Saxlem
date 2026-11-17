@@ -76,6 +76,45 @@ const slotsSchema = z
   })
   .passthrough();
 export type BookingSlot = Readonly<z.infer<typeof slotSchema>>;
+const originSchema = z.enum(["patientBooked", "clinicCreated", "walkIn"]);
+const boardSchema = z
+  .object({
+    date: z.string(),
+    clinicId: z.string().uuid(),
+    clinicTimezone: z.string().min(1),
+    durationMinutes: z.number().int().min(1),
+    generatedAt: z.string().datetime({ offset: true }),
+    doctors: z.array(
+      z
+        .object({
+          doctorId: z.string().uuid(),
+          doctorName: z.string(),
+          slots: z.array(
+            z
+              .object({
+                startsAt: z.string().datetime({ offset: true }),
+                endsAt: z.string().datetime({ offset: true }),
+                state: z.enum(["free", "booked", "unavailable", "past"]),
+                walkIn: z.boolean(),
+                appointment: z
+                  .object({
+                    id: z.string().uuid(),
+                    reference: z.string(),
+                    origin: originSchema,
+                    status: appointmentStatusSchema,
+                    patientName: z.string(),
+                  })
+                  .strict()
+                  .nullable(),
+              })
+              .strict(),
+          ),
+        })
+        .strict(),
+    ),
+  })
+  .strict();
+export type DayBoard = Readonly<z.infer<typeof boardSchema>>;
 export interface DaySlots {
   readonly doctorName: string;
   readonly timezone: string;
@@ -146,6 +185,16 @@ export class BackendAppointmentRepository {
       durationMinutes: result.data.durationMinutes,
       slots: Object.freeze(result.data.days[0]?.slots ?? []),
     });
+  }
+  /** Every doctor's day at the signed-in clinic, slot by slot. */
+  async board(date: string): Promise<DayBoard> {
+    return (
+      await this.api.request({
+        path: `/api/v1/appointments/board?date=${encodeURIComponent(date)}` as `/api/v1/${string}`,
+        session: this.session,
+        schema: boardSchema,
+      })
+    ).data;
   }
   async create(input: ClinicBookingInput): Promise<BackendAppointment> {
     const { idempotencyKey, walkIn, ...body } = input;

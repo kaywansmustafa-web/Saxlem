@@ -58,6 +58,37 @@ const en = {
   sourcePhone: "Phone",
   sourceWalkIn: "Walk-in",
   source: "Booked via",
+  dayBoard: "Day board",
+  list: "List",
+  boardTitle: "Today's schedule",
+  boardHelp:
+    "Every doctor's day at a glance. Tap a free time to book a phone call or a walk-in.",
+  today: "Today",
+  previousDay: "Previous day",
+  nextDay: "Next day",
+  legend: "Key",
+  legendFree: "Free",
+  legendApp: "Saxlem app",
+  legendPhone: "Phone",
+  legendWalkIn: "Walk-in",
+  legendUnavailable: "Break or off",
+  legendPast: "Past",
+  time: "Time",
+  free: "Free",
+  walkInReady: "Walk-in OK",
+  notWorking: "Not working",
+  now: "Now",
+  noDoctorsToday: "No doctors are working at this clinic on this day.",
+  updated: "Updated {time}",
+  bookThisTime: "Book {time} with {doctor}",
+  phoneOption: "Phone booking",
+  walkInOption: "Walk-in now",
+  walkInLater: "Walk-ins can only take a time within the next hour.",
+  close: "Close",
+  show: "Show",
+  holding: "{time} with {doctor}. Choose the patient to confirm.",
+  completedTag: "Done",
+  noShowTag: "No-show",
 };
 
 export type BookingMessages = typeof en;
@@ -120,6 +151,37 @@ const ar: BookingMessages = {
   sourcePhone: "الهاتف",
   sourceWalkIn: "حضور مباشر",
   source: "مصدر الحجز",
+  dayBoard: "لوحة اليوم",
+  list: "القائمة",
+  boardTitle: "جدول اليوم",
+  boardHelp:
+    "يوم كل طبيب في نظرة واحدة. اضغط على وقت متاح لحجز مكالمة هاتفية أو حضور مباشر.",
+  today: "اليوم",
+  previousDay: "اليوم السابق",
+  nextDay: "اليوم التالي",
+  legend: "دليل الألوان",
+  legendFree: "متاح",
+  legendApp: "تطبيق Saxlem",
+  legendPhone: "الهاتف",
+  legendWalkIn: "حضور مباشر",
+  legendUnavailable: "استراحة أو عطلة",
+  legendPast: "مضى",
+  time: "الوقت",
+  free: "متاح",
+  walkInReady: "متاح للحضور",
+  notWorking: "خارج الدوام",
+  now: "الآن",
+  noDoctorsToday: "لا يوجد أطباء يعملون في هذه العيادة في هذا اليوم.",
+  updated: "آخر تحديث {time}",
+  bookThisTime: "حجز {time} مع {doctor}",
+  phoneOption: "حجز عبر الهاتف",
+  walkInOption: "حضور مباشر الآن",
+  walkInLater: "يمكن للحضور المباشر أخذ وقت خلال الساعة القادمة فقط.",
+  close: "إغلاق",
+  show: "عرض",
+  holding: "{time} مع {doctor}. اختر المريض للتأكيد.",
+  completedTag: "مكتمل",
+  noShowTag: "لم يحضر",
 };
 
 const ku: BookingMessages = {
@@ -181,6 +243,37 @@ const ku: BookingMessages = {
   sourcePhone: "تەلەفۆن",
   sourceWalkIn: "هاتنا راستەوخۆ",
   source: "ژ رێکا",
+  dayBoard: "تەختەیا رۆژێ",
+  list: "لیست",
+  boardTitle: "خشتەیا ئەڤرۆ",
+  boardHelp:
+    "رۆژا هەمی نوژداران ب ئێک نێرین. ل سەر دەمەکێ ڤالا بدە بۆ گرتنا ژڤانا تەلەفۆنێ یان هاتنا راستەوخۆ.",
+  today: "ئەڤرۆ",
+  previousDay: "رۆژا بەری",
+  nextDay: "رۆژا پشتی",
+  legend: "رێبەرێ رەنگان",
+  legendFree: "ڤالا",
+  legendApp: "ئەپێ Saxlem",
+  legendPhone: "تەلەفۆن",
+  legendWalkIn: "هاتنا راستەوخۆ",
+  legendUnavailable: "بێهنڤەدان یان پشوو",
+  legendPast: "بۆری",
+  time: "دەم",
+  free: "ڤالا",
+  walkInReady: "بۆ هاتنا راستەوخۆ",
+  notWorking: "ل دەوامێ نینە",
+  now: "نوکە",
+  noDoctorsToday: "د ڤێ رۆژێ دا چ نوژدار ل ڤێ کلینیکێ کار ناکەن.",
+  updated: "دووماهیک نویکرن {time}",
+  bookThisTime: "گرتنا {time} دگەل {doctor}",
+  phoneOption: "ژڤان ب تەلەفۆنێ",
+  walkInOption: "هاتنا راستەوخۆ نوکە",
+  walkInLater: "هاتنا راستەوخۆ تەنێ دشێت دەمەکێ د دەمژمێرا بێت دا بگریت.",
+  close: "گرتن",
+  show: "نیشان بدە",
+  holding: "{time} دگەل {doctor}. نەخۆشی هەلبژێرە بۆ پشتراستکرنێ.",
+  completedTag: "تەمام",
+  noShowTag: "نەهات",
 };
 
 export const bookingMessages = (locale: Locale): BookingMessages =>
@@ -197,3 +290,38 @@ export const originLabel = (
       : origin === "walkIn"
         ? m.sourceWalkIn
         : null;
+
+/**
+ * Clock and day formats for the board and booking screens. Arabic and Badini
+ * use a 24-hour clock with Western digits (what Duhok clinics write on
+ * appointment cards); Badini day names use Kurdish in Arabic script because
+ * browsers have no Badini calendar data.
+ */
+export const clockFormat = (locale: Locale, timeZone: string) =>
+  new Intl.DateTimeFormat(
+    locale === "en" ? "en" : locale === "ar" ? "ar-IQ" : "ckb-IQ",
+    {
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone,
+      ...(locale === "en" ? {} : { hourCycle: "h23", numberingSystem: "latn" }),
+    },
+  );
+export const dayFormat = (locale: Locale, timeZone: string, withTime = false) =>
+  new Intl.DateTimeFormat(
+    locale === "en" ? "en" : locale === "ar" ? "ar-IQ" : "ckb-IQ",
+    {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      timeZone,
+      numberingSystem: "latn",
+      ...(withTime
+        ? {
+            hour: "numeric",
+            minute: "2-digit",
+            ...(locale === "en" ? {} : { hourCycle: "h23" as const }),
+          }
+        : {}),
+    },
+  );

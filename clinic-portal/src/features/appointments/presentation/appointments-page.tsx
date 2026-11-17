@@ -11,6 +11,7 @@ import {
   paymentTone,
 } from "@/features/payments/presentation/messages";
 import { bookingMessages, originLabel } from "./booking-messages";
+import { AppointmentViews } from "./appointment-views";
 
 const statuses: readonly BackendAppointmentStatus[] = [
   "scheduled",
@@ -56,6 +57,7 @@ export function AppointmentsPage({
         <h1>{m.appointments}</h1>
         <p>{m.appointmentHelp}</p>
         <div className="heading-actions">
+          <AppointmentViews current="list" locale={locale} m={bm} />
           <Link
             className="button-link primary"
             href={`/${locale}/appointments/new?mode=phone`}

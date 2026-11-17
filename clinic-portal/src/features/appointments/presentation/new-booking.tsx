@@ -2,7 +2,11 @@
 import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Locale } from "@/i18n";
-import type { BookingMessages } from "./booking-messages";
+import {
+  clockFormat,
+  dayFormat,
+  type BookingMessages,
+} from "./booking-messages";
 
 type Mode = "phone" | "walkIn";
 type VisitType = "initial" | "followUp";
@@ -54,7 +58,10 @@ export function NewBooking({
   timezone,
   locale,
   m,
+  preset,
 }: {
+  /** Doctor, day and time chosen on the day board. */
+  preset?: { doctorId?: string; date?: string; startsAt?: string };
   mode: Mode;
   doctors: readonly Doctor[];
   today: string;
@@ -75,10 +82,16 @@ export function NewBooking({
     gender: "unspecified" as "female" | "male" | "unspecified",
   });
   const [doctorId, setDoctorId] = useState(
-    doctors.length === 1 ? doctors[0]!.id : "",
+    preset?.doctorId && doctors.some((item) => item.id === preset.doctorId)
+      ? preset.doctorId
+      : doctors.length === 1
+        ? doctors[0]!.id
+        : "",
   );
   const [type, setType] = useState<VisitType>("initial");
-  const [date, setDate] = useState(today);
+  const [date, setDate] = useState(
+    !walkIn && preset?.date && preset.date >= today ? preset.date : today,
+  );
   const [slots, setSlots] = useState<readonly Slot[] | null>(null);
   const [slot, setSlot] = useState<Slot | null>(null);
   const [reason, setReason] = useState(walkIn ? m.walkInReason : "");
@@ -88,15 +101,7 @@ export function NewBooking({
   const [error, setError] = useState("");
   const operation = useRef<string>("");
 
-  const time = useMemo(
-    () =>
-      new Intl.DateTimeFormat(locale, {
-        hour: "numeric",
-        minute: "2-digit",
-        timeZone: timezone,
-      }),
-    [locale, timezone],
-  );
+  const time = useMemo(() => clockFormat(locale, timezone), [locale, timezone]);
   const doctor = doctors.find((item) => item.id === doctorId);
 
   const search = async () => {
@@ -179,8 +184,11 @@ export function NewBooking({
           )
         : day.slots;
       setSlots(offered);
-      // A walk-in takes the next free time; reception can still pick another.
-      if (walkIn && offered[0]) setSlot(offered[0]);
+      // The time picked on the day board wins; otherwise a walk-in takes
+      // the next free time. Reception can still pick another.
+      const held = offered.find((item) => item.startsAt === preset?.startsAt);
+      if (held) setSlot(held);
+      else if (walkIn && offered[0]) setSlot(offered[0]);
     } catch {
       setError(m.failed);
     } finally {
@@ -240,6 +248,13 @@ export function NewBooking({
 
   return (
     <div className="booking-flow">
+      {preset?.startsAt && doctor && !patient && (
+        <p className="booking-held">
+          {m.holding
+            .replace("{time}", time.format(new Date(preset.startsAt)))
+            .replace("{doctor}", doctor.displayName)}
+        </p>
+      )}
       {error && (
         <p className="booking-alert" role="alert">
           {error}
@@ -539,14 +554,9 @@ export function NewBooking({
               .replace("{doctor}", doctor.displayName)
               .replace(
                 "{time}",
-                new Intl.DateTimeFormat(locale, {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                  hour: "numeric",
-                  minute: "2-digit",
-                  timeZone: timezone,
-                }).format(new Date(slot.startsAt)),
+                dayFormat(locale, timezone, true).format(
+                  new Date(slot.startsAt),
+                ),
               )}
           </p>
         )}
