@@ -766,7 +766,7 @@ dialog {
 @media print {
   @page { size: A4; margin: 14mm; }
   body { background: #fff !important; }
-  .sidebar, .topbar, .breadcrumbs, .page-header, .back-link, .no-print, .skip, nextjs-portal { display: none !important; }
+  .sidebar, .topbar, .breadcrumbs, .page-header, .back-link, .no-print, .skip, nextjs-portal, aside, header:not(.statement-head) { display: none !important; }
   .shell, .workspace, .main { display: block !important; margin: 0 !important; padding: 0 !important; background: #fff !important; }
   .statement-sheet { border: 0; box-shadow: none; padding: 0; max-width: none; border-radius: 0; font-size: 12px; }
   .statement-total, .statement-head { -webkit-print-color-adjust: exact; print-color-adjust: exact; }

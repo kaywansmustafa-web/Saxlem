@@ -47,7 +47,7 @@ export function StatementDocument({ statement }: { statement: Statement }) {
     >
       <header className="statement-head">
         <div className="statement-brand">
-          <BrandMark className="statement-mark" />
+          <BrandMark className="statement-mark" idPrefix="sx-statement" />
           <div>
             <strong className="statement-wordmark">saxlem</strong>
             <span>Healthcare booking · Kurdistan Region</span>
