@@ -22,6 +22,7 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
   receptionist: [
     'clinic:operations:read',
     'patient:directory:read',
+    'reception:doctors:manage',
     'patient:register',
     'doctor:directory:read',
     'doctor:availability:read',

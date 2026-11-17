@@ -84,6 +84,13 @@ export class StaffMembershipDto {
   @ApiProperty() clinicName!: string;
 }
 
+export class StaffReceptionDoctorDto {
+  @ApiProperty({ format: 'uuid' }) organizationId!: string;
+  @ApiProperty({ format: 'uuid' }) clinicId!: string;
+  @ApiProperty({ format: 'uuid' }) doctorId!: string;
+  @ApiProperty() doctorName!: string;
+}
+
 export class StaffResponseDto {
   @ApiProperty({ format: 'uuid' }) userId!: string;
   @ApiProperty({ format: 'uuid' }) staffAccountId!: string;
@@ -94,6 +101,11 @@ export class StaffResponseDto {
   memberships!: StaffMembershipDto[];
   @ApiProperty({ format: 'uuid', nullable: true }) doctorId!: string | null;
   @ApiProperty({ nullable: true }) doctorName!: string | null;
+  @ApiProperty({
+    type: [StaffReceptionDoctorDto],
+    description: 'Doctors a receptionist works for, per clinic.',
+  })
+  receptionDoctors!: StaffReceptionDoctorDto[];
   @ApiProperty({ format: 'date-time' }) createdAt!: string;
   @ApiProperty({ format: 'date-time' }) updatedAt!: string;
 }
@@ -110,6 +122,18 @@ export class CreateStaffDto {
   role!: 'receptionist' | 'clinicManager';
   @ApiProperty({ format: 'uuid' }) @IsUUID() organizationId!: string;
   @ApiProperty({ format: 'uuid' }) @IsUUID() clinicId!: string;
+  @ApiPropertyOptional({
+    type: 'string',
+    format: 'uuid',
+    isArray: true,
+    description:
+      'Receptionists only: the doctor(s) they work for. Usually one.',
+  })
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(20)
+  @IsUUID('all', { each: true })
+  doctorIds?: string[];
 }
 export class CreateStaffResponseDto extends StaffResponseDto {
   @ApiProperty({
@@ -144,6 +168,18 @@ export class AddStaffMembershipDto {
   @ApiProperty({ enum: ['receptionist', 'clinicManager', 'doctor'] })
   @IsEnum(['receptionist', 'clinicManager', 'doctor'])
   role!: 'receptionist' | 'clinicManager' | 'doctor';
+  @ApiPropertyOptional({
+    type: 'string',
+    format: 'uuid',
+    isArray: true,
+    description:
+      'Receptionists only: the doctor(s) they work for. Usually one.',
+  })
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(20)
+  @IsUUID('all', { each: true })
+  doctorIds?: string[];
 }
 
 export class PatientSummaryDto {

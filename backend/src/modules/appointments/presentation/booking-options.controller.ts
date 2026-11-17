@@ -109,6 +109,9 @@ export class BookingOptionsController {
           platformAdministrator: false,
           organizationId,
           clinicId,
+          receptionist: request.principal.capabilities.has(
+            'reception:doctors:manage',
+          ),
         },
         params.doctorId,
         query.clinicId,

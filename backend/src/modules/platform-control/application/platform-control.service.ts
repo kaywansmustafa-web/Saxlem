@@ -39,6 +39,13 @@ type StaffRow = Prisma.StaffAccountGetPayload<{
       include: {
         roles: true;
         memberships: { include: { organization: true; clinic: true } };
+        receptionistDoctors: {
+          include: {
+            assignment: {
+              include: { doctor: { select: { displayName: true } } };
+            };
+          };
+        };
       };
     };
     doctor: { select: { id: true; displayName: true } };
@@ -101,6 +108,13 @@ export class PlatformControlService {
           include: {
             roles: true,
             memberships: { include: { organization: true, clinic: true } },
+            receptionistDoctors: {
+              include: {
+                assignment: {
+                  include: { doctor: { select: { displayName: true } } },
+                },
+              },
+            },
           },
         },
         doctor: { select: { id: true, displayName: true } },
@@ -121,6 +135,13 @@ export class PlatformControlService {
           include: {
             roles: true,
             memberships: { include: { organization: true, clinic: true } },
+            receptionistDoctors: {
+              include: {
+                assignment: {
+                  include: { doctor: { select: { displayName: true } } },
+                },
+              },
+            },
           },
         },
         doctor: { select: { id: true, displayName: true } },
@@ -174,6 +195,7 @@ export class PlatformControlService {
           role: input.role,
         },
       });
+      await this.assignReceptionDoctors(tx, actorId, user.id, input);
       await this.audit(
         tx,
         actorId,
@@ -286,9 +308,15 @@ export class PlatformControlService {
             role: input.role,
           },
         },
-        create: { ...input, userId: staff.userId },
+        create: {
+          organizationId: input.organizationId,
+          clinicId: input.clinicId,
+          role: input.role,
+          userId: staff.userId,
+        },
         update: { status: 'active' },
       });
+      await this.assignReceptionDoctors(tx, actorId, staff.userId, input);
       await tx.identityRoleAssignment.upsert({
         where: {
           userId_organizationId_clinicId_role: {
@@ -298,7 +326,12 @@ export class PlatformControlService {
             role: input.role,
           },
         },
-        create: { ...input, userId: staff.userId },
+        create: {
+          organizationId: input.organizationId,
+          clinicId: input.clinicId,
+          role: input.role,
+          userId: staff.userId,
+        },
         update: {},
       });
       await tx.user.update({
@@ -1546,6 +1579,50 @@ export class PlatformControlService {
     });
   }
 
+  /**
+   * Each receptionist normally works for one doctor. The owner picks the
+   * doctor(s) when adding a receptionist; the receptionist can add more
+   * later from the Clinic Portal.
+   */
+  private async assignReceptionDoctors(
+    tx: Prisma.TransactionClient,
+    actorId: string,
+    userId: string,
+    input: {
+      organizationId: string;
+      clinicId: string;
+      role: string;
+      doctorIds?: string[] | undefined;
+    },
+  ) {
+    const doctorIds = [...new Set(input.doctorIds ?? [])];
+    if (!doctorIds.length) return;
+    if (input.role !== 'receptionist')
+      throw new BadRequestException('Only receptionists are given doctors.');
+    const valid = await tx.doctorClinicAssignment.count({
+      where: {
+        organizationId: input.organizationId,
+        clinicId: input.clinicId,
+        doctorId: { in: doctorIds },
+        status: 'active',
+      },
+    });
+    if (valid !== doctorIds.length)
+      throw new BadRequestException(
+        'Every doctor must be active at this clinic.',
+      );
+    await tx.receptionistDoctorAssignment.createMany({
+      data: doctorIds.map((doctorId) => ({
+        organizationId: input.organizationId,
+        clinicId: input.clinicId,
+        userId,
+        doctorId,
+        createdByUserId: actorId,
+      })),
+      skipDuplicates: true,
+    });
+  }
+
   private staffRecord(row: StaffRow) {
     return {
       userId: row.userId,
@@ -1569,6 +1646,12 @@ export class PlatformControlService {
       })),
       doctorId: row.doctor?.id ?? null,
       doctorName: row.doctor?.displayName ?? null,
+      receptionDoctors: row.user.receptionistDoctors.map((x) => ({
+        organizationId: x.organizationId,
+        clinicId: x.clinicId,
+        doctorId: x.doctorId,
+        doctorName: x.assignment.doctor.displayName,
+      })),
       createdAt: row.createdAt.toISOString(),
       updatedAt: row.updatedAt.toISOString(),
     };
@@ -1581,6 +1664,13 @@ export class PlatformControlService {
           include: {
             roles: true,
             memberships: { include: { organization: true, clinic: true } },
+            receptionistDoctors: {
+              include: {
+                assignment: {
+                  include: { doctor: { select: { displayName: true } } },
+                },
+              },
+            },
           },
         },
         doctor: { select: { id: true, displayName: true } },

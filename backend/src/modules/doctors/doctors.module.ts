@@ -1,3 +1,5 @@
+import { ReceptionDoctorsService } from './application/reception-doctors.service';
+import { ReceptionDoctorsController } from './presentation/reception-doctors.controller';
 import { Module } from '@nestjs/common';
 import { IdentityModule } from '../identity/identity.module';
 import { DoctorService } from './application/doctor.service';
@@ -14,8 +16,13 @@ import { ClinicHoursController } from './presentation/clinic-hours.controller';
 
 @Module({
   imports: [IdentityModule],
-  controllers: [DoctorsController, ClinicHoursController],
+  controllers: [
+    DoctorsController,
+    ClinicHoursController,
+    ReceptionDoctorsController,
+  ],
   providers: [
+    ReceptionDoctorsService,
     DoctorService,
     DoctorDtoMapper,
     DoctorScheduleService,
@@ -30,6 +37,7 @@ import { ClinicHoursController } from './presentation/clinic-hours.controller';
     },
   ],
   exports: [
+    ReceptionDoctorsService,
     DoctorService,
     DoctorScheduleService,
     TimezoneService,

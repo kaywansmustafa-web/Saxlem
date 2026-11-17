@@ -586,6 +586,80 @@ describe('doctor domain API', () => {
       .get(`/api/v1/doctors/${inactiveClinicOnly.id}`)
       .set('Authorization', `Bearer ${administratorToken}`)
       .expect(404);
+
+    // Each receptionist works for their own doctor(s).
+    await api()
+      .get('/api/v1/reception/doctors')
+      .set('Authorization', `Bearer ${staffToken}`)
+      .expect(200)
+      .expect((response) => {
+        expect(response.body.configured).toBe(false);
+        const ids = response.body.doctors.map(
+          (item: { id: string }) => item.id,
+        );
+        expect(ids).toContain(activeA.id);
+        expect(ids).not.toContain(inactiveA.id);
+        expect(ids).not.toContain(activeB.id);
+      });
+    await api()
+      .put('/api/v1/reception/doctors')
+      .set('Authorization', `Bearer ${staffToken}`)
+      .send({ doctorIds: [activeB.id] })
+      .expect(400);
+    await api()
+      .put('/api/v1/reception/doctors')
+      .set('Authorization', `Bearer ${staffToken}`)
+      .send({ doctorIds: [] })
+      .expect(400);
+    await api()
+      .put('/api/v1/reception/doctors')
+      .set('Authorization', `Bearer ${staffToken}`)
+      .send({ doctorIds: [activeA.id] })
+      .expect(200)
+      .expect((response) => {
+        expect(response.body.configured).toBe(true);
+        expect(
+          response.body.doctors.filter(
+            (item: { assigned: boolean }) => item.assigned,
+          ),
+        ).toEqual([expect.objectContaining({ id: activeA.id })]);
+      });
+    await api()
+      .get('/api/v1/reception/doctors')
+      .set('Authorization', `Bearer ${managerToken}`)
+      .expect(403);
+    await api()
+      .post('/api/v1/platform/staff')
+      .set('Authorization', `Bearer ${administratorToken}`)
+      .set('Idempotency-Key', `staff-desk-${suffix}`)
+      .send({
+        email: `desk-${suffix}@example.invalid`,
+        role: 'receptionist',
+        organizationId: tenantA.organizationId,
+        clinicId: tenantA.clinicId,
+        doctorIds: [activeA.id],
+      })
+      .expect(201)
+      .expect((response) =>
+        expect(response.body.receptionDoctors).toEqual([
+          expect.objectContaining({
+            doctorId: activeA.id,
+            doctorName: expect.stringContaining('Shilan'),
+          }),
+        ]),
+      );
+    await api()
+      .post('/api/v1/platform/staff')
+      .set('Authorization', `Bearer ${administratorToken}`)
+      .set('Idempotency-Key', `staff-manager-${suffix}`)
+      .send({
+        email: `manager-desk-${suffix}@example.invalid`,
+        role: 'clinicManager',
+        organizationId: tenantA.organizationId,
+        clinicId: tenantA.clinicId,
+        doctorIds: [activeA.id],
+      })
+      .expect(400);
     await app.close();
   }, 120_000);
 

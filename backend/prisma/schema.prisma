@@ -222,10 +222,10 @@ model Clinic {
 }
 
 model User {
-  id                   String                   @id @default(uuid(7)) @db.Uuid
-  status               RecordStatus             @default(active)
-  createdAt            DateTime                 @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt            DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(3)
+  id                   String                         @id @default(uuid(7)) @db.Uuid
+  status               RecordStatus                   @default(active)
+  createdAt            DateTime                       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt            DateTime                       @updatedAt @map("updated_at") @db.Timestamptz(3)
   patientAccount       PatientAccount?
   staffAccount         StaffAccount?
   memberships          ClinicMembership[]
@@ -238,13 +238,14 @@ model User {
   roles                IdentityRoleAssignment[]
   sessionFamilies      SessionFamily[]
   authenticationEvents AuthenticationEvent[]
-  billingReversals     CommissionLedgerEntry[]  @relation("BillingReversalActor")
-  finalizedStatements  BillingStatement[]       @relation("BillingStatementFinalizer")
-  uploadedDocuments    DocumentRecord[]         @relation("DocumentUploader")
-  authorizationVersion Int                      @default(1) @map("authorization_version")
-  roleVersion          Int                      @default(1) @map("role_version")
+  billingReversals     CommissionLedgerEntry[]        @relation("BillingReversalActor")
+  finalizedStatements  BillingStatement[]             @relation("BillingStatementFinalizer")
+  uploadedDocuments    DocumentRecord[]               @relation("DocumentUploader")
+  authorizationVersion Int                            @default(1) @map("authorization_version")
+  roleVersion          Int                            @default(1) @map("role_version")
   recordedPayments     AppointmentPayment[]
   organizationPayouts  OrganizationPayout[]
+  receptionistDoctors  ReceptionistDoctorAssignment[] @relation("ReceptionistDoctors")
 
   @@map("users")
 }
@@ -439,15 +440,16 @@ model DoctorSpecialtyAssignment {
 }
 
 model DoctorClinicAssignment {
-  organizationId String         @map("organization_id") @db.Uuid
-  clinicId       String         @map("clinic_id") @db.Uuid
-  doctorId       String         @map("doctor_id") @db.Uuid
-  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
-  status         RecordStatus   @default(active)
-  clinic         Clinic         @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
-  doctor         Doctor         @relation(fields: [organizationId, doctorId], references: [organizationId, id], onDelete: Restrict)
+  organizationId String                         @map("organization_id") @db.Uuid
+  clinicId       String                         @map("clinic_id") @db.Uuid
+  doctorId       String                         @map("doctor_id") @db.Uuid
+  createdAt      DateTime                       @default(now()) @map("created_at") @db.Timestamptz(3)
+  status         RecordStatus                   @default(active)
+  clinic         Clinic                         @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+  doctor         Doctor                         @relation(fields: [organizationId, doctorId], references: [organizationId, id], onDelete: Restrict)
   appointments   Appointment[]
   queueSessions  QueueSession[]
+  receptionists  ReceptionistDoctorAssignment[]
 
   @@id([organizationId, clinicId, doctorId])
   @@map("doctor_clinic_assignments")
@@ -1295,4 +1297,23 @@ model OrganizationPayout {
   @@unique([organizationId, periodStart])
   @@index([periodStart])
   @@map("organization_payouts")
+}
+
+/// Which doctors a receptionist works for at a clinic. Most clinics in
+/// Duhok give each doctor their own receptionist, so a receptionist starts
+/// with one doctor and can add more (cover, shared front desk).
+model ReceptionistDoctorAssignment {
+  id              String                 @id @default(uuid(7)) @db.Uuid
+  organizationId  String                 @map("organization_id") @db.Uuid
+  clinicId        String                 @map("clinic_id") @db.Uuid
+  userId          String                 @map("user_id") @db.Uuid
+  doctorId        String                 @map("doctor_id") @db.Uuid
+  createdByUserId String?                @map("created_by_user_id") @db.Uuid
+  createdAt       DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
+  user            User                   @relation("ReceptionistDoctors", fields: [userId], references: [id], onDelete: Restrict)
+  assignment      DoctorClinicAssignment @relation(fields: [organizationId, clinicId, doctorId], references: [organizationId, clinicId, doctorId], onDelete: Restrict)
+
+  @@unique([organizationId, clinicId, userId, doctorId])
+  @@index([organizationId, clinicId, doctorId])
+  @@map("receptionist_doctor_assignments")
 }

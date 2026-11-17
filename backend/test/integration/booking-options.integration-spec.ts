@@ -1,4 +1,8 @@
-import { ConflictException, ForbiddenException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
 import type { BackendConfiguration } from '../../src/config/environment';
@@ -8,6 +12,7 @@ import { PrismaAppointmentRepository } from '../../src/modules/appointments/infr
 import { DoctorScheduleService } from '../../src/modules/doctors/application/doctor-schedule.service';
 import { TimezoneService } from '../../src/modules/doctors/application/timezone.service';
 import { PrismaDoctorScheduleRepository } from '../../src/modules/doctors/infrastructure/prisma-doctor-schedule.repository';
+import { ReceptionDoctorsService } from '../../src/modules/doctors/application/reception-doctors.service';
 import { PrismaPatientRepository } from '../../src/modules/patients/infrastructure/prisma-patient.repository';
 
 const prisma = new PrismaClient({
@@ -318,6 +323,73 @@ describe('patient booking options database integration', () => {
     ).rejects.toBeInstanceOf(ForbiddenException);
   }, 30_000);
 
+  it('scopes a receptionist to their own doctors', async () => {
+    const fixture = await setup();
+    const service = appointmentService();
+    const reception = new ReceptionDoctorsService({
+      db: prisma,
+    } as unknown as PrismaService);
+    const receptionist = await prisma.user.create({ data: {} });
+    const who = {
+      actorId: receptionist.id,
+      organizationId: fixture.organizationId,
+      clinicId: fixture.clinicId,
+      receptionist: true,
+    };
+    const staffAccess = {
+      actorId: receptionist.id,
+      patient: false,
+      doctor: false,
+      platformAdministrator: false,
+      organizationId: fixture.organizationId,
+      clinicId: fixture.clinicId,
+      receptionist: true,
+    };
+    // Before choosing, nothing is hidden and the view asks for a choice.
+    await expect(reception.scope(who)).resolves.toBeNull();
+    await expect(reception.view(who)).resolves.toMatchObject({
+      configured: false,
+      doctors: [{ id: fixture.doctorId, assigned: false }],
+    });
+    await expect(
+      reception.update(who, [fixture.organizationId], 'pick-wrong'),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    await expect(reception.update(who, [], 'pick-none')).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+    await expect(
+      reception.update(who, [fixture.doctorId], 'pick-mine'),
+    ).resolves.toMatchObject({
+      configured: true,
+      doctors: [{ id: fixture.doctorId, assigned: true }],
+    });
+    await expect(reception.scope(who)).resolves.toEqual([fixture.doctorId]);
+    const board = await service.dayBoard(staffAccess, '2030-07-22', 'board');
+    expect(board.doctors.map((doctor) => doctor.doctorId)).toEqual([
+      fixture.doctorId,
+    ]);
+    // A doctor outside the list cannot be booked or browsed by this desk.
+    await expect(
+      service.bookingOptions(
+        staffAccess,
+        fixture.organizationId,
+        fixture.clinicId,
+        fixture.profileId,
+        'initial',
+        '2030-07-22',
+        '2030-07-22',
+        'other-doctor',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+    const audit = await prisma.auditEvent.findFirst({
+      where: {
+        actorUserId: receptionist.id,
+        action: 'reception.doctors_updated',
+      },
+    });
+    expect(audit?.metadata).toMatchObject({ added: [fixture.doctorId] });
+  }, 30_000);
+
   it('enforces the clinic-registered patient shape in the database', async () => {
     const fixture = await setup();
     await expect(
@@ -340,6 +412,7 @@ describe('patient booking options database integration', () => {
 
 function appointmentService() {
   const database = { db: prisma } as unknown as PrismaService;
+  const reception = new ReceptionDoctorsService(database);
   const timezones = new TimezoneService();
   const schedules = new DoctorScheduleService(
     new PrismaDoctorScheduleRepository(database),
@@ -354,6 +427,7 @@ function appointmentService() {
       appointmentFoundationFeeIqd: 25000,
       appointmentFoundationDurationMinutes: 30,
     } as BackendConfiguration,
+    reception,
   );
 }
 

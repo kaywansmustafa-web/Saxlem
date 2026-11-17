@@ -98,6 +98,8 @@ export interface AppointmentListQuery {
   readonly pageSize: number;
   readonly cursor?: string;
   readonly status?: AppointmentStatus;
+  /** Limits results to these doctors (a receptionist's own doctors). */
+  readonly doctorIds?: readonly string[];
 }
 export interface AppointmentPage {
   readonly items: readonly AppointmentProjection[];

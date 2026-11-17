@@ -3311,6 +3311,99 @@
         ]
       }
     },
+    "/api/v1/reception/doctors": {
+      "get": {
+        "description": "Every active doctor at the clinic, marked whether this receptionist works for them. A receptionist starts with one doctor and can add more.",
+        "operationId": "ReceptionDoctorsController_view",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceptionDoctorsResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "The signed-in receptionist's doctors at this clinic",
+        "tags": [
+          "reception"
+        ]
+      },
+      "put": {
+        "operationId": "ReceptionDoctorsController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateReceptionDoctorsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceptionDoctorsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Choose which doctors this receptionist works for",
+        "tags": [
+          "reception"
+        ]
+      }
+    },
     "/api/v1/patients/directory": {
       "get": {
         "operationId": "PatientsController_directory",
@@ -9578,6 +9671,32 @@
           "clinicName"
         ]
       },
+      "StaffReceptionDoctorDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clinicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "organizationId",
+          "clinicId",
+          "doctorId",
+          "doctorName"
+        ]
+      },
       "StaffResponseDto": {
         "type": "object",
         "properties": {
@@ -9621,6 +9740,13 @@
             "type": "object",
             "nullable": true
           },
+          "receptionDoctors": {
+            "description": "Doctors a receptionist works for, per clinic.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StaffReceptionDoctorDto"
+            }
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -9639,6 +9765,7 @@
           "memberships",
           "doctorId",
           "doctorName",
+          "receptionDoctors",
           "createdAt",
           "updatedAt"
         ]
@@ -9683,6 +9810,14 @@
           "clinicId": {
             "type": "string",
             "format": "uuid"
+          },
+          "doctorIds": {
+            "description": "Receptionists only: the doctor(s) they work for. Usually one.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         },
         "required": [
@@ -9735,6 +9870,13 @@
             "type": "object",
             "nullable": true
           },
+          "receptionDoctors": {
+            "description": "Doctors a receptionist works for, per clinic.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StaffReceptionDoctorDto"
+            }
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -9761,6 +9903,7 @@
           "memberships",
           "doctorId",
           "doctorName",
+          "receptionDoctors",
           "createdAt",
           "updatedAt",
           "activationCredential",
@@ -9800,6 +9943,14 @@
               "clinicManager",
               "doctor"
             ]
+          },
+          "doctorIds": {
+            "description": "Receptionists only: the doctor(s) they work for. Usually one.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         },
         "required": [
@@ -11512,6 +11663,63 @@
           "clinicName",
           "timezone",
           "workingHours"
+        ]
+      },
+      "ReceptionDoctorDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "assigned": {
+            "type": "boolean",
+            "description": "This receptionist works for the doctor."
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "assigned"
+        ]
+      },
+      "ReceptionDoctorsResponseDto": {
+        "type": "object",
+        "properties": {
+          "doctors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReceptionDoctorDto"
+            }
+          },
+          "configured": {
+            "type": "boolean",
+            "description": "False until the receptionist has chosen a doctor."
+          }
+        },
+        "required": [
+          "doctors",
+          "configured"
+        ]
+      },
+      "UpdateReceptionDoctorsDto": {
+        "type": "object",
+        "properties": {
+          "doctorIds": {
+            "minItems": 1,
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "doctorIds"
         ]
       },
       "PatientDirectoryListItemResponseDto": {

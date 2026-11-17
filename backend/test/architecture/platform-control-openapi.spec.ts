@@ -35,6 +35,7 @@ describe('platform control OpenAPI', () => {
       'doctorName',
       'email',
       'memberships',
+      'receptionDoctors',
       'roles',
       'staffAccountId',
       'status',

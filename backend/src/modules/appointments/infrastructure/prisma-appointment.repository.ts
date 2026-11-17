@@ -60,6 +60,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
         : {}),
       startsAt: { gte: query.from, lt: query.to },
       ...(query.status ? { status: query.status } : {}),
+      ...(query.doctorIds ? { doctorId: { in: [...query.doctorIds] } } : {}),
     };
     if (query.cursor) {
       const cursor = await this.prisma.db.appointment.findFirst({
