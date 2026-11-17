@@ -19,6 +19,7 @@ const mutationSchema = z.discriminatedUnion("operation", [
       organizationId: idSchema,
       clinicId: idSchema,
       role: z.enum(["receptionist", "clinicManager", "doctor"]),
+      doctorIds: z.array(idSchema).max(20).optional(),
     })
     .strict(),
   z
@@ -96,6 +97,9 @@ export async function PATCH(
             organizationId: operation.organizationId,
             clinicId: operation.clinicId,
             role: operation.role,
+            ...(operation.role === "receptionist" && operation.doctorIds?.length
+              ? { doctorIds: operation.doctorIds }
+              : {}),
           }
         : undefined;
   try {

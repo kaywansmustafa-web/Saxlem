@@ -2,6 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  ReceptionDoctorPicker,
+  pickedDoctors,
+  type PickerDoctor,
+} from "./reception-doctor-picker";
 
 type Membership = {
   id: string;
@@ -17,7 +22,9 @@ export function StaffControls({
   memberships,
   organizations,
   clinics,
+  doctors = [],
 }: {
+  doctors?: PickerDoctor[];
   staffId: string;
   status: "active" | "inactive";
   memberships: Membership[];
@@ -27,6 +34,8 @@ export function StaffControls({
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [clinicId, setClinicId] = useState("");
+  const [role, setRole] = useState("receptionist");
   async function mutate(body: Record<string, unknown>) {
     setBusy(true);
     setMessage("");
@@ -69,11 +78,23 @@ export function StaffControls({
         onSubmit={(event) => {
           event.preventDefault();
           const data = new FormData(event.currentTarget);
+          const doctorIds = pickedDoctors(event.currentTarget);
+          if (
+            role === "receptionist" &&
+            doctorIds.length === 0 &&
+            doctors.some((d) => d.clinics.some((c) => c.id === clinicId))
+          ) {
+            setMessage("Choose the doctor this receptionist works for.");
+            return;
+          }
           void mutate({
             operation: "addMembership",
             organizationId: data.get("organizationId"),
             clinicId: data.get("clinicId"),
             role: data.get("role"),
+            ...(role === "receptionist" && doctorIds.length
+              ? { doctorIds }
+              : {}),
           });
         }}
       >
@@ -92,7 +113,12 @@ export function StaffControls({
         </label>
         <label className="field">
           Clinic
-          <select name="clinicId" required defaultValue="">
+          <select
+            name="clinicId"
+            required
+            value={clinicId}
+            onChange={(event) => setClinicId(event.target.value)}
+          >
             <option value="" disabled>
               Choose clinic
             </option>
@@ -105,12 +131,19 @@ export function StaffControls({
         </label>
         <label className="field">
           Role
-          <select name="role" defaultValue="receptionist">
+          <select
+            name="role"
+            value={role}
+            onChange={(event) => setRole(event.target.value)}
+          >
             <option value="receptionist">Receptionist</option>
             <option value="clinicManager">Clinic manager</option>
             <option value="doctor">Doctor</option>
           </select>
         </label>
+        {role === "receptionist" && (
+          <ReceptionDoctorPicker doctors={doctors} clinicId={clinicId} />
+        )}
         <button className="button button-primary" disabled={busy}>
           Add assignment
         </button>

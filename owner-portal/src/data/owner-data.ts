@@ -210,6 +210,18 @@ export const staffSchema = z
     ),
     doctorId: id.nullable(),
     doctorName: z.string().nullable(),
+    receptionDoctors: z
+      .array(
+        z
+          .object({
+            organizationId: id,
+            clinicId: id,
+            doctorId: id,
+            doctorName: z.string(),
+          })
+          .strict(),
+      )
+      .optional(),
     createdAt: dateTime,
     updatedAt: dateTime,
   })
@@ -396,6 +408,17 @@ export const listDoctors = (session: OwnerSession, page = 1) =>
     session,
     schema: doctorPageSchema,
   });
+/** Every active doctor (up to 500), for choosing a receptionist's doctor. */
+export async function listAllDoctors(session: OwnerSession) {
+  const first = await listDoctors(session, 1);
+  const pages = Math.min(first.totalPages, 10);
+  const rest = await Promise.all(
+    Array.from({ length: Math.max(0, pages - 1) }, (_, index) =>
+      listDoctors(session, index + 2),
+    ),
+  );
+  return [first, ...rest].flatMap((page) => page.items);
+}
 export const doctorDetail = (session: OwnerSession, doctorId: string) =>
   ownerApi().request({
     path: `/api/v1/platform/doctors/${doctorId}`,

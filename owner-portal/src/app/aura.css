@@ -666,3 +666,11 @@ dialog {
   flex: none;
   white-space: nowrap;
 }
+
+/* Receptionist → doctor picker */
+.doctor-picker{border:1px solid var(--border,#e3e8f0);border-radius:14px;padding:12px 16px 14px;display:grid;gap:8px;margin:0}
+.doctor-picker legend{padding:0 6px;font-weight:650}
+.doctor-picker .check-row{display:flex;align-items:center;gap:10px;font-weight:600;cursor:pointer}
+.doctor-picker .check-row input{width:18px;height:18px;accent-color:#2950f5}
+.doctor-picker small{color:var(--muted,#5b6578)}
+.doctor-picker .check-row{margin:0;padding:2px 0;min-height:0}

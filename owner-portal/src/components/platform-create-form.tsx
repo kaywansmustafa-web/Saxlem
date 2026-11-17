@@ -1,12 +1,19 @@
 "use client";
 import { useState } from "react";
+import {
+  ReceptionDoctorPicker,
+  pickedDoctors,
+  type PickerDoctor,
+} from "./reception-doctor-picker";
 
 export function PlatformCreateForm({
   kind,
   organizations,
   clinics,
   specialties = [],
+  doctors = [],
 }: {
+  doctors?: PickerDoctor[];
   kind: "staff" | "doctor";
   organizations: { id: string; name: string }[];
   clinics: { id: string; organizationId: string; name: string }[];
@@ -14,7 +21,13 @@ export function PlatformCreateForm({
 }) {
   const [busy, setBusy] = useState(false),
     [message, setMessage] = useState(""),
-    [credential, setCredential] = useState("");
+    [credential, setCredential] = useState(""),
+    [clinicId, setClinicId] = useState(""),
+    [role, setRole] = useState("receptionist");
+  const needsDoctor =
+    kind === "staff" &&
+    role === "receptionist" &&
+    doctors.some((d) => d.clinics.some((c) => c.id === clinicId));
   return (
     <form
       className="card"
@@ -24,9 +37,18 @@ export function PlatformCreateForm({
         setBusy(true);
         setMessage("");
         const raw = Object.fromEntries(new FormData(event.currentTarget));
+        delete raw.doctorIds;
+        const doctorIds = pickedDoctors(event.currentTarget);
+        if (needsDoctor && doctorIds.length === 0) {
+          setBusy(false);
+          setMessage("Choose the doctor this receptionist works for.");
+          return;
+        }
         const body =
           kind === "staff"
-            ? raw
+            ? role === "receptionist" && doctorIds.length
+              ? { ...raw, doctorIds }
+              : raw
             : {
                 ...raw,
                 yearsOfExperience: Number(raw.yearsOfExperience),
@@ -100,7 +122,12 @@ export function PlatformCreateForm({
       </label>
       <label className="field">
         Clinic
-        <select name="clinicId" required defaultValue="">
+        <select
+          name="clinicId"
+          required
+          value={clinicId}
+          onChange={(event) => setClinicId(event.target.value)}
+        >
           <option value="" disabled>
             Choose clinic
           </option>
@@ -114,7 +141,11 @@ export function PlatformCreateForm({
       {kind === "staff" ? (
         <label className="field">
           Role
-          <select name="role">
+          <select
+            name="role"
+            value={role}
+            onChange={(event) => setRole(event.target.value)}
+          >
             <option value="receptionist">Receptionist</option>
             <option value="clinicManager">Clinic manager</option>
           </select>
@@ -130,6 +161,9 @@ export function PlatformCreateForm({
             ))}
           </select>
         </label>
+      )}
+      {kind === "staff" && role === "receptionist" && (
+        <ReceptionDoctorPicker doctors={doctors} clinicId={clinicId} />
       )}
       {message && (
         <p

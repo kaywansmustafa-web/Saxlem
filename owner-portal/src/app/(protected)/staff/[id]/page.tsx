@@ -3,7 +3,12 @@ import { z } from "zod";
 import { PageHeader, StatusBadge } from "@/components/app-shell";
 import { DataTable } from "@/components/data-table";
 import { StaffControls } from "@/components/staff-controls";
-import { listClinics, listOrganizations, staffDetail } from "@/data/owner-data";
+import {
+  listAllDoctors,
+  listClinics,
+  listOrganizations,
+  staffDetail,
+} from "@/data/owner-data";
 import { requireOwnerSession } from "@/infrastructure/auth";
 
 export default async function StaffDetailPage({
@@ -14,11 +19,15 @@ export default async function StaffDetailPage({
   const { id } = await params;
   if (!z.string().uuid().safeParse(id).success) notFound();
   const session = await requireOwnerSession();
-  const [staff, organizations, clinics] = await Promise.all([
+  const [staff, organizations, clinics, doctors] = await Promise.all([
     staffDetail(session, id),
     listOrganizations(session),
     listClinics(session),
+    listAllDoctors(session),
   ]);
+  const clinicName = (clinicId: string) =>
+    staff.memberships.find((item) => item.clinicId === clinicId)?.clinicName ??
+    clinicId;
   return (
     <>
       <PageHeader
@@ -33,6 +42,31 @@ export default async function StaffDetailPage({
           </p>
           <p>User {staff.userId}</p>
           {staff.doctorName && <p>Doctor identity: {staff.doctorName}</p>}
+          {staff.memberships.some((item) => item.role === "receptionist") && (
+            <>
+              <h3>Works for</h3>
+              {staff.receptionDoctors?.length ? (
+                <ul className="list compact-list">
+                  {staff.receptionDoctors.map((item) => (
+                    <li key={`${item.clinicId}-${item.doctorId}`}>
+                      <span>
+                        <strong>{item.doctorName}</strong>
+                        <br />
+                        <small>{clinicName(item.clinicId)}</small>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>
+                  <small>
+                    No doctor chosen yet. They will be asked to choose one when
+                    they sign in to the Clinic Portal.
+                  </small>
+                </p>
+              )}
+            </>
+          )}
         </section>
         <StaffControls
           staffId={staff.staffAccountId}
@@ -40,6 +74,7 @@ export default async function StaffDetailPage({
           memberships={staff.memberships}
           organizations={organizations.items}
           clinics={clinics.items}
+          doctors={doctors}
         />
       </div>
       <h2>Memberships</h2>

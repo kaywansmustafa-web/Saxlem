@@ -1,12 +1,17 @@
 import { PageHeader } from "@/components/app-shell";
 import { PlatformCreateForm } from "@/components/platform-create-form";
-import { listClinics, listOrganizations } from "@/data/owner-data";
+import {
+  listAllDoctors,
+  listClinics,
+  listOrganizations,
+} from "@/data/owner-data";
 import { requireOwnerSession } from "@/infrastructure/auth";
 export default async function NewStaffPage() {
   const session = await requireOwnerSession();
-  const [organizations, clinics] = await Promise.all([
+  const [organizations, clinics, doctors] = await Promise.all([
     listOrganizations(session),
     listClinics(session),
+    listAllDoctors(session),
   ]);
   return (
     <>
@@ -18,6 +23,7 @@ export default async function NewStaffPage() {
         kind="staff"
         organizations={organizations.items}
         clinics={clinics.items}
+        doctors={doctors}
       />
     </>
   );

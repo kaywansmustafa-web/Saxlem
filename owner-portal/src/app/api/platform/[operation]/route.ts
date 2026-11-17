@@ -15,6 +15,7 @@ const staff = z
     role: z.enum(["receptionist", "clinicManager"]),
     organizationId: z.string().uuid(),
     clinicId: z.string().uuid(),
+    doctorIds: z.array(z.string().uuid()).max(20).optional(),
   })
   .strict();
 const doctor = z
