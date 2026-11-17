@@ -300,7 +300,7 @@ describe('per-doctor billing and payouts', () => {
       platform,
       fixture.organizationId,
       fixture.shilan,
-      free.id as string,
+      free.id,
       new Date('2026-10-01T00:00:00.000Z'),
       'plan-shilan',
     );

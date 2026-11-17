@@ -180,18 +180,29 @@ export class StatementService {
         ...facts.revenue,
         totalIqd: facts.revenue.counterIqd + facts.revenue.onlineIqd,
       },
-      charges: lines.charges.map((line) => ({
-        id: line.id,
-        recognizedAt: line.recognizedAt.toISOString(),
-        appointmentReference: line.appointmentReference,
-        appointmentStartsAt: line.appointmentStartsAt.toISOString(),
-        clinicName: line.clinicName,
-        planName: line.planName,
-        amountIqd: line.status === 'earned' ? line.amountIqd : -line.amountIqd,
-        kind:
-          line.status === 'earned' ? ('charge' as const) : ('credit' as const),
-        reason: line.reason,
-      })),
+      // A credit sits right under the charge it cancels.
+      charges: [...lines.charges]
+        .sort(
+          (a, b) =>
+            a.recognizedAt.getTime() - b.recognizedAt.getTime() ||
+            (a.originalId ?? a.id).localeCompare(b.originalId ?? b.id) ||
+            (a.status === 'earned' ? 0 : 1) - (b.status === 'earned' ? 0 : 1),
+        )
+        .map((line) => ({
+          id: line.id,
+          recognizedAt: line.recognizedAt.toISOString(),
+          appointmentReference: line.appointmentReference,
+          appointmentStartsAt: line.appointmentStartsAt.toISOString(),
+          clinicName: line.clinicName,
+          planName: line.planName,
+          amountIqd:
+            line.status === 'earned' ? line.amountIqd : -line.amountIqd,
+          kind:
+            line.status === 'earned'
+              ? ('charge' as const)
+              : ('credit' as const),
+          reason: line.reason,
+        })),
       onlinePayments: lines.payments.map((line) => this.money(line)),
       refunds: lines.clawbacks.map((line) => this.money(line)),
       settlement: settlement
