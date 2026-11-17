@@ -16,13 +16,21 @@ vi.mock("@/infrastructure/request-security", async () => {
       r.headers.get("origin") === "https://owner.example",
   };
 });
-import { POST as settle } from "@/app/api/platform/payouts/[organizationId]/route";
+import { POST as settle } from "@/app/api/platform/payouts/[organizationId]/[doctorId]/route";
 import { PUT as saveProfile } from "@/app/api/platform/payout-profiles/[organizationId]/route";
+import { PUT as saveDoctorAccount } from "@/app/api/platform/doctor-payout-profiles/[organizationId]/[doctorId]/route";
 import { currentMonth, iqd } from "@/domain/money";
 
 const organizationId = "0198d38e-5862-7000-8000-000000000001";
+const doctorId = "0198d38e-5862-7000-8000-0000000000d1";
+type Handler = (
+  request: Request,
+  context: {
+    params: Promise<{ organizationId: string; doctorId: string }>;
+  },
+) => Promise<Response>;
 const send = (
-  handler: typeof settle,
+  handler: Handler,
   method: string,
   body: unknown,
   origin = "https://owner.example",
@@ -33,7 +41,7 @@ const send = (
       headers: { origin, "content-type": "application/json" },
       body: JSON.stringify(body),
     }),
-    { params: Promise.resolve({ organizationId }) },
+    { params: Promise.resolve({ organizationId, doctorId }) },
   );
 
 describe("payout routes", () => {
@@ -42,7 +50,7 @@ describe("payout routes", () => {
     restoreOwnerSession.mockReset();
   });
 
-  it("forwards a settlement with the amount the operator saw", async () => {
+  it("forwards a doctor's settlement with the amount the operator saw", async () => {
     restoreOwnerSession.mockResolvedValue({ accessToken: "t" });
     request.mockResolvedValue({ status: "settled" });
     const body = {
@@ -54,7 +62,7 @@ describe("payout routes", () => {
     expect(request).toHaveBeenCalledWith(
       expect.objectContaining({
         method: "POST",
-        path: `/api/v1/platform/organizations/${organizationId}/payouts`,
+        path: `/api/v1/platform/organizations/${organizationId}/doctors/${doctorId}/payouts`,
         body,
       }),
     );
@@ -75,18 +83,35 @@ describe("payout routes", () => {
     expect(request).not.toHaveBeenCalled();
   });
 
-  it("saves the online switch and payout account", async () => {
+  it("saves the organization's online switch", async () => {
     restoreOwnerSession.mockResolvedValue({ accessToken: "t" });
     request.mockResolvedValue({ organizationId });
+    expect(
+      (await send(saveProfile, "PUT", { onlinePaymentsEnabled: true })).status,
+    ).toBe(200);
+  });
+
+  it("saves each doctor's own payout account", async () => {
+    restoreOwnerSession.mockResolvedValue({ accessToken: "t" });
+    request.mockResolvedValue({ organizationId, doctorId });
     const body = {
-      onlinePaymentsEnabled: true,
-      payoutAccountName: "Clinic LLC",
+      payoutAccountName: "Dr. Shilan",
       payoutAccountNumber: "IQ12 FIBI 0000 1111",
     };
-    expect((await send(saveProfile, "PUT", body)).status).toBe(200);
+    expect((await send(saveDoctorAccount, "PUT", body)).status).toBe(200);
+    expect(request).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: "PUT",
+        path: `/api/v1/platform/organizations/${organizationId}/doctors/${doctorId}/payout-profile`,
+      }),
+    );
     expect(
-      (await send(saveProfile, "PUT", { ...body, payoutAccountNumber: "<x>" }))
-        .status,
+      (
+        await send(saveDoctorAccount, "PUT", {
+          ...body,
+          payoutAccountNumber: "<x>",
+        })
+      ).status,
     ).toBe(400);
   });
 

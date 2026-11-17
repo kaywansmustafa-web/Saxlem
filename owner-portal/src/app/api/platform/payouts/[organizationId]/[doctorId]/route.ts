@@ -13,10 +13,10 @@ const body = z
   })
   .strict();
 
-/** Records a month's settlement with an organization as paid. */
+/** Records a month's settlement with one doctor as paid. */
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ organizationId: string }> },
+  { params }: { params: Promise<{ organizationId: string; doctorId: string }> },
 ) {
   if (!sameOrigin(request))
     return noStoreJson(
@@ -28,10 +28,13 @@ export async function POST(
       { ok: false, error: { message: "Use a valid form request." } },
       400,
     );
-  const { organizationId } = await params;
-  if (!z.string().uuid().safeParse(organizationId).success)
+  const { organizationId, doctorId } = await params;
+  if (
+    !z.string().uuid().safeParse(organizationId).success ||
+    !z.string().uuid().safeParse(doctorId).success
+  )
     return noStoreJson(
-      { ok: false, error: { message: "Organization not found." } },
+      { ok: false, error: { message: "Doctor not found." } },
       404,
     );
   let raw: unknown;
@@ -57,7 +60,7 @@ export async function POST(
     );
   try {
     const data = await ownerApi().request({
-      path: `/api/v1/platform/organizations/${organizationId}/payouts`,
+      path: `/api/v1/platform/organizations/${organizationId}/doctors/${doctorId}/payouts`,
       method: "POST",
       session,
       body: parsed.data,

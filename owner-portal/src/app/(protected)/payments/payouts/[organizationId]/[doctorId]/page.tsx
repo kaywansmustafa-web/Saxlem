@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/app-shell";
+import { DoctorPayoutAccountForm } from "@/components/doctor-payout-account-form";
 import { PayoutSettleForm } from "@/components/payout-settle-form";
-import { payoutDetail } from "@/data/owner-data";
+import { doctorPayoutProfile, payoutDetail } from "@/data/owner-data";
 import {
   baghdadDateTime,
   currentMonth,
@@ -16,18 +17,21 @@ export default async function PayoutDetailPage({
   params,
   searchParams,
 }: {
-  params: Promise<{ organizationId: string }>;
+  params: Promise<{ organizationId: string; doctorId: string }>;
   searchParams: Promise<{ month?: string }>;
 }) {
-  const { organizationId } = await params;
+  const { organizationId, doctorId } = await params;
   const { month: raw } = await searchParams;
   const month = /^\d{4}-(0[1-9]|1[0-2])$/.test(raw ?? "")
     ? raw!
     : currentMonth();
   const session = await requireOwnerSession();
-  let payout;
+  let payout, profile;
   try {
-    payout = await payoutDetail(session, organizationId, month);
+    [payout, profile] = await Promise.all([
+      payoutDetail(session, organizationId, doctorId, month),
+      doctorPayoutProfile(session, organizationId, doctorId).catch(() => null),
+    ]);
   } catch (error) {
     if (error instanceof OwnerApiError && error.status === 404) notFound();
     throw error;
@@ -54,8 +58,8 @@ export default async function PayoutDetailPage({
         ← Monthly payouts
       </Link>
       <PageHeader
-        title={payout.organizationName}
-        description={`Settlement for ${monthName}.`}
+        title={payout.doctorName}
+        description={`${payout.organizationName} · settlement for ${monthName}. Each doctor is billed and paid separately.`}
         action={
           <span className={`badge badge-${tone}`}>
             <span className="badge-dot" aria-hidden="true" />
@@ -79,8 +83,8 @@ export default async function PayoutDetailPage({
             <div className="payout-net">
               <dt>
                 {payout.netPayableIqd >= 0
-                  ? "Saxlem pays the clinic"
-                  : "The clinic owes Saxlem"}
+                  ? `Saxlem pays ${payout.doctorName}`
+                  : `${payout.doctorName} owes Saxlem`}
               </dt>
               <dd className="numeric">{iqd(Math.abs(payout.netPayableIqd))}</dd>
             </div>
@@ -90,39 +94,28 @@ export default async function PayoutDetailPage({
             {payout.paymentCount === 1 ? "payment" : "payments"}.{" "}
             {payout.payoutAccount
               ? `Pay to ${payout.payoutAccount.name ?? "account"} ${payout.payoutAccount.numberHint}.`
-              : "No payout account is saved for this organization yet (Payments → Clinics)."}
+              : "No payout account is saved for this doctor yet."}
           </p>
         </section>
         <section className="card detail-card">
-          <h2>By doctor</h2>
-          {payout.doctors?.length ? (
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Doctor</th>
-                  <th>Payments</th>
-                  <th>Collected</th>
-                </tr>
-              </thead>
-              <tbody>
-                {payout.doctors.map((doctor) => (
-                  <tr key={doctor.doctorId}>
-                    <td>{doctor.doctorName}</td>
-                    <td className="numeric">{doctor.paymentCount}</td>
-                    <td className="numeric">{iqd(doctor.grossIqd)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p className="muted">No online payments in this settlement.</p>
-          )}
+          <h2>Pay to</h2>
+          <p className="muted">
+            {profile?.payoutAccountNumberHint
+              ? `${profile.payoutAccountName ?? "Account"} ${profile.payoutAccountNumberHint}`
+              : "No account saved yet."}
+          </p>
+          <DoctorPayoutAccountForm
+            organizationId={payout.organizationId}
+            doctorId={payout.doctorId}
+            profile={profile}
+          />
         </section>
       </div>
       {payout.status === "ready" && (
         <PayoutSettleForm
           organizationId={payout.organizationId}
-          organizationName={payout.organizationName}
+          doctorId={payout.doctorId}
+          doctorName={payout.doctorName}
           month={month}
           netPayableIqd={payout.netPayableIqd}
         />

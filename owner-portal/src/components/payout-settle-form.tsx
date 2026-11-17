@@ -1,15 +1,17 @@
 "use client";
 import { useState } from "react";
 
-/** Records that Saxlem paid (or received) a month's settlement. */
+/** Records that Saxlem paid (or received) a doctor's month. */
 export function PayoutSettleForm({
   organizationId,
-  organizationName,
+  doctorId,
+  doctorName,
   month,
   netPayableIqd,
 }: {
   organizationId: string;
-  organizationName: string;
+  doctorId: string;
+  doctorName: string;
   month: string;
   netPayableIqd: number;
 }) {
@@ -18,8 +20,8 @@ export function PayoutSettleForm({
   const amount = `${Math.abs(netPayableIqd).toLocaleString("en-IQ")} IQD`;
   const direction =
     netPayableIqd >= 0
-      ? `Saxlem pays ${organizationName} ${amount}`
-      : `${organizationName} pays Saxlem ${amount}`;
+      ? `Saxlem pays ${doctorName} ${amount}`
+      : `${doctorName} pays Saxlem ${amount}`;
   return (
     <form
       className="card detail-card settle-form"
@@ -30,7 +32,7 @@ export function PayoutSettleForm({
         const raw = Object.fromEntries(new FormData(event.currentTarget));
         try {
           const response = await fetch(
-            `/api/platform/payouts/${organizationId}`,
+            `/api/platform/payouts/${organizationId}/${doctorId}`,
             {
               method: "POST",
               headers: { "content-type": "application/json" },

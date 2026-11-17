@@ -31,6 +31,7 @@ export default async function StatementsPage({
             <table className="table">
               <thead>
                 <tr>
+                  <th>Doctor</th>
                   <th>Period</th>
                   <th>Qualifying</th>
                   <th>Gross</th>
@@ -43,6 +44,10 @@ export default async function StatementsPage({
               <tbody>
                 {data.map((item) => (
                   <tr key={item.id}>
+                    <td>
+                      {item.doctorName ??
+                        "Whole clinic (before per-doctor billing)"}
+                    </td>
                     <td>
                       {new Date(item.periodStart).toLocaleDateString("en-IQ")} –{" "}
                       {new Date(item.periodEnd).toLocaleDateString("en-IQ")}

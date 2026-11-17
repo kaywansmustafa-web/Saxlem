@@ -674,3 +674,9 @@ dialog {
 .doctor-picker .check-row input{width:18px;height:18px;accent-color:#2950f5}
 .doctor-picker small{color:var(--muted,#5b6578)}
 .doctor-picker .check-row{margin:0;padding:2px 0;min-height:0}
+.doctor-accounts-title{margin:18px 0 8px;font-size:1rem}
+.doctor-accounts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.doctor-accounts details{border:1px solid var(--border,#e3e8f0);border-radius:12px;padding:10px 14px;background:var(--surface,#fff)}
+.doctor-accounts summary{display:flex;justify-content:space-between;gap:12px;cursor:pointer;list-style:none}
+.doctor-accounts summary::-webkit-details-marker{display:none}
+.doctor-accounts details[open] summary{margin-bottom:10px}

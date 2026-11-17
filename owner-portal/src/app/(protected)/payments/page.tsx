@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
+import { DoctorPayoutAccountForm } from "@/components/doctor-payout-account-form";
 import { PaymentAccountForm } from "@/components/payment-account-form";
 import { PayoutProfileForm } from "@/components/payout-profile-form";
 import {
@@ -25,7 +26,7 @@ type Tab = "ledger" | "payouts" | "clinics";
 const tabs: readonly [Tab, string][] = [
   ["ledger", "Payments"],
   ["payouts", "Monthly payouts"],
-  ["clinics", "Clinics"],
+  ["clinics", "Clinics and doctors"],
 ];
 
 export default async function PaymentsPage({
@@ -50,7 +51,7 @@ export default async function PaymentsPage({
         title="Payments"
         description={
           settings.collectionMode === "platform"
-            ? "Online payments go into Saxlem’s FIB account. Every payment is recorded here, and Saxlem pays each clinic once a month."
+            ? "Online payments go into Saxlem’s FIB account. Every payment is recorded here, and Saxlem pays each doctor once a month."
             : "Online payments go into each clinic’s own FIB account. Every payment is recorded here."
         }
       />
@@ -113,7 +114,7 @@ function CollectionBanner({ settings }: { settings: PaymentSettings }) {
             ? "Online payments are on."
             : "Online payments are off for the whole platform. Patients only see “Pay at the clinic”."}
           {settings.collectionMode === "platform" &&
-            ` FIB fee ${settings.providerFeeBps / 100}% ${settings.feePassedToClinic ? "is deducted from clinic payouts" : "is paid by Saxlem"}.`}
+            ` FIB fee ${settings.providerFeeBps / 100}% ${settings.feePassedToClinic ? "is deducted from doctor payouts" : "is paid by Saxlem"}.`}
         </span>
       </div>
       <StatusBadge status={settings.onlineEnabled ? "active" : "inactive"} />
@@ -232,14 +233,14 @@ async function Payouts({
       {active.length ? (
         <>
           <p className="ledger-total">
-            Still to pay clinics for this month:{" "}
+            Still to pay doctors for this month:{" "}
             <strong>{iqd(totalNet)}</strong>
           </p>
           <div className="card table-card" tabIndex={0} aria-label="Payouts">
             <table className="table">
               <thead>
                 <tr>
-                  <th>Organization</th>
+                  <th>Doctor</th>
                   <th>Payments</th>
                   <th>Collected</th>
                   <th>Refunds back</th>
@@ -252,9 +253,10 @@ async function Payouts({
               </thead>
               <tbody>
                 {active.map((item) => (
-                  <tr key={item.organizationId}>
+                  <tr key={`${item.organizationId}:${item.doctorId}`}>
                     <td>
-                      <strong>{item.organizationName}</strong>
+                      <strong>{item.doctorName}</strong>
+                      <small>{item.organizationName}</small>
                       {item.payoutAccount ? (
                         <small>
                           {item.payoutAccount.name ?? "Account"}{" "}
@@ -273,8 +275,8 @@ async function Payouts({
                       <strong>{iqd(item.netPayableIqd)}</strong>
                       <small>
                         {item.netPayableIqd >= 0
-                          ? "Saxlem pays clinic"
-                          : "Clinic owes Saxlem"}
+                          ? "Saxlem pays doctor"
+                          : "Doctor owes Saxlem"}
                       </small>
                     </td>
                     <td>
@@ -288,7 +290,7 @@ async function Payouts({
                     <td>
                       <Link
                         className="button button-secondary"
-                        href={`/payments/payouts/${item.organizationId}?month=${month}`}
+                        href={`/payments/payouts/${item.organizationId}/${item.doctorId}?month=${month}`}
                       >
                         {item.status === "ready" ? "Review and pay" : "View"}
                       </Link>
@@ -364,13 +366,22 @@ async function Clinics({
       </div>
     );
   }
-  const profiles = await Promise.all(
-    organizations.map((o) => payoutProfile(session, o.id).catch(() => null)),
-  );
+  const [profiles, payees] = await Promise.all([
+    Promise.all(
+      organizations.map((o) => payoutProfile(session, o.id).catch(() => null)),
+    ),
+    // Every working doctor appears in this month's payouts list.
+    payoutSummary(session, currentMonth())
+      .then((summary) => summary.items)
+      .catch(() => []),
+  ]);
   return (
     <div className="payment-accounts">
       {organizations.map((organization, index) => {
         const profile = profiles[index];
+        const doctors = payees.filter(
+          (item) => item.organizationId === organization.id,
+        );
         return (
           <section className="card payment-account" key={organization.id}>
             <div className="payment-account-head">
@@ -380,9 +391,7 @@ async function Clinics({
                   {profile?.onlinePaymentsEnabled
                     ? "Patients can pay in the app."
                     : "Patients pay at the clinic only."}{" "}
-                  {profile?.payoutAccountNumberHint
-                    ? `Payouts to ${profile.payoutAccountName ?? "account"} ${profile.payoutAccountNumberHint}.`
-                    : "No payout account yet."}
+                  Each doctor is billed and paid separately.
                 </p>
               </div>
               <StatusBadge
@@ -396,6 +405,42 @@ async function Clinics({
               />
             ) : (
               <p className="muted">Settings are unavailable right now.</p>
+            )}
+            <h3 className="doctor-accounts-title">
+              Doctors&apos; payout accounts
+            </h3>
+            {doctors.length ? (
+              <ul className="doctor-accounts">
+                {doctors.map((doctor) => (
+                  <li key={doctor.doctorId}>
+                    <details>
+                      <summary>
+                        <strong>{doctor.doctorName}</strong>
+                        <span className="muted">
+                          {doctor.payoutAccount
+                            ? `${doctor.payoutAccount.name ?? "Account"} ${doctor.payoutAccount.numberHint}`
+                            : "No account yet"}
+                        </span>
+                      </summary>
+                      <DoctorPayoutAccountForm
+                        organizationId={organization.id}
+                        doctorId={doctor.doctorId}
+                        profile={
+                          doctor.payoutAccount
+                            ? {
+                                payoutAccountName: doctor.payoutAccount.name,
+                                payoutAccountNumberHint:
+                                  doctor.payoutAccount.numberHint,
+                              }
+                            : null
+                        }
+                      />
+                    </details>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="muted">No doctors in this organization yet.</p>
             )}
           </section>
         );

@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
 
-/** Per-organization switch for paying in the app, and where Saxlem pays it. */
+/** Per-organization switch for paying in the app. Payout accounts are per
+ * doctor (each doctor is billed and paid separately). */
 export function PayoutProfileForm({
   organizationId,
   profile,
@@ -23,7 +24,6 @@ export function PayoutProfileForm({
         setBusy(true);
         setMessage("");
         const raw = Object.fromEntries(new FormData(event.currentTarget));
-        const number = String(raw.payoutAccountNumber ?? "").trim();
         try {
           const response = await fetch(
             `/api/platform/payout-profiles/${organizationId}`,
@@ -32,10 +32,6 @@ export function PayoutProfileForm({
               headers: { "content-type": "application/json" },
               body: JSON.stringify({
                 onlinePaymentsEnabled: raw.onlinePaymentsEnabled === "on",
-                payoutAccountName:
-                  String(raw.payoutAccountName ?? "").trim() || null,
-                // Leave the saved number alone unless a new one is typed.
-                ...(number ? { payoutAccountNumber: number } : {}),
               }),
             },
           );
@@ -62,29 +58,6 @@ export function PayoutProfileForm({
           defaultChecked={profile.onlinePaymentsEnabled}
         />
         Patients can pay in the app
-      </label>
-      <label className="field">
-        Payout account name
-        <input
-          name="payoutAccountName"
-          maxLength={200}
-          defaultValue={profile.payoutAccountName ?? ""}
-          autoComplete="off"
-        />
-      </label>
-      <label className="field">
-        FIB account number or IBAN
-        <input
-          name="payoutAccountNumber"
-          maxLength={64}
-          pattern="[A-Za-z0-9 ]{4,64}"
-          placeholder={
-            profile.payoutAccountNumberHint
-              ? `Saved: ${profile.payoutAccountNumberHint}`
-              : "Where Saxlem sends the monthly payout"
-          }
-          autoComplete="off"
-        />
       </label>
       {message && (
         <p className="form-error" role="status">

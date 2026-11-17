@@ -142,6 +142,8 @@ export const commissionSchema = z
     id,
     organizationId: id,
     clinicId: id,
+    doctorId: id,
+    doctorName: z.string(),
     appointmentId: id,
     appointmentReference: z.string(),
     planCode: z.string(),
@@ -166,6 +168,9 @@ export const statementSchema = z
   .object({
     id,
     organizationId: id,
+    /** Each doctor is billed separately; null on old clinic-wide statements. */
+    doctorId: id.nullable(),
+    doctorName: z.string().nullable(),
     periodStart: dateTime,
     periodEnd: dateTime,
     timezone: z.literal("Asia/Baghdad"),
@@ -608,6 +613,8 @@ export const payoutSchema = z
   .object({
     organizationId: z.string().uuid(),
     organizationName: z.string(),
+    doctorId: z.string().uuid(),
+    doctorName: z.string(),
     periodStart: z.string(),
     periodEnd: z.string(),
     status: z.enum(["open", "ready", "settled"]),
@@ -630,18 +637,6 @@ export const payoutSchema = z
       .object({ name: z.string().nullable(), numberHint: z.string() })
       .strict()
       .nullable(),
-    doctors: z
-      .array(
-        z
-          .object({
-            doctorId: z.string().uuid(),
-            doctorName: z.string(),
-            paymentCount: z.number().int(),
-            grossIqd: z.number().int(),
-          })
-          .strict(),
-      )
-      .optional(),
   })
   .strict();
 export type Payout = z.infer<typeof payoutSchema>;
@@ -665,6 +660,17 @@ export const payoutProfileSchema = z
   })
   .strict();
 export type PayoutProfile = z.infer<typeof payoutProfileSchema>;
+
+export const doctorPayoutProfileSchema = z
+  .object({
+    organizationId: z.string().uuid(),
+    doctorId: z.string().uuid(),
+    payoutAccountName: z.string().nullable(),
+    payoutAccountNumberHint: z.string().nullable(),
+    version: z.number().int(),
+  })
+  .strict();
+export type DoctorPayoutProfile = z.infer<typeof doctorPayoutProfileSchema>;
 
 export const paymentSettings = (session: OwnerSession) =>
   ownerApi().request({
@@ -700,12 +706,24 @@ export const payoutSummary = (session: OwnerSession, month: string) =>
 export const payoutDetail = (
   session: OwnerSession,
   organizationId: string,
+  doctorId: string,
   month: string,
 ) =>
   ownerApi().request({
-    path: `/api/v1/platform/organizations/${encodeURIComponent(organizationId)}/payouts?month=${encodeURIComponent(month)}`,
+    path: `/api/v1/platform/organizations/${encodeURIComponent(organizationId)}/doctors/${encodeURIComponent(doctorId)}/payouts?month=${encodeURIComponent(month)}`,
     session,
     schema: payoutSchema,
+  });
+
+export const doctorPayoutProfile = (
+  session: OwnerSession,
+  organizationId: string,
+  doctorId: string,
+) =>
+  ownerApi().request({
+    path: `/api/v1/platform/organizations/${encodeURIComponent(organizationId)}/doctors/${encodeURIComponent(doctorId)}/payout-profile`,
+    session,
+    schema: doctorPayoutProfileSchema,
   });
 
 export const payoutProfile = (session: OwnerSession, organizationId: string) =>
