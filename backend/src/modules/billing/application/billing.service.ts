@@ -84,18 +84,20 @@ export class BillingService {
     organizationId: string,
     pageSize: number,
     cursor?: string,
+    doctorId?: string,
   ) {
     this.scope(access, organizationId);
     if (!Number.isInteger(pageSize) || pageSize < 1 || pageSize > 100)
       throw new BadRequestException(
         'Billing page size must be between 1 and 100.',
       );
-    const binding = `${access.actorId}:${organizationId}:${access.clinicId ?? '*'}:${pageSize}`;
+    const binding = `${access.actorId}:${organizationId}:${access.clinicId ?? '*'}:${doctorId ?? '*'}:${pageSize}`;
     const page = await this.repository.commissions(
       access,
       organizationId,
       pageSize,
       cursor ? this.decode(cursor, binding) : undefined,
+      doctorId,
     );
     return Object.freeze({
       items: page.items,
@@ -103,9 +105,9 @@ export class BillingService {
     });
   }
 
-  statements(access: BillingAccess, organizationId: string) {
+  statements(access: BillingAccess, organizationId: string, doctorId?: string) {
     this.scope(access, organizationId);
-    return this.repository.statements(access, organizationId);
+    return this.repository.statements(access, organizationId, doctorId);
   }
   async statement(access: BillingAccess, id: string) {
     this.read(access);
@@ -113,16 +115,19 @@ export class BillingService {
     if (!row) throw new NotFoundException('Billing statement was not found.');
     return row;
   }
-  currentStatement(
+  /** One running statement per doctor: each doctor is billed separately. */
+  currentStatements(
     access: BillingAccess,
     organizationId: string,
+    doctorId?: string,
     now = new Date(),
   ) {
     this.scope(access, organizationId);
-    return this.repository.currentStatement(
+    return this.repository.currentStatements(
       access,
       organizationId,
       this.period(now),
+      doctorId,
     );
   }
   finalize(

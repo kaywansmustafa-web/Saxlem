@@ -12,7 +12,7 @@ describe('BillingService', () => {
     commissions: jest.fn(),
     statements: jest.fn(),
     statement: jest.fn(),
-    currentStatement: jest.fn(),
+    currentStatements: jest.fn(),
     finalize: jest.fn(),
     materializeCompletion: jest.fn(),
   } as jest.Mocked<BillingRepository>;
@@ -93,20 +93,22 @@ describe('BillingService', () => {
   });
 
   it('uses exact Baghdad calendar-month UTC boundaries', async () => {
-    repository.currentStatement.mockResolvedValue({});
+    repository.currentStatements.mockResolvedValue([]);
     const service = new BillingService(repository, configuration);
-    await service.currentStatement(
+    await service.currentStatements(
       platform,
       manager.organizationId,
+      undefined,
       new Date('2026-08-31T21:30:00.000Z'),
     );
-    expect(repository.currentStatement.mock.calls[0]).toEqual([
+    expect(repository.currentStatements.mock.calls[0]).toEqual([
       platform,
       manager.organizationId,
       {
         start: new Date('2026-08-31T21:00:00.000Z'),
         end: new Date('2026-09-30T21:00:00.000Z'),
       },
+      undefined,
     ]);
   });
 });

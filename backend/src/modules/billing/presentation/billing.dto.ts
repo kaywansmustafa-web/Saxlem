@@ -38,9 +38,17 @@ export class BillingListQueryDto {
   @IsOptional()
   @Matches(/^[\x21-\x7e]{1,2048}$/u)
   cursor?: string;
+  @ApiPropertyOptional({ format: 'uuid', description: 'One doctor only.' })
+  @IsOptional()
+  @IsUUID()
+  doctorId?: string;
 }
 export class BillingOrganizationQueryDto {
   @ApiProperty({ format: 'uuid' }) @IsUUID() organizationId!: string;
+  @ApiPropertyOptional({ format: 'uuid', description: 'One doctor only.' })
+  @IsOptional()
+  @IsUUID()
+  doctorId?: string;
 }
 export class AssignBillingPlanDto {
   @ApiProperty({ format: 'uuid' }) @IsUUID() planId!: string;
@@ -81,6 +89,8 @@ export class CommissionResponseDto {
   @ApiProperty({ format: 'uuid' }) id!: string;
   @ApiProperty({ format: 'uuid' }) organizationId!: string;
   @ApiProperty({ format: 'uuid' }) clinicId!: string;
+  @ApiProperty({ format: 'uuid' }) doctorId!: string;
+  @ApiProperty() doctorName!: string;
   @ApiProperty({ format: 'uuid' }) appointmentId!: string;
   @ApiProperty() appointmentReference!: string;
   @ApiProperty() planCode!: string;
@@ -103,6 +113,15 @@ export class CommissionPageResponseDto {
 export class BillingStatementResponseDto {
   @ApiProperty({ format: 'uuid' }) id!: string;
   @ApiProperty({ format: 'uuid' }) organizationId!: string;
+  @ApiProperty({
+    type: 'string',
+    format: 'uuid',
+    nullable: true,
+    description:
+      'Each doctor is billed separately. Null only on clinic-wide statements finalized before 2026-11-17.',
+  })
+  doctorId!: string | null;
+  @ApiProperty({ type: 'string', nullable: true }) doctorName!: string | null;
   @ApiProperty({ format: 'date-time' }) periodStart!: string;
   @ApiProperty({ format: 'date-time' }) periodEnd!: string;
   @ApiProperty({ enum: ['Asia/Baghdad'] }) timezone!: 'Asia/Baghdad';

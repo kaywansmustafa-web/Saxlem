@@ -29,6 +29,8 @@ import {
 import { RequireCapabilities } from '../../identity/presentation/require-capabilities.decorator';
 import { PayoutService } from '../application/payout.service';
 import {
+  DoctorPayoutParamsDto,
+  DoctorPayoutProfileDto,
   LedgerQueryDto,
   LedgerResponseDto,
   MonthQueryDto,
@@ -37,6 +39,7 @@ import {
   PayoutDto,
   PayoutProfileDto,
   PayoutSummaryDto,
+  SaveDoctorPayoutProfileDto,
   SavePayoutProfileDto,
   SettlePayoutDto,
 } from './payment.dto';
@@ -72,27 +75,31 @@ export class PayoutsController {
   }
 
   @Get('payouts')
-  @ApiOperation({ summary: 'Monthly settlement for every organization' })
+  @ApiOperation({ summary: 'Monthly settlement for every doctor' })
   @ApiOkResponse({ type: PayoutSummaryDto })
   summary(@Query() query: MonthQueryDto) {
     return this.payouts.summary(query.month);
   }
 
-  @Get('organizations/:organizationId/payouts')
-  @ApiOperation({ summary: 'One organization’s settlement, by doctor' })
+  @Get('organizations/:organizationId/doctors/:doctorId/payouts')
+  @ApiOperation({ summary: 'One doctor’s monthly settlement' })
   @ApiOkResponse({ type: PayoutDto })
   @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
   detail(
-    @Param() params: OrganizationPaymentParamsDto,
+    @Param() params: DoctorPayoutParamsDto,
     @Query() query: MonthQueryDto,
   ) {
-    return this.payouts.detail(params.organizationId, query.month);
+    return this.payouts.detail(
+      params.organizationId,
+      params.doctorId,
+      query.month,
+    );
   }
 
-  @Post('organizations/:organizationId/payouts')
+  @Post('organizations/:organizationId/doctors/:doctorId/payouts')
   @HttpCode(200)
   @ApiOperation({
-    summary: 'Record a monthly settlement as paid',
+    summary: 'Record a doctor’s monthly settlement as paid',
     description:
       'Only for a month that has ended. Fails if the amounts changed since they were shown.',
   })
@@ -101,26 +108,55 @@ export class PayoutsController {
   @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
   settle(
     @Req() req: AuthenticatedRequest,
-    @Param() params: OrganizationPaymentParamsDto,
+    @Param() params: DoctorPayoutParamsDto,
     @Body() body: SettlePayoutDto,
   ) {
     return this.payouts.settle(
       paymentAccess(req),
       params.organizationId,
+      params.doctorId,
+      body,
+      req.requestId,
+    );
+  }
+
+  @Get('organizations/:organizationId/doctors/:doctorId/payout-profile')
+  @ApiOperation({ summary: 'Where a doctor’s payouts are sent' })
+  @ApiOkResponse({ type: DoctorPayoutProfileDto })
+  @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
+  doctorProfile(@Param() params: DoctorPayoutParamsDto) {
+    return this.payouts.doctorProfile(params.organizationId, params.doctorId);
+  }
+
+  @Put('organizations/:organizationId/doctors/:doctorId/payout-profile')
+  @ApiOperation({ summary: 'Set where a doctor’s payouts are sent' })
+  @ApiOkResponse({ type: DoctorPayoutProfileDto })
+  @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
+  saveDoctorProfile(
+    @Req() req: AuthenticatedRequest,
+    @Param() params: DoctorPayoutParamsDto,
+    @Body() body: SaveDoctorPayoutProfileDto,
+  ) {
+    return this.payouts.saveDoctorProfile(
+      paymentAccess(req),
+      params.organizationId,
+      params.doctorId,
       body,
       req.requestId,
     );
   }
 
   @Get('organizations/:organizationId/payout-profile')
-  @ApiOperation({ summary: 'Online payments switch and payout account' })
+  @ApiOperation({ summary: 'Online payments switch for an organization' })
   @ApiOkResponse({ type: PayoutProfileDto })
   profile(@Param() params: OrganizationPaymentParamsDto) {
     return this.payouts.profile(params.organizationId);
   }
 
   @Put('organizations/:organizationId/payout-profile')
-  @ApiOperation({ summary: 'Update online payments switch and payout account' })
+  @ApiOperation({
+    summary: 'Turn online payments on or off for an organization',
+  })
   @ApiOkResponse({ type: PayoutProfileDto })
   @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
   saveProfile(

@@ -3,7 +3,9 @@ import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/database/prisma.service';
 import {
   payoutTotals,
+  type DoctorPayoutProfile,
   type LedgerEntry,
+  type Payee,
   type LedgerFilter,
   type PayoutInputs,
   type PayoutPayment,
@@ -92,12 +94,118 @@ export class PrismaPayoutRepository implements PayoutRepository {
     });
   }
 
-  async inputs(organizationId: string, start: Date, end: Date) {
-    return this.read(this.prisma.db, organizationId, start, end);
+  async payees(start: Date, end: Date): Promise<readonly Payee[]> {
+    const db = this.prisma.db;
+    const [working, paid, clawed, commission, payouts] = await Promise.all([
+      db.doctorClinicAssignment.findMany({
+        where: { status: 'active', doctor: { status: 'active' } },
+        select: { organizationId: true, doctorId: true },
+      }),
+      db.appointmentPayment.findMany({
+        where: {
+          collectedBy: 'platform',
+          status: 'paid',
+          payoutId: null,
+          paidAt: { lt: end },
+        },
+        select: {
+          organizationId: true,
+          appointment: { select: { doctorId: true } },
+        },
+      }),
+      db.appointmentPayment.findMany({
+        where: {
+          collectedBy: 'platform',
+          status: 'refunded',
+          payoutId: { not: null },
+          clawbackPayoutId: null,
+          refundedAt: { lt: end },
+        },
+        select: {
+          organizationId: true,
+          appointment: { select: { doctorId: true } },
+        },
+      }),
+      db.commissionLedgerEntry.findMany({
+        where: { recognizedAt: { gte: start, lt: end } },
+        select: { organizationId: true, doctorId: true },
+        distinct: ['organizationId', 'doctorId'],
+      }),
+      db.organizationPayout.findMany({
+        where: { periodStart: start, doctorId: { not: null } },
+        select: { organizationId: true, doctorId: true },
+      }),
+    ]);
+    const keys = new Set<string>();
+    for (const row of working)
+      keys.add(`${row.organizationId}:${row.doctorId}`);
+    for (const row of [...paid, ...clawed])
+      keys.add(`${row.organizationId}:${row.appointment.doctorId}`);
+    for (const row of commission)
+      keys.add(`${row.organizationId}:${row.doctorId}`);
+    for (const row of payouts)
+      keys.add(`${row.organizationId}:${row.doctorId}`);
+    const pairs = [...keys].map((key) => key.split(':') as [string, string]);
+    const doctors = await db.doctor.findMany({
+      where: { id: { in: pairs.map(([, doctorId]) => doctorId) } },
+      select: {
+        id: true,
+        organizationId: true,
+        displayName: true,
+        organization: { select: { name: true } },
+      },
+    });
+    return Object.freeze(
+      doctors
+        .filter((doctor) => keys.has(`${doctor.organizationId}:${doctor.id}`))
+        .map((doctor) =>
+          Object.freeze({
+            organizationId: doctor.organizationId,
+            organizationName: doctor.organization.name,
+            doctorId: doctor.id,
+            doctorName: doctor.displayName,
+          }),
+        )
+        .sort(
+          (a, b) =>
+            a.organizationName.localeCompare(b.organizationName) ||
+            a.doctorName.localeCompare(b.doctorName),
+        ),
+    );
+  }
+
+  async payee(organizationId: string, doctorId: string): Promise<Payee | null> {
+    const doctor = await this.prisma.db.doctor.findFirst({
+      where: { id: doctorId, organizationId },
+      select: {
+        id: true,
+        organizationId: true,
+        displayName: true,
+        organization: { select: { name: true } },
+      },
+    });
+    return doctor
+      ? Object.freeze({
+          organizationId: doctor.organizationId,
+          organizationName: doctor.organization.name,
+          doctorId: doctor.id,
+          doctorName: doctor.displayName,
+        })
+      : null;
+  }
+
+  async inputs(
+    organizationId: string,
+    doctorId: string,
+    start: Date,
+    end: Date,
+  ) {
+    return this.read(this.prisma.db, organizationId, doctorId, start, end);
   }
 
   async settle(input: {
     organizationId: string;
+    doctorId: string;
     start: Date;
     end: Date;
     expected: PayoutTotals;
@@ -110,11 +218,12 @@ export class PrismaPayoutRepository implements PayoutRepository {
   }): Promise<SettledPayout | null> {
     return this.prisma.db.$transaction(
       async (tx) => {
-        // One settlement at a time per organization.
-        await tx.$queryRaw`SELECT "id" FROM "organizations" WHERE "id" = ${input.organizationId}::uuid FOR UPDATE`;
+        // One settlement at a time per doctor.
+        await tx.$queryRaw`SELECT "id" FROM "doctors" WHERE "id" = ${input.doctorId}::uuid AND "organization_id" = ${input.organizationId}::uuid FOR UPDATE`;
         const current = await this.read(
           tx,
           input.organizationId,
+          input.doctorId,
           input.start,
           input.end,
         );
@@ -133,6 +242,7 @@ export class PrismaPayoutRepository implements PayoutRepository {
         const payout = await tx.organizationPayout.create({
           data: {
             organizationId: input.organizationId,
+            doctorId: input.doctorId,
             periodStart: input.start,
             periodEnd: input.end,
             ...totals,
@@ -168,6 +278,7 @@ export class PrismaPayoutRepository implements PayoutRepository {
             outcome: 'succeeded',
             requestId: input.requestId,
             metadata: {
+              doctorId: input.doctorId,
               periodStart: input.start.toISOString(),
               netPayableIqd: totals.netPayableIqd,
               paymentCount: totals.paymentCount,
@@ -224,56 +335,115 @@ export class PrismaPayoutRepository implements PayoutRepository {
     });
   }
 
+  async doctorProfile(organizationId: string, doctorId: string) {
+    const row = await this.prisma.db.doctorPayoutProfile.findFirst({
+      where: { organizationId, doctorId },
+    });
+    return row ? this.doctorProfileRecord(row) : null;
+  }
+
+  async saveDoctorProfile(
+    organizationId: string,
+    doctorId: string,
+    input: {
+      payoutAccountName: string | null;
+      payoutAccountNumber: string | null;
+    },
+    actorUserId: string,
+    requestId: string,
+  ) {
+    return this.prisma.db.$transaction(async (tx) => {
+      const row = await tx.doctorPayoutProfile.upsert({
+        where: { doctorId },
+        create: { organizationId, doctorId, ...input },
+        update: { ...input, version: { increment: 1 } },
+      });
+      await tx.auditEvent.create({
+        data: {
+          actorUserId,
+          organizationId,
+          action: 'payment.doctor_payout_profile_updated',
+          targetType: 'Doctor',
+          targetId: doctorId,
+          outcome: 'succeeded',
+          requestId,
+          metadata: { payoutAccountSet: input.payoutAccountNumber !== null },
+          occurredAt: new Date(),
+        },
+      });
+      return this.doctorProfileRecord(row);
+    });
+  }
+
   private async read(
     db: Db,
     organizationId: string,
+    doctorId: string,
     start: Date,
     end: Date,
   ): Promise<PayoutInputs> {
-    const [organization, payments, clawbacks, commission, settled, profile] =
-      await Promise.all([
-        db.organization.findUniqueOrThrow({
-          where: { id: organizationId },
-          select: { name: true },
-        }),
-        // Everything collected for the organization and not yet paid out,
-        // up to the end of the month (late confirmations are included).
-        db.appointmentPayment.findMany({
-          where: {
+    const [
+      doctor,
+      payments,
+      clawbacks,
+      commission,
+      settled,
+      profile,
+      doctorProfile,
+    ] = await Promise.all([
+      db.doctor.findFirstOrThrow({
+        where: { id: doctorId, organizationId },
+        select: { displayName: true, organization: { select: { name: true } } },
+      }),
+      // Everything collected for the organization and not yet paid out,
+      // up to the end of the month (late confirmations are included).
+      db.appointmentPayment.findMany({
+        where: {
+          organizationId,
+          appointment: { doctorId },
+          collectedBy: 'platform',
+          status: 'paid',
+          payoutId: null,
+          paidAt: { lt: end },
+        },
+        select: payoutPaymentSelect,
+        orderBy: { id: 'asc' },
+      }),
+      // Refunded after they were already paid out: taken back now.
+      db.appointmentPayment.findMany({
+        where: {
+          organizationId,
+          appointment: { doctorId },
+          collectedBy: 'platform',
+          status: 'refunded',
+          payoutId: { not: null },
+          clawbackPayoutId: null,
+          refundedAt: { lt: end },
+        },
+        select: payoutPaymentSelect,
+        orderBy: { id: 'asc' },
+      }),
+      db.commissionLedgerEntry.groupBy({
+        by: ['status'],
+        where: {
+          organizationId,
+          doctorId,
+          recognizedAt: { gte: start, lt: end },
+        },
+        _sum: { amountIqd: true },
+      }),
+      db.organizationPayout.findUnique({
+        where: {
+          organizationId_doctorId_periodStart: {
             organizationId,
-            collectedBy: 'platform',
-            status: 'paid',
-            payoutId: null,
-            paidAt: { lt: end },
+            doctorId,
+            periodStart: start,
           },
-          select: payoutPaymentSelect,
-          orderBy: { id: 'asc' },
-        }),
-        // Refunded after they were already paid out: taken back now.
-        db.appointmentPayment.findMany({
-          where: {
-            organizationId,
-            collectedBy: 'platform',
-            status: 'refunded',
-            payoutId: { not: null },
-            clawbackPayoutId: null,
-            refundedAt: { lt: end },
-          },
-          select: payoutPaymentSelect,
-          orderBy: { id: 'asc' },
-        }),
-        db.commissionLedgerEntry.groupBy({
-          by: ['status'],
-          where: { organizationId, recognizedAt: { gte: start, lt: end } },
-          _sum: { amountIqd: true },
-        }),
-        db.organizationPayout.findUnique({
-          where: {
-            organizationId_periodStart: { organizationId, periodStart: start },
-          },
-        }),
-        db.organizationPayoutProfile.findUnique({ where: { organizationId } }),
-      ]);
+        },
+      }),
+      db.organizationPayoutProfile.findUnique({ where: { organizationId } }),
+      db.doctorPayoutProfile.findFirst({ where: { organizationId, doctorId } }),
+    ]);
     const settledPayments = settled
       ? await db.appointmentPayment.findMany({
           where: { payoutId: settled.id },
@@ -288,13 +458,34 @@ export class PrismaPayoutRepository implements PayoutRepository {
     );
     return Object.freeze({
       organizationId,
-      organizationName: organization.name,
+      organizationName: doctor.organization.name,
+      doctorId,
+      doctorName: doctor.displayName,
       payments: payments.map((row) => this.payoutPayment(row)),
       clawbacks: clawbacks.map((row) => this.payoutPayment(row)),
       commissionIqd,
       settled: settled ? this.settled(settled) : null,
       settledPayments: settledPayments.map((row) => this.payoutPayment(row)),
       profile: profile ? this.profileRecord(profile) : null,
+      doctorProfile: doctorProfile
+        ? this.doctorProfileRecord(doctorProfile)
+        : null,
+    });
+  }
+
+  private doctorProfileRecord(row: {
+    organizationId: string;
+    doctorId: string;
+    payoutAccountName: string | null;
+    payoutAccountNumber: string | null;
+    version: number;
+  }): DoctorPayoutProfile {
+    return Object.freeze({
+      organizationId: row.organizationId,
+      doctorId: row.doctorId,
+      payoutAccountName: row.payoutAccountName,
+      payoutAccountNumber: row.payoutAccountNumber,
+      version: row.version,
     });
   }
 

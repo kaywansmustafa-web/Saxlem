@@ -30,13 +30,20 @@ class FakePayouts implements PayoutRepository {
   inputsValue: PayoutInputs = {
     organizationId: 'org',
     organizationName: 'Hillview',
+    doctorId: 'd1',
+    doctorName: 'Dr. Avin',
     payments: [pay('p1', 25000), pay('p2', 25000), pay('p3', 30000, 'd2')],
     clawbacks: [pay('p0', 25000)],
     commissionIqd: 3750,
     settled: null,
     settledPayments: [],
     profile: null,
+    doctorProfile: null,
   };
+  savedDoctorProfile: {
+    payoutAccountName: string | null;
+    payoutAccountNumber: string | null;
+  } | null = null;
   settledWith: { expected: PayoutTotals; reference: string } | null = null;
   ledger() {
     return Promise.resolve({ items: [], nextCursor: null });
@@ -44,8 +51,50 @@ class FakePayouts implements PayoutRepository {
   organizations() {
     return Promise.resolve([{ id: 'org', name: 'Hillview' }]);
   }
-  inputs() {
-    return Promise.resolve(this.inputsValue);
+  payees() {
+    return Promise.resolve([
+      {
+        organizationId: 'org',
+        organizationName: 'Hillview',
+        doctorId: 'd1',
+        doctorName: 'Dr. Avin',
+      },
+      {
+        organizationId: 'org',
+        organizationName: 'Hillview',
+        doctorId: 'd2',
+        doctorName: 'Dr. Rawand',
+      },
+    ]);
+  }
+  payee(organizationId: string, doctorId: string) {
+    return Promise.resolve(
+      organizationId === 'org' && ['d1', 'd2'].includes(doctorId)
+        ? {
+            organizationId,
+            organizationName: 'Hillview',
+            doctorId,
+            doctorName: doctorId === 'd1' ? 'Dr. Avin' : 'Dr. Rawand',
+          }
+        : null,
+    );
+  }
+  doctorProfile() {
+    return Promise.resolve(null);
+  }
+  saveDoctorProfile(
+    organizationId: string,
+    doctorId: string,
+    input: {
+      payoutAccountName: string | null;
+      payoutAccountNumber: string | null;
+    },
+  ) {
+    this.savedDoctorProfile = input;
+    return Promise.resolve({ organizationId, doctorId, ...input, version: 1 });
+  }
+  inputs(_organizationId: string, doctorId: string) {
+    return Promise.resolve({ ...this.inputsValue, doctorId });
   }
   settle(input: { expected: PayoutTotals; reference: string }) {
     this.settledWith = input;
@@ -136,11 +185,21 @@ describe('PayoutService', () => {
   it('shows a month as open until it ends, then ready', async () => {
     const { service } = setup();
     expect(
-      (await service.detail('org', '2026-11', new Date('2026-11-20'))).status,
+      (await service.detail('org', 'd1', '2026-11', new Date('2026-11-20')))
+        .status,
     ).toBe('open');
-    const ready = await service.detail('org', '2026-11', december);
+    const ready = await service.detail('org', 'd1', '2026-11', december);
     expect(ready.status).toBe('ready');
-    expect(ready.doctors).toHaveLength(2);
+    expect(ready.doctorName).toBe('Dr. Avin');
+  });
+
+  it('lists one settlement per doctor and rejects unknown doctors', async () => {
+    const { service } = setup();
+    const summary = await service.summary('2026-11', december);
+    expect(summary.items.map((item) => item.doctorId)).toEqual(['d1', 'd2']);
+    await expect(
+      service.detail('org', 'nobody', '2026-11', december),
+    ).rejects.toThrow('Doctor was not found');
   });
 
   it('settles only a finished month with unchanged amounts', async () => {
@@ -151,21 +210,22 @@ describe('PayoutService', () => {
       reference: 'FIB-123',
     };
     await expect(
-      service.settle(admin, 'org', input, 'req', new Date('2026-11-20')),
+      service.settle(admin, 'org', 'd1', input, 'req', new Date('2026-11-20')),
     ).rejects.toBeInstanceOf(ConflictException);
     await expect(
       service.settle(
         admin,
         'org',
+        'd1',
         { ...input, expectedNetPayableIqd: 1 },
         'req',
         december,
       ),
     ).rejects.toThrow('amounts changed');
     await expect(
-      service.settle(staff, 'org', input, 'req', december),
+      service.settle(staff, 'org', 'd1', input, 'req', december),
     ).rejects.toBeInstanceOf(ForbiddenException);
-    await service.settle(admin, 'org', input, 'req', december);
+    await service.settle(admin, 'org', 'd1', input, 'req', december);
     expect(repository.settledWith?.expected.netPayableIqd).toBe(50850);
     expect(repository.settledWith?.reference).toBe('FIB-123');
   });
@@ -182,6 +242,7 @@ describe('PayoutService', () => {
       service.settle(
         admin,
         'org',
+        'd1',
         { month: '2026-11', expectedNetPayableIqd: 0, reference: 'x' },
         'req',
         december,
@@ -206,6 +267,7 @@ describe('PayoutService', () => {
       service.settle(
         admin,
         'org',
+        'd1',
         { month: '2026-11', expectedNetPayableIqd: 1, reference: 'x' },
         'req',
         december,
@@ -234,5 +296,23 @@ describe('PayoutService', () => {
     );
     expect(saved.payoutAccountNumberHint).toBe('…5678');
     expect(JSON.stringify(saved)).not.toContain('IQ12');
+    const { service: second, repository } = setup();
+    const doctor = await second.saveDoctorProfile(
+      admin,
+      'org',
+      'd1',
+      {
+        payoutAccountName: 'Dr. Avin',
+        payoutAccountNumber: 'IQ12 FIBI 0000 1234 9999',
+      },
+      'req',
+    );
+    expect(doctor.payoutAccountNumberHint).toBe('…9999');
+    expect(repository.savedDoctorProfile?.payoutAccountNumber).toBe(
+      'IQ12FIBI000012349999',
+    );
+    await expect(
+      second.saveDoctorProfile(staff, 'org', 'd1', {}, 'req'),
+    ).rejects.toBeInstanceOf(ForbiddenException);
   });
 });

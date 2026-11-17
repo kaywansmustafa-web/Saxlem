@@ -81,6 +81,40 @@ export class OrganizationPaymentParamsDto {
   organizationId!: string;
 }
 
+export class DoctorPayoutParamsDto extends OrganizationPaymentParamsDto {
+  @ApiProperty({ format: 'uuid' })
+  @IsUUID()
+  doctorId!: string;
+}
+
+export class SaveDoctorPayoutProfileDto {
+  @ApiPropertyOptional({ maxLength: 200, nullable: true })
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  payoutAccountName?: string | null;
+  @ApiPropertyOptional({
+    minLength: 4,
+    maxLength: 64,
+    nullable: true,
+    description: "FIB account number or IBAN for the doctor's payouts.",
+  })
+  @IsOptional()
+  @IsString()
+  @Matches(/^[A-Za-z0-9 ]{4,64}$/)
+  payoutAccountNumber?: string | null;
+}
+
+export class DoctorPayoutProfileDto {
+  @ApiProperty({ format: 'uuid' }) organizationId!: string;
+  @ApiProperty({ format: 'uuid' }) doctorId!: string;
+  @ApiProperty({ type: 'string', nullable: true })
+  payoutAccountName!: string | null;
+  @ApiProperty({ type: 'string', nullable: true })
+  payoutAccountNumberHint!: string | null;
+  @ApiProperty({ type: 'integer' }) version!: number;
+}
+
 export class SavePaymentAccountDto {
   @ApiProperty({ enum: ['fib', 'simulated'] })
   @IsIn(['fib', 'simulated'])
@@ -297,13 +331,6 @@ export class LedgerResponseDto {
   nextCursor!: string | null;
 }
 
-export class DoctorPayoutDto {
-  @ApiProperty({ format: 'uuid' }) doctorId!: string;
-  @ApiProperty() doctorName!: string;
-  @ApiProperty({ type: 'integer' }) paymentCount!: number;
-  @ApiProperty({ type: 'integer' }) grossIqd!: number;
-}
-
 export class PayoutSettlementDto {
   @ApiProperty({ format: 'uuid' }) id!: string;
   @ApiProperty() reference!: string;
@@ -319,6 +346,12 @@ export class PayoutAccountHintDto {
 export class PayoutDto {
   @ApiProperty({ format: 'uuid' }) organizationId!: string;
   @ApiProperty() organizationName!: string;
+  @ApiProperty({
+    format: 'uuid',
+    description: 'Each doctor is billed and paid separately.',
+  })
+  doctorId!: string;
+  @ApiProperty() doctorName!: string;
   @ApiProperty({ format: 'date-time' }) periodStart!: string;
   @ApiProperty({ format: 'date-time' }) periodEnd!: string;
   @ApiProperty({
@@ -337,7 +370,7 @@ export class PayoutDto {
   @ApiProperty({
     type: 'integer',
     description:
-      'Positive: Saxlem pays the organization. Negative: it owes Saxlem.',
+      'Positive: Saxlem pays the doctor. Negative: the doctor owes Saxlem.',
   })
   netPayableIqd!: number;
   @ApiProperty({ type: 'integer' }) paymentCount!: number;
@@ -345,8 +378,6 @@ export class PayoutDto {
   settlement!: PayoutSettlementDto | null;
   @ApiProperty({ type: () => PayoutAccountHintDto, nullable: true })
   payoutAccount!: PayoutAccountHintDto | null;
-  @ApiPropertyOptional({ type: () => [DoctorPayoutDto] })
-  doctors?: DoctorPayoutDto[];
 }
 
 export class PayoutSummaryDto {

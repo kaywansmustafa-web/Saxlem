@@ -76,7 +76,8 @@ describe('appointment payments architecture', () => {
       '/api/v1/platform/payments/settings',
       '/api/v1/platform/payments/ledger',
       '/api/v1/platform/payouts',
-      '/api/v1/platform/organizations/{organizationId}/payouts',
+      '/api/v1/platform/organizations/{organizationId}/doctors/{doctorId}/payouts',
+      '/api/v1/platform/organizations/{organizationId}/doctors/{doctorId}/payout-profile',
       '/api/v1/platform/organizations/{organizationId}/payout-profile',
     ])
       expect(document.paths).toHaveProperty(route);

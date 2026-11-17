@@ -29,6 +29,7 @@ export interface BillingRepository {
     organizationId: string,
     pageSize: number,
     cursor?: BillingCursor,
+    doctorId?: string,
   ): Promise<{
     readonly items: readonly BillingRecord[];
     readonly next: BillingCursor | null;
@@ -36,13 +37,16 @@ export interface BillingRepository {
   statements(
     access: BillingAccess,
     organizationId: string,
+    doctorId?: string,
   ): Promise<readonly BillingRecord[]>;
   statement(access: BillingAccess, id: string): Promise<BillingRecord | null>;
-  currentStatement(
+  /** This month's running statement for every doctor the caller may see. */
+  currentStatements(
     access: BillingAccess,
     organizationId: string,
     period: BillingPeriod,
-  ): Promise<BillingRecord>;
+    doctorId?: string,
+  ): Promise<readonly BillingRecord[]>;
   finalize(
     access: BillingAccess,
     id: string,

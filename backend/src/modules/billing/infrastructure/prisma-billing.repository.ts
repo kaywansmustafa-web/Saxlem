@@ -14,6 +14,16 @@ import {
 } from '../domain/billing';
 import type { BillingRepository } from '../domain/billing.repository';
 
+/** Limits billing rows to one doctor and to a receptionist's doctors. */
+function doctorFilter(access: BillingAccess, doctorId?: string) {
+  const own = access.doctorIds?.length ? [...access.doctorIds] : null;
+  if (doctorId && own && !own.includes(doctorId))
+    return { doctorId: { in: [] as string[] } };
+  if (doctorId) return { doctorId };
+  if (own) return { doctorId: { in: own } };
+  return {};
+}
+
 @Injectable()
 export class PrismaBillingRepository implements BillingRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -116,10 +126,12 @@ export class PrismaBillingRepository implements BillingRepository {
     organizationId: string,
     pageSize: number,
     cursor?: BillingCursor,
+    doctorId?: string,
   ) {
     const rows = await this.prisma.db.commissionLedgerEntry.findMany({
       where: {
         organizationId,
+        ...doctorFilter(access, doctorId),
         ...(cursor
           ? {
               OR: [
@@ -134,6 +146,7 @@ export class PrismaBillingRepository implements BillingRepository {
       include: {
         appointment: { select: { publicReference: true } },
         plan: { select: { code: true } },
+        doctor: { select: { displayName: true } },
       },
     });
     const items = rows.slice(0, pageSize);
@@ -146,9 +159,13 @@ export class PrismaBillingRepository implements BillingRepository {
     });
   }
 
-  statements(access: BillingAccess, organizationId: string) {
+  statements(access: BillingAccess, organizationId: string, doctorId?: string) {
     return this.prisma.db.billingStatement
-      .findMany({ where: { organizationId }, orderBy: { periodStart: 'desc' } })
+      .findMany({
+        where: { organizationId, ...doctorFilter(access, doctorId) },
+        include: { doctor: { select: { displayName: true } } },
+        orderBy: [{ periodStart: 'desc' }, { doctorId: 'asc' }],
+      })
       .then((rows) => Object.freeze(rows.map(this.statementRecord)));
   }
   async statement(access: BillingAccess, id: string) {
@@ -158,38 +175,85 @@ export class PrismaBillingRepository implements BillingRepository {
         ...(access.platformAdministrator
           ? {}
           : { organizationId: access.organizationId }),
+        ...doctorFilter(access),
       },
       include: {
         lines: { orderBy: [{ recognizedAt: 'asc' }, { id: 'asc' }] },
         clinicBreakdowns: true,
+        doctor: { select: { displayName: true } },
       },
     });
     return row ? this.statementRecord(row) : null;
   }
 
-  currentStatement(
+  currentStatements(
     access: BillingAccess,
     organizationId: string,
     period: BillingPeriod,
+    doctorId?: string,
   ) {
     return this.prisma.db.$transaction(async (tx) => {
-      const totals = await this.totals(tx, organizationId, period);
-      const row = await tx.billingStatement.upsert({
-        where: {
-          organizationId_periodStart: {
+      // Every doctor working in the organization gets a running statement,
+      // plus any doctor who earned commission this month and has since left.
+      const [working, earning] = await Promise.all([
+        tx.doctorClinicAssignment.findMany({
+          where: {
             organizationId,
-            periodStart: period.start,
+            status: 'active',
+            doctor: { status: 'active' },
           },
-        },
-        create: {
+          select: { doctorId: true },
+        }),
+        tx.commissionLedgerEntry.findMany({
+          where: {
+            organizationId,
+            recognizedAt: { gte: period.start, lt: period.end },
+          },
+          select: { doctorId: true },
+          distinct: ['doctorId'],
+        }),
+      ]);
+      const filter = doctorFilter(access, doctorId);
+      const doctorIds = [
+        ...new Set([...working, ...earning].map((row) => row.doctorId)),
+      ].filter((id) =>
+        'doctorId' in filter
+          ? typeof filter.doctorId === 'string'
+            ? filter.doctorId === id
+            : filter.doctorId.in.includes(id)
+          : true,
+      );
+      const rows = [];
+      for (const id of doctorIds.sort()) {
+        const totals = await this.totals(
+          tx,
           organizationId,
-          periodStart: period.start,
-          periodEnd: period.end,
-          ...totals,
-        },
-        update: totals,
-      });
-      return this.statementRecord(row);
+          period,
+          undefined,
+          id,
+        );
+        rows.push(
+          await tx.billingStatement.upsert({
+            where: {
+              organizationId_doctorId_periodStart: {
+                organizationId,
+                doctorId: id,
+                periodStart: period.start,
+              },
+            },
+            create: {
+              organizationId,
+              doctorId: id,
+              periodStart: period.start,
+              periodEnd: period.end,
+              ...totals,
+            },
+            update: totals,
+            include: { doctor: { select: { displayName: true } } },
+          }),
+        );
+      }
+      return Object.freeze(rows.map(this.statementRecord));
     });
   }
 
@@ -218,6 +282,7 @@ export class PrismaBillingRepository implements BillingRepository {
       const entries = await tx.commissionLedgerEntry.findMany({
         where: {
           organizationId: statement.organizationId,
+          ...(statement.doctorId ? { doctorId: statement.doctorId } : {}),
           recognizedAt: { gte: statement.periodStart, lt: statement.periodEnd },
         },
         include: { appointment: { select: { publicReference: true } } },
@@ -257,7 +322,10 @@ export class PrismaBillingRepository implements BillingRepository {
       if (changed.count !== 1)
         throw new ConflictException('Billing statement version is stale.');
       const result = this.statementRecord(
-        (await tx.billingStatement.findUnique({ where: { id } }))!,
+        (await tx.billingStatement.findUnique({
+          where: { id },
+          include: { doctor: { select: { displayName: true } } },
+        }))!,
       );
       await this.events(
         tx,
@@ -271,6 +339,7 @@ export class PrismaBillingRepository implements BillingRepository {
         {
           periodStart: statement.periodStart.toISOString(),
           periodEnd: statement.periodEnd.toISOString(),
+          doctorId: statement.doctorId,
         },
       );
       await this.complete(tx, access.actorId, command, result, 200);
@@ -292,6 +361,7 @@ export class PrismaBillingRepository implements BillingRepository {
         id: true,
         organizationId: true,
         clinicId: true,
+        doctorId: true,
         type: true,
         origin: true,
         status: true,
@@ -328,6 +398,7 @@ export class PrismaBillingRepository implements BillingRepository {
       data: {
         organizationId: appointment.organizationId,
         clinicId: appointment.clinicId,
+        doctorId: appointment.doctorId,
         appointmentId,
         planId: assignment.planId,
         amountIqd: assignment.plan.commissionAmountIqd,
@@ -366,11 +437,13 @@ export class PrismaBillingRepository implements BillingRepository {
     organizationId: string,
     period: BillingPeriod,
     clinicId?: string,
+    doctorId?: string,
   ) {
     const entries = await tx.commissionLedgerEntry.findMany({
       where: {
         organizationId,
         ...(clinicId ? { clinicId } : {}),
+        ...(doctorId ? { doctorId } : {}),
         recognizedAt: { gte: period.start, lt: period.end },
       },
     });
@@ -558,6 +631,8 @@ export class PrismaBillingRepository implements BillingRepository {
     recognizedAt: Date;
     status: 'earned' | 'reversed';
     originalCommissionId: string | null;
+    doctorId: string;
+    doctor: { displayName: string };
     plan: { code: string };
     appointment: { publicReference: string };
   }) =>
@@ -565,6 +640,8 @@ export class PrismaBillingRepository implements BillingRepository {
       id: row.id,
       organizationId: row.organizationId,
       clinicId: row.clinicId,
+      doctorId: row.doctorId,
+      doctorName: row.doctor.displayName,
       appointmentId: row.appointmentId,
       appointmentReference: row.appointment.publicReference,
       planCode: row.plan.code,
@@ -581,6 +658,8 @@ export class PrismaBillingRepository implements BillingRepository {
   private statementRecord = (row: {
     id: string;
     organizationId: string;
+    doctorId: string | null;
+    doctor?: { displayName: string } | null;
     periodStart: Date;
     periodEnd: Date;
     timezone: string;
@@ -615,6 +694,8 @@ export class PrismaBillingRepository implements BillingRepository {
     Object.freeze({
       id: row.id,
       organizationId: row.organizationId,
+      doctorId: row.doctorId,
+      doctorName: row.doctor?.displayName ?? null,
       periodStart: row.periodStart.toISOString(),
       periodEnd: row.periodEnd.toISOString(),
       timezone: row.timezone,

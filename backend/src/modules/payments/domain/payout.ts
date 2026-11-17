@@ -45,17 +45,39 @@ export interface PayoutPayment {
   readonly doctorName: string;
 }
 
-/** Everything a month's settlement with one organization is built from. */
+/** Everything a month's settlement with one doctor is built from. Each
+ * doctor is billed and paid separately. */
 export interface PayoutInputs {
   readonly organizationId: string;
   readonly organizationName: string;
+  readonly doctorId: string;
+  readonly doctorName: string;
   readonly payments: readonly PayoutPayment[];
   readonly clawbacks: readonly PayoutPayment[];
   readonly commissionIqd: number;
   readonly settled: SettledPayout | null;
   /** Payments a settled payout covered, for its doctor breakdown. */
   readonly settledPayments: readonly PayoutPayment[];
+  /** Organization switch for online payments. */
   readonly profile: PayoutProfile | null;
+  /** Where this doctor's money goes. */
+  readonly doctorProfile: DoctorPayoutProfile | null;
+}
+
+export interface DoctorPayoutProfile {
+  readonly organizationId: string;
+  readonly doctorId: string;
+  readonly payoutAccountName: string | null;
+  readonly payoutAccountNumber: string | null;
+  readonly version: number;
+}
+
+/** A doctor Saxlem may owe money to (or collect commission from). */
+export interface Payee {
+  readonly organizationId: string;
+  readonly organizationName: string;
+  readonly doctorId: string;
+  readonly doctorName: string;
 }
 
 export interface SettledPayout {
@@ -147,11 +169,20 @@ export interface PayoutRepository {
     nextCursor: string | null;
   }>;
   organizations(): Promise<readonly { id: string; name: string }[]>;
-  inputs(organizationId: string, start: Date, end: Date): Promise<PayoutInputs>;
+  /** Active doctors, plus any doctor with money in the month. */
+  payees(start: Date, end: Date): Promise<readonly Payee[]>;
+  payee(organizationId: string, doctorId: string): Promise<Payee | null>;
+  inputs(
+    organizationId: string,
+    doctorId: string,
+    start: Date,
+    end: Date,
+  ): Promise<PayoutInputs>;
   /** Re-reads the inputs under lock and records the payout only if they are
    * unchanged. Returns null when something changed or it was already settled. */
   settle(input: {
     organizationId: string;
+    doctorId: string;
     start: Date;
     end: Date;
     expected: PayoutTotals;
@@ -173,6 +204,20 @@ export interface PayoutRepository {
     actorUserId: string,
     requestId: string,
   ): Promise<PayoutProfile>;
+  doctorProfile(
+    organizationId: string,
+    doctorId: string,
+  ): Promise<DoctorPayoutProfile | null>;
+  saveDoctorProfile(
+    organizationId: string,
+    doctorId: string,
+    input: {
+      payoutAccountName: string | null;
+      payoutAccountNumber: string | null;
+    },
+    actorUserId: string,
+    requestId: string,
+  ): Promise<DoctorPayoutProfile>;
 }
 
 export const PAYOUT_REPOSITORY = Symbol('PAYOUT_REPOSITORY');

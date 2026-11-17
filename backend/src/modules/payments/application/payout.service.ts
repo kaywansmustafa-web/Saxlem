@@ -12,14 +12,14 @@ import type { PaymentAccess } from '../domain/payment';
 import {
   PAYOUT_REPOSITORY,
   baghdadMonth,
-  doctorBreakdown,
   payoutTotals,
   type PayoutInputs,
   type PayoutRepository,
 } from '../domain/payout';
 
 /** Platform-collection bookkeeping: the payments ledger and the monthly
- * settlement Saxlem makes with each organization. */
+ * settlement Saxlem makes with each doctor (each doctor is billed and paid
+ * separately). */
 @Injectable()
 export class PayoutService {
   constructor(
@@ -74,18 +74,19 @@ export class PayoutService {
     };
   }
 
-  /** Every organization's settlement for a month, settled or not. */
+  /** Every doctor's settlement for a month, settled or not. */
   async summary(month: string, now = new Date()) {
     const period = this.month(month);
-    const organizations = await this.repository.organizations();
+    const payees = await this.repository.payees(period.start, period.end);
     const items = [];
-    for (const organization of organizations) {
+    for (const payee of payees) {
       const inputs = await this.repository.inputs(
-        organization.id,
+        payee.organizationId,
+        payee.doctorId,
         period.start,
         period.end,
       );
-      items.push(this.project(inputs, period, now, false));
+      items.push(this.project(inputs, period, now));
     }
     return {
       month,
@@ -96,15 +97,21 @@ export class PayoutService {
     };
   }
 
-  async detail(organizationId: string, month: string, now = new Date()) {
+  async detail(
+    organizationId: string,
+    doctorId: string,
+    month: string,
+    now = new Date(),
+  ) {
     const period = this.month(month);
-    const inputs = await this.inputs(organizationId, period);
-    return this.project(inputs, period, now, true);
+    const inputs = await this.inputs(organizationId, doctorId, period);
+    return this.project(inputs, period, now);
   }
 
   async settle(
     access: PaymentAccess,
     organizationId: string,
+    doctorId: string,
     input: {
       month: string;
       expectedNetPayableIqd: number;
@@ -121,7 +128,7 @@ export class PayoutService {
     const period = this.month(input.month);
     if (period.end > now)
       throw new ConflictException('A month can be settled once it has ended.');
-    const inputs = await this.inputs(organizationId, period);
+    const inputs = await this.inputs(organizationId, doctorId, period);
     if (inputs.settled)
       throw new ConflictException('This month is already settled.');
     const totals = this.totals(inputs);
@@ -137,6 +144,7 @@ export class PayoutService {
       );
     const settled = await this.repository.settle({
       organizationId,
+      doctorId,
       start: period.start,
       end: period.end,
       expected: totals,
@@ -151,7 +159,7 @@ export class PayoutService {
       throw new ConflictException(
         'The amounts changed or the month was settled. Refresh and try again.',
       );
-    return this.detail(organizationId, input.month, now);
+    return this.detail(organizationId, doctorId, input.month, now);
   }
 
   async profile(organizationId: string) {
@@ -196,14 +204,73 @@ export class PayoutService {
     return this.profileProjection(organizationId, saved);
   }
 
+  /** Where Saxlem sends one doctor's money. */
+  async doctorProfile(organizationId: string, doctorId: string) {
+    await this.payee(organizationId, doctorId);
+    return this.doctorProfileProjection(
+      organizationId,
+      doctorId,
+      await this.repository.doctorProfile(organizationId, doctorId),
+    );
+  }
+
+  async saveDoctorProfile(
+    access: PaymentAccess,
+    organizationId: string,
+    doctorId: string,
+    input: {
+      payoutAccountName?: string | null;
+      payoutAccountNumber?: string | null;
+    },
+    requestId: string,
+  ) {
+    if (!access.platformAdministrator)
+      throw new ForbiddenException(
+        'Platform administrator access is required.',
+      );
+    await this.payee(organizationId, doctorId);
+    const current = await this.repository.doctorProfile(
+      organizationId,
+      doctorId,
+    );
+    const saved = await this.repository.saveDoctorProfile(
+      organizationId,
+      doctorId,
+      {
+        payoutAccountName:
+          input.payoutAccountName === undefined
+            ? (current?.payoutAccountName ?? null)
+            : input.payoutAccountName?.trim() || null,
+        payoutAccountNumber:
+          input.payoutAccountNumber === undefined
+            ? (current?.payoutAccountNumber ?? null)
+            : input.payoutAccountNumber?.replace(/\s+/g, '') || null,
+      },
+      access.actorId,
+      requestId,
+    );
+    return this.doctorProfileProjection(organizationId, doctorId, saved);
+  }
+
+  private async payee(organizationId: string, doctorId: string) {
+    const payee = await this.repository.payee(organizationId, doctorId);
+    if (!payee)
+      throw new NotFoundException('Doctor was not found in the organization.');
+    return payee;
+  }
+
   private async inputs(
     organizationId: string,
+    doctorId: string,
     period: { start: Date; end: Date },
   ) {
-    const organizations = await this.repository.organizations();
-    if (!organizations.some((o) => o.id === organizationId))
-      throw new NotFoundException('Organization was not found.');
-    return this.repository.inputs(organizationId, period.start, period.end);
+    await this.payee(organizationId, doctorId);
+    return this.repository.inputs(
+      organizationId,
+      doctorId,
+      period.start,
+      period.end,
+    );
   }
 
   private totals(inputs: PayoutInputs) {
@@ -218,12 +285,13 @@ export class PayoutService {
     inputs: PayoutInputs,
     period: { start: Date; end: Date },
     now: Date,
-    withDoctors: boolean,
   ) {
     const totals = inputs.settled ?? this.totals(inputs);
     return {
       organizationId: inputs.organizationId,
       organizationName: inputs.organizationName,
+      doctorId: inputs.doctorId,
+      doctorName: inputs.doctorName,
       periodStart: period.start.toISOString(),
       periodEnd: period.end.toISOString(),
       status: inputs.settled
@@ -245,18 +313,32 @@ export class PayoutService {
             settledAt: inputs.settled.settledAt.toISOString(),
           }
         : null,
-      payoutAccount: this.accountHint(inputs.profile),
-      ...(withDoctors
-        ? {
-            doctors: doctorBreakdown(
-              inputs.settled ? inputs.settledPayments : inputs.payments,
-            ),
-          }
-        : {}),
+      payoutAccount: this.accountHint(inputs.doctorProfile),
     };
   }
 
-  private accountHint(profile: PayoutInputs['profile']) {
+  private doctorProfileProjection(
+    organizationId: string,
+    doctorId: string,
+    profile: PayoutInputs['doctorProfile'],
+  ) {
+    return {
+      organizationId,
+      doctorId,
+      payoutAccountName: profile?.payoutAccountName ?? null,
+      payoutAccountNumberHint: profile?.payoutAccountNumber
+        ? `…${profile.payoutAccountNumber.slice(-4)}`
+        : null,
+      version: profile?.version ?? 0,
+    };
+  }
+
+  private accountHint(
+    profile: {
+      payoutAccountName: string | null;
+      payoutAccountNumber: string | null;
+    } | null,
+  ) {
     if (!profile?.payoutAccountNumber) return null;
     return {
       name: profile.payoutAccountName,

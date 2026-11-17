@@ -885,6 +885,16 @@
               "maxLength": 2048,
               "type": "string"
             }
+          },
+          {
+            "name": "doctorId",
+            "required": false,
+            "in": "query",
+            "description": "One doctor only.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -941,12 +951,23 @@
     },
     "/api/v1/billing/statements/current": {
       "get": {
+        "description": "Each doctor is billed separately, so this returns one draft per doctor. A receptionist sees only their own doctors.",
         "operationId": "BillingController_current",
         "parameters": [
           {
             "name": "organizationId",
             "required": true,
             "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "doctorId",
+            "required": false,
+            "in": "query",
+            "description": "One doctor only.",
             "schema": {
               "format": "uuid",
               "type": "string"
@@ -959,7 +980,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BillingStatementResponseDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BillingStatementResponseDto"
+                  }
                 }
               }
             }
@@ -1000,6 +1024,7 @@
             "bearer": []
           }
         ],
+        "summary": "This month's running statement for each doctor",
         "tags": [
           "billing"
         ]
@@ -1013,6 +1038,16 @@
             "name": "organizationId",
             "required": true,
             "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "doctorId",
+            "required": false,
+            "in": "query",
+            "description": "One doctor only.",
             "schema": {
               "format": "uuid",
               "type": "string"
@@ -6037,18 +6072,27 @@
             "bearer": []
           }
         ],
-        "summary": "Monthly settlement for every organization",
+        "summary": "Monthly settlement for every doctor",
         "tags": [
           "payouts"
         ]
       }
     },
-    "/api/v1/platform/organizations/{organizationId}/payouts": {
+    "/api/v1/platform/organizations/{organizationId}/doctors/{doctorId}/payouts": {
       "get": {
         "operationId": "PayoutsController_detail",
         "parameters": [
           {
             "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "doctorId",
             "required": true,
             "in": "path",
             "schema": {
@@ -6124,7 +6168,7 @@
             "bearer": []
           }
         ],
-        "summary": "One organization’s settlement, by doctor",
+        "summary": "One doctor’s monthly settlement",
         "tags": [
           "payouts"
         ]
@@ -6135,6 +6179,15 @@
         "parameters": [
           {
             "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "doctorId",
             "required": true,
             "in": "path",
             "schema": {
@@ -6220,7 +6273,187 @@
             "bearer": []
           }
         ],
-        "summary": "Record a monthly settlement as paid",
+        "summary": "Record a doctor’s monthly settlement as paid",
+        "tags": [
+          "payouts"
+        ]
+      }
+    },
+    "/api/v1/platform/organizations/{organizationId}/doctors/{doctorId}/payout-profile": {
+      "get": {
+        "operationId": "PayoutsController_doctorProfile",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "doctorId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorPayoutProfileDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Where a doctor’s payouts are sent",
+        "tags": [
+          "payouts"
+        ]
+      },
+      "put": {
+        "operationId": "PayoutsController_saveDoctorProfile",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "doctorId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveDoctorPayoutProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorPayoutProfileDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Set where a doctor’s payouts are sent",
         "tags": [
           "payouts"
         ]
@@ -6287,7 +6520,7 @@
             "bearer": []
           }
         ],
-        "summary": "Online payments switch and payout account",
+        "summary": "Online payments switch for an organization",
         "tags": [
           "payouts"
         ]
@@ -6372,7 +6605,7 @@
             "bearer": []
           }
         ],
-        "summary": "Update online payments switch and payout account",
+        "summary": "Turn online payments on or off for an organization",
         "tags": [
           "payouts"
         ]
@@ -9235,6 +9468,13 @@
             "type": "string",
             "format": "uuid"
           },
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorName": {
+            "type": "string"
+          },
           "appointmentId": {
             "type": "string",
             "format": "uuid"
@@ -9291,6 +9531,8 @@
           "id",
           "organizationId",
           "clinicId",
+          "doctorId",
+          "doctorName",
           "appointmentId",
           "appointmentReference",
           "planCode",
@@ -9334,6 +9576,16 @@
           "organizationId": {
             "type": "string",
             "format": "uuid"
+          },
+          "doctorId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Each doctor is billed separately. Null only on clinic-wide statements finalized before 2026-11-17."
+          },
+          "doctorName": {
+            "type": "string",
+            "nullable": true
           },
           "periodStart": {
             "type": "string",
@@ -9388,6 +9640,8 @@
         "required": [
           "id",
           "organizationId",
+          "doctorId",
+          "doctorName",
           "periodStart",
           "periodEnd",
           "timezone",
@@ -9503,6 +9757,16 @@
             "type": "string",
             "format": "uuid"
           },
+          "doctorId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Each doctor is billed separately. Null only on clinic-wide statements finalized before 2026-11-17."
+          },
+          "doctorName": {
+            "type": "string",
+            "nullable": true
+          },
           "periodStart": {
             "type": "string",
             "format": "date-time"
@@ -9568,6 +9832,8 @@
         "required": [
           "id",
           "organizationId",
+          "doctorId",
+          "doctorName",
           "periodStart",
           "periodEnd",
           "timezone",
@@ -13326,30 +13592,6 @@
           "numberHint"
         ]
       },
-      "DoctorPayoutDto": {
-        "type": "object",
-        "properties": {
-          "doctorId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "doctorName": {
-            "type": "string"
-          },
-          "paymentCount": {
-            "type": "integer"
-          },
-          "grossIqd": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "doctorId",
-          "doctorName",
-          "paymentCount",
-          "grossIqd"
-        ]
-      },
       "PayoutDto": {
         "type": "object",
         "properties": {
@@ -13358,6 +13600,14 @@
             "format": "uuid"
           },
           "organizationName": {
+            "type": "string"
+          },
+          "doctorId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Each doctor is billed and paid separately."
+          },
+          "doctorName": {
             "type": "string"
           },
           "periodStart": {
@@ -13392,7 +13642,7 @@
           },
           "netPayableIqd": {
             "type": "integer",
-            "description": "Positive: Saxlem pays the organization. Negative: it owes Saxlem."
+            "description": "Positive: Saxlem pays the doctor. Negative: the doctor owes Saxlem."
           },
           "paymentCount": {
             "type": "integer"
@@ -13414,17 +13664,13 @@
                 "$ref": "#/components/schemas/PayoutAccountHintDto"
               }
             ]
-          },
-          "doctors": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DoctorPayoutDto"
-            }
           }
         },
         "required": [
           "organizationId",
           "organizationName",
+          "doctorId",
+          "doctorName",
           "periodStart",
           "periodEnd",
           "status",
@@ -13498,6 +13744,54 @@
           "expectedNetPayableIqd",
           "reference"
         ]
+      },
+      "DoctorPayoutProfileDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "payoutAccountName": {
+            "type": "string",
+            "nullable": true
+          },
+          "payoutAccountNumberHint": {
+            "type": "string",
+            "nullable": true
+          },
+          "version": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "organizationId",
+          "doctorId",
+          "payoutAccountName",
+          "payoutAccountNumberHint",
+          "version"
+        ]
+      },
+      "SaveDoctorPayoutProfileDto": {
+        "type": "object",
+        "properties": {
+          "payoutAccountName": {
+            "type": "object",
+            "maxLength": 200,
+            "nullable": true
+          },
+          "payoutAccountNumber": {
+            "type": "object",
+            "minLength": 4,
+            "maxLength": 64,
+            "nullable": true,
+            "description": "FIB account number or IBAN for the doctor's payouts."
+          }
+        }
       },
       "PayoutProfileDto": {
         "type": "object",

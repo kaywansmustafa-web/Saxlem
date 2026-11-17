@@ -18,6 +18,7 @@ import {
   ApiHeader,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -108,18 +109,25 @@ export class BillingController {
       query.organizationId,
       query.pageSize,
       query.cursor,
+      query.doctorId,
     );
   }
   @Get('statements/current')
   @RequireCapabilities('billing:read')
-  @ApiOkResponse({ type: BillingStatementResponseDto })
+  @ApiOperation({
+    summary: "This month's running statement for each doctor",
+    description:
+      'Each doctor is billed separately, so this returns one draft per doctor. A receptionist sees only their own doctors.',
+  })
+  @ApiOkResponse({ type: [BillingStatementResponseDto] })
   current(
     @Req() req: AuthenticatedRequest,
     @Query() query: BillingOrganizationQueryDto,
   ) {
-    return this.billing.currentStatement(
+    return this.billing.currentStatements(
       this.access(req),
       query.organizationId,
+      query.doctorId,
     );
   }
   @Get('statements')
@@ -129,7 +137,11 @@ export class BillingController {
     @Req() req: AuthenticatedRequest,
     @Query() query: BillingOrganizationQueryDto,
   ) {
-    return this.billing.statements(this.access(req), query.organizationId);
+    return this.billing.statements(
+      this.access(req),
+      query.organizationId,
+      query.doctorId,
+    );
   }
   @Get('statements/:id')
   @RequireCapabilities('billing:read')
@@ -167,6 +179,7 @@ export class BillingController {
         ? { organizationId: req.tenant.organizationId }
         : {}),
       ...(req.tenant?.clinicId ? { clinicId: req.tenant.clinicId } : {}),
+      ...(req.tenant?.doctorIds ? { doctorIds: req.tenant.doctorIds } : {}),
     };
   }
 }

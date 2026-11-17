@@ -407,6 +407,11 @@ model Doctor {
   holidays             DoctorHoliday[]
   scheduleExceptions   DoctorScheduleException[]
 
+  commissions   CommissionLedgerEntry[] @relation("DoctorCommissions")
+  statements    BillingStatement[]      @relation("DoctorStatements")
+  payouts       OrganizationPayout[]    @relation("DoctorPayouts")
+  payoutProfile DoctorPayoutProfile?    @relation("DoctorPayoutProfile")
+
   @@unique([organizationId, id])
   @@unique([organizationId, licenseNumber])
   @@index([organizationId, status, displayName])
@@ -691,6 +696,8 @@ model CommissionLedgerEntry {
   id                   String                 @id @default(uuid(7)) @db.Uuid
   organizationId       String                 @map("organization_id") @db.Uuid
   clinicId             String                 @map("clinic_id") @db.Uuid
+  /// Each doctor is billed separately.
+  doctorId             String                 @map("doctor_id") @db.Uuid
   appointmentId        String                 @map("appointment_id") @db.Uuid
   planId               String                 @map("plan_id") @db.Uuid
   originalCommissionId String?                @unique(map: "commission_one_reversal_per_original") @map("original_commission_id") @db.Uuid
@@ -709,6 +716,7 @@ model CommissionLedgerEntry {
   createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
   organization         Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   clinic               Clinic                 @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+  doctor               Doctor                 @relation("DoctorCommissions", fields: [organizationId, doctorId], references: [organizationId, id], onDelete: Restrict)
   appointment          Appointment            @relation(fields: [organizationId, appointmentId], references: [organizationId, id], onDelete: Restrict)
   plan                 BillingPlan            @relation(fields: [planId], references: [id], onDelete: Restrict)
   originalCommission   CommissionLedgerEntry? @relation("CommissionReversal", fields: [originalCommissionId], references: [id], onDelete: Restrict)
@@ -718,12 +726,16 @@ model CommissionLedgerEntry {
 
   @@index([organizationId, recognizedAt, id])
   @@index([organizationId, clinicId, recognizedAt])
+  @@index([organizationId, doctorId, recognizedAt])
   @@map("commission_ledger_entries")
 }
 
 model BillingStatement {
   id               String                            @id @default(uuid(7)) @db.Uuid
   organizationId   String                            @map("organization_id") @db.Uuid
+  /// One statement per doctor per month. Null only on statements finalized
+  /// before per-doctor billing (2026-11-17), which covered the clinic.
+  doctorId         String?                           @map("doctor_id") @db.Uuid
   periodStart      DateTime                          @map("period_start") @db.Timestamptz(3)
   periodEnd        DateTime                          @map("period_end") @db.Timestamptz(3)
   timezone         String                            @default("Asia/Baghdad")
@@ -739,11 +751,12 @@ model BillingStatement {
   createdAt        DateTime                          @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt        DateTime                          @updatedAt @map("updated_at") @db.Timestamptz(3)
   organization     Organization                      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  doctor           Doctor?                           @relation("DoctorStatements", fields: [organizationId, doctorId], references: [organizationId, id], onDelete: Restrict)
   finalizedBy      User?                             @relation("BillingStatementFinalizer", fields: [finalizedById], references: [id], onDelete: Restrict)
   lines            BillingStatementLine[]
   clinicBreakdowns BillingStatementClinicBreakdown[]
 
-  @@unique([organizationId, periodStart])
+  @@unique([organizationId, doctorId, periodStart])
   @@index([organizationId, periodStart, id])
   @@map("billing_statements")
 }
@@ -1276,6 +1289,9 @@ model OrganizationPayoutProfile {
 model OrganizationPayout {
   id                String               @id @default(uuid(7)) @db.Uuid
   organizationId    String               @map("organization_id") @db.Uuid
+  /// Saxlem pays each doctor separately. Null only on payouts settled before
+  /// per-doctor payouts (2026-11-17).
+  doctorId          String?              @map("doctor_id") @db.Uuid
   periodStart       DateTime             @map("period_start") @db.Timestamptz(3)
   periodEnd         DateTime             @map("period_end") @db.Timestamptz(3)
   grossCollectedIqd Int                  @map("gross_collected_iqd")
@@ -1290,11 +1306,12 @@ model OrganizationPayout {
   settledById       String               @map("settled_by_id") @db.Uuid
   createdAt         DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
   organization      Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  doctor            Doctor?              @relation("DoctorPayouts", fields: [organizationId, doctorId], references: [organizationId, id], onDelete: Restrict)
   settledBy         User                 @relation(fields: [settledById], references: [id], onDelete: Restrict)
   payments          AppointmentPayment[] @relation("PayoutPayments")
   clawbacks         AppointmentPayment[] @relation("PayoutClawbacks")
 
-  @@unique([organizationId, periodStart])
+  @@unique([organizationId, doctorId, periodStart])
   @@index([periodStart])
   @@map("organization_payouts")
 }
@@ -1316,4 +1333,19 @@ model ReceptionistDoctorAssignment {
   @@unique([organizationId, clinicId, userId, doctorId])
   @@index([organizationId, clinicId, doctorId])
   @@map("receptionist_doctor_assignments")
+}
+
+/// Where Saxlem sends a doctor's monthly payout of online payments.
+model DoctorPayoutProfile {
+  doctorId            String   @id @map("doctor_id") @db.Uuid
+  organizationId      String   @map("organization_id") @db.Uuid
+  payoutAccountName   String?  @map("payout_account_name")
+  payoutAccountNumber String?  @map("payout_account_number")
+  version             Int      @default(1)
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  doctor              Doctor   @relation("DoctorPayoutProfile", fields: [organizationId, doctorId], references: [organizationId, id], onDelete: Restrict)
+
+  @@unique([organizationId, doctorId])
+  @@map("doctor_payout_profiles")
 }
