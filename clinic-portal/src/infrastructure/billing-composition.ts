@@ -21,9 +21,13 @@ export async function billingComposition(requestedOrganizationId?: string) {
   if (!session || accessTokenNeedsRefresh(session))
     throw error("unauthorized", 401);
   if (
-    !["receptionist", "clinicManager", "platformAdministrator"].includes(
-      session.role,
-    )
+    // Doctors read their own statements (the backend scopes them).
+    ![
+      "receptionist",
+      "clinicManager",
+      "platformAdministrator",
+      "doctor",
+    ].includes(session.role)
   )
     throw error("forbidden", 403);
   const platform = session.role === "platformAdministrator";

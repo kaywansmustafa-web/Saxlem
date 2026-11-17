@@ -10,6 +10,8 @@ import {
   billingStatementSchema,
   currentStatementsSchema,
   commissionPageSchema,
+  cycleStatementDocumentSchema,
+  cycleStatementListSchema,
   organizationPlanSchema,
 } from "../domain/models";
 import type { BillingRepository } from "../domain/repository";
@@ -98,6 +100,21 @@ export class BackendBillingRepository implements BillingRepository {
     return this.request(
       `/api/v1/billing/statements/${encodeURIComponent(id)}`,
       billingStatementDetailSchema,
+    );
+  }
+  listCycleStatements() {
+    return this.request("/api/v1/statements", cycleStatementListSchema).then(
+      (list) => list.items,
+    );
+  }
+  getCycleStatement(
+    organizationId: string,
+    doctorId: string,
+    cycleNumber: number,
+  ) {
+    return this.request(
+      `/api/v1/statements/${encodeURIComponent(organizationId)}/${encodeURIComponent(doctorId)}/${cycleNumber}`,
+      cycleStatementDocumentSchema,
     );
   }
   finalizeStatement(id: string, version: number, key: string) {

@@ -8,6 +8,7 @@ import {
 
 const implementedRoutes = new Set([
   "doctorWorkspace",
+  "doctorBilling",
   "doctorPatients",
   "doctorSchedule",
   "doctorNotifications",
@@ -38,6 +39,7 @@ describe("central route policy", () => {
       "doctorSchedule",
       "doctorNotifications",
       "doctorSettings",
+      "doctorBilling",
     ]);
 
     expect(navigationFor("platformAdministrator").map((x) => x.id)).toEqual([

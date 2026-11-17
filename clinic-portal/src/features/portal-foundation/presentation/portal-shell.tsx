@@ -27,6 +27,7 @@ const labels: Record<PortalRouteId, keyof FoundationMessages> = {
   organizations: "organizations",
   clinics: "clinics",
   billing: "billing",
+  doctorBilling: "billing",
 };
 const roleLabels: Record<PortalStaffRole, keyof FoundationMessages> = {
   receptionist: "receptionist",

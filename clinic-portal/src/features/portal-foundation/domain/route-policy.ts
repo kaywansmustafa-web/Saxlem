@@ -19,7 +19,8 @@ export type PortalRouteId =
   | "administration"
   | "organizations"
   | "clinics"
-  | "billing";
+  | "billing"
+  | "doctorBilling";
 export interface RoutePolicy {
   readonly id: PortalRouteId;
   readonly segment: string;
@@ -193,6 +194,16 @@ export const routePolicies: readonly RoutePolicy[] = Object.freeze([
     landing: false,
     placeholder: false,
     owner: "Sprint 13T",
+  },
+  {
+    id: "doctorBilling",
+    segment: "doctor/billing",
+    // A doctor's own 30-day statements.
+    roles: ["doctor"],
+    navigation: true,
+    landing: false,
+    placeholder: false,
+    owner: "Sprint 13V",
   },
 ]);
 export const policy = (id: PortalRouteId) =>

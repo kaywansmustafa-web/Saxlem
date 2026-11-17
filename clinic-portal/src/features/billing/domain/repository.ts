@@ -3,6 +3,8 @@ import type {
   BillingStatement,
   BillingStatementDetail,
   CommissionPage,
+  CycleStatement,
+  CycleStatementDocument,
   OrganizationPlan,
 } from "./models";
 
@@ -30,6 +32,13 @@ export interface BillingRepository {
     organizationId: string,
   ): Promise<readonly BillingStatement[]>;
   getStatement(statementId: string): Promise<BillingStatementDetail>;
+  /** Each doctor's 30-day statements the session may see. */
+  listCycleStatements(): Promise<readonly CycleStatement[]>;
+  getCycleStatement(
+    organizationId: string,
+    doctorId: string,
+    cycleNumber: number,
+  ): Promise<CycleStatementDocument>;
   finalizeStatement(
     statementId: string,
     version: number,

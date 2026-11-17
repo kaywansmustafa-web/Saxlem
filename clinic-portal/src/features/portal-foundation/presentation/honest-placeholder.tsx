@@ -19,6 +19,7 @@ const labels: Record<RoutePolicy["id"], keyof FoundationMessages> = {
   organizations: "organizations",
   clinics: "clinics",
   billing: "billing",
+  doctorBilling: "billing",
 };
 /** A calm "coming soon" card for sections that are not built yet. It names
  * the section and says plainly that it is not available; no internal plan

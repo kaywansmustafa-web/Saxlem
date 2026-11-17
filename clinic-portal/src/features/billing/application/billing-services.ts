@@ -21,6 +21,16 @@ export class BillingReadServices {
   statement(id: string) {
     return this.repository.getStatement(id);
   }
+  cycleStatements() {
+    return this.repository.listCycleStatements();
+  }
+  cycleStatement(doctorId: string, cycleNumber: number) {
+    return this.repository.getCycleStatement(
+      this.organizationId,
+      doctorId,
+      cycleNumber,
+    );
+  }
 }
 export class PlatformBillingServices extends BillingReadServices {
   plans() {

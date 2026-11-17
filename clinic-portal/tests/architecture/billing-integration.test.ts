@@ -20,14 +20,19 @@ describe("billing integration architecture", () => {
       read("features/billing/domain/models.ts"),
       read("features/billing/domain/repository.ts"),
     ].join("\n");
+    // Statements name how a settlement was paid (FIB or cash) and a masked
+    // account hint; never card or bank details, patients or clinical data.
     expect(source).not.toMatch(
-      /stripe|paypal|fastpay|fib|card|bank|diagnosis|patientName|phone|appointmentReason/iu,
+      /stripe|paypal|fastpay|card|bank|iban|accountNumber|diagnosis|patientName|phoneNumber|appointmentReason/iu,
     );
   });
-  it("exposes billing navigation to clinic staff and platform administrators, never doctors", () => {
+  it("exposes clinic billing to staff and administrators; doctors get only their own statements", () => {
     const source = read("features/portal-foundation/domain/route-policy.ts");
     expect(source).toMatch(
       /id:\s*"billing"[\s\S]*?roles:\s*\["receptionist",\s*"clinicManager",\s*"platformAdministrator"\]/u,
+    );
+    expect(source).toMatch(
+      /id:\s*"doctorBilling"[\s\S]*?segment:\s*"doctor\/billing"[\s\S]*?roles:\s*\["doctor"\]/u,
     );
   });
   it("has no production billing mock or client-side backend request", () => {

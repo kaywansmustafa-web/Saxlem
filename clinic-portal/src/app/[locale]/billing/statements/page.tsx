@@ -2,6 +2,7 @@ import { BillingWorkspace } from "@/features/billing/presentation/billing-worksp
 import { billingComposition } from "@/infrastructure/billing-composition";
 import { isLocale } from "@/i18n";
 import { notFound } from "next/navigation";
+import { StatementsListPage } from "@/features/billing/presentation/statement-pages";
 const uuid = /^[0-9a-f-]{36}$/iu;
 export default async function Page({
   params,
@@ -16,6 +17,10 @@ export default async function Page({
     composition = await billingComposition(
       requested && uuid.test(requested) ? requested : undefined,
     );
+  // Clinic staff see 30-day statements; Saxlem uses the Owner Portal but
+  // keeps the organization view here.
+  if (composition.session.role !== "platformAdministrator")
+    return <StatementsListPage locale={locale} doctorView={false} />;
   return (
     <BillingWorkspace
       locale={locale}
