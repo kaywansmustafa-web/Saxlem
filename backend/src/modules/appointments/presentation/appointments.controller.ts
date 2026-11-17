@@ -43,6 +43,7 @@ import {
   RescheduleAppointmentDto,
   UpdateAppointmentDto,
 } from './appointment.dto';
+import { DayBoardQueryDto, DayBoardResponseDto } from './day-board.dto';
 @ApiTags('appointments')
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ type: ApiErrorEnvelopeDto })
@@ -75,6 +76,21 @@ export class AppointmentsController {
       items: page.items.map((x) => this.mapper.map(x)),
       nextCursor: page.nextCursor,
     };
+  }
+  @Get('board')
+  @RequireCapabilities('appointment:slots:read')
+  @ApiOperation({
+    summary: "Reception's day board for the signed-in clinic",
+    description:
+      'Every active doctor at the clinic with each slot of the day marked free, booked (with origin: app, phone or walk-in), unavailable (break, leave, holiday) or past. Built from the same schedule and conflict rules as booking.',
+  })
+  @ApiOkResponse({ type: DayBoardResponseDto })
+  @ApiServiceUnavailableResponse({
+    type: ApiErrorEnvelopeDto,
+    description: 'Mandatory staff read audit is unavailable.',
+  })
+  board(@Req() req: AuthenticatedRequest, @Query() query: DayBoardQueryDto) {
+    return this.service.dayBoard(this.access(req), query.date, req.requestId);
   }
   @Get(':id')
   @RequireCapabilities('appointment:read')

@@ -56,6 +56,18 @@ export interface AppointmentRepository {
     command: AppointmentCommand,
     validate: () => Promise<void>,
   ): Promise<AppointmentProjection | null>;
+  /** Active doctors assigned to the clinic, for reception's day board. */
+  clinicDoctors(
+    organizationId: string,
+    clinicId: string,
+  ): Promise<readonly { readonly id: string; readonly displayName: string }[]>;
+  /** Every non-cancelled appointment at the clinic in [from, to). */
+  dayAppointments(
+    organizationId: string,
+    clinicId: string,
+    from: Date,
+    to: Date,
+  ): Promise<readonly AppointmentProjection[]>;
   auditView(
     access: AppointmentAccess,
     appointments: readonly AppointmentProjection[],

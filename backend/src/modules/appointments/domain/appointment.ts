@@ -71,3 +71,34 @@ export interface BookingOptionsProjection {
   readonly days: readonly BookingDayProjection[];
   readonly generatedAt: string;
 }
+
+/** One cell of reception's day board. */
+export type DayBoardSlotState = 'free' | 'booked' | 'unavailable' | 'past';
+export interface DayBoardAppointment {
+  readonly id: string;
+  readonly reference: string;
+  readonly origin: AppointmentOrigin;
+  readonly status: AppointmentStatus;
+  readonly patientName: string;
+}
+export interface DayBoardSlot {
+  readonly startsAt: string;
+  readonly endsAt: string;
+  readonly state: DayBoardSlotState;
+  /** Free and starting within the next hour, so a walk-in can take it. */
+  readonly walkIn: boolean;
+  readonly appointment: DayBoardAppointment | null;
+}
+export interface DayBoardDoctor {
+  readonly doctorId: string;
+  readonly doctorName: string;
+  readonly slots: readonly DayBoardSlot[];
+}
+export interface DayBoardProjection {
+  readonly date: string;
+  readonly clinicId: string;
+  readonly clinicTimezone: string;
+  readonly durationMinutes: number;
+  readonly generatedAt: string;
+  readonly doctors: readonly DayBoardDoctor[];
+}

@@ -292,6 +292,23 @@ describe('patient booking options database integration', () => {
     await expect(
       book(staffAccess, caller.patientProfileId, slot(0), 'calendar-clash-1'),
     ).rejects.toBeInstanceOf(ConflictException);
+    // The day board colours each slot by how it was booked.
+    const board = await service.dayBoard(staffAccess, '2030-07-22', 'board');
+    const cells = new Map(
+      board.doctors[0]!.slots.map((cell) => [cell.startsAt, cell]),
+    );
+    expect(cells.get(slot(0))).toMatchObject({
+      state: 'booked',
+      appointment: { origin: 'patientBooked' },
+    });
+    expect(cells.get(slot(1))).toMatchObject({
+      state: 'booked',
+      appointment: { origin: 'clinicCreated', patientName: 'Phone Caller' },
+    });
+    expect(cells.get(slot(2))).toMatchObject({ state: 'free' });
+    expect(cells.get('2030-07-22T05:30:00.000Z')).toMatchObject({
+      state: 'unavailable',
+    });
     // Staff of another clinic cannot read this calendar.
     await expect(
       window(

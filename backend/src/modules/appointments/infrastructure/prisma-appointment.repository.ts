@@ -281,6 +281,45 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       validate,
     );
   }
+  async clinicDoctors(organizationId: string, clinicId: string) {
+    const rows = await this.prisma.db.doctorClinicAssignment.findMany({
+      where: {
+        organizationId,
+        clinicId,
+        status: 'active',
+        doctor: { status: 'active', organization: { status: 'active' } },
+      },
+      select: { doctor: { select: { id: true, displayName: true } } },
+      orderBy: { doctor: { displayName: 'asc' } },
+    });
+    return Object.freeze(
+      rows.map((row) =>
+        Object.freeze({
+          id: row.doctor.id,
+          displayName: row.doctor.displayName,
+        }),
+      ),
+    );
+  }
+  async dayAppointments(
+    organizationId: string,
+    clinicId: string,
+    from: Date,
+    to: Date,
+  ) {
+    const rows = await this.prisma.db.appointment.findMany({
+      where: {
+        organizationId,
+        clinicId,
+        status: { not: 'cancelled' },
+        startsAt: { lt: to },
+        endsAt: { gt: from },
+      },
+      include,
+      orderBy: [{ startsAt: 'asc' }, { id: 'asc' }],
+    });
+    return Object.freeze(rows.map((row) => this.map(row)));
+  }
   async auditView(
     access: AppointmentAccess,
     appointments: readonly AppointmentProjection[],

@@ -4034,6 +4034,85 @@
         ]
       }
     },
+    "/api/v1/appointments/board": {
+      "get": {
+        "description": "Every active doctor at the clinic with each slot of the day marked free, booked (with origin: app, phone or walk-in), unavailable (break, leave, holiday) or past. Built from the same schedule and conflict rules as booking.",
+        "operationId": "AppointmentsController_board",
+        "parameters": [
+          {
+            "name": "date",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-11-17",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DayBoardResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Mandatory staff read audit is unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reception's day board for the signed-in clinic",
+        "tags": [
+          "appointments"
+        ]
+      }
+    },
     "/api/v1/appointments/{id}": {
       "get": {
         "operationId": "AppointmentsController_get",
@@ -11982,6 +12061,148 @@
         "required": [
           "items",
           "nextCursor"
+        ]
+      },
+      "DayBoardAppointmentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "origin": {
+            "type": "string",
+            "enum": [
+              "patientBooked",
+              "clinicCreated",
+              "walkIn"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "scheduled",
+              "confirmed",
+              "cancelled",
+              "completed",
+              "noShow"
+            ]
+          },
+          "patientName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "reference",
+          "origin",
+          "status",
+          "patientName"
+        ]
+      },
+      "DayBoardSlotDto": {
+        "type": "object",
+        "properties": {
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "free",
+              "booked",
+              "unavailable",
+              "past"
+            ]
+          },
+          "walkIn": {
+            "type": "boolean",
+            "description": "Free and starting within the next hour (walk-in eligible)."
+          },
+          "appointment": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DayBoardAppointmentDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "startsAt",
+          "endsAt",
+          "state",
+          "walkIn",
+          "appointment"
+        ]
+      },
+      "DayBoardDoctorDto": {
+        "type": "object",
+        "properties": {
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorName": {
+            "type": "string"
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DayBoardSlotDto"
+            }
+          }
+        },
+        "required": [
+          "doctorId",
+          "doctorName",
+          "slots"
+        ]
+      },
+      "DayBoardResponseDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "clinicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clinicTimezone": {
+            "type": "string"
+          },
+          "durationMinutes": {
+            "type": "integer"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "doctors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DayBoardDoctorDto"
+            }
+          }
+        },
+        "required": [
+          "date",
+          "clinicId",
+          "clinicTimezone",
+          "durationMinutes",
+          "generatedAt",
+          "doctors"
         ]
       },
       "CreateAppointmentDto": {
