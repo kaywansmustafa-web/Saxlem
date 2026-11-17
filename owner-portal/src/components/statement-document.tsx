@@ -96,7 +96,9 @@ export function StatementDocument({ statement }: { statement: Statement }) {
         <strong>{iqd(Math.abs(net))}</strong>
         <small>
           {net < 0
-            ? "Paid in cash, in person."
+            ? s.dueAt
+              ? `Paid in cash, in person, by ${day(s.dueAt)}.`
+              : "Paid in cash, in person."
             : net > 0
               ? s.payoutAccount
                 ? `By FIB to ${s.payoutAccount.name ?? "account"} ${s.payoutAccount.numberHint}, or in cash.`
@@ -131,8 +133,17 @@ export function StatementDocument({ statement }: { statement: Statement }) {
                 {s.charges.filter((c) => c.kind === "charge").length} app
                 bookings)
               </td>
-              <td>−{iqd(s.commissionIqd)}</td>
+              <td>
+                {s.commissionIqd ? "−" : ""}
+                {iqd(s.commissionIqd)}
+              </td>
             </tr>
+            {s.carriedFrom.map((row) => (
+              <tr key={row.cycleNumber}>
+                <td>Unpaid from statement {row.statementNumber}</td>
+                <td>−{iqd(-row.amountIqd)}</td>
+              </tr>
+            ))}
             <tr className="sum-total">
               <td>{verdict}</td>
               <td>{iqd(Math.abs(net))}</td>
@@ -266,7 +277,13 @@ export function StatementDocument({ statement }: { statement: Statement }) {
 
       <section className="statement-section statement-settlement">
         <h2>Settlement</h2>
-        {s.settlement ? (
+        {s.settlement?.method === "carried" ? (
+          <p className="statement-empty">
+            Not paid by the due date. The balance moved into statement{" "}
+            {s.settlement.carriedIntoStatement} and comes out of the
+            doctor&apos;s app payments there.
+          </p>
+        ) : s.settlement ? (
           <dl>
             <dt>Paid</dt>
             <dd>

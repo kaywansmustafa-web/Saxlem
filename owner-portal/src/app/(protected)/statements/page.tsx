@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { PageHeader, StateView } from "@/components/app-shell";
+import { GraceButton } from "@/components/billing-forms";
 import { OrganizationFilter } from "@/components/organization-filter";
 import {
+  listCollections,
+  type Collection,
   listBillingStatements,
   listOrganizations,
   type StatementSummary,
@@ -68,7 +71,13 @@ function Rows({ items }: { items: readonly StatementSummary[] }) {
                       ? "Doctor pays Saxlem (cash)"
                       : "Even"}
                   {item.settlement &&
-                    ` · ${item.settlement.method === "cash" ? "cash" : "FIB"}`}
+                    ` · ${
+                      item.settlement.method === "cash"
+                        ? "cash"
+                        : item.settlement.method === "carried"
+                          ? "not paid, carried to next"
+                          : "FIB"
+                    }`}
                 </small>
               </td>
               <td>
@@ -87,6 +96,86 @@ function Rows({ items }: { items: readonly StatementSummary[] }) {
   );
 }
 
+const stageText: Record<Collection["stage"], [string, string]> = {
+  clear: ["Clear", "success"],
+  due: ["Due", "info"],
+  overdue: ["Overdue: taken from next app payments", "warning"],
+  warning: ["Will be hidden from the app", "danger"],
+  hidden: ["Hidden from the app until paid", "danger"],
+};
+const shortDay = (value: string | null) =>
+  value
+    ? new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Asia/Baghdad",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }).format(new Date(value))
+    : "—";
+
+function CollectionRows({ items }: { items: readonly Collection[] }) {
+  return (
+    <div className="card table-card" tabIndex={0}>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Doctor</th>
+            <th>Owes</th>
+            <th>Stage</th>
+            <th>Due since</th>
+            <th>Hidden from the app</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((item) => (
+            <tr key={item.doctorId}>
+              <td>
+                <strong>{item.doctorName}</strong>
+                <small>{item.organizationName}</small>
+              </td>
+              <td className="numeric">
+                <span className="direction-owes">{iqd(item.owedIqd)}</span>
+                <small>{item.statementNumber ?? ""}</small>
+              </td>
+              <td>
+                <span className={`badge badge-${stageText[item.stage][1]}`}>
+                  {stageText[item.stage][0]}
+                </span>
+              </td>
+              <td>{shortDay(item.dueAt)}</td>
+              <td>
+                {item.hiddenAt
+                  ? `Since ${shortDay(item.hiddenAt)}`
+                  : `From ${shortDay(item.hideOn)}`}
+                {item.graceUntil && (
+                  <small>More time until {shortDay(item.graceUntil)}</small>
+                )}
+              </td>
+              <td>
+                <div className="row-actions">
+                  {item.cycleNumber && (
+                    <Link
+                      className="button button-secondary button-small"
+                      href={`/statements/${item.organizationId}/${item.doctorId}/${item.cycleNumber}`}
+                    >
+                      Statement
+                    </Link>
+                  )}
+                  <GraceButton
+                    organizationId={item.organizationId}
+                    doctorId={item.doctorId}
+                  />
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export default async function StatementsPage({
   searchParams,
 }: {
@@ -95,9 +184,10 @@ export default async function StatementsPage({
   const session = await requireOwnerSession();
   const { organizationId } = await searchParams;
   const valid = z.string().uuid().safeParse(organizationId);
-  const [organizations, data] = await Promise.all([
+  const [organizations, data, collections] = await Promise.all([
     listOrganizations(session),
     listBillingStatements(session, valid.success ? valid.data : undefined),
+    listCollections(session, valid.success ? valid.data : undefined),
   ]);
   const group = (status: StatementSummary["status"]) =>
     data.items.filter((item) => item.status === status);
@@ -148,6 +238,21 @@ export default async function StatementsPage({
         </article>
       </section>
       <div className="statement-groups">
+        <section>
+          <h2>Collections</h2>
+          <p className="muted">
+            Doctors pay what they owe within 14 days of a statement ending.
+            Unpaid balances move into the next statement and come out of their
+            app payments. Only if a balance is still unpaid 60 days after it was
+            due is the doctor hidden from the patient app (phone and walk-in
+            bookings keep working) until it is paid.
+          </p>
+          {collections.items.length ? (
+            <CollectionRows items={collections.items} />
+          ) : (
+            <p className="muted">Nobody owes Saxlem right now.</p>
+          )}
+        </section>
         <section>
           <h2>Ready to settle</h2>
           {due.length ? (

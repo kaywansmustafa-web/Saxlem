@@ -57,6 +57,13 @@ const actions = z.discriminatedUnion("action", [
     .strict(),
   z
     .object({
+      action: z.literal("grace"),
+      organizationId: uuid,
+      doctorId: uuid,
+    })
+    .strict(),
+  z
+    .object({
       action: z.literal("settle"),
       organizationId: uuid,
       doctorId: uuid,
@@ -115,6 +122,12 @@ function route(input: Action): {
         path: `/api/v1/billing/commissions/${input.commissionId}/credit`,
         method: "POST",
         body: { reason: input.reason },
+      };
+    case "grace":
+      return {
+        path: `/api/v1/platform/organizations/${input.organizationId}/doctors/${input.doctorId}/collections/grace`,
+        method: "POST",
+        body: {},
       };
     case "settle": {
       const { organizationId, doctorId, cycleNumber, ...body } = input;

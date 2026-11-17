@@ -111,6 +111,13 @@ describe("payout routes", () => {
         body: { planId: null, from: "2026-11-18" },
       }),
     );
+    await post({ action: "grace", organizationId, doctorId });
+    expect(request).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        path: `/api/v1/platform/organizations/${organizationId}/doctors/${doctorId}/collections/grace`,
+        method: "POST",
+      }),
+    );
     const { OwnerApiError } = await import("@/infrastructure/api-client");
     request.mockRejectedValue(
       new OwnerApiError(

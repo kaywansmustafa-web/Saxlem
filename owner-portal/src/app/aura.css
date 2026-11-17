@@ -773,3 +773,4 @@ dialog {
   .statement-table tr { break-inside: avoid; }
   .statement-signatures { break-inside: avoid; }
 }
+.row-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: flex-start; }

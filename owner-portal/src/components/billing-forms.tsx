@@ -472,6 +472,28 @@ export function SettleStatementForm({
   );
 }
 
+export function GraceButton({
+  organizationId,
+  doctorId,
+}: {
+  organizationId: string;
+  doctorId: string;
+}) {
+  const { busy, message, run } = useAction();
+  return (
+    <span className="inline-action">
+      <button
+        className="button button-secondary button-small"
+        disabled={busy}
+        onClick={() => void run({ action: "grace", organizationId, doctorId })}
+      >
+        {busy ? "Saving…" : "Give 30 more days"}
+      </button>
+      <Message text={message} />
+    </span>
+  );
+}
+
 export function PrintButton({
   label = "Print or save as PDF",
 }: {

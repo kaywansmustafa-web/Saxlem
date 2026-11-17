@@ -746,17 +746,20 @@ export const statementSummarySchema = z
     clawbackIqd: money,
     providerFeeIqd: money,
     commissionIqd: money,
+    carriedInIqd: money,
     netPayableIqd: money,
     paymentCount: money,
     chargeCount: money.nullable(),
+    dueAt: dateTime.nullable(),
     settlement: z
       .object({
-        method: z.enum(["fib", "cash"]),
+        method: z.enum(["fib", "cash", "carried"]),
         settledAt: dateTime,
+        carriedIntoStatement: z.string().nullable().optional(),
         reference: z.string().nullable().optional(),
         counterpartyName: z.string().nullable().optional(),
         note: z.string().nullable().optional(),
-        settledByName: z.string().optional(),
+        settledByName: z.string().nullable().optional(),
       })
       .strict()
       .nullable(),
@@ -819,6 +822,15 @@ export const statementDocumentSchema = statementSummarySchema
     ),
     onlinePayments: z.array(statementMoneySchema),
     refunds: z.array(statementMoneySchema),
+    carriedFrom: z.array(
+      z
+        .object({
+          statementNumber: z.string(),
+          cycleNumber: z.number().int().positive(),
+          amountIqd: money,
+        })
+        .strict(),
+    ),
   })
   .strict();
 export type StatementDocument = z.infer<typeof statementDocumentSchema>;
@@ -841,4 +853,32 @@ export const statementDocument = (
     path: `/api/v1/statements/${organizationId}/${doctorId}/${cycleNumber}`,
     session,
     schema: statementDocumentSchema,
+  });
+
+export const collectionSchema = z
+  .object({
+    organizationId: id,
+    organizationName: z.string(),
+    doctorId: id,
+    doctorName: z.string(),
+    stage: z.enum(["clear", "due", "overdue", "warning", "hidden"]),
+    owedIqd: money,
+    cycleNumber: z.number().int().positive().nullable(),
+    statementNumber: z.string().nullable(),
+    dueAt: dateTime.nullable(),
+    warnOn: dateTime.nullable(),
+    hideOn: dateTime.nullable(),
+    hiddenAt: dateTime.nullable(),
+    graceUntil: dateTime.nullable(),
+  })
+  .strict();
+export type Collection = z.infer<typeof collectionSchema>;
+export const listCollections = (
+  session: OwnerSession,
+  organizationId?: string,
+) =>
+  ownerApi().request({
+    path: `/api/v1/statements/collections${organizationId ? `?organizationId=${organizationId}` : ""}`,
+    session,
+    schema: z.object({ items: z.array(collectionSchema) }).strict(),
   });
