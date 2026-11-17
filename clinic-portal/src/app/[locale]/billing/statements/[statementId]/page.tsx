@@ -17,7 +17,8 @@ export default async function Page({
     <BillingWorkspace
       locale={locale}
       role={
-        composition.session.role as "clinicManager" | "platformAdministrator"
+        composition.session.role as
+          "receptionist" | "clinicManager" | "platformAdministrator"
       }
       organizationId={composition.organizationId}
       mode="detail"

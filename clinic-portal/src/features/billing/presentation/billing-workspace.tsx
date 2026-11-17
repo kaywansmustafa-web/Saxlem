@@ -32,7 +32,7 @@ export function BillingWorkspace({
   statementId,
 }: {
   locale: Locale;
-  role: "clinicManager" | "platformAdministrator";
+  role: "receptionist" | "clinicManager" | "platformAdministrator";
   organizationId?: string;
   mode: Mode;
   statementId?: string;

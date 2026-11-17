@@ -24,10 +24,10 @@ describe("billing integration architecture", () => {
       /stripe|paypal|fastpay|fib|card|bank|diagnosis|patientName|phone|appointmentReason/iu,
     );
   });
-  it("exposes billing navigation only to managers and platform administrators", () => {
+  it("exposes billing navigation to clinic staff and platform administrators, never doctors", () => {
     const source = read("features/portal-foundation/domain/route-policy.ts");
     expect(source).toMatch(
-      /id:\s*"billing"[\s\S]*?roles:\s*\["clinicManager",\s*"platformAdministrator"\]/u,
+      /id:\s*"billing"[\s\S]*?roles:\s*\["receptionist",\s*"clinicManager",\s*"platformAdministrator"\]/u,
     );
   });
   it("has no production billing mock or client-side backend request", () => {

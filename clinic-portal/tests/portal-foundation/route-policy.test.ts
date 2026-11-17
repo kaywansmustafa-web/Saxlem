@@ -28,6 +28,8 @@ describe("central route policy", () => {
       "schedule",
       "notifications",
       "settings",
+      // The receptionist runs the clinic, billing included.
+      "billing",
     ]);
 
     expect(navigationFor("doctor").map((x) => x.id)).toEqual([

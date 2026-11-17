@@ -187,7 +187,8 @@ export const routePolicies: readonly RoutePolicy[] = Object.freeze([
   {
     id: "billing",
     segment: "billing",
-    roles: ["clinicManager", "platformAdministrator"],
+    // The receptionist runs the clinic (there is usually no separate manager).
+    roles: ["receptionist", "clinicManager", "platformAdministrator"],
     navigation: true,
     landing: false,
     placeholder: false,
