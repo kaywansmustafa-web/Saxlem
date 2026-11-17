@@ -16,6 +16,15 @@ const configurationSchema = z
       .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace'])
       .default('info'),
     CORS_ORIGINS: z.string().default(''),
+    /** Load balancers in front of the API; 0 means requests arrive directly. */
+    TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(0),
+    /** Requests one network address may make per minute; 0 turns it off. */
+    API_RATE_LIMIT_PER_MINUTE: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(100_000)
+      .default(600),
     OPENAPI_ENABLED: truthy.default(false),
     APPOINTMENT_PAST_TOLERANCE_MINUTES: z.coerce
       .number()
@@ -168,8 +177,24 @@ const configurationSchema = z
     REFRESH_TOKEN_SECRET: cryptographicSecret,
     OTP_SECRET: cryptographicSecret,
     AUDIT_HASH_SECRET: cryptographicSecret,
+    /** Who delivers sign-in codes. "development" only works outside production. */
+    OTP_PROVIDER: z.enum(['development', 'otpiq']).default('development'),
+    OTPIQ_API_KEY: z.string().optional(),
+    /** auto lets OTPIQ choose WhatsApp, Telegram or SMS, falling back in order. */
+    OTPIQ_CHANNEL: z
+      .enum(['auto', 'sms', 'whatsapp', 'telegram'])
+      .default('auto'),
+    OTPIQ_BASE_URL: z.url().default('https://api.otpiq.com/api'),
   })
   .superRefine((input, context) => {
+    if (
+      input.OTP_PROVIDER === 'otpiq' &&
+      (input.OTPIQ_API_KEY ?? '').length < 16
+    )
+      context.addIssue({
+        code: 'custom',
+        message: 'OTP_PROVIDER=otpiq requires OTPIQ_API_KEY.',
+      });
     const secrets = [
       input.ACCESS_TOKEN_SECRET,
       input.REFRESH_TOKEN_SECRET,
@@ -245,6 +270,14 @@ const configurationSchema = z
         .map((origin) => origin.trim())
         .filter(Boolean),
       openApiEnabled: input.OPENAPI_ENABLED,
+      trustProxyHops: input.TRUST_PROXY_HOPS,
+      otpDelivery: {
+        provider: input.OTP_PROVIDER,
+        apiKey: input.OTPIQ_API_KEY ?? '',
+        channel: input.OTPIQ_CHANNEL,
+        baseUrl: input.OTPIQ_BASE_URL.replace(/\/+$/, ''),
+      },
+      apiRateLimitPerMinute: input.API_RATE_LIMIT_PER_MINUTE,
       appointmentPastToleranceMinutes: input.APPOINTMENT_PAST_TOLERANCE_MINUTES,
       appointmentFoundationFeeIqd: input.APPOINTMENT_FOUNDATION_FEE_IQD,
       appointmentFoundationDurationMinutes:

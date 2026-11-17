@@ -40,7 +40,12 @@ import 'features/notifications/domain/repositories/notifications_repository.dart
 import 'features/notifications/data/repositories/backend_notifications_repository.dart';
 
 void main() {
-  const secureStorage = FlutterSecureStorage();
+  const secureStorage = FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    iOptions: IOSOptions(
+      accessibility: KeychainAccessibility.first_unlock_this_device,
+    ),
+  );
   const secureStore = FlutterSecureKeyValueStore(secureStorage);
   final dependencies = AppDependencies.create(
     configuration: AppConfiguration.fromCompileTime(),

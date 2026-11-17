@@ -56,6 +56,6 @@ describe("temporary dependency reachability controls", () => {
     expect(manifest.dependencies).not.toHaveProperty("minimatch");
     expect(manifest.dependencies).not.toHaveProperty("brace-expansion");
     expect(manifest.devDependencies.eslint).toBeDefined();
-    expect(manifest.devDependencies["eslint-config-next"]).toBe("16.2.12");
+    expect(manifest.devDependencies["eslint-config-next"]).toBe("16.4.6");
   });
 });
