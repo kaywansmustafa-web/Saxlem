@@ -12,6 +12,10 @@ import {
 } from "@/features/appointments/presentation/booking-messages";
 import { AppointmentViews } from "@/features/appointments/presentation/appointment-views";
 import { DayBoard } from "@/features/appointments/presentation/day-board";
+import {
+  ReceptionBar,
+  ReceptionSetup,
+} from "@/features/reception/presentation/reception-setup";
 
 const shift = (date: string, days: number) => {
   const value = new Date(`${date}T00:00:00.000Z`);
@@ -38,9 +42,12 @@ export default async function Page({
       : today;
   const m = bookingMessages(locale);
   const cm = clinicalMessages(locale);
-  let board;
+  let board, reception;
   try {
-    board = await (await clinicalComposition(locale)).appointments.board(date);
+    const composition = await clinicalComposition(locale);
+    reception = await composition.reception.view();
+    if (!reception || reception.configured)
+      board = await composition.appointments.board(date);
   } catch (error) {
     return (
       <ClinicalState
@@ -57,6 +64,10 @@ export default async function Page({
       />
     );
   }
+  if (!board)
+    return reception ? (
+      <ReceptionSetup view={reception} locale={locale} />
+    ) : null;
   const label = dayFormat(locale, "UTC").format(
     new Date(`${date}T00:00:00.000Z`),
   );
@@ -83,6 +94,7 @@ export default async function Page({
           </Link>
         </div>
       </header>
+      <ReceptionBar view={reception ?? null} locale={locale} />
       <nav className="board-dates" aria-label={m.day}>
         <Link href={href(shift(date, -1))} aria-label={m.previousDay}>
           <span aria-hidden="true">‹</span>

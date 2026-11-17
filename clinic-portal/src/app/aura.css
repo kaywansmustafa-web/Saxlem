@@ -290,3 +290,24 @@ dialog .row-actions button{min-height:46px;padding:0 20px;border:0}
 .booking-held{margin:0;padding:14px 18px;border-radius:var(--r-md);background:var(--brand-tint);color:var(--blue);font-weight:650;box-shadow:inset 4px 0 0 var(--blue)}
 [dir=rtl] .booking-held{box-shadow:inset -4px 0 0 var(--blue)}
 [dir=rtl] .board-dates>a span{display:inline-block;transform:scaleX(-1)}
+
+/* Receptionist: my doctors */
+.my-doctors-setup{max-width:640px;margin:8vh auto 0;padding:32px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--elevation);display:grid;gap:16px}
+.my-doctors-setup h2{margin:0;font-size:1.5rem}
+.my-doctors-setup p{margin:0;color:var(--muted);line-height:1.6}
+.my-doctor-choices{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.my-doctor-choice{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--r-md);background:var(--surface);font-weight:650;cursor:pointer;transition:border-color .15s ease,background .15s ease}
+.my-doctor-choice:hover{border-color:var(--blue)}
+.my-doctor-choice.on{border-color:var(--blue);background:var(--brand-tint)}
+.my-doctor-choice input{width:18px;height:18px;accent-color:var(--blue);flex:none}
+.my-doctor-avatar{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--aura);color:#fff;font-weight:750;flex:none}
+.my-doctors-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 16px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--elevation)}
+.my-doctors-label{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.my-doctors-bar ul{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0}
+.my-doctors-bar li{padding:5px 12px;border-radius:999px;background:var(--brand-tint);color:var(--blue);font-weight:650;font-size:.88rem}
+.my-doctors-bar>button{margin-inline-start:auto;min-height:36px;padding:0 14px}
+.my-doctors-bar dialog{max-width:560px;width:calc(100% - 32px)}
+.my-doctors-bar dialog h2{margin-top:0}
+.my-doctors-bar dialog p{color:var(--muted)}
+.my-doctors-bar dialog .row-actions{margin-top:16px;justify-content:flex-end}
+.my-doctors-bar dialog .row-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 20px}

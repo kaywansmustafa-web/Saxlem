@@ -10,6 +10,7 @@ import { BackendArrivalRepository } from "@/features/arrivals/data/backend-arriv
 import { BackendDoctorDirectory } from "@/features/live-queue/data/backend-doctor-directory";
 import { BackendQueueRepository } from "@/features/live-queue/data/backend-queue-repository";
 import { BackendPaymentRepository } from "@/features/payments/data/backend-payment-repository";
+import { BackendReceptionDoctors } from "@/features/reception/data/backend-reception-doctors";
 
 export async function clinicalComposition(locale?: Locale) {
   const configuration = portalConfiguration();
@@ -23,5 +24,6 @@ export async function clinicalComposition(locale?: Locale) {
     queueDoctors: new BackendDoctorDirectory(api, session),
     queues: new BackendQueueRepository(api, session),
     payments: new BackendPaymentRepository(api, session),
+    reception: new BackendReceptionDoctors(api, session),
   });
 }

@@ -1,4 +1,9 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import {
+  ReceptionBar,
+  ReceptionSetup,
+  ownDoctorIds,
+} from "@/features/reception/presentation/reception-setup";
 import { isLocale } from "@/i18n";
 import { clinicalComposition } from "@/infrastructure/clinical-composition";
 import { PortalApiError } from "@/infrastructure/api/api-error";
@@ -24,10 +29,21 @@ export default async function Page({
   const result = await (async () => {
     try {
       const composition = await clinicalComposition(locale),
-        doctors = await composition.queueDoctors.list(
-          composition.context.clinicId,
-        );
-      if (!query.doctorId) return { ok: true, doctors } as const;
+        reception = await composition.reception.view();
+      if (reception && !reception.configured)
+        return { ok: true, setup: reception } as const;
+      // A receptionist sees only the doctors they work for.
+      const own = ownDoctorIds(reception),
+        doctors = (
+          await composition.queueDoctors.list(composition.context.clinicId)
+        ).filter((doctor) => !own || own.has(doctor.id));
+      if (!query.doctorId)
+        return {
+          ok: true,
+          doctors,
+          reception,
+          only: own && doctors.length === 1 ? doctors[0]!.id : undefined,
+        } as const;
       const doctor = doctors.find((x) => x.id === query.doctorId);
       if (!doctor) return { ok: false, kind: "notFound" as const };
       let queue;
@@ -50,6 +66,7 @@ export default async function Page({
       return {
         ok: true,
         doctors,
+        reception,
         doctorId: doctor.id,
         queue,
         page,
@@ -74,16 +91,24 @@ export default async function Page({
   })();
   if (!result.ok)
     return <ClinicalState kind={result.kind} m={clinicalMessages(locale)} />;
+  if ("setup" in result && result.setup)
+    return <ReceptionSetup view={result.setup} locale={locale} />;
+  // One doctor: open their queue straight away.
+  if ("only" in result && result.only)
+    redirect(`/${locale}/live-queue?doctorId=${result.only}`);
   return (
-    <ProductionQueueWorkspace
-      key={`${result.doctorId ?? "selection"}:${result.queue?.id ?? "none"}:${result.queue?.version ?? 0}`}
-      locale={locale}
-      m={productionQueueMessages(locale)}
-      doctors={result.doctors!}
-      doctorId={result.doctorId}
-      queue={result.queue}
-      page={result.page}
-      appointmentId={result.appointmentId}
-    />
+    <>
+      <ReceptionBar view={result.reception ?? null} locale={locale} />
+      <ProductionQueueWorkspace
+        key={`${result.doctorId ?? "selection"}:${result.queue?.id ?? "none"}:${result.queue?.version ?? 0}`}
+        locale={locale}
+        m={productionQueueMessages(locale)}
+        doctors={result.doctors!}
+        doctorId={result.doctorId}
+        queue={result.queue}
+        page={result.page}
+        appointmentId={result.appointmentId}
+      />
+    </>
   );
 }

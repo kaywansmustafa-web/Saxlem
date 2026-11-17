@@ -27,7 +27,10 @@ export function AppointmentsPage({
   m,
   filters,
   validationMessage,
+  toolbar,
 }: {
+  /** Shown under the heading (the receptionist's "My doctors"). */
+  toolbar?: React.ReactNode;
   page: AppointmentPage;
   payments?: ReadonlyMap<string, BackendPayment>;
   locale: Locale;
@@ -72,6 +75,7 @@ export function AppointmentsPage({
           </Link>
         </div>
       </header>
+      {toolbar}
       <form className="clinical-filters" method="get">
         <label>
           {m.from}

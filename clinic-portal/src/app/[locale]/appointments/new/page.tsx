@@ -7,6 +7,10 @@ import { clinicalMessages } from "@/features/clinical-presentation/messages";
 import { iraqCalendarDate } from "@/features/appointments/domain/appointment-filter-contract";
 import { bookingMessages } from "@/features/appointments/presentation/booking-messages";
 import { NewBooking } from "@/features/appointments/presentation/new-booking";
+import {
+  ReceptionSetup,
+  ownDoctorIds,
+} from "@/features/reception/presentation/reception-setup";
 
 /** Phone booking (?mode=phone, default) or walk-in (?mode=walkIn). */
 export default async function Page({
@@ -31,13 +35,19 @@ export default async function Page({
     ),
   };
   const m = bookingMessages(locale);
-  let doctors;
+  let doctors, reception;
   try {
     const composition = await clinicalComposition(locale);
-    doctors = await composition.queueDoctors.list(composition.context.clinicId);
+    reception = await composition.reception.view();
+    const own = ownDoctorIds(reception);
+    doctors = (
+      await composition.queueDoctors.list(composition.context.clinicId)
+    ).filter((doctor) => !own || own.has(doctor.id));
   } catch {
     return <ClinicalState kind="backendError" m={clinicalMessages(locale)} />;
   }
+  if (reception && !reception.configured)
+    return <ReceptionSetup view={reception} locale={locale} />;
   return (
     <>
       <header className="heading booking-heading">
