@@ -7033,6 +7033,169 @@
         ]
       }
     },
+    "/api/v1/statements/collections": {
+      "get": {
+        "operationId": "StatementsController_collections",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": false,
+            "in": "query",
+            "description": "Saxlem only; clinic staff always see their organization.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "doctorId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionListDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Doctors who owe Saxlem: how much, since when, and when they would be hidden",
+        "tags": [
+          "statements"
+        ]
+      }
+    },
+    "/api/v1/platform/organizations/{organizationId}/doctors/{doctorId}/collections/grace": {
+      "post": {
+        "operationId": "StatementsController_grace",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "doctorId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionItemDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Give a doctor 30 more days before hiding (shows them again)",
+        "tags": [
+          "statements"
+        ]
+      }
+    },
     "/api/v1/statements/{organizationId}/{doctorId}/{cycleNumber}": {
       "get": {
         "operationId": "StatementsController_document",
@@ -14548,8 +14711,10 @@
             "type": "string",
             "enum": [
               "fib",
-              "cash"
-            ]
+              "cash",
+              "carried"
+            ],
+            "description": "carried: unpaid, moved into the next statement."
           },
           "settledAt": {
             "type": "string",
@@ -14627,6 +14792,10 @@
           "commissionIqd": {
             "type": "integer"
           },
+          "carriedInIqd": {
+            "type": "integer",
+            "description": "Unpaid balance from earlier statements (zero or less)."
+          },
           "netPayableIqd": {
             "type": "integer"
           },
@@ -14636,6 +14805,12 @@
           "chargeCount": {
             "type": "integer",
             "nullable": true
+          },
+          "dueAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When the doctor should have paid (doctor owes only)."
           },
           "settlement": {
             "nullable": true,
@@ -14663,9 +14838,11 @@
           "clawbackIqd",
           "providerFeeIqd",
           "commissionIqd",
+          "carriedInIqd",
           "netPayableIqd",
           "paymentCount",
           "chargeCount",
+          "dueAt",
           "settlement"
         ]
       },
@@ -14683,6 +14860,101 @@
           "items"
         ]
       },
+      "CollectionItemDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "organizationName": {
+            "type": "string"
+          },
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorName": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "clear",
+              "due",
+              "overdue",
+              "warning",
+              "hidden"
+            ],
+            "description": "due: reminders; overdue: carried into the next statement; warning: will be hidden from the app on hideOn; hidden: hidden until paid."
+          },
+          "owedIqd": {
+            "type": "integer"
+          },
+          "cycleNumber": {
+            "type": "integer",
+            "nullable": true
+          },
+          "statementNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "dueAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "warnOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "hideOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "hiddenAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "graceUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "organizationId",
+          "organizationName",
+          "doctorId",
+          "doctorName",
+          "stage",
+          "owedIqd",
+          "cycleNumber",
+          "statementNumber",
+          "dueAt",
+          "warnOn",
+          "hideOn",
+          "hiddenAt",
+          "graceUntil"
+        ]
+      },
+      "CollectionListDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CollectionItemDto"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
       "StatementSettlementDto": {
         "type": "object",
         "properties": {
@@ -14690,8 +14962,13 @@
             "type": "string",
             "enum": [
               "fib",
-              "cash"
+              "cash",
+              "carried"
             ]
+          },
+          "carriedIntoStatement": {
+            "type": "string",
+            "nullable": true
           },
           "reference": {
             "type": "string",
@@ -14710,11 +14987,14 @@
             "format": "date-time"
           },
           "settledByName": {
-            "type": "string"
+            "type": "string",
+            "nullable": true,
+            "description": "Null when closed automatically (carried)."
           }
         },
         "required": [
           "method",
+          "carriedIntoStatement",
           "reference",
           "counterpartyName",
           "note",
@@ -14881,6 +15161,26 @@
           "amountIqd"
         ]
       },
+      "StatementCarriedDto": {
+        "type": "object",
+        "properties": {
+          "statementNumber": {
+            "type": "string"
+          },
+          "cycleNumber": {
+            "type": "integer"
+          },
+          "amountIqd": {
+            "type": "integer",
+            "description": "Negative: the doctor owed."
+          }
+        },
+        "required": [
+          "statementNumber",
+          "cycleNumber",
+          "amountIqd"
+        ]
+      },
       "StatementDocumentDto": {
         "type": "object",
         "properties": {
@@ -14947,6 +15247,10 @@
           "commissionIqd": {
             "type": "integer"
           },
+          "carriedInIqd": {
+            "type": "integer",
+            "description": "Unpaid balance from earlier statements (zero or less)."
+          },
           "netPayableIqd": {
             "type": "integer"
           },
@@ -14956,6 +15260,12 @@
           "chargeCount": {
             "type": "integer",
             "nullable": true
+          },
+          "dueAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When the doctor should have paid (doctor owes only)."
           },
           "settlement": {
             "nullable": true,
@@ -15015,6 +15325,12 @@
             "items": {
               "$ref": "#/components/schemas/StatementMoneyDto"
             }
+          },
+          "carriedFrom": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StatementCarriedDto"
+            }
           }
         },
         "required": [
@@ -15033,9 +15349,11 @@
           "clawbackIqd",
           "providerFeeIqd",
           "commissionIqd",
+          "carriedInIqd",
           "netPayableIqd",
           "paymentCount",
           "chargeCount",
+          "dueAt",
           "settlement",
           "issuedAt",
           "cycleStart",
@@ -15046,7 +15364,8 @@
           "revenue",
           "charges",
           "onlinePayments",
-          "refunds"
+          "refunds",
+          "carriedFrom"
         ]
       },
       "SettleStatementDto": {

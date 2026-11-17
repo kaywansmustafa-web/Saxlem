@@ -7,6 +7,7 @@ import { PrismaBillingRepository } from '../../src/modules/billing/infrastructur
 import type { BackendConfiguration } from '../../src/config/environment';
 import { StatementService } from '../../src/modules/payments/application/statement.service';
 import { PrismaStatementRepository } from '../../src/modules/payments/infrastructure/prisma-statement.repository';
+import { PrismaAppointmentRepository } from '../../src/modules/appointments/infrastructure/prisma-appointment.repository';
 
 const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.TEST_DATABASE_URL! }),
@@ -331,6 +332,71 @@ describe('per-doctor billing and payouts', () => {
     ).find((row) => row.doctorId === fixture.shilan);
     expect(shilanSetup?.effectivePlan.id).toBe(free.id);
     expect(setupView!.cycleStart).toBe('2026-09-01');
+
+    // Collections: Karwan owes 1,250 on statement 2 (Oct) and never pays.
+    const october = await fixture.completed(fixture.karwan, 10, '2026-10-10');
+    await prisma.$transaction((tx) =>
+      billing.materializeCompletion(
+        tx,
+        october.id,
+        new Date('2026-10-10T08:15:00Z'),
+        fixture.actorId,
+        'complete-october',
+      ),
+    );
+    const appointments = new PrismaAppointmentRepository(database);
+    // 20 Dec: carried into statement 3; overdue since 14 Nov, not hidden.
+    const december = new Date('2026-12-20T09:00:00.000Z');
+    await statements.runCollections(december);
+    const carried = await prisma.organizationPayout.findFirstOrThrow({
+      where: { doctorId: fixture.karwan, cycleNumber: 2 },
+    });
+    expect(carried).toMatchObject({
+      method: 'carried',
+      carriedIntoCycle: 3,
+      netPayableIqd: -1250,
+      settledById: null,
+    });
+    const owed = (
+      await statements.collections(
+        platform,
+        { organizationId: fixture.organizationId },
+        december,
+      )
+    ).items;
+    expect(owed).toEqual([
+      expect.objectContaining({
+        doctorId: fixture.karwan,
+        stage: 'overdue',
+        owedIqd: 1250,
+        cycleNumber: 3,
+      }),
+    ]);
+    expect(await appointments.hiddenFromApp(fixture.karwan)).toBe(false);
+    // 20 Jan: still unpaid 60+ days after the due date: hidden from the app.
+    const january = new Date('2027-01-20T09:00:00.000Z');
+    await statements.runCollections(january);
+    expect(await appointments.hiddenFromApp(fixture.karwan)).toBe(true);
+    expect(await appointments.hiddenFromApp(fixture.shilan)).toBe(false);
+    // Paying the cash brings him back.
+    const karwanDue = (
+      await statements.list(
+        platform,
+        { organizationId: fixture.organizationId, doctorId: fixture.karwan },
+        january,
+      )
+    ).items.find((row) => row.status === 'due')!;
+    expect(karwanDue).toMatchObject({ cycleNumber: 4, netPayableIqd: -1250 });
+    await statements.settle(
+      platform,
+      fixture.organizationId,
+      fixture.karwan,
+      4,
+      { method: 'cash', expectedNetPayableIqd: -1250 },
+      'settle-karwan-4',
+      january,
+    );
+    expect(await appointments.hiddenFromApp(fixture.karwan)).toBe(false);
   }, 60_000);
 });
 

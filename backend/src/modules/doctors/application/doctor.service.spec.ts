@@ -125,12 +125,15 @@ describe('DoctorService', () => {
       organizationId: undefined,
       clinicId: undefined,
       clinicAssignmentVisibility: 'active',
+      // Patients never see doctors hidden for an overdue balance.
+      forPatients: true,
     });
     await service.discoveryOptions(staff);
     expect(repo.discoveryOptions.mock.calls.at(-1)?.[0]).toEqual({
       organizationId: 'org',
       clinicId: 'clinic',
       clinicAssignmentVisibility: 'active',
+      forPatients: false,
     });
   });
 

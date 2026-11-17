@@ -90,6 +90,8 @@ export class AppointmentService {
       );
     this.dateWindow(dateFrom, dateTo);
     if (staff) this.requireOwnDoctor(access, doctorId);
+    if (access.patient && (await this.repository.hiddenFromApp(doctorId)))
+      throw new NotFoundException('Booking options were not found.');
     const generatedAt = new Date();
     // Reception may still book the slot that has just begun (a walk-in at
     // 10:03 takes the 10:00 slot); the app only offers slots in the future.
@@ -236,6 +238,11 @@ export class AppointmentService {
     const write = this.write(access, input);
     this.validateTime(write);
     if (!access.patient) this.requireOwnDoctor(access, input.doctorId);
+    // Phone and walk-in bookings still work for a hidden doctor.
+    if (access.patient && (await this.repository.hiddenFromApp(input.doctorId)))
+      throw new ConflictException(
+        'This doctor is not taking app bookings right now. Please call the clinic.',
+      );
     return this.commandResult(() =>
       this.repository.create(access, write, requestId, command, () =>
         this.validateContext(access, write, input.startsAtSource),

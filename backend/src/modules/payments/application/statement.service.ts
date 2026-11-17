@@ -9,6 +9,11 @@ import {
 import { BACKEND_CONFIGURATION } from '../../../config/configuration.module';
 import type { BackendConfiguration } from '../../../config/environment';
 import {
+  GRACE_DAYS,
+  collectionStage,
+  dueAt,
+} from '../../../common/billing/collections';
+import {
   cycleAt,
   cycleByNumber,
   cycleQueryStart,
@@ -113,7 +118,7 @@ export class StatementService {
             plan,
             number,
             cycleByNumber(doctor.cycleStart, number).start,
-            this.totals(lines),
+            this.totals(lines, this.carriedIn(doctor, number)),
             null,
             now,
             lines.charges.length,
@@ -147,7 +152,7 @@ export class StatementService {
         );
     const totals = settlement
       ? this.settledTotals(settlement)
-      : this.totals(lines);
+      : this.totals(lines, this.carriedIn(doctor, cycleNumber));
     const facts = await this.repository.facts(
       doctor,
       cycleQueryStart(cycle),
@@ -205,9 +210,22 @@ export class StatementService {
         })),
       onlinePayments: lines.payments.map((line) => this.money(line)),
       refunds: lines.clawbacks.map((line) => this.money(line)),
+      // Unpaid balances from earlier statements, taken from this one.
+      carriedFrom: doctor.settlements
+        .filter(
+          (row) => row.carriedIntoCycle === cycleNumber && row.cycleNumber,
+        )
+        .map((row) => ({
+          statementNumber: statementNumber(doctorId, row.cycleNumber!),
+          cycleNumber: row.cycleNumber!,
+          amountIqd: row.netPayableIqd,
+        })),
       settlement: settlement
         ? {
             method: settlement.method,
+            carriedIntoStatement: settlement.carriedIntoCycle
+              ? statementNumber(doctorId, settlement.carriedIntoCycle)
+              : null,
             reference: settlement.reference,
             counterpartyName: settlement.counterpartyName,
             note: settlement.note,
@@ -256,6 +274,7 @@ export class StatementService {
     const window = this.window(doctor, plan, cycleNumber);
     const preview = this.totals(
       await this.repository.openLines(doctor, window),
+      this.carriedIn(doctor, cycleNumber),
     );
     if (input.method === 'fib' && preview.netPayableIqd < 0)
       throw new BadRequestException(
@@ -272,8 +291,10 @@ export class StatementService {
       periodEnd: cycle.end,
       window,
       expectedNetPayableIqd: input.expectedNetPayableIqd,
-      totals: (lines) => this.totals(lines),
+      totals: (lines, settlements) =>
+        this.totals(lines, this.carriedIn({ settlements }, cycleNumber)),
       method: input.method,
+      carriedIntoCycle: null,
       reference,
       counterpartyName: input.counterpartyName?.trim() || null,
       note: input.note?.trim() || null,
@@ -284,7 +305,193 @@ export class StatementService {
       throw new ConflictException(
         'The amounts changed or the statement was settled. Refresh and try again.',
       );
+    // Paying brings a hidden doctor back right away.
+    await this.refreshVisibility(
+      await this.doctor(organizationId, doctorId),
+      now,
+      access.actorId,
+      requestId,
+    );
     return this.document(access, organizationId, doctorId, cycleNumber, now);
+  }
+
+  /** Who owes Saxlem, how much, since when, and what happens next. */
+  async collections(
+    access: StatementAccess,
+    filter: { organizationId?: string },
+    now = new Date(),
+  ) {
+    const organizationId = access.platformAdministrator
+      ? filter.organizationId
+      : access.organizationId;
+    if (!access.platformAdministrator && !organizationId)
+      throw new ForbiddenException('Billing access requires an organization.');
+    const doctors = (await this.repository.doctors(organizationId)).filter(
+      (doctor) => this.allowed(access, doctor.doctorId),
+    );
+    const items = [];
+    for (const doctor of doctors) {
+      const state = await this.debt(doctor, now);
+      if (state.stage === 'clear' && !doctor.appHiddenAt) continue;
+      items.push({
+        organizationId: doctor.organizationId,
+        organizationName: doctor.organizationName,
+        doctorId: doctor.doctorId,
+        doctorName: doctor.doctorName,
+        stage: doctor.appHiddenAt ? ('hidden' as const) : state.stage,
+        owedIqd: state.owedIqd,
+        cycleNumber: state.cycleNumber,
+        statementNumber: state.cycleNumber
+          ? statementNumber(doctor.doctorId, state.cycleNumber)
+          : null,
+        dueAt: state.oldestDueAt?.toISOString() ?? null,
+        warnOn: state.warnOn?.toISOString() ?? null,
+        hideOn: state.hideOn?.toISOString() ?? null,
+        hiddenAt: doctor.appHiddenAt?.toISOString() ?? null,
+        graceUntil: doctor.billingGraceUntil?.toISOString() ?? null,
+      });
+    }
+    return { items };
+  }
+
+  /** Saxlem gives a doctor GRACE_DAYS more before hiding (shows them again
+   * if hidden). Reminders and carrying continue. */
+  async giveMoreTime(
+    access: StatementAccess,
+    organizationId: string,
+    doctorId: string,
+    requestId: string,
+    now = new Date(),
+  ) {
+    if (!access.platformAdministrator)
+      throw new ForbiddenException(
+        'Platform administrator access is required.',
+      );
+    const doctor = await this.doctor(organizationId, doctorId);
+    const from = Math.max(
+      now.getTime(),
+      doctor.billingGraceUntil?.getTime() ?? 0,
+    );
+    await this.repository.setGrace(
+      doctor,
+      new Date(from + GRACE_DAYS * 86_400_000),
+      access.actorId,
+      requestId,
+    );
+    await this.refreshVisibility(
+      await this.doctor(organizationId, doctorId),
+      now,
+      access.actorId,
+      requestId,
+    );
+    return this.collections(access, { organizationId }, now).then(
+      (list) => list.items.find((item) => item.doctorId === doctorId) ?? null,
+    );
+  }
+
+  /** The collections run: carry unpaid balances forward, then hide or show
+   * doctors. Safe to run any time; it only acts on what is due. */
+  async runCollections(now = new Date(), requestId = 'billing-collections') {
+    let carried = 0,
+      changed = 0;
+    for (const listed of await this.repository.doctors()) {
+      let doctor = listed;
+      // Several cycles may have passed: carry one at a time, oldest first.
+      for (let step = 0; step < 24; step += 1) {
+        if (!(await this.carry(doctor, now, requestId))) break;
+        carried += 1;
+        doctor = await this.doctor(doctor.organizationId, doctor.doctorId);
+      }
+      if (await this.refreshVisibility(doctor, now, null, requestId))
+        changed += 1;
+    }
+    return { carried, changed };
+  }
+
+  /** If the doctor still owes on their oldest statement once the next one
+   * has ended, the balance moves into the next one. */
+  private async carry(doctor: StatementDoctor, now: Date, requestId: string) {
+    const plan = await this.plan(doctor, now);
+    const number = plan.next;
+    if (plan.settled.has(number)) return false;
+    const cycle = cycleByNumber(doctor.cycleStart, number);
+    const following = cycleByNumber(doctor.cycleStart, number + 1);
+    if (cycle.end > now || following.end > now) return false;
+    const window = this.window(doctor, plan, number);
+    const totals = this.totals(
+      await this.repository.openLines(doctor, window),
+      this.carriedIn(doctor, number),
+    );
+    if (totals.netPayableIqd >= 0) return false;
+    const settled = await this.repository.settle({
+      doctor,
+      cycleNumber: number,
+      periodStart: cycle.start,
+      periodEnd: cycle.end,
+      window,
+      expectedNetPayableIqd: totals.netPayableIqd,
+      totals: (lines, settlements) =>
+        this.totals(lines, this.carriedIn({ settlements }, number)),
+      method: 'carried',
+      carriedIntoCycle: number + 1,
+      reference: null,
+      counterpartyName: null,
+      note: null,
+      actorUserId: null,
+      requestId,
+    });
+    return Boolean(settled);
+  }
+
+  /** What the doctor owes now and since when. */
+  private async debt(doctor: StatementDoctor, now: Date) {
+    const plan = await this.plan(doctor, now);
+    const number = plan.next;
+    const cycle = cycleByNumber(doctor.cycleStart, number);
+    let owedIqd = 0;
+    if (!plan.settled.has(number) && cycle.end <= now) {
+      const totals = this.totals(
+        await this.repository.openLines(
+          doctor,
+          this.window(doctor, plan, number),
+        ),
+        this.carriedIn(doctor, number),
+      );
+      owedIqd = Math.max(0, -totals.netPayableIqd);
+    }
+    // A balance carried from earlier statements is as old as the first.
+    let first = number;
+    while (plan.settled.get(first - 1)?.method === 'carried') first -= 1;
+    const oldestDueAt = owedIqd
+      ? dueAt(cycleByNumber(doctor.cycleStart, first).end)
+      : null;
+    return {
+      owedIqd,
+      cycleNumber: owedIqd ? number : null,
+      oldestDueAt,
+      ...collectionStage({
+        owedIqd,
+        oldestDueAt,
+        graceUntil: doctor.billingGraceUntil,
+        hiddenAt: null,
+        now,
+      }),
+    };
+  }
+
+  /** Hides a long-overdue doctor from the patient app, or shows them again
+   * once paid or given more time. Returns whether anything changed. */
+  private async refreshVisibility(
+    doctor: StatementDoctor,
+    now: Date,
+    actorId: string | null,
+    requestId: string,
+  ) {
+    const { stage } = await this.debt(doctor, now);
+    const hide = stage === 'hidden';
+    if (hide === Boolean(doctor.appHiddenAt)) return false;
+    await this.repository.setAppHidden(doctor, hide, actorId, requestId);
+    return true;
   }
 
   private async plan(doctor: StatementDoctor, now: Date): Promise<Plan> {
@@ -303,6 +510,13 @@ export class StatementService {
       // Anything dated in a settled cycle moves to the next open one.
       while (settled.has(number)) number += 1;
       if (number < current.number) withActivity.add(number);
+    }
+    // A balance carried into a statement makes it one to settle, even if
+    // nothing else happened in those 30 days.
+    for (const row of doctor.settlements) {
+      if (!row.carriedIntoCycle || settled.has(row.carriedIntoCycle)) continue;
+      if (row.carriedIntoCycle < current.number)
+        withActivity.add(row.carriedIntoCycle);
     }
     const next = withActivity.size ? Math.min(...withActivity) : current.number;
     const lastSettledEnd = (cycle: number) =>
@@ -336,7 +550,17 @@ export class StatementService {
     };
   }
 
-  private totals(lines: StatementLines) {
+  /** Unpaid balances earlier statements moved into this one (≤ 0). */
+  private carriedIn(
+    doctor: Pick<StatementDoctor, 'settlements'>,
+    number: number,
+  ) {
+    return doctor.settlements
+      .filter((row) => row.carriedIntoCycle === number)
+      .reduce((sum, row) => sum + row.netPayableIqd, 0);
+  }
+
+  private totals(lines: StatementLines, carriedInIqd: number) {
     const gross = lines.payments.reduce((sum, p) => sum + p.amountIqd, 0);
     const clawback = lines.clawbacks.reduce((sum, p) => sum + p.amountIqd, 0);
     const fee = this.configuration.paymentFeePassedToClinic
@@ -351,7 +575,8 @@ export class StatementService {
       clawbackIqd: clawback,
       providerFeeIqd: fee,
       commissionIqd: commission,
-      netPayableIqd: gross - clawback - fee - commission,
+      carriedInIqd,
+      netPayableIqd: gross - clawback - fee - commission + carriedInIqd,
       paymentCount: lines.payments.length,
     };
   }
@@ -362,6 +587,7 @@ export class StatementService {
       clawbackIqd: row.clawbackIqd,
       providerFeeIqd: row.providerFeeIqd,
       commissionIqd: row.commissionIqd,
+      carriedInIqd: row.carriedInIqd,
       netPayableIqd: row.netPayableIqd,
       paymentCount: row.paymentCount,
     };
@@ -404,6 +630,11 @@ export class StatementService {
             : ('even' as const),
       ...totals,
       chargeCount: chargeCount ?? null,
+      // Doctors pay what they owe within DUE_DAYS of the statement's end.
+      dueAt:
+        !settlement && cycle.end <= now && totals.netPayableIqd < 0
+          ? dueAt(cycle.end).toISOString()
+          : null,
       settlement: settlement
         ? {
             method: settlement.method,

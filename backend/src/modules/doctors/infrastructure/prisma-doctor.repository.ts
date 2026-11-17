@@ -69,7 +69,10 @@ export class PrismaDoctorRepository implements DoctorRepository {
   async discoveryOptions(
     criteria: Pick<
       DoctorSearchCriteria,
-      'organizationId' | 'clinicId' | 'clinicAssignmentVisibility'
+      | 'organizationId'
+      | 'clinicId'
+      | 'clinicAssignmentVisibility'
+      | 'forPatients'
     >,
   ) {
     const visibleDoctor = this.visibilityWhere(criteria);
@@ -164,6 +167,7 @@ export class PrismaDoctorRepository implements DoctorRepository {
       clinicId?: string | undefined;
       visibility: 'active' | 'activeOrInactive';
       clinicAssignmentVisibility: DoctorClinicAssignmentVisibility;
+      forPatients?: boolean;
     },
   ) {
     const doctor = await this.prisma.db.doctor.findFirst({
@@ -196,6 +200,8 @@ export class PrismaDoctorRepository implements DoctorRepository {
             },
         organization: { status: 'active' },
         specialtyAssignments: { some: { specialty: { status: 'active' } } },
+        // Hidden from patients while a Saxlem balance is long overdue.
+        ...(criteria.forPatients ? { appHiddenAt: null } : {}),
       },
       include: doctorInclude(criteria.clinicAssignmentVisibility),
     });
@@ -237,6 +243,7 @@ export class PrismaDoctorRepository implements DoctorRepository {
         : {}),
       status: criteria.status,
       organization: { status: 'active' },
+      ...(criteria.forPatients ? { appHiddenAt: null } : {}),
       ...(criteria.gender ? { gender: criteria.gender } : {}),
       ...(criteria.minimumYearsOfExperience === undefined
         ? {}
@@ -298,7 +305,10 @@ export class PrismaDoctorRepository implements DoctorRepository {
   private visibilityWhere(
     criteria: Pick<
       DoctorSearchCriteria,
-      'organizationId' | 'clinicId' | 'clinicAssignmentVisibility'
+      | 'organizationId'
+      | 'clinicId'
+      | 'clinicAssignmentVisibility'
+      | 'forPatients'
     >,
   ): Prisma.DoctorWhereInput {
     return {
@@ -307,6 +317,7 @@ export class PrismaDoctorRepository implements DoctorRepository {
         : {}),
       status: 'active',
       organization: { status: 'active' },
+      ...(criteria.forPatients ? { appHiddenAt: null } : {}),
       clinicAssignments: criteria.clinicId
         ? {
             some: {

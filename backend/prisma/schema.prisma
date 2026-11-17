@@ -410,11 +410,15 @@ model Doctor {
   holidays             DoctorHoliday[]
   scheduleExceptions   DoctorScheduleException[]
 
-  commissions     CommissionLedgerEntry[] @relation("DoctorCommissions")
-  statements      BillingStatement[]      @relation("DoctorStatements")
-  payouts         OrganizationPayout[]    @relation("DoctorPayouts")
-  planAssignments DoctorPlanAssignment[]  @relation("DoctorPlans")
-  payoutProfile   DoctorPayoutProfile?    @relation("DoctorPayoutProfile")
+  commissions       CommissionLedgerEntry[] @relation("DoctorCommissions")
+  statements        BillingStatement[]      @relation("DoctorStatements")
+  payouts           OrganizationPayout[]    @relation("DoctorPayouts")
+  planAssignments   DoctorPlanAssignment[]  @relation("DoctorPlans")
+  payoutProfile     DoctorPayoutProfile?    @relation("DoctorPayoutProfile")
+  /// Hidden from the patient app because a statement is long overdue.
+  appHiddenAt       DateTime?               @map("app_hidden_at") @db.Timestamptz(3)
+  /// Saxlem gave more time: no hiding before this.
+  billingGraceUntil DateTime?               @map("billing_grace_until") @db.Timestamptz(3)
 
   @@unique([organizationId, id])
   @@unique([organizationId, licenseNumber])
@@ -1322,8 +1326,13 @@ model OrganizationPayout {
   commissionIqd     Int                  @map("commission_iqd")
   netPayableIqd     Int                  @map("net_payable_iqd")
   paymentCount      Int                  @map("payment_count")
-  /// fib or cash. Doctors pay Saxlem in cash; Saxlem pays by FIB or cash.
+  /// fib or cash; carried = the doctor owed, did not pay, and the balance
+  /// moved into the next statement.
   method            String               @default("fib")
+  /// For a carried statement: the cycle its balance moved into.
+  carriedIntoCycle  Int?                 @map("carried_into_cycle")
+  /// Unpaid balance brought in from earlier statements (zero or negative).
+  carriedInIqd      Int                  @default(0) @map("carried_in_iqd")
   /// The 30-day billing cycle this settles (null on early calendar-month ones).
   cycleNumber       Int?                 @map("cycle_number")
   /// Earliest time the settlement swept up (unsettled items carry forward).
@@ -1333,11 +1342,11 @@ model OrganizationPayout {
   reference         String?
   note              String?
   settledAt         DateTime             @map("settled_at") @db.Timestamptz(3)
-  settledById       String               @map("settled_by_id") @db.Uuid
+  settledById       String?              @map("settled_by_id") @db.Uuid
   createdAt         DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
   organization      Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   doctor            Doctor?              @relation("DoctorPayouts", fields: [organizationId, doctorId], references: [organizationId, id], onDelete: Restrict)
-  settledBy         User                 @relation(fields: [settledById], references: [id], onDelete: Restrict)
+  settledBy         User?                @relation(fields: [settledById], references: [id], onDelete: Restrict)
   payments          AppointmentPayment[] @relation("PayoutPayments")
   clawbacks         AppointmentPayment[] @relation("PayoutClawbacks")
 

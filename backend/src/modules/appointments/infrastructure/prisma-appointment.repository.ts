@@ -32,6 +32,14 @@ type Row = Prisma.AppointmentGetPayload<{ include: typeof include }>;
 export class PrismaAppointmentRepository implements AppointmentRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  async hiddenFromApp(doctorId: string) {
+    const doctor = await this.prisma.db.doctor.findUnique({
+      where: { id: doctorId },
+      select: { appHiddenAt: true },
+    });
+    return Boolean(doctor?.appHiddenAt);
+  }
+
   async replay(access: AppointmentAccess, command: AppointmentCommand) {
     const existing = await this.prisma.db.idempotencyRecord.findUnique({
       where: {

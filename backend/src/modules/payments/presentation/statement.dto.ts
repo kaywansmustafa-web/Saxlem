@@ -70,17 +70,29 @@ export class SettleStatementDto {
 }
 
 class StatementSettlementBriefDto {
-  @ApiProperty({ enum: ['fib', 'cash'] }) method!: 'fib' | 'cash';
+  @ApiProperty({
+    enum: ['fib', 'cash', 'carried'],
+    description: 'carried: unpaid, moved into the next statement.',
+  })
+  method!: 'fib' | 'cash' | 'carried';
   @ApiProperty({ format: 'date-time' }) settledAt!: string;
 }
 class StatementSettlementDto {
-  @ApiProperty({ enum: ['fib', 'cash'] }) method!: 'fib' | 'cash';
+  @ApiProperty({ enum: ['fib', 'cash', 'carried'] })
+  method!: 'fib' | 'cash' | 'carried';
+  @ApiProperty({ type: 'string', nullable: true })
+  carriedIntoStatement!: string | null;
   @ApiProperty({ type: 'string', nullable: true }) reference!: string | null;
   @ApiProperty({ type: 'string', nullable: true })
   counterpartyName!: string | null;
   @ApiProperty({ type: 'string', nullable: true }) note!: string | null;
   @ApiProperty({ format: 'date-time' }) settledAt!: string;
-  @ApiProperty() settledByName!: string;
+  @ApiProperty({
+    type: 'string',
+    nullable: true,
+    description: 'Null when closed automatically (carried).',
+  })
+  settledByName!: string | null;
 }
 export class StatementSummaryDto {
   @ApiProperty({ format: 'uuid' }) organizationId!: string;
@@ -104,9 +116,21 @@ export class StatementSummaryDto {
   @ApiProperty({ type: 'integer' }) clawbackIqd!: number;
   @ApiProperty({ type: 'integer' }) providerFeeIqd!: number;
   @ApiProperty({ type: 'integer' }) commissionIqd!: number;
+  @ApiProperty({
+    type: 'integer',
+    description: 'Unpaid balance from earlier statements (zero or less).',
+  })
+  carriedInIqd!: number;
   @ApiProperty({ type: 'integer' }) netPayableIqd!: number;
   @ApiProperty({ type: 'integer' }) paymentCount!: number;
   @ApiProperty({ type: 'integer', nullable: true }) chargeCount!: number | null;
+  @ApiProperty({
+    type: 'string',
+    format: 'date-time',
+    nullable: true,
+    description: 'When the doctor should have paid (doctor owes only).',
+  })
+  dueAt!: string | null;
   @ApiProperty({ type: StatementSettlementBriefDto, nullable: true })
   settlement!: StatementSettlementBriefDto | StatementSettlementDto | null;
 }
@@ -152,6 +176,45 @@ class StatementMoneyDto {
   @ApiProperty() appointmentReference!: string;
   @ApiProperty({ type: 'integer' }) amountIqd!: number;
 }
+class StatementCarriedDto {
+  @ApiProperty() statementNumber!: string;
+  @ApiProperty({ type: 'integer' }) cycleNumber!: number;
+  @ApiProperty({ type: 'integer', description: 'Negative: the doctor owed.' })
+  amountIqd!: number;
+}
+export class CollectionItemDto {
+  @ApiProperty({ format: 'uuid' }) organizationId!: string;
+  @ApiProperty() organizationName!: string;
+  @ApiProperty({ format: 'uuid' }) doctorId!: string;
+  @ApiProperty() doctorName!: string;
+  @ApiProperty({
+    enum: ['clear', 'due', 'overdue', 'warning', 'hidden'],
+    description:
+      'due: reminders; overdue: carried into the next statement; warning: will be hidden from the app on hideOn; hidden: hidden until paid.',
+  })
+  stage!: 'clear' | 'due' | 'overdue' | 'warning' | 'hidden';
+  @ApiProperty({ type: 'integer' }) owedIqd!: number;
+  @ApiProperty({ type: 'integer', nullable: true }) cycleNumber!: number | null;
+  @ApiProperty({ type: 'string', nullable: true })
+  statementNumber!: string | null;
+  @ApiProperty({ type: 'string', format: 'date-time', nullable: true })
+  dueAt!: string | null;
+  @ApiProperty({ type: 'string', format: 'date-time', nullable: true })
+  warnOn!: string | null;
+  @ApiProperty({ type: 'string', format: 'date-time', nullable: true })
+  hideOn!: string | null;
+  @ApiProperty({ type: 'string', format: 'date-time', nullable: true })
+  hiddenAt!: string | null;
+  @ApiProperty({ type: 'string', format: 'date-time', nullable: true })
+  graceUntil!: string | null;
+}
+export class CollectionListDto {
+  @ApiProperty({ type: [CollectionItemDto] }) items!: CollectionItemDto[];
+}
+export class CollectionDoctorParamsDto {
+  @ApiProperty({ format: 'uuid' }) @IsUUID() organizationId!: string;
+  @ApiProperty({ format: 'uuid' }) @IsUUID() doctorId!: string;
+}
 export class StatementDocumentDto extends StatementSummaryDto {
   @ApiProperty({ format: 'date-time' }) issuedAt!: string;
   @ApiProperty({ example: '2026-11-17' }) cycleStart!: string;
@@ -165,6 +228,8 @@ export class StatementDocumentDto extends StatementSummaryDto {
   @ApiProperty({ type: [StatementMoneyDto] })
   onlinePayments!: StatementMoneyDto[];
   @ApiProperty({ type: [StatementMoneyDto] }) refunds!: StatementMoneyDto[];
+  @ApiProperty({ type: [StatementCarriedDto] })
+  carriedFrom!: StatementCarriedDto[];
   @ApiProperty({ type: StatementSettlementDto, nullable: true })
   declare settlement: StatementSettlementDto | null;
 }

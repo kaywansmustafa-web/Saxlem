@@ -7,6 +7,7 @@ import { PAYOUT_REPOSITORY } from './domain/payout';
 import { PrismaPayoutRepository } from './infrastructure/prisma-payout.repository';
 import { PayoutsController } from './presentation/payouts.controller';
 import { StatementService } from './application/statement.service';
+import { BillingCollectionsWorker } from './infrastructure/billing-collections.worker';
 import { STATEMENT_REPOSITORY } from './domain/statement';
 import { PrismaStatementRepository } from './infrastructure/prisma-statement.repository';
 import { StatementsController } from './presentation/statements.controller';
@@ -35,6 +36,7 @@ import {
     PrismaPayoutRepository,
     { provide: PAYOUT_REPOSITORY, useExisting: PrismaPayoutRepository },
     StatementService,
+    BillingCollectionsWorker,
     PrismaStatementRepository,
     { provide: STATEMENT_REPOSITORY, useExisting: PrismaStatementRepository },
     PrismaPaymentRepository,

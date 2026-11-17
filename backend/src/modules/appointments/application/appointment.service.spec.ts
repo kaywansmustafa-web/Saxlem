@@ -417,6 +417,7 @@ function fixture() {
     auditView: jest.fn(),
     clinicDoctors: jest.fn().mockResolvedValue([]),
     dayAppointments: jest.fn().mockResolvedValue([]),
+    hiddenFromApp: jest.fn().mockResolvedValue(false),
   };
   const schedules = {
     assertBookable,

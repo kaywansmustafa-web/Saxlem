@@ -150,6 +150,14 @@ const configurationSchema = z
     PAYMENT_PUBLIC_CALLBACK_BASE_URL: z.string().url().optional(),
     PAYMENT_LINK_MINUTES: z.coerce.number().int().min(6).max(2880).default(30),
     PAYMENT_WORKER_ENABLED: truthy.default(false),
+    // Carries unpaid doctor balances and hides long-overdue doctors.
+    BILLING_COLLECTIONS_WORKER_ENABLED: truthy.default(false),
+    BILLING_COLLECTIONS_INTERVAL_MS: z.coerce
+      .number()
+      .int()
+      .min(60000)
+      .max(86400000)
+      .default(3600000),
     PAYMENT_WORKER_POLL_INTERVAL_MS: z.coerce
       .number()
       .int()
@@ -284,6 +292,8 @@ const configurationSchema = z
       paymentPublicCallbackBaseUrl: input.PAYMENT_PUBLIC_CALLBACK_BASE_URL,
       paymentLinkMinutes: input.PAYMENT_LINK_MINUTES,
       paymentWorkerEnabled: input.PAYMENT_WORKER_ENABLED,
+      billingCollectionsWorkerEnabled: input.BILLING_COLLECTIONS_WORKER_ENABLED,
+      billingCollectionsIntervalMs: input.BILLING_COLLECTIONS_INTERVAL_MS,
       paymentWorkerPollIntervalMs: input.PAYMENT_WORKER_POLL_INTERVAL_MS,
       accessTokenSecret: input.ACCESS_TOKEN_SECRET,
       refreshTokenSecret: input.REFRESH_TOKEN_SECRET,

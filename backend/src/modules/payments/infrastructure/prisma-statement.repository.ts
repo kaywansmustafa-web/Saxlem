@@ -18,6 +18,8 @@ const doctorSelect = {
   id: true,
   organizationId: true,
   displayName: true,
+  appHiddenAt: true,
+  billingGraceUntil: true,
   organization: {
     select: { name: true, billingCycleStart: true, createdAt: true },
   },
@@ -250,7 +252,7 @@ export class PrismaStatementRepository implements StatementRepository {
           settlements: settlements.map((row) => this.settlementRecord(row)),
         };
         const lines = await this.lines(tx, current, input.window);
-        const totals = input.totals(lines);
+        const totals = input.totals(lines, current.settlements);
         if (totals.netPayableIqd !== input.expectedNetPayableIqd) return null;
         const payout = await tx.organizationPayout.create({
           data: {
@@ -262,6 +264,7 @@ export class PrismaStatementRepository implements StatementRepository {
             windowStart: input.window.chargesFrom,
             ...totals,
             method: input.method,
+            carriedIntoCycle: input.carriedIntoCycle,
             reference: input.reference,
             counterpartyName: input.counterpartyName,
             note: input.note,
@@ -294,7 +297,10 @@ export class PrismaStatementRepository implements StatementRepository {
           data: {
             actorUserId: input.actorUserId,
             organizationId: doctor.organizationId,
-            action: 'payment.statement_settled',
+            action:
+              input.method === 'carried'
+                ? 'payment.statement_carried'
+                : 'payment.statement_settled',
             targetType: 'OrganizationPayout',
             targetId: payout.id,
             outcome: 'succeeded',
@@ -312,6 +318,67 @@ export class PrismaStatementRepository implements StatementRepository {
       },
       { isolationLevel: 'Serializable' },
     );
+  }
+
+  async setAppHidden(
+    doctor: StatementDoctor,
+    hidden: boolean,
+    actorUserId: string | null,
+    requestId: string,
+  ) {
+    await this.prisma.db.$transaction(async (tx) => {
+      const changed = await tx.doctor.updateMany({
+        where: {
+          id: doctor.doctorId,
+          organizationId: doctor.organizationId,
+          appHiddenAt: hidden ? null : { not: null },
+        },
+        data: { appHiddenAt: hidden ? new Date() : null },
+      });
+      if (!changed.count) return;
+      await tx.auditEvent.create({
+        data: {
+          actorUserId,
+          organizationId: doctor.organizationId,
+          action: hidden
+            ? 'billing.doctor_hidden_overdue'
+            : 'billing.doctor_shown_again',
+          targetType: 'Doctor',
+          targetId: doctor.doctorId,
+          outcome: 'succeeded',
+          requestId,
+          metadata: {},
+          occurredAt: new Date(),
+        },
+      });
+    });
+  }
+
+  async setGrace(
+    doctor: StatementDoctor,
+    until: Date,
+    actorUserId: string,
+    requestId: string,
+  ) {
+    await this.prisma.db.$transaction(async (tx) => {
+      await tx.doctor.update({
+        where: { id: doctor.doctorId },
+        data: { billingGraceUntil: until },
+      });
+      await tx.auditEvent.create({
+        data: {
+          actorUserId,
+          organizationId: doctor.organizationId,
+          action: 'billing.grace_given',
+          targetType: 'Doctor',
+          targetId: doctor.doctorId,
+          outcome: 'succeeded',
+          requestId,
+          metadata: { until: until.toISOString() },
+          occurredAt: new Date(),
+        },
+      });
+    });
   }
 
   private async lines(
@@ -441,6 +508,8 @@ export class PrismaStatementRepository implements StatementRepository {
         ...new Set(row.clinicAssignments.map((a) => a.clinic.name)),
       ].sort(),
       settlements: row.payouts.map((payout) => this.settlementRecord(payout)),
+      appHiddenAt: row.appHiddenAt,
+      billingGraceUntil: row.billingGraceUntil,
       payoutAccount: row.payoutProfile
         ? {
             name: row.payoutProfile.payoutAccountName,
@@ -457,11 +526,13 @@ export class PrismaStatementRepository implements StatementRepository {
     periodEnd: Date;
     windowStart: Date | null;
     method: string;
+    carriedIntoCycle: number | null;
+    carriedInIqd: number;
     reference: string | null;
     counterpartyName: string | null;
     note: string | null;
     settledAt: Date;
-    settledBy: { staffAccount: { email: string } | null };
+    settledBy: { staffAccount: { email: string } | null } | null;
     grossCollectedIqd: number;
     clawbackIqd: number;
     providerFeeIqd: number;
@@ -475,12 +546,21 @@ export class PrismaStatementRepository implements StatementRepository {
       periodStart: row.periodStart,
       periodEnd: row.periodEnd,
       windowStart: row.windowStart ?? row.periodStart,
-      method: row.method === 'cash' ? 'cash' : 'fib',
+      method:
+        row.method === 'cash'
+          ? 'cash'
+          : row.method === 'carried'
+            ? 'carried'
+            : 'fib',
+      carriedIntoCycle: row.carriedIntoCycle,
+      carriedInIqd: row.carriedInIqd,
       reference: row.reference,
       counterpartyName: row.counterpartyName,
       note: row.note,
       settledAt: row.settledAt,
-      settledByName: row.settledBy.staffAccount?.email ?? 'Saxlem',
+      settledByName: row.settledBy
+        ? (row.settledBy.staffAccount?.email ?? 'Saxlem')
+        : null,
       grossCollectedIqd: row.grossCollectedIqd,
       clawbackIqd: row.clawbackIqd,
       providerFeeIqd: row.providerFeeIqd,

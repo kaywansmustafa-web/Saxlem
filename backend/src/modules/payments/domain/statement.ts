@@ -6,6 +6,9 @@
  * pays Saxlem the difference in cash.
  */
 export type SettlementMethod = 'fib' | 'cash';
+/** carried: the doctor owed, did not pay, and the balance moved into the
+ * next statement (taken from their app payments there). */
+export type ClosingMethod = SettlementMethod | 'carried';
 
 export interface StatementSettlement {
   readonly id: string;
@@ -14,12 +17,17 @@ export interface StatementSettlement {
   readonly periodEnd: Date;
   /** Earliest time this settlement swept up. */
   readonly windowStart: Date;
-  readonly method: SettlementMethod;
+  readonly method: ClosingMethod;
+  /** For a carried statement: the cycle its balance moved into. */
+  readonly carriedIntoCycle: number | null;
+  /** Unpaid balance brought in from earlier statements (zero or less). */
+  readonly carriedInIqd: number;
   readonly reference: string | null;
   readonly counterpartyName: string | null;
   readonly note: string | null;
   readonly settledAt: Date;
-  readonly settledByName: string;
+  /** Null when Saxlem closed it automatically (carried). */
+  readonly settledByName: string | null;
   readonly grossCollectedIqd: number;
   readonly clawbackIqd: number;
   readonly providerFeeIqd: number;
@@ -37,6 +45,10 @@ export interface StatementDoctor {
   readonly cycleStart: string;
   readonly clinicNames: readonly string[];
   readonly settlements: readonly StatementSettlement[];
+  /** Hidden from the patient app for an overdue balance. */
+  readonly appHiddenAt: Date | null;
+  /** Saxlem gave more time: no hiding before this. */
+  readonly billingGraceUntil: Date | null;
   readonly payoutAccount: {
     readonly name: string | null;
     readonly number: string | null;
@@ -134,21 +146,39 @@ export interface StatementRepository {
     periodEnd: Date;
     window: StatementWindow;
     expectedNetPayableIqd: number;
-    totals: (lines: StatementLines) => {
+    totals: (
+      lines: StatementLines,
+      settlements: readonly StatementSettlement[],
+    ) => {
       grossCollectedIqd: number;
       clawbackIqd: number;
       providerFeeIqd: number;
       commissionIqd: number;
+      carriedInIqd: number;
       netPayableIqd: number;
       paymentCount: number;
     };
-    method: SettlementMethod;
+    method: ClosingMethod;
+    carriedIntoCycle: number | null;
     reference: string | null;
     counterpartyName: string | null;
     note: string | null;
-    actorUserId: string;
+    actorUserId: string | null;
     requestId: string;
   }): Promise<StatementSettlement | null>;
+  /** Hides the doctor from the patient app, or shows them again. */
+  setAppHidden(
+    doctor: StatementDoctor,
+    hidden: boolean,
+    actorUserId: string | null,
+    requestId: string,
+  ): Promise<void>;
+  setGrace(
+    doctor: StatementDoctor,
+    until: Date,
+    actorUserId: string,
+    requestId: string,
+  ): Promise<void>;
 }
 
 export const STATEMENT_REPOSITORY = Symbol('STATEMENT_REPOSITORY');

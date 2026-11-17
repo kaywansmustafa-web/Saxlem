@@ -31,6 +31,9 @@ import {
   type StatementAccess,
 } from '../application/statement.service';
 import {
+  CollectionDoctorParamsDto,
+  CollectionItemDto,
+  CollectionListDto,
   SettleStatementDto,
   StatementDocumentDto,
   StatementListDto,
@@ -75,6 +78,42 @@ export class StatementsController {
     @Query() query: StatementListQueryDto,
   ) {
     return this.statements.list(statementAccess(req), query);
+  }
+
+  @Get('statements/collections')
+  @RequireCapabilities('billing:read')
+  @ApiOperation({
+    summary:
+      'Doctors who owe Saxlem: how much, since when, and when they would be hidden',
+  })
+  @ApiOkResponse({ type: CollectionListDto })
+  collections(
+    @Req() req: AuthenticatedRequest,
+    @Query() query: StatementListQueryDto,
+  ) {
+    return this.statements.collections(statementAccess(req), query);
+  }
+
+  @Post(
+    'platform/organizations/:organizationId/doctors/:doctorId/collections/grace',
+  )
+  @HttpCode(200)
+  @RequireCapabilities('payment:payout:manage')
+  @ApiOperation({
+    summary: 'Give a doctor 30 more days before hiding (shows them again)',
+  })
+  @ApiOkResponse({ type: CollectionItemDto })
+  @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
+  grace(
+    @Req() req: AuthenticatedRequest,
+    @Param() p: CollectionDoctorParamsDto,
+  ) {
+    return this.statements.giveMoreTime(
+      statementAccess(req),
+      p.organizationId,
+      p.doctorId,
+      req.requestId,
+    );
   }
 
   @Get('statements/:organizationId/:doctorId/:cycleNumber')

@@ -48,6 +48,17 @@ class FakeStatements implements StatementRepository {
   payments: StatementMoney[] = [money('p1', '2026-10-10T08:00:00Z', 25000)];
   settlements: StatementSettlement[] = [];
   settledWith: Parameters<StatementRepository['settle']>[0] | null = null;
+  hidden = new Set<string>();
+  grace = new Map<string, Date>();
+  setAppHidden(doctor: StatementDoctor, hidden: boolean) {
+    if (hidden) this.hidden.add(doctor.doctorId);
+    else this.hidden.delete(doctor.doctorId);
+    return Promise.resolve();
+  }
+  setGrace(doctor: StatementDoctor, until: Date) {
+    this.grace.set(doctor.doctorId, until);
+    return Promise.resolve();
+  }
 
   private record(doctorId = 'd1'): StatementDoctor {
     return {
@@ -57,7 +68,11 @@ class FakeStatements implements StatementRepository {
       doctorName: doctorId === 'd1' ? 'Dr. Avin' : 'Dr. Rawand',
       cycleStart: '2026-09-01',
       clinicNames: ['Hillview'],
-      settlements: this.settlements,
+      settlements: doctorId === 'd1' ? this.settlements : [],
+      appHiddenAt: this.hidden.has(doctorId)
+        ? at('2026-11-01T00:00:00Z')
+        : null,
+      billingGraceUntil: this.grace.get(doctorId) ?? null,
       payoutAccount: null,
     };
   }
@@ -134,7 +149,7 @@ class FakeStatements implements StatementRepository {
   async settle(input: Parameters<StatementRepository['settle']>[0]) {
     this.settledWith = input;
     const lines = await this.openLines(input.doctor, input.window);
-    const totals = input.totals(lines);
+    const totals = input.totals(lines, this.settlements);
     const row: StatementSettlement = {
       id: `s${input.cycleNumber}`,
       cycleNumber: input.cycleNumber,
@@ -142,6 +157,7 @@ class FakeStatements implements StatementRepository {
       periodEnd: input.periodEnd,
       windowStart: input.window.chargesFrom,
       method: input.method,
+      carriedIntoCycle: input.carriedIntoCycle,
       reference: input.reference,
       counterpartyName: input.counterpartyName,
       note: input.note,
@@ -327,5 +343,76 @@ describe('StatementService', () => {
     await expect(
       service.document(desk, 'org', 'd1', 4, now),
     ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('carries an unpaid balance into the next statement and takes it from app payments', async () => {
+    const { service, repository } = setup();
+    const result = await service.runCollections(now);
+    expect(result.carried).toBe(1);
+    expect(repository.settlements[0]).toMatchObject({
+      cycleNumber: 1,
+      method: 'carried',
+      carriedIntoCycle: 2,
+      netPayableIqd: -2500,
+    });
+    // Statement 2: 25,000 app money − 125 fee − 2,500 carried in.
+    const second = await service.document(admin, 'org', 'd1', 2, now);
+    expect(second.carriedInIqd).toBe(-2500);
+    expect(second.netPayableIqd).toBe(25000 - 125 - 2500);
+    expect(second.carriedFrom).toEqual([
+      expect.objectContaining({ cycleNumber: 1, amountIqd: -2500 }),
+    ]);
+    const first = await service.document(admin, 'org', 'd1', 1, now);
+    expect(first.settlement).toMatchObject({ method: 'carried' });
+    expect((await service.collections(admin, {}, now)).items).toEqual([]);
+  });
+
+  it('reminds, then hides only long after the due date; more time and paying bring the doctor back', async () => {
+    const { service, repository } = setup();
+    repository.payments = [];
+    // Statement 1 is due on 15 Oct (1 Oct + 14 days).
+    const list = await service.collections(
+      admin,
+      {},
+      at('2026-10-10T09:00:00Z'),
+    );
+    expect(list.items).toEqual([
+      expect.objectContaining({ doctorId: 'd1', stage: 'due', owedIqd: 2500 }),
+    ]);
+    const late = at('2027-01-20T09:00:00Z');
+    await service.runCollections(late);
+    // Carried 1→2→3→4; the debt is as old as statement 1.
+    expect(repository.settlements.map((row) => row.method)).toEqual([
+      'carried',
+      'carried',
+      'carried',
+    ]);
+    expect(repository.hidden.has('d1')).toBe(true);
+    const hidden = (await service.collections(admin, {}, late)).items[0]!;
+    expect(hidden).toMatchObject({
+      stage: 'hidden',
+      owedIqd: 3750,
+      cycleNumber: 4,
+    });
+    // Due 15 Oct (Baghdad); hidden from 14 Dec, 60 days later.
+    expect(hidden.hideOn).toBe('2026-12-13T21:00:00.000Z');
+    // Saxlem gives 30 more days: shown again straight away.
+    const graced = await service.giveMoreTime(admin, 'org', 'd1', 'r', late);
+    expect(repository.hidden.has('d1')).toBe(false);
+    expect(graced).toMatchObject({ stage: 'overdue' });
+    await expect(
+      service.giveMoreTime(desk, 'org', 'd1', 'r', late),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+    // Paying in cash clears it.
+    await service.settle(
+      admin,
+      'org',
+      'd1',
+      4,
+      { method: 'cash', expectedNetPayableIqd: -3750 },
+      'r',
+      late,
+    );
+    expect((await service.collections(admin, {}, late)).items).toEqual([]);
   });
 });

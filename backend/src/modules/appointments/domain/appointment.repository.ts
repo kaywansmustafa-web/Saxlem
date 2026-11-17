@@ -5,6 +5,9 @@ import type {
   AppointmentWrite,
 } from './appointment';
 export interface AppointmentRepository {
+  /** True while a doctor is hidden from the patient app for an overdue
+   * Saxlem balance. */
+  hiddenFromApp(doctorId: string): Promise<boolean>;
   replay(
     access: AppointmentAccess,
     command: AppointmentCommand,
