@@ -504,3 +504,28 @@
     break-inside: avoid;
   }
 }
+
+/* Payment reminders: gentle first, firmer as the balance gets older. */
+.billing-reminder {
+  display: grid;
+  gap: 0.25rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.9rem;
+  border: 1px solid #c7d4ff;
+  border-inline-start: 6px solid #2950f5;
+  background: #f1f4ff;
+}
+.billing-reminder p {
+  margin: 0;
+}
+.billing-reminder.overdue {
+  border-color: #fbd3b5;
+  border-inline-start-color: #c2410c;
+  background: #fff6ee;
+}
+.billing-reminder.warning,
+.billing-reminder.hidden {
+  border-color: #f5b5b0;
+  border-inline-start-color: #b42318;
+  background: #fff1f0;
+}

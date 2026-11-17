@@ -1,17 +1,20 @@
 import Link from "next/link";
 import type { Locale } from "@/i18n";
-import type { CycleStatement } from "../domain/models";
+import type { Collection, CycleStatement } from "../domain/models";
 import { statementFormat } from "./statement-format";
 import { statementMessages } from "./statement-messages";
 
 /** Each doctor's running statement on top, then every earlier statement. */
 export function StatementsOverview({
   statements,
+  collections,
   locale,
   basePath,
   showCommissionsLink,
 }: {
   statements: readonly CycleStatement[];
+  /** Doctors who owe Saxlem: shown as reminders at the top. */
+  collections: readonly Collection[];
   locale: Locale;
   /** e.g. /en/billing/statements — the doctor and cycle are appended. */
   basePath: (row: CycleStatement) => string;
@@ -62,6 +65,42 @@ export function StatementsOverview({
           </nav>
         )}
       </header>
+      {collections
+        .filter((item) => item.stage !== "clear")
+        .map((item) => {
+          const amount = f.iqd(item.owedIqd);
+          const text =
+            item.stage === "hidden"
+              ? m.remindHidden(item.doctorName, amount)
+              : item.stage === "warning"
+                ? m.remindWarning(
+                    item.doctorName,
+                    amount,
+                    item.hideOn ? f.day(item.hideOn) : "",
+                  )
+                : item.stage === "overdue"
+                  ? m.remindOverdue(
+                      item.doctorName,
+                      amount,
+                      item.dueAt ? f.day(item.dueAt) : "",
+                    )
+                  : m.remindDue(
+                      item.doctorName,
+                      amount,
+                      item.statementNumber ?? "",
+                      item.dueAt ? f.day(item.dueAt) : "",
+                    );
+          return (
+            <div
+              key={item.doctorId}
+              className={`billing-reminder ${item.stage}`}
+              role={item.stage === "due" ? "status" : "alert"}
+            >
+              <strong>{m.reminder}</strong>
+              <p>{text}</p>
+            </div>
+          );
+        })}
       {current.length > 0 && (
         <div className="billing-doctors">
           {current.map((row) => (
@@ -106,9 +145,15 @@ export function StatementsOverview({
                 <span>
                   {f.day(row.periodStart)} – {f.lastDay(row.periodEnd)}
                 </span>
-                <span className={`statement-status ${row.status}`}>
-                  {m.short[row.status]}
-                </span>
+                {row.settlement?.method === "carried" ? (
+                  <span className="statement-status due">
+                    {m.short.carried}
+                  </span>
+                ) : (
+                  <span className={`statement-status ${row.status}`}>
+                    {m.short[row.status]}
+                  </span>
+                )}
                 <span className="statement-result">{result(row)}</span>
                 <Link href={basePath(row)}>{m.view}</Link>
               </li>

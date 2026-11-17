@@ -10,6 +10,7 @@ import {
   billingStatementSchema,
   currentStatementsSchema,
   commissionPageSchema,
+  collectionListSchema,
   cycleStatementDocumentSchema,
   cycleStatementListSchema,
   organizationPlanSchema,
@@ -106,6 +107,12 @@ export class BackendBillingRepository implements BillingRepository {
     return this.request("/api/v1/statements", cycleStatementListSchema).then(
       (list) => list.items,
     );
+  }
+  listCollections() {
+    return this.request(
+      "/api/v1/statements/collections",
+      collectionListSchema,
+    ).then((list) => list.items);
   }
   getCycleStatement(
     organizationId: string,

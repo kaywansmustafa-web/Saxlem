@@ -31,6 +31,7 @@ const en = {
     due: "Ready to settle",
     waiting: "Waiting",
     settled: "Settled",
+    carried: "Unpaid, carried forward",
   },
   from: "From",
   to: "To",
@@ -95,6 +96,19 @@ const en = {
   next: "Next statement",
   unavailable: "Statements are unavailable right now. Try again.",
   notFound: "This statement was not found.",
+  reminder: "Payment reminder",
+  remindDue: (name: string, amount: string, n: string, day: string) =>
+    `${name} owes Saxlem ${amount} on statement ${n}. Please pay in cash by ${day}; Saxlem collects it in person.`,
+  remindOverdue: (name: string, amount: string, day: string) =>
+    `${amount} owed by ${name} was due on ${day}. If it stays unpaid, it is taken from ${name}'s next app payments.`,
+  remindWarning: (name: string, amount: string, day: string) =>
+    `${name} still owes ${amount}. Please pay before ${day} so patients can keep booking ${name} in the app.`,
+  remindHidden: (name: string, amount: string) =>
+    `${name} is hidden from the Saxlem app because ${amount} is unpaid. Phone and walk-in bookings still work. Once it is paid in cash, ${name} shows in the app again.`,
+  unpaidFrom: (n: string) => `Unpaid from statement ${n}`,
+  carriedNote: (n: string) =>
+    `Not paid by the due date. The balance moved into statement ${n} and comes out of the app payments there.`,
+  payBy: (day: string) => `Paid in cash, in person, by ${day}.`,
   iqd: "IQD",
 };
 type StatementMessages = typeof en;
@@ -130,6 +144,7 @@ const ar: StatementMessages = {
     due: "جاهز للتسوية",
     waiting: "بانتظار",
     settled: "تمت التسوية",
+    carried: "غير مدفوع، مُرحّل",
   },
   from: "من",
   to: "إلى",
@@ -193,6 +208,19 @@ const ar: StatementMessages = {
   next: "الكشف التالي",
   unavailable: "الكشوفات غير متاحة حالياً. حاول مرة أخرى.",
   notFound: "لم يتم العثور على هذا الكشف.",
+  reminder: "تذكير بالدفع",
+  remindDue: (name, amount, n, day) =>
+    `على ${name} مبلغ ${amount} لساخلم عن الكشف ${n}. يرجى الدفع نقداً قبل ${day}؛ تستلمه ساخلم شخصياً.`,
+  remindOverdue: (name, amount, day) =>
+    `مبلغ ${amount} المستحق على ${name} كان موعده ${day}. إذا بقي دون دفع فسيُخصم من مدفوعات التطبيق القادمة لـ${name}.`,
+  remindWarning: (name, amount, day) =>
+    `لا يزال على ${name} مبلغ ${amount}. يرجى الدفع قبل ${day} ليبقى بإمكان المرضى حجز ${name} عبر التطبيق.`,
+  remindHidden: (name, amount) =>
+    `${name} مخفي من تطبيق ساخلم لأن مبلغ ${amount} غير مدفوع. حجوزات الهاتف والحضور المباشر مستمرة. بعد الدفع نقداً يظهر ${name} في التطبيق مجدداً.`,
+  unpaidFrom: (n) => `غير مدفوع من الكشف ${n}`,
+  carriedNote: (n) =>
+    `لم يُدفع في الموعد. انتقل المبلغ إلى الكشف ${n} ويُخصم من مدفوعات التطبيق هناك.`,
+  payBy: (day) => `يُدفع نقداً وبشكل شخصي قبل ${day}.`,
   iqd: "د.ع",
 };
 
@@ -228,6 +256,7 @@ const ku: StatementMessages = {
     due: "ئامادەیە بۆ یەکلاکرنێ",
     waiting: "چاڤەڕێیە",
     settled: "یەکلاکرییە",
+    carried: "نەدای، چوو بۆ کەشفێ دویڤدا",
   },
   from: "ژ",
   to: "بۆ",
@@ -291,6 +320,19 @@ const ku: StatementMessages = {
   next: "کەشفێ دویڤدا",
   unavailable: "کەشف نوکە بەردەست نینن. دیسا هەول بدە.",
   notFound: "ئەڤ کەشفە نەهاتە دیتن.",
+  reminder: "بیرئینانا پارەدانێ",
+  remindDue: (name, amount, n, day) =>
+    `${amount} ل سەر ${name} یە بۆ ساخلەم ل کەشفێ ${n}. هیڤییە بەری ${day} ب کاش بدەی؛ ساخلەم ب دەستێ خۆ وەردگریت.`,
+  remindOverdue: (name, amount, day) =>
+    `${amount} یا ل سەر ${name} ل ${day} دەمێ وێ بوو. ئەگەر نەهێتە دان، دێ ژ پارەدانێن ئەپی یێن ${name} یێن دویڤدا هێتە برین.`,
+  remindWarning: (name, amount, day) =>
+    `هێشتا ${amount} ل سەر ${name} یە. هیڤییە بەری ${day} بدەی دا نەخوش بشێن ب ئەپی ژڤانان ل دەڤ ${name} بگرن.`,
+  remindHidden: (name, amount) =>
+    `${name} ژ ئەپێ ساخلەم هاتیە ڤەشارتن چونکی ${amount} نەهاتیە دان. ژڤانێن تەلەفۆنێ و راستەوخۆ بەردەوامن. پشتی دانا کاش، ${name} دیسا د ئەپی دا دیار دبیت.`,
+  unpaidFrom: (n) => `نەدای ژ کەشفێ ${n}`,
+  carriedNote: (n) =>
+    `د دەمێ خۆ دا نەهاتە دان. بڕ چوو بۆ کەشفێ ${n} و ژ پارەدانێن ئەپی ل وێرێ دهێتە برین.`,
+  payBy: (day) => `ب کاش و ب دەستێ خۆ، بەری ${day}.`,
   iqd: "IQD",
 };
 

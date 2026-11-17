@@ -175,17 +175,20 @@ export const cycleStatementSchema = z
     clawbackIqd: money,
     providerFeeIqd: money,
     commissionIqd: money,
+    carriedInIqd: money,
     netPayableIqd: money,
     paymentCount: money,
     chargeCount: money.nullable(),
+    dueAt: timestamp.nullable(),
     settlement: z
       .object({
-        method: z.enum(["fib", "cash"]),
+        method: z.enum(["fib", "cash", "carried"]),
         settledAt: timestamp,
+        carriedIntoStatement: z.string().nullable().optional(),
         reference: z.string().nullable().optional(),
         counterpartyName: z.string().nullable().optional(),
         note: z.string().nullable().optional(),
-        settledByName: z.string().optional(),
+        settledByName: z.string().nullable().optional(),
       })
       .strict()
       .nullable(),
@@ -251,8 +254,40 @@ export const cycleStatementDocumentSchema = cycleStatementSchema
     ),
     onlinePayments: z.array(statementMoneySchema),
     refunds: z.array(statementMoneySchema),
+    carriedFrom: z.array(
+      z
+        .object({
+          statementNumber: z.string(),
+          cycleNumber: z.number().int().positive(),
+          amountIqd: money,
+        })
+        .strict(),
+    ),
   })
   .strict();
 export type CycleStatementDocument = z.infer<
   typeof cycleStatementDocumentSchema
 >;
+
+/** What a doctor owes Saxlem and where collection stands. */
+export const collectionSchema = z
+  .object({
+    organizationId: uuid,
+    organizationName: z.string(),
+    doctorId: uuid,
+    doctorName: z.string(),
+    stage: z.enum(["clear", "due", "overdue", "warning", "hidden"]),
+    owedIqd: money,
+    cycleNumber: z.number().int().positive().nullable(),
+    statementNumber: z.string().nullable(),
+    dueAt: timestamp.nullable(),
+    warnOn: timestamp.nullable(),
+    hideOn: timestamp.nullable(),
+    hiddenAt: timestamp.nullable(),
+    graceUntil: timestamp.nullable(),
+  })
+  .strict();
+export type Collection = z.infer<typeof collectionSchema>;
+export const collectionListSchema = z
+  .object({ items: z.array(collectionSchema) })
+  .strict();

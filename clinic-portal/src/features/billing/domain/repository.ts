@@ -3,6 +3,7 @@ import type {
   BillingStatement,
   BillingStatementDetail,
   CommissionPage,
+  Collection,
   CycleStatement,
   CycleStatementDocument,
   OrganizationPlan,
@@ -34,6 +35,8 @@ export interface BillingRepository {
   getStatement(statementId: string): Promise<BillingStatementDetail>;
   /** Each doctor's 30-day statements the session may see. */
   listCycleStatements(): Promise<readonly CycleStatement[]>;
+  /** Doctors who owe Saxlem, in the session's scope. */
+  listCollections(): Promise<readonly Collection[]>;
   getCycleStatement(
     organizationId: string,
     doctorId: string,

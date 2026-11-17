@@ -24,6 +24,9 @@ export class BillingReadServices {
   cycleStatements() {
     return this.repository.listCycleStatements();
   }
+  collections() {
+    return this.repository.listCollections();
+  }
   cycleStatement(doctorId: string, cycleNumber: number) {
     return this.repository.getCycleStatement(
       this.organizationId,

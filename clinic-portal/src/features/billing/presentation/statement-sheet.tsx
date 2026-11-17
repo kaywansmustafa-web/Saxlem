@@ -78,7 +78,9 @@ export function StatementSheet({
         <strong>{f.iqd(Math.abs(net))}</strong>
         <small>
           {net < 0
-            ? m.inCash
+            ? s.dueAt
+              ? m.payBy(f.day(s.dueAt))
+              : m.inCash
             : net > 0
               ? s.payoutAccount
                 ? m.byFibTo(
@@ -110,8 +112,17 @@ export function StatementSheet({
             )}
             <tr>
               <td>{m.commission(charges)}</td>
-              <td>−{f.iqd(s.commissionIqd)}</td>
+              <td>
+                {s.commissionIqd ? "−" : ""}
+                {f.iqd(s.commissionIqd)}
+              </td>
             </tr>
+            {s.carriedFrom.map((row) => (
+              <tr key={row.cycleNumber}>
+                <td>{m.unpaidFrom(row.statementNumber)}</td>
+                <td>−{f.iqd(-row.amountIqd)}</td>
+              </tr>
+            ))}
             <tr className="sum-total">
               <td>{verdict}</td>
               <td>{f.iqd(Math.abs(net))}</td>
@@ -238,7 +249,11 @@ export function StatementSheet({
       </section>
       <section className="statement-section statement-settlement">
         <h2>{m.settlement}</h2>
-        {s.settlement ? (
+        {s.settlement?.method === "carried" ? (
+          <p className="statement-empty">
+            {m.carriedNote(s.settlement.carriedIntoStatement ?? "")}
+          </p>
+        ) : s.settlement ? (
           <dl>
             <dt>{m.paid}</dt>
             <dd>

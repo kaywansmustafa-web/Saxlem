@@ -4,7 +4,11 @@ import { notFound } from "next/navigation";
 import type { Locale } from "@/i18n";
 import { PortalApiError } from "@/infrastructure/api/api-error";
 import { billingComposition } from "@/infrastructure/billing-composition";
-import type { CycleStatement, CycleStatementDocument } from "../domain/models";
+import type {
+  Collection,
+  CycleStatement,
+  CycleStatementDocument,
+} from "../domain/models";
 import { PrintButton } from "./print-button";
 import { StatementSheet } from "./statement-sheet";
 import { StatementsOverview } from "./statements-overview";
@@ -31,9 +35,14 @@ export async function StatementsListPage({
 }) {
   const m = statementMessages(locale);
   let rows: readonly CycleStatement[] | null = null;
+  let owed: readonly Collection[] = [];
   try {
     const composition = await billingComposition();
-    rows = (await composition.read?.cycleStatements()) ?? null;
+    [rows, owed] = await Promise.all([
+      composition.read?.cycleStatements() ?? Promise.resolve(null),
+      // Reminders are best effort; the statements still show without them.
+      composition.read?.collections().catch(() => []) ?? Promise.resolve([]),
+    ]);
   } catch {
     rows = null;
   }
@@ -41,6 +50,7 @@ export async function StatementsListPage({
   return (
     <StatementsOverview
       statements={rows}
+      collections={owed}
       locale={locale}
       showCommissionsLink={!doctorView}
       basePath={(row) =>
