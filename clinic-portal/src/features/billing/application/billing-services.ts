@@ -15,8 +15,8 @@ export class BillingReadServices {
   listStatements() {
     return this.repository.listStatements(this.organizationId);
   }
-  currentStatement() {
-    return this.repository.getCurrentStatement(this.organizationId);
+  currentStatements() {
+    return this.repository.getCurrentStatements(this.organizationId);
   }
   statement(id: string) {
     return this.repository.getStatement(id);

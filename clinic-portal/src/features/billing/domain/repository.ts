@@ -25,7 +25,10 @@ export interface BillingRepository {
     cursor?: string;
   }): Promise<CommissionPage>;
   listStatements(organizationId: string): Promise<readonly BillingStatement[]>;
-  getCurrentStatement(organizationId: string): Promise<BillingStatement>;
+  /** One running statement per doctor (each doctor is billed separately). */
+  getCurrentStatements(
+    organizationId: string,
+  ): Promise<readonly BillingStatement[]>;
   getStatement(statementId: string): Promise<BillingStatementDetail>;
   finalizeStatement(
     statementId: string,

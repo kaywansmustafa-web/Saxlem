@@ -126,7 +126,11 @@ export function BillingWorkspace({
           setCommissionCursor(page.nextCursor);
         } else
           setData(
-            body.statement ?? body.statements ?? body.plans ?? body.assignment,
+            body.current ??
+              body.statement ??
+              body.statements ??
+              body.plans ??
+              body.assignment,
           );
       })
       .catch((value) => {
@@ -394,6 +398,7 @@ function BillingContent({
               <strong>
                 <bdi>{item.appointmentReference}</bdi>
               </strong>
+              <span>{item.doctorName}</span>
               <span>{item.status === "earned" ? m.earned : m.reversed}</span>
               <span>{date(item.completedAt)}</span>
               <span>{money(item.amountIqd)}</span>
@@ -439,6 +444,7 @@ function BillingContent({
             <strong>
               {date(row.periodStart)} – {date(row.periodEnd)}
             </strong>
+            <span>{row.doctorName ?? m.wholeClinic}</span>
             <span>{row.status === "draft" ? m.draft : m.finalized}</span>
             <span>{money(row.netCommissionIqd)}</span>
             <Link
@@ -494,10 +500,65 @@ function BillingContent({
       <p>{m.noData}</p>
     );
   }
+  if (mode === "overview") {
+    // Each doctor is billed separately: one running statement per doctor.
+    const rows = data as BillingStatement[] | null;
+    return rows?.length ? (
+      <div className="billing-doctors">
+        {rows.map((row) => (
+          <StatementCard
+            key={row.id}
+            statement={row as BillingStatementDetail}
+            mode={mode}
+            m={m}
+            money={money}
+            date={date}
+            platform={platform}
+            onFinalize={onFinalize}
+          />
+        ))}
+      </div>
+    ) : (
+      <p>{m.noData}</p>
+    );
+  }
   const statement = data as BillingStatementDetail | null;
   if (!statement) return <p>{m.noData}</p>;
   return (
+    <StatementCard
+      statement={statement}
+      mode={mode}
+      m={m}
+      money={money}
+      date={date}
+      platform={platform}
+      onFinalize={onFinalize}
+    />
+  );
+}
+function StatementCard({
+  statement,
+  mode,
+  m,
+  money,
+  date,
+  platform,
+  onFinalize,
+}: {
+  statement: BillingStatementDetail;
+  mode: Mode;
+  m: ReturnType<typeof billingMessages>;
+  money: (value: number) => React.ReactNode;
+  date: (value: string) => React.ReactNode;
+  platform: boolean;
+  onFinalize: (
+    statement: BillingStatementDetail,
+    button: HTMLButtonElement,
+  ) => void;
+}) {
+  return (
     <article className="billing-card">
+      <p className="billing-doctor">{statement.doctorName ?? m.wholeClinic}</p>
       <h2>{mode === "overview" ? m.currentStatement : m.details}</h2>
       <dl>
         <Metric

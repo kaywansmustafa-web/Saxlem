@@ -37,6 +37,8 @@ describe("billing contracts", () => {
       id,
       organizationId: id,
       clinicId: id,
+      doctorId: id,
+      doctorName: "Dr. Shilan",
       appointmentId: id,
       appointmentReference: "APT-1",
       planCode: "STANDARD_1250",
@@ -65,6 +67,8 @@ describe("billing contracts", () => {
     const statement = {
       id,
       organizationId: id,
+      doctorId: id,
+      doctorName: "Dr. Shilan",
       periodStart: at,
       periodEnd: "2026-09-01T00:00:00.000Z",
       timezone: "Asia/Baghdad",

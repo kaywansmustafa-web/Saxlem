@@ -8,6 +8,7 @@ import {
   billingStatementDetailSchema,
   billingStatementListSchema,
   billingStatementSchema,
+  currentStatementsSchema,
   commissionPageSchema,
   organizationPlanSchema,
 } from "../domain/models";
@@ -87,10 +88,10 @@ export class BackendBillingRepository implements BillingRepository {
       billingStatementListSchema,
     );
   }
-  getCurrentStatement(organizationId: string) {
+  getCurrentStatements(organizationId: string) {
     return this.request(
       `/api/v1/billing/statements/current?organizationId=${encodeURIComponent(organizationId)}`,
-      billingStatementSchema,
+      currentStatementsSchema,
     );
   }
   getStatement(id: string) {

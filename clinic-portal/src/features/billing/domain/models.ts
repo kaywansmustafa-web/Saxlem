@@ -40,6 +40,8 @@ export const commissionSchema = z
     id: uuid,
     organizationId: uuid,
     clinicId: uuid,
+    doctorId: uuid,
+    doctorName: z.string().min(1).max(200),
     appointmentId: uuid,
     appointmentReference: z.string().min(1).max(100),
     planCode: z.string().min(1).max(100),
@@ -80,6 +82,9 @@ export const commissionPageSchema = z
 const statementBase = {
   id: uuid,
   organizationId: uuid,
+  /** Each doctor is billed separately; null on old clinic-wide statements. */
+  doctorId: uuid.nullable(),
+  doctorName: z.string().min(1).max(200).nullable(),
   periodStart: timestamp,
   periodEnd: timestamp,
   timezone: z.literal("Asia/Baghdad"),
@@ -137,6 +142,8 @@ export const billingStatementDetailSchema = z
   })
   .strict();
 export const billingStatementListSchema = unique(billingStatementSchema);
+/** This month's running statement for each doctor. */
+export const currentStatementsSchema = unique(billingStatementSchema);
 
 export type BillingPlan = Readonly<z.infer<typeof billingPlanSchema>>;
 export type OrganizationPlan = Readonly<z.infer<typeof organizationPlanSchema>>;

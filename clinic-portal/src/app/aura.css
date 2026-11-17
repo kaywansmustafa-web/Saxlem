@@ -311,3 +311,5 @@ dialog .row-actions button{min-height:46px;padding:0 20px;border:0}
 .my-doctors-bar dialog p{color:var(--muted)}
 .my-doctors-bar dialog .row-actions{margin-top:16px;justify-content:flex-end}
 .my-doctors-bar dialog .row-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 20px}
+.billing-doctors{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.billing-doctor{margin:0 0 4px;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--blue)}
