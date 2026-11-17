@@ -147,8 +147,11 @@ export function PlatformCreateForm({
             onChange={(event) => setRole(event.target.value)}
           >
             <option value="receptionist">Receptionist</option>
-            <option value="clinicManager">Clinic manager</option>
           </select>
+          <small>
+            The receptionist runs the clinic for their doctor: bookings, queue,
+            payments and billing.
+          </small>
         </label>
       ) : (
         <label className="field">

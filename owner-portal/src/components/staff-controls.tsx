@@ -137,7 +137,6 @@ export function StaffControls({
             onChange={(event) => setRole(event.target.value)}
           >
             <option value="receptionist">Receptionist</option>
-            <option value="clinicManager">Clinic manager</option>
             <option value="doctor">Doctor</option>
           </select>
         </label>
