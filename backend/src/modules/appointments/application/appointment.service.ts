@@ -1,5 +1,4 @@
 import {
-  Optional,
   BadRequestException,
   ConflictException,
   ForbiddenException,
@@ -11,7 +10,6 @@ import {
 import { createHash } from 'node:crypto';
 import { BACKEND_CONFIGURATION } from '../../../config/configuration.module';
 import type { BackendConfiguration } from '../../../config/environment';
-import { ReceptionDoctorsService } from '../../doctors/application/reception-doctors.service';
 import { DoctorScheduleService } from '../../doctors/application/doctor-schedule.service';
 import { TimezoneService } from '../../doctors/application/timezone.service';
 import type { DoctorAccessContext } from '../../doctors/application/doctor.service';
@@ -57,25 +55,15 @@ export class AppointmentService {
     private readonly timezones: TimezoneService,
     @Inject(BACKEND_CONFIGURATION)
     private readonly configuration: BackendConfiguration,
-    @Optional()
-    private readonly reception?: ReceptionDoctorsService,
   ) {}
 
   /** A receptionist's doctors, or null when the caller isn't scoped. */
-  private async receptionScope(
-    access: AppointmentAccess,
-  ): Promise<readonly string[] | null> {
-    if (!access.receptionist || !this.reception) return null;
-    return this.reception.scope({
-      actorId: access.actorId,
-      organizationId: access.organizationId,
-      clinicId: access.clinicId,
-      receptionist: true,
-    });
+  private receptionScope(access: AppointmentAccess): readonly string[] | null {
+    return access.doctorIds?.length ? access.doctorIds : null;
   }
 
-  private async requireOwnDoctor(access: AppointmentAccess, doctorId: string) {
-    const scope = await this.receptionScope(access);
+  private requireOwnDoctor(access: AppointmentAccess, doctorId: string) {
+    const scope = this.receptionScope(access);
     if (scope && !scope.includes(doctorId))
       throw new ForbiddenException(
         "This doctor isn't on your list. Add them under My doctors first.",
@@ -101,7 +89,7 @@ export class AppointmentService {
         'Booking options are limited to patients and staff of this clinic.',
       );
     this.dateWindow(dateFrom, dateTo);
-    if (staff) await this.requireOwnDoctor(access, doctorId);
+    if (staff) this.requireOwnDoctor(access, doctorId);
     const generatedAt = new Date();
     // Reception may still book the slot that has just begun (a walk-in at
     // 10:03 takes the 10:00 slot); the app only offers slots in the future.
@@ -215,7 +203,7 @@ export class AppointmentService {
       throw new BadRequestException(
         'Appointment page size must be between 1 and 50.',
       );
-    const scope = await this.receptionScope(access);
+    const scope = this.receptionScope(access);
     const page = await this.repository.list(
       access,
       scope ? { ...query, doctorIds: scope } : query,
@@ -247,7 +235,7 @@ export class AppointmentService {
     if (replay) return replay;
     const write = this.write(access, input);
     this.validateTime(write);
-    if (!access.patient) await this.requireOwnDoctor(access, input.doctorId);
+    if (!access.patient) this.requireOwnDoctor(access, input.doctorId);
     return this.commandResult(() =>
       this.repository.create(access, write, requestId, command, () =>
         this.validateContext(access, write, input.startsAtSource),
@@ -599,7 +587,7 @@ export class AppointmentService {
       generatedAt.getTime() -
         this.configuration.appointmentPastToleranceMinutes * 60_000,
     );
-    const scope = await this.receptionScope(access);
+    const scope = this.receptionScope(access);
     const doctors = (
       await this.repository.clinicDoctors(organizationId, clinicId)
     ).filter((doctor) => !scope || scope.includes(doctor.id));

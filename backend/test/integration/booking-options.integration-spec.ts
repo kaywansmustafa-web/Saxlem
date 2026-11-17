@@ -1,8 +1,11 @@
+import { randomUUID } from 'node:crypto';
 import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
+  NotFoundException,
 } from '@nestjs/common';
+import { PrismaArrivalRepository } from '../../src/modules/arrivals/infrastructure/prisma-arrival.repository';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
 import type { BackendConfiguration } from '../../src/config/environment';
@@ -336,15 +339,14 @@ describe('patient booking options database integration', () => {
       clinicId: fixture.clinicId,
       receptionist: true,
     };
-    const staffAccess = {
+    const staffAccess = () => ({
       actorId: receptionist.id,
       patient: false,
       doctor: false,
       platformAdministrator: false,
       organizationId: fixture.organizationId,
       clinicId: fixture.clinicId,
-      receptionist: true,
-    };
+    });
     // Before choosing, nothing is hidden and the view asks for a choice.
     await expect(reception.scope(who)).resolves.toBeNull();
     await expect(reception.view(who)).resolves.toMatchObject({
@@ -363,15 +365,17 @@ describe('patient booking options database integration', () => {
       configured: true,
       doctors: [{ id: fixture.doctorId, assigned: true }],
     });
-    await expect(reception.scope(who)).resolves.toEqual([fixture.doctorId]);
-    const board = await service.dayBoard(staffAccess, '2030-07-22', 'board');
+    const doctorIds = await reception.scope(who);
+    expect(doctorIds).toEqual([fixture.doctorId]);
+    const scoped = { ...staffAccess(), doctorIds: doctorIds ?? undefined };
+    const board = await service.dayBoard(scoped, '2030-07-22', 'board');
     expect(board.doctors.map((doctor) => doctor.doctorId)).toEqual([
       fixture.doctorId,
     ]);
     // A doctor outside the list cannot be booked or browsed by this desk.
     await expect(
       service.bookingOptions(
-        staffAccess,
+        scoped,
         fixture.organizationId,
         fixture.clinicId,
         fixture.profileId,
@@ -388,6 +392,88 @@ describe('patient booking options database integration', () => {
       },
     });
     expect(audit?.metadata).toMatchObject({ added: [fixture.doctorId] });
+  }, 30_000);
+
+  it("hides other doctors' appointments, check-ins, queues and patients from a receptionist", async () => {
+    const fixture = await setup();
+    const service = appointmentService();
+    const database = { db: prisma } as unknown as PrismaService;
+    const appointment = await service.create(
+      {
+        actorId: fixture.patientUserId,
+        patient: true,
+        doctor: false,
+        platformAdministrator: false,
+      },
+      {
+        organizationId: fixture.organizationId,
+        clinicId: fixture.clinicId,
+        doctorId: fixture.doctorId,
+        patientProfileId: fixture.profileId,
+        type: 'initial',
+        reason: 'Scope check',
+        startsAt: new Date('2030-07-22T05:00:00.000Z'),
+        startsAtSource: '2030-07-22T05:00:00.000Z',
+        durationMinutes: 30,
+      },
+      'scope-booking-0001',
+      'scope-booking',
+    );
+    const staff = {
+      actorId: fixture.patientUserId,
+      patient: false,
+      doctor: false,
+      platformAdministrator: false,
+      organizationId: fixture.organizationId,
+      clinicId: fixture.clinicId,
+    };
+    const mine = { ...staff, doctorIds: [fixture.doctorId] };
+    const other = { ...staff, doctorIds: [randomUUID()] };
+
+    // Appointments: detail, list and changes.
+    await expect(
+      service.get(other, appointment.id, 'scope'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+    await expect(
+      service.get(mine, appointment.id, 'scope'),
+    ).resolves.toMatchObject({ id: appointment.id });
+    const window = {
+      from: new Date('2030-07-21T00:00:00.000Z'),
+      to: new Date('2030-07-23T00:00:00.000Z'),
+      pageSize: 50,
+    };
+    expect((await service.list(other, window, 'scope')).items).toEqual([]);
+    expect(
+      (await service.list(mine, window, 'scope')).items.map((item) => item.id),
+    ).toContain(appointment.id);
+
+    // Check-ins.
+    const arrivals = new PrismaArrivalRepository(database);
+    await expect(arrivals.get(other, appointment.id)).resolves.toBeNull();
+    await expect(arrivals.get(mine, appointment.id)).resolves.not.toBeNull();
+
+    // Patient search.
+    const patients = new PrismaPatientRepository(database);
+    const search = (doctorIds: string[]) =>
+      patients.searchDirectory(
+        {
+          actorId: fixture.patientUserId,
+          organizationId: fixture.organizationId,
+          clinicId: fixture.clinicId,
+          doctorIds,
+        },
+        { q: 'Booking', pageSize: 50 },
+        undefined,
+        'scope-search',
+      );
+    expect(
+      (await search([randomUUID()])).items.map((item) => item.patientProfileId),
+    ).not.toContain(fixture.profileId);
+    expect(
+      (await search([fixture.doctorId])).items.map(
+        (item) => item.patientProfileId,
+      ),
+    ).toContain(fixture.profileId);
   }, 30_000);
 
   it('enforces the clinic-registered patient shape in the database', async () => {
@@ -412,7 +498,6 @@ describe('patient booking options database integration', () => {
 
 function appointmentService() {
   const database = { db: prisma } as unknown as PrismaService;
-  const reception = new ReceptionDoctorsService(database);
   const timezones = new TimezoneService();
   const schedules = new DoctorScheduleService(
     new PrismaDoctorScheduleRepository(database),
@@ -427,7 +512,6 @@ function appointmentService() {
       appointmentFoundationFeeIqd: 25000,
       appointmentFoundationDurationMinutes: 30,
     } as BackendConfiguration,
-    reception,
   );
 }
 

@@ -312,6 +312,18 @@ export class PrismaPatientRepository implements PatientRepository {
       ${phone ? Prisma.sql`OR COALESCE(pa.normalized_phone_number, pp.contact_phone_number) LIKE ${phonePattern} ESCAPE '\\'` : Prisma.empty}
       ${/^[0-9a-f-]+$/iu.test(normalizedQuery) ? Prisma.sql`OR pp.id::text LIKE ${identifierPattern} ESCAPE '\\'` : Prisma.empty}
     )`;
+    const scoped = access.doctorIds?.length ? [...access.doctorIds] : null;
+    const doctorJoin = scoped
+      ? Prisma.sql`AND a.doctor_id = ANY(${scoped}::uuid[])`
+      : Prisma.empty;
+    const registeredHere = scoped
+      ? Prisma.sql`(pp.registered_by_organization_id = ${access.organizationId}::uuid
+          AND NOT EXISTS (
+            SELECT 1 FROM appointments x
+            WHERE x.patient_profile_id = pp.id
+              AND x.organization_id = ${access.organizationId}::uuid
+          ))`
+      : Prisma.sql`pp.registered_by_organization_id = ${access.organizationId}::uuid`;
     const boundary = cursor
       ? Prisma.sql`AND (
           LOWER(pp.last_name) > ${cursor.lastName}
@@ -349,6 +361,7 @@ export class PrismaPatientRepository implements PatientRepository {
           ON a.organization_id = opp.organization_id
           AND a.patient_profile_id = pp.id
           AND a.clinic_id = ${access.clinicId}::uuid
+          ${doctorJoin}
         WHERE pp.status = 'active'
           AND (
             u.status = 'active'
@@ -356,7 +369,7 @@ export class PrismaPatientRepository implements PatientRepository {
           )
           AND (
             a.id IS NOT NULL
-            OR pp.registered_by_organization_id = ${access.organizationId}::uuid
+            OR ${registeredHere}
           )
           AND ${search}
           ${boundary}
@@ -410,6 +423,12 @@ export class PrismaPatientRepository implements PatientRepository {
   ): Promise<PatientDirectoryDetailProjection | null> {
     return this.prisma.db.$transaction(async (tx) => {
       const currentTime = new Date();
+      const mine = {
+        clinicId: access.clinicId,
+        ...(access.doctorIds?.length
+          ? { doctorId: { in: [...access.doctorIds] } }
+          : {}),
+      };
       const profile = await tx.patientProfile.findFirst({
         where: {
           id: profileId,
@@ -422,7 +441,7 @@ export class PrismaPatientRepository implements PatientRepository {
                   organizationId: access.organizationId,
                   status: 'active',
                   organization: { status: 'active' },
-                  appointments: { some: { clinicId: access.clinicId } },
+                  appointments: { some: mine },
                 },
               },
             },
@@ -434,6 +453,16 @@ export class PrismaPatientRepository implements PatientRepository {
                   organizationId: access.organizationId,
                   status: 'active',
                   organization: { status: 'active' },
+                  // A receptionist sees a clinic-registered patient once they
+                  // book with one of their doctors, or while unbooked.
+                  ...(access.doctorIds?.length
+                    ? {
+                        OR: [
+                          { appointments: { some: mine } },
+                          { appointments: { none: {} } },
+                        ],
+                      }
+                    : {}),
                 },
               },
             },
@@ -453,6 +482,9 @@ export class PrismaPatientRepository implements PatientRepository {
             organizationId: access.organizationId,
             clinicId: access.clinicId,
             patientProfileId: profileId,
+            ...(access.doctorIds?.length
+              ? { doctorId: { in: [...access.doctorIds] } }
+              : {}),
             startsAt: { gte: currentTime },
             status: { in: ['scheduled', 'confirmed'] },
           },
@@ -475,6 +507,9 @@ export class PrismaPatientRepository implements PatientRepository {
             organizationId: access.organizationId,
             clinicId: access.clinicId,
             patientProfileId: profileId,
+            ...(access.doctorIds?.length
+              ? { doctorId: { in: [...access.doctorIds] } }
+              : {}),
             startsAt: { lt: currentTime },
             status: {
               in: [

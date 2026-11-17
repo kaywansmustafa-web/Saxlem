@@ -31,8 +31,8 @@ export interface AppointmentAccess {
   readonly platformAdministrator: boolean;
   readonly organizationId?: string | undefined;
   readonly clinicId?: string | undefined;
-  /** Receptionists see and book only the doctors they work for. */
-  readonly receptionist?: boolean;
+  /** A receptionist's doctors: every read and write stays within them. */
+  readonly doctorIds?: readonly string[] | undefined;
 }
 export interface AppointmentWrite {
   readonly organizationId: string;

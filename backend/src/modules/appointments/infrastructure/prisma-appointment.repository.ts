@@ -433,7 +433,14 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     if (access.platformAdministrator) return {};
     if (!access.organizationId || !access.clinicId)
       throw new ForbiddenException('Staff tenant context is required.');
-    return { organizationId: access.organizationId, clinicId: access.clinicId };
+    return {
+      organizationId: access.organizationId,
+      clinicId: access.clinicId,
+      // A receptionist only ever sees their own doctors' appointments.
+      ...(access.doctorIds?.length
+        ? { doctorId: { in: [...access.doctorIds] } }
+        : {}),
+    };
   }
   private async events(
     tx: Prisma.TransactionClient,

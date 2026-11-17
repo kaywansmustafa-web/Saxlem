@@ -19,8 +19,13 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'payment:read',
     'payment:choose',
   ],
+  // The receptionist runs the clinic for their doctor(s): there is usually
+  // no separate clinic manager, so they hold every clinic capability.
   receptionist: [
     'clinic:operations:read',
+    'clinic:management:read',
+    'clinic:hours:read',
+    'billing:read',
     'patient:directory:read',
     'reception:doctors:manage',
     'patient:register',
@@ -44,6 +49,8 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'queue:call-next',
     'queue:recall',
     'queue:mark-no-response',
+    'queue:consultation:start',
+    'queue:consultation:complete',
     'notifications:read',
     'notifications:stream',
     'notifications:mark-read',

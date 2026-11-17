@@ -253,6 +253,7 @@ export class PatientsController {
       actorId: request.principal.id,
       organizationId,
       clinicId,
+      doctorIds: request.tenant?.doctorIds,
     };
   }
 

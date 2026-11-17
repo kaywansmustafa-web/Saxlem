@@ -40,16 +40,9 @@ const granted: Record<
   readonly Operation[]
 > = {
   patient: [],
-  receptionist: [
-    'open',
-    'enqueue',
-    'pause',
-    'resume',
-    'close',
-    'call-next',
-    'recall',
-    'no-response',
-  ],
+  // The receptionist runs the clinic and the queue (founder decision
+  // 2026-11-17), so they hold every queue operation.
+  receptionist: operations,
   doctor: [
     'open',
     'pause',

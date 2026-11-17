@@ -273,7 +273,7 @@ export class AppointmentsController {
       platformAdministrator: req.principal.kind === 'platformAdministrator',
       organizationId: req.tenant?.organizationId,
       clinicId: req.tenant?.clinicId,
-      receptionist: req.principal.capabilities.has('reception:doctors:manage'),
+      doctorIds: req.tenant?.doctorIds,
     };
   }
 }

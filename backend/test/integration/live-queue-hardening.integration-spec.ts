@@ -21,6 +21,50 @@ const prisma = new PrismaClient({
 describe('live queue structural hardening', () => {
   afterAll(() => prisma.$disconnect());
 
+  it("keeps a receptionist to their own doctors' queues", async () => {
+    const fixture = await createFixture(1);
+    const repository = queueRepository();
+    const mine = { ...staffAccess(fixture), doctorIds: [fixture.doctorId] };
+    const other = {
+      ...staffAccess(fixture),
+      doctorIds: ['00000000-0000-4000-8000-0000000000ff'],
+    };
+    await expect(
+      repository.open(
+        other,
+        fixture.clinicId,
+        fixture.doctorId,
+        new Date('2031-01-01'),
+        5,
+        1,
+        new Date('2031-01-01T05:30:00Z'),
+        'open-other',
+        command('queue-open-other', 'queue.open', {}),
+      ),
+    ).rejects.toThrow('Doctor assignment was not found.');
+    const opened = await repository.open(
+      mine,
+      fixture.clinicId,
+      fixture.doctorId,
+      new Date('2031-01-01'),
+      5,
+      1,
+      new Date('2031-01-01T05:30:00Z'),
+      'open-mine',
+      command('queue-open-mine', 'queue.open', {}),
+    );
+    await expect(repository.get(mine, opened.id)).resolves.not.toBeNull();
+    await expect(repository.get(other, opened.id)).resolves.toBeNull();
+    await expect(
+      repository.getCurrent(
+        other,
+        fixture.clinicId,
+        fixture.doctorId,
+        new Date('2031-01-01T05:31:00Z'),
+      ),
+    ).resolves.toBeNull();
+  });
+
   it('C1 serializes two eligible concurrent enqueues and allocates consecutive tickets without gaps', async () => {
     const fixture = await createFixture(2);
     const repository = queueRepository();

@@ -32,7 +32,16 @@ interface AccessClaims {
 
 export interface AuthenticatedRequest extends Request {
   principal?: AuthenticatedPrincipal;
-  tenant?: { organizationId: string; clinicId?: string };
+  tenant?: {
+    organizationId: string;
+    clinicId?: string;
+    /**
+     * Receptionists work for specific doctors. When set, every clinic read
+     * and write is limited to these doctors. Undefined means the whole
+     * clinic (a receptionist who has not chosen yet, or another role).
+     */
+    doctorIds?: readonly string[];
+  };
 }
 
 @Injectable()
@@ -136,9 +145,27 @@ export class JwtAuthGuard implements CanActivate {
         (requestedClinic && requestedClinic !== claims.clinic)
       )
         throw new ForbiddenException('Tenant context does not match.');
+      const doctorIds =
+        claims.role === 'receptionist'
+          ? (
+              await this.prisma.db.receptionistDoctorAssignment.findMany({
+                where: {
+                  userId: claims.sub,
+                  organizationId: claims.org,
+                  clinicId: claims.clinic,
+                  assignment: {
+                    status: 'active',
+                    doctor: { status: 'active' },
+                  },
+                },
+                select: { doctorId: true },
+              })
+            ).map((row) => row.doctorId)
+          : [];
       request.tenant = {
         organizationId: claims.org,
         clinicId: claims.clinic,
+        ...(doctorIds.length ? { doctorIds: Object.freeze(doctorIds) } : {}),
       };
     } else if (
       claims.role !== 'patient' &&

@@ -185,7 +185,7 @@ describe('doctor schedule foundation API', () => {
     await api()
       .get(`/api/v1/clinics/${tenantA.clinicId}/hours`)
       .set('Authorization', `Bearer ${staffToken}`)
-      .expect(403);
+      .expect(200);
     expect(
       (
         await prisma.auditEvent.findMany({
@@ -196,7 +196,12 @@ describe('doctor schedule foundation API', () => {
           orderBy: { occurredAt: 'asc' },
         })
       ).map((event) => event.action),
-    ).toEqual(['schedule.viewed', 'availability.viewed']);
+    ).toEqual([
+      'schedule.viewed',
+      'availability.viewed',
+      // Clinic hours: the receptionist runs the clinic.
+      'schedule.viewed',
+    ]);
 
     await api()
       .get(`/api/v1/doctors/${doctorB.id}/schedule`)

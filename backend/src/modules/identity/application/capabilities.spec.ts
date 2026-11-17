@@ -3,7 +3,8 @@ import { capabilitiesFor } from './capabilities';
 describe('schedule capabilities', () => {
   it.each([
     ['patient', true, false, false],
-    ['receptionist', true, true, false],
+    // The receptionist runs the clinic (founder decision 2026-11-17).
+    ['receptionist', true, true, true],
     ['doctor', true, true, false],
     ['clinicManager', true, true, true],
     ['platformAdministrator', true, true, true],
@@ -83,7 +84,7 @@ describe('billing capabilities', () => {
   it.each([
     ['platformAdministrator', true, true],
     ['clinicManager', true, false],
-    ['receptionist', false, false],
+    ['receptionist', true, false],
     ['doctor', false, false],
     ['patient', false, false],
   ] as const)('applies billing least privilege to %s', (role, read, manage) => {

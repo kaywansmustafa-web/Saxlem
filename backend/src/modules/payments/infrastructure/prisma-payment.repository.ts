@@ -230,7 +230,13 @@ export class PrismaPaymentRepository implements PaymentRepository {
       throw new ForbiddenException('Clinic staff access is required.');
     if (!access.organizationId || !access.clinicId)
       throw new ForbiddenException('Staff tenant context is required.');
-    return { organizationId: access.organizationId, clinicId: access.clinicId };
+    return {
+      organizationId: access.organizationId,
+      clinicId: access.clinicId,
+      ...(access.doctorIds?.length
+        ? { appointment: { doctorId: { in: [...access.doctorIds] } } }
+        : {}),
+    };
   }
 
   private async audit(

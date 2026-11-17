@@ -34,6 +34,11 @@ export interface PatientDirectoryAccess {
   readonly actorId: string;
   readonly organizationId: string;
   readonly clinicId: string;
+  /**
+   * A receptionist's doctors. When set, only patients booked with these
+   * doctors (or registered here and not yet booked with anyone) are visible.
+   */
+  readonly doctorIds?: readonly string[] | undefined;
 }
 
 export interface PatientDirectoryQuery {

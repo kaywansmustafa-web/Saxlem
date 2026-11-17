@@ -55,6 +55,7 @@ export function paymentAccess(req: AuthenticatedRequest): PaymentAccess {
     platformAdministrator: req.principal.kind === 'platformAdministrator',
     organizationId: req.tenant?.organizationId,
     clinicId: req.tenant?.clinicId,
+    doctorIds: req.tenant?.doctorIds,
   };
 }
 
