@@ -21,13 +21,20 @@ describe('Billing OpenAPI', () => {
       '/api/v1/billing/statements/current',
       '/api/v1/billing/statements/{id}',
       '/api/v1/billing/statements/{id}/finalize',
+      '/api/v1/billing/plans/{id}/status',
+      '/api/v1/billing/organizations/{organizationId}/setup',
+      '/api/v1/billing/organizations/{organizationId}/cycle-start',
+      '/api/v1/billing/organizations/{organizationId}/plan-changes',
+      '/api/v1/billing/organizations/{organizationId}/doctors/{doctorId}/plan',
+      '/api/v1/billing/commissions/{id}/credit',
     ])
       expect(document.paths).toHaveProperty(path);
     const plan =
       document.components.schemas.BillingPlanResponseDto!.properties!;
+    // 0 IQD makes a free (pilot) plan.
     expect(plan.commissionAmountIqd).toMatchObject({
       type: 'integer',
-      minimum: 1,
+      minimum: 0,
     });
     const statement =
       document.components.schemas.BillingStatementResponseDto!.properties!;

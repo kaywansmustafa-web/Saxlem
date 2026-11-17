@@ -6,6 +6,10 @@ import { PayoutService } from './application/payout.service';
 import { PAYOUT_REPOSITORY } from './domain/payout';
 import { PrismaPayoutRepository } from './infrastructure/prisma-payout.repository';
 import { PayoutsController } from './presentation/payouts.controller';
+import { StatementService } from './application/statement.service';
+import { STATEMENT_REPOSITORY } from './domain/statement';
+import { PrismaStatementRepository } from './infrastructure/prisma-statement.repository';
+import { StatementsController } from './presentation/statements.controller';
 import { PAYMENT_GATEWAYS } from './domain/payment-gateway';
 import { PAYMENT_REPOSITORY } from './domain/payment.repository';
 import { FibPaymentGateway } from './infrastructure/fib-payment-gateway';
@@ -23,12 +27,16 @@ import {
     PaymentsController,
     PaymentCallbackController,
     PayoutsController,
+    StatementsController,
   ],
   providers: [
     PaymentService,
     PayoutService,
     PrismaPayoutRepository,
     { provide: PAYOUT_REPOSITORY, useExisting: PrismaPayoutRepository },
+    StatementService,
+    PrismaStatementRepository,
+    { provide: STATEMENT_REPOSITORY, useExisting: PrismaStatementRepository },
     PrismaPaymentRepository,
     { provide: PAYMENT_REPOSITORY, useExisting: PrismaPaymentRepository },
     FibPaymentGateway,

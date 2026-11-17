@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
   Param,
   Post,
   Put,
@@ -33,15 +32,11 @@ import {
   DoctorPayoutProfileDto,
   LedgerQueryDto,
   LedgerResponseDto,
-  MonthQueryDto,
   OrganizationPaymentParamsDto,
   PaymentSettingsDto,
-  PayoutDto,
   PayoutProfileDto,
-  PayoutSummaryDto,
   SaveDoctorPayoutProfileDto,
   SavePayoutProfileDto,
-  SettlePayoutDto,
 } from './payment.dto';
 import { paymentAccess } from './payments.controller';
 
@@ -72,52 +67,6 @@ export class PayoutsController {
   @ApiOkResponse({ type: LedgerResponseDto })
   ledger(@Query() query: LedgerQueryDto) {
     return this.payouts.ledger(query);
-  }
-
-  @Get('payouts')
-  @ApiOperation({ summary: 'Monthly settlement for every doctor' })
-  @ApiOkResponse({ type: PayoutSummaryDto })
-  summary(@Query() query: MonthQueryDto) {
-    return this.payouts.summary(query.month);
-  }
-
-  @Get('organizations/:organizationId/doctors/:doctorId/payouts')
-  @ApiOperation({ summary: 'One doctor’s monthly settlement' })
-  @ApiOkResponse({ type: PayoutDto })
-  @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
-  detail(
-    @Param() params: DoctorPayoutParamsDto,
-    @Query() query: MonthQueryDto,
-  ) {
-    return this.payouts.detail(
-      params.organizationId,
-      params.doctorId,
-      query.month,
-    );
-  }
-
-  @Post('organizations/:organizationId/doctors/:doctorId/payouts')
-  @HttpCode(200)
-  @ApiOperation({
-    summary: 'Record a doctor’s monthly settlement as paid',
-    description:
-      'Only for a month that has ended. Fails if the amounts changed since they were shown.',
-  })
-  @ApiOkResponse({ type: PayoutDto })
-  @ApiConflictResponse({ type: ApiErrorEnvelopeDto })
-  @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
-  settle(
-    @Req() req: AuthenticatedRequest,
-    @Param() params: DoctorPayoutParamsDto,
-    @Body() body: SettlePayoutDto,
-  ) {
-    return this.payouts.settle(
-      paymentAccess(req),
-      params.organizationId,
-      params.doctorId,
-      body,
-      req.requestId,
-    );
   }
 
   @Get('organizations/:organizationId/doctors/:doctorId/payout-profile')

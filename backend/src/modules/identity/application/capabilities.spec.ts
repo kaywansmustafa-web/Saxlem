@@ -85,7 +85,8 @@ describe('billing capabilities', () => {
     ['platformAdministrator', true, true],
     ['clinicManager', true, false],
     ['receptionist', true, false],
-    ['doctor', false, false],
+    // Doctors read their own statements only (scoped server-side).
+    ['doctor', true, false],
     ['patient', false, false],
   ] as const)('applies billing least privilege to %s', (role, read, manage) => {
     const granted = capabilitiesFor(role);

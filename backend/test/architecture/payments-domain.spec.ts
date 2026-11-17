@@ -75,8 +75,9 @@ describe('appointment payments architecture', () => {
       '/api/v1/platform/organizations/{organizationId}/payment-account',
       '/api/v1/platform/payments/settings',
       '/api/v1/platform/payments/ledger',
-      '/api/v1/platform/payouts',
-      '/api/v1/platform/organizations/{organizationId}/doctors/{doctorId}/payouts',
+      '/api/v1/statements',
+      '/api/v1/statements/{organizationId}/{doctorId}/{cycleNumber}',
+      '/api/v1/platform/organizations/{organizationId}/doctors/{doctorId}/statements/{cycleNumber}/settlement',
       '/api/v1/platform/organizations/{organizationId}/doctors/{doctorId}/payout-profile',
       '/api/v1/platform/organizations/{organizationId}/payout-profile',
     ])

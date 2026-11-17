@@ -74,6 +74,8 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'notifications:read',
     'notifications:stream',
     'notifications:mark-read',
+    // Their own commission and statements only (scoped by ownDoctorId).
+    'billing:read',
   ],
   clinicManager: [
     'clinic:management:read',

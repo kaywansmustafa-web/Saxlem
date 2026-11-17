@@ -54,6 +54,38 @@ export interface BillingRepository {
     requestId: string,
     command: BillingCommand,
   ): Promise<BillingRecord>;
+  createPlan(
+    access: BillingAccess,
+    input: { displayName: string; commissionAmountIqd: number },
+    requestId: string,
+  ): Promise<BillingRecord>;
+  setPlanStatus(
+    access: BillingAccess,
+    id: string,
+    status: 'active' | 'inactive',
+    requestId: string,
+  ): Promise<BillingRecord>;
+  setup(organizationId: string, now: Date): Promise<BillingRecord | null>;
+  assignDoctorPlan(
+    access: BillingAccess,
+    organizationId: string,
+    doctorId: string,
+    planId: string | null,
+    effectiveFrom: Date,
+    requestId: string,
+  ): Promise<BillingRecord | null>;
+  setCycleStart(
+    access: BillingAccess,
+    organizationId: string,
+    day: string,
+    requestId: string,
+  ): Promise<void>;
+  creditCommission(
+    access: BillingAccess,
+    id: string,
+    reason: string,
+    requestId: string,
+  ): Promise<BillingRecord>;
   materializeCompletion(
     tx: Prisma.TransactionClient,
     appointmentId: string,

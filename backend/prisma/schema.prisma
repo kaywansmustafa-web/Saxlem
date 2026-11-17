@@ -146,6 +146,9 @@ model Organization {
   id                       String                       @id @default(uuid(7)) @db.Uuid
   name                     String
   status                   RecordStatus                 @default(active)
+  /// Billing runs in 30-day cycles from this Asia/Baghdad date: the day the
+  /// organization's first clinic was listed in the app.
+  billingCycleStart        DateTime?                    @map("billing_cycle_start") @db.Date
   createdAt                DateTime                     @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt                DateTime                     @updatedAt @map("updated_at") @db.Timestamptz(3)
   clinics                  Clinic[]
@@ -407,10 +410,11 @@ model Doctor {
   holidays             DoctorHoliday[]
   scheduleExceptions   DoctorScheduleException[]
 
-  commissions   CommissionLedgerEntry[] @relation("DoctorCommissions")
-  statements    BillingStatement[]      @relation("DoctorStatements")
-  payouts       OrganizationPayout[]    @relation("DoctorPayouts")
-  payoutProfile DoctorPayoutProfile?    @relation("DoctorPayoutProfile")
+  commissions     CommissionLedgerEntry[] @relation("DoctorCommissions")
+  statements      BillingStatement[]      @relation("DoctorStatements")
+  payouts         OrganizationPayout[]    @relation("DoctorPayouts")
+  planAssignments DoctorPlanAssignment[]  @relation("DoctorPlans")
+  payoutProfile   DoctorPayoutProfile?    @relation("DoctorPayoutProfile")
 
   @@unique([organizationId, id])
   @@unique([organizationId, licenseNumber])
@@ -672,9 +676,27 @@ model BillingPlan {
   createdAt           DateTime                     @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt           DateTime                     @updatedAt @map("updated_at") @db.Timestamptz(3)
   assignments         OrganizationPlanAssignment[]
+  doctorAssignments   DoctorPlanAssignment[]
   commissionEntries   CommissionLedgerEntry[]
 
   @@map("billing_plans")
+}
+
+/// A doctor-specific commission plan; overrides the organization's plan.
+model DoctorPlanAssignment {
+  id             String      @id @default(uuid(7)) @db.Uuid
+  organizationId String      @map("organization_id") @db.Uuid
+  doctorId       String      @map("doctor_id") @db.Uuid
+  planId         String      @map("plan_id") @db.Uuid
+  effectiveFrom  DateTime    @map("effective_from") @db.Timestamptz(3)
+  effectiveTo    DateTime?   @map("effective_to") @db.Timestamptz(3)
+  version        Int         @default(1)
+  createdAt      DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  doctor         Doctor      @relation("DoctorPlans", fields: [organizationId, doctorId], references: [organizationId, id], onDelete: Restrict, map: "doctor_plan_assignments_doctor_fkey")
+  plan           BillingPlan @relation(fields: [planId], references: [id], onDelete: Restrict, map: "doctor_plan_assignments_plan_id_fkey")
+
+  @@index([organizationId, doctorId, effectiveFrom], map: "doctor_plan_assignments_doctor_idx")
+  @@map("doctor_plan_assignments")
 }
 
 model OrganizationPlanAssignment {
@@ -1300,7 +1322,15 @@ model OrganizationPayout {
   commissionIqd     Int                  @map("commission_iqd")
   netPayableIqd     Int                  @map("net_payable_iqd")
   paymentCount      Int                  @map("payment_count")
-  reference         String
+  /// fib or cash. Doctors pay Saxlem in cash; Saxlem pays by FIB or cash.
+  method            String               @default("fib")
+  /// The 30-day billing cycle this settles (null on early calendar-month ones).
+  cycleNumber       Int?                 @map("cycle_number")
+  /// Earliest time the settlement swept up (unsettled items carry forward).
+  windowStart       DateTime?            @map("window_start") @db.Timestamptz(3)
+  /// Who handed over or received the money at the clinic.
+  counterpartyName  String?              @map("counterparty_name")
+  reference         String?
   note              String?
   settledAt         DateTime             @map("settled_at") @db.Timestamptz(3)
   settledById       String               @map("settled_by_id") @db.Uuid

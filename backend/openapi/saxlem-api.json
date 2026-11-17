@@ -603,6 +603,620 @@
         "tags": [
           "billing"
         ]
+      },
+      "post": {
+        "operationId": "BillingController_createPlan",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBillingPlanDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingPlanResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a commission plan (0 IQD = free plan)",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/billing/plans/{id}/status": {
+      "put": {
+        "operationId": "BillingController_planStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingPlanStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingPlanResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Turn a plan off (when unused) or back on",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/billing/organizations/{organizationId}/setup": {
+      "get": {
+        "operationId": "BillingController_setup",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingSetupDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Plan, 30-day cycle and each doctor's plan for an organization",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/billing/organizations/{organizationId}/cycle-start": {
+      "put": {
+        "operationId": "BillingController_cycleStart",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingCycleStartDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingSetupDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Set the day billing cycles count from",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/billing/organizations/{organizationId}/plan-changes": {
+      "post": {
+        "operationId": "BillingController_changePlan",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignOrganizationPlanByDayDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationPlanResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Move an organization to a plan from a day on",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/billing/organizations/{organizationId}/doctors/{doctorId}/plan": {
+      "post": {
+        "operationId": "BillingController_doctorPlan",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "doctorId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignDoctorPlanDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorPlanAssignmentDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Give one doctor their own plan from a day on (or clear it)",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/billing/commissions/{id}/credit": {
+      "post": {
+        "operationId": "BillingController_credit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreditCommissionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommissionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Credit (waive) one charge, with a reason",
+        "tags": [
+          "billing"
+        ]
       }
     },
     "/api/v1/billing/plans/{id}": {
@@ -6010,275 +6624,6 @@
         ]
       }
     },
-    "/api/v1/platform/payouts": {
-      "get": {
-        "operationId": "PayoutsController_summary",
-        "parameters": [
-          {
-            "name": "month",
-            "required": true,
-            "in": "query",
-            "description": "Baghdad calendar month.",
-            "schema": {
-              "example": "2026-11",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PayoutSummaryDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Monthly settlement for every doctor",
-        "tags": [
-          "payouts"
-        ]
-      }
-    },
-    "/api/v1/platform/organizations/{organizationId}/doctors/{doctorId}/payouts": {
-      "get": {
-        "operationId": "PayoutsController_detail",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "doctorId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "month",
-            "required": true,
-            "in": "query",
-            "description": "Baghdad calendar month.",
-            "schema": {
-              "example": "2026-11",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PayoutDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "One doctor’s monthly settlement",
-        "tags": [
-          "payouts"
-        ]
-      },
-      "post": {
-        "description": "Only for a month that has ended. Fails if the amounts changed since they were shown.",
-        "operationId": "PayoutsController_settle",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "doctorId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SettlePayoutDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PayoutDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Record a doctor’s monthly settlement as paid",
-        "tags": [
-          "payouts"
-        ]
-      }
-    },
     "/api/v1/platform/organizations/{organizationId}/doctors/{doctorId}/payout-profile": {
       "get": {
         "operationId": "PayoutsController_doctorProfile",
@@ -6608,6 +6953,293 @@
         "summary": "Turn online payments on or off for an organization",
         "tags": [
           "payouts"
+        ]
+      }
+    },
+    "/api/v1/statements": {
+      "get": {
+        "operationId": "StatementsController_list",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": false,
+            "in": "query",
+            "description": "Saxlem only; clinic staff always see their organization.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "doctorId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatementListDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Each doctor's 30-day statements: running, due and settled",
+        "tags": [
+          "statements"
+        ]
+      }
+    },
+    "/api/v1/statements/{organizationId}/{doctorId}/{cycleNumber}": {
+      "get": {
+        "operationId": "StatementsController_document",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "doctorId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "cycleNumber",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatementDocumentDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "One full statement, for screen and print",
+        "tags": [
+          "statements"
+        ]
+      }
+    },
+    "/api/v1/platform/organizations/{organizationId}/doctors/{doctorId}/statements/{cycleNumber}/settlement": {
+      "post": {
+        "operationId": "StatementsController_settle",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "doctorId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "cycleNumber",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SettleStatementDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatementDocumentDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Record that a statement was paid, in cash or by FIB",
+        "tags": [
+          "statements"
         ]
       }
     },
@@ -9368,7 +10000,7 @@
           },
           "commissionAmountIqd": {
             "type": "integer",
-            "minimum": 1
+            "minimum": 0
           },
           "ruleCode": {
             "type": "string"
@@ -9392,6 +10024,63 @@
           "ruleCode",
           "ruleVersion",
           "version"
+        ]
+      },
+      "CreateBillingPlanDto": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "commissionAmountIqd": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000,
+            "description": "Charged per qualifying visit; 0 makes a free plan."
+          }
+        },
+        "required": [
+          "displayName",
+          "commissionAmountIqd"
+        ]
+      },
+      "BillingPlanStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "BillingCycleDto": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "number",
+          "start",
+          "end"
         ]
       },
       "OrganizationPlanResponseDto": {
@@ -9431,10 +10120,14 @@
           "plan"
         ]
       },
-      "AssignBillingPlanDto": {
+      "DoctorPlanAssignmentDto": {
         "type": "object",
         "properties": {
-          "planId": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorId": {
             "type": "string",
             "format": "uuid"
           },
@@ -9442,15 +10135,183 @@
             "type": "string",
             "format": "date-time"
           },
-          "expectedVersion": {
-            "type": "integer",
-            "minimum": 1,
+          "effectiveTo": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
+          },
+          "plan": {
+            "$ref": "#/components/schemas/BillingPlanResponseDto"
+          }
+        },
+        "required": [
+          "id",
+          "doctorId",
+          "effectiveFrom",
+          "effectiveTo",
+          "plan"
+        ]
+      },
+      "DoctorBillingSetupDto": {
+        "type": "object",
+        "properties": {
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorName": {
+            "type": "string"
+          },
+          "ownPlan": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DoctorPlanAssignmentDto"
+              }
+            ]
+          },
+          "upcomingOwnPlan": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DoctorPlanAssignmentDto"
+              }
+            ]
+          },
+          "effectivePlan": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BillingPlanResponseDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "doctorId",
+          "doctorName",
+          "ownPlan",
+          "upcomingOwnPlan",
+          "effectivePlan"
+        ]
+      },
+      "BillingSetupDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "organizationName": {
+            "type": "string"
+          },
+          "cycleStart": {
+            "type": "string",
+            "example": "2026-11-17"
+          },
+          "currentCycle": {
+            "$ref": "#/components/schemas/BillingCycleDto"
+          },
+          "plan": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrganizationPlanResponseDto"
+              }
+            ]
+          },
+          "upcomingPlan": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrganizationPlanResponseDto"
+              }
+            ]
+          },
+          "doctors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DoctorBillingSetupDto"
+            }
+          }
+        },
+        "required": [
+          "organizationId",
+          "organizationName",
+          "cycleStart",
+          "currentCycle",
+          "plan",
+          "upcomingPlan",
+          "doctors"
+        ]
+      },
+      "BillingCycleStartDto": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "example": "2026-11-17",
+            "description": "Day the first clinic was listed in the app."
+          }
+        },
+        "required": [
+          "startDate"
+        ]
+      },
+      "AssignOrganizationPlanByDayDto": {
+        "type": "object",
+        "properties": {
+          "planId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "from": {
+            "type": "string",
+            "example": "2026-11-18",
+            "description": "Baghdad day it starts."
           }
         },
         "required": [
           "planId",
-          "effectiveFrom"
+          "from"
+        ]
+      },
+      "AssignDoctorPlanDto": {
+        "type": "object",
+        "properties": {
+          "planId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Null goes back to the organization plan."
+          },
+          "from": {
+            "type": "string",
+            "example": "2026-11-18",
+            "description": "Baghdad day it starts."
+          }
+        },
+        "required": [
+          "planId",
+          "from"
+        ]
+      },
+      "CreditCommissionDto": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "reason"
         ]
       },
       "CommissionResponseDto": {
@@ -9525,6 +10386,11 @@
             "type": "string",
             "format": "uuid",
             "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true,
+            "description": "Why a credit was given."
           }
         },
         "required": [
@@ -9544,7 +10410,30 @@
           "completedAt",
           "recognizedAt",
           "status",
-          "originalCommissionId"
+          "originalCommissionId",
+          "reason"
+        ]
+      },
+      "AssignBillingPlanDto": {
+        "type": "object",
+        "properties": {
+          "planId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true
+          }
+        },
+        "required": [
+          "planId",
+          "effectiveFrom"
         ]
       },
       "CommissionPageResponseDto": {
@@ -13550,201 +14439,6 @@
           "nextCursor"
         ]
       },
-      "PayoutSettlementDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "reference": {
-            "type": "string"
-          },
-          "note": {
-            "type": "string",
-            "nullable": true
-          },
-          "settledAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "required": [
-          "id",
-          "reference",
-          "note",
-          "settledAt"
-        ]
-      },
-      "PayoutAccountHintDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "numberHint": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "name",
-          "numberHint"
-        ]
-      },
-      "PayoutDto": {
-        "type": "object",
-        "properties": {
-          "organizationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "organizationName": {
-            "type": "string"
-          },
-          "doctorId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Each doctor is billed and paid separately."
-          },
-          "doctorName": {
-            "type": "string"
-          },
-          "periodStart": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "periodEnd": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "open",
-              "ready",
-              "settled"
-            ],
-            "description": "open: month not over. ready: can be settled. settled: done."
-          },
-          "grossCollectedIqd": {
-            "type": "integer"
-          },
-          "clawbackIqd": {
-            "type": "integer",
-            "description": "Refunds of payments already paid out, taken back."
-          },
-          "providerFeeIqd": {
-            "type": "integer"
-          },
-          "commissionIqd": {
-            "type": "integer"
-          },
-          "netPayableIqd": {
-            "type": "integer",
-            "description": "Positive: Saxlem pays the doctor. Negative: the doctor owes Saxlem."
-          },
-          "paymentCount": {
-            "type": "integer"
-          },
-          "settlement": {
-            "nullable": true,
-            "type": "object",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PayoutSettlementDto"
-              }
-            ]
-          },
-          "payoutAccount": {
-            "nullable": true,
-            "type": "object",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PayoutAccountHintDto"
-              }
-            ]
-          }
-        },
-        "required": [
-          "organizationId",
-          "organizationName",
-          "doctorId",
-          "doctorName",
-          "periodStart",
-          "periodEnd",
-          "status",
-          "grossCollectedIqd",
-          "clawbackIqd",
-          "providerFeeIqd",
-          "commissionIqd",
-          "netPayableIqd",
-          "paymentCount",
-          "settlement",
-          "payoutAccount"
-        ]
-      },
-      "PayoutSummaryDto": {
-        "type": "object",
-        "properties": {
-          "month": {
-            "type": "string"
-          },
-          "periodStart": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "periodEnd": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "monthEnded": {
-            "type": "boolean"
-          },
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PayoutDto"
-            }
-          }
-        },
-        "required": [
-          "month",
-          "periodStart",
-          "periodEnd",
-          "monthEnded",
-          "items"
-        ]
-      },
-      "SettlePayoutDto": {
-        "type": "object",
-        "properties": {
-          "month": {
-            "type": "string",
-            "example": "2026-11",
-            "description": "Baghdad calendar month."
-          },
-          "expectedNetPayableIqd": {
-            "type": "integer",
-            "description": "Net amount shown to the operator. Settling fails if the amounts changed."
-          },
-          "reference": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 120,
-            "description": "Transfer reference, for example the FIB transaction ID."
-          },
-          "note": {
-            "type": "string",
-            "maxLength": 500
-          }
-        },
-        "required": [
-          "month",
-          "expectedNetPayableIqd",
-          "reference"
-        ]
-      },
       "DoctorPayoutProfileDto": {
         "type": "object",
         "properties": {
@@ -13845,6 +14539,549 @@
         },
         "required": [
           "onlinePaymentsEnabled"
+        ]
+      },
+      "StatementSettlementBriefDto": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "fib",
+              "cash"
+            ]
+          },
+          "settledAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "method",
+          "settledAt"
+        ]
+      },
+      "StatementSummaryDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "organizationName": {
+            "type": "string"
+          },
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorName": {
+            "type": "string"
+          },
+          "cycleNumber": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "statementNumber": {
+            "type": "string",
+            "example": "SX-79C55D-007"
+          },
+          "periodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "due",
+              "waiting",
+              "settled"
+            ],
+            "description": "open: 30 days still running; due: ready to settle; waiting: an older statement must be settled first."
+          },
+          "canSettle": {
+            "type": "boolean"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "saxlemPays",
+              "doctorPays",
+              "even"
+            ]
+          },
+          "grossCollectedIqd": {
+            "type": "integer"
+          },
+          "clawbackIqd": {
+            "type": "integer"
+          },
+          "providerFeeIqd": {
+            "type": "integer"
+          },
+          "commissionIqd": {
+            "type": "integer"
+          },
+          "netPayableIqd": {
+            "type": "integer"
+          },
+          "paymentCount": {
+            "type": "integer"
+          },
+          "chargeCount": {
+            "type": "integer",
+            "nullable": true
+          },
+          "settlement": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StatementSettlementBriefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "organizationId",
+          "organizationName",
+          "doctorId",
+          "doctorName",
+          "cycleNumber",
+          "statementNumber",
+          "periodStart",
+          "periodEnd",
+          "status",
+          "canSettle",
+          "direction",
+          "grossCollectedIqd",
+          "clawbackIqd",
+          "providerFeeIqd",
+          "commissionIqd",
+          "netPayableIqd",
+          "paymentCount",
+          "chargeCount",
+          "settlement"
+        ]
+      },
+      "StatementListDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StatementSummaryDto"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "StatementSettlementDto": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "fib",
+              "cash"
+            ]
+          },
+          "reference": {
+            "type": "string",
+            "nullable": true
+          },
+          "counterpartyName": {
+            "type": "string",
+            "nullable": true
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "settledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "settledByName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "method",
+          "reference",
+          "counterpartyName",
+          "note",
+          "settledAt",
+          "settledByName"
+        ]
+      },
+      "StatementAccountDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "numberHint": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "numberHint"
+        ]
+      },
+      "StatementVisitsDto": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "completed": {
+            "type": "integer"
+          },
+          "noShow": {
+            "type": "integer"
+          },
+          "cancelled": {
+            "type": "integer"
+          },
+          "upcoming": {
+            "type": "integer"
+          },
+          "app": {
+            "type": "integer"
+          },
+          "phone": {
+            "type": "integer"
+          },
+          "walkIn": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "completed",
+          "noShow",
+          "cancelled",
+          "upcoming",
+          "app",
+          "phone",
+          "walkIn"
+        ]
+      },
+      "StatementRevenueDto": {
+        "type": "object",
+        "properties": {
+          "totalIqd": {
+            "type": "integer"
+          },
+          "counterIqd": {
+            "type": "integer"
+          },
+          "counterCount": {
+            "type": "integer"
+          },
+          "onlineIqd": {
+            "type": "integer"
+          },
+          "onlineCount": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "totalIqd",
+          "counterIqd",
+          "counterCount",
+          "onlineIqd",
+          "onlineCount"
+        ]
+      },
+      "StatementChargeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recognizedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "appointmentReference": {
+            "type": "string"
+          },
+          "appointmentStartsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "clinicName": {
+            "type": "string"
+          },
+          "planName": {
+            "type": "string"
+          },
+          "amountIqd": {
+            "type": "integer",
+            "description": "Negative for a credit."
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "charge",
+              "credit"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "recognizedAt",
+          "appointmentReference",
+          "appointmentStartsAt",
+          "clinicName",
+          "planName",
+          "amountIqd",
+          "kind",
+          "reason"
+        ]
+      },
+      "StatementMoneyDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "appointmentReference": {
+            "type": "string"
+          },
+          "amountIqd": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "at",
+          "appointmentReference",
+          "amountIqd"
+        ]
+      },
+      "StatementDocumentDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "organizationName": {
+            "type": "string"
+          },
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorName": {
+            "type": "string"
+          },
+          "cycleNumber": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "statementNumber": {
+            "type": "string",
+            "example": "SX-79C55D-007"
+          },
+          "periodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "due",
+              "waiting",
+              "settled"
+            ],
+            "description": "open: 30 days still running; due: ready to settle; waiting: an older statement must be settled first."
+          },
+          "canSettle": {
+            "type": "boolean"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "saxlemPays",
+              "doctorPays",
+              "even"
+            ]
+          },
+          "grossCollectedIqd": {
+            "type": "integer"
+          },
+          "clawbackIqd": {
+            "type": "integer"
+          },
+          "providerFeeIqd": {
+            "type": "integer"
+          },
+          "commissionIqd": {
+            "type": "integer"
+          },
+          "netPayableIqd": {
+            "type": "integer"
+          },
+          "paymentCount": {
+            "type": "integer"
+          },
+          "chargeCount": {
+            "type": "integer",
+            "nullable": true
+          },
+          "settlement": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StatementSettlementDto"
+              }
+            ]
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cycleStart": {
+            "type": "string",
+            "example": "2026-11-17"
+          },
+          "clinicNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "providerFeeBps": {
+            "type": "integer"
+          },
+          "payoutAccount": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StatementAccountDto"
+              }
+            ]
+          },
+          "visits": {
+            "$ref": "#/components/schemas/StatementVisitsDto"
+          },
+          "revenue": {
+            "$ref": "#/components/schemas/StatementRevenueDto"
+          },
+          "charges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StatementChargeDto"
+            }
+          },
+          "onlinePayments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StatementMoneyDto"
+            }
+          },
+          "refunds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StatementMoneyDto"
+            }
+          }
+        },
+        "required": [
+          "organizationId",
+          "organizationName",
+          "doctorId",
+          "doctorName",
+          "cycleNumber",
+          "statementNumber",
+          "periodStart",
+          "periodEnd",
+          "status",
+          "canSettle",
+          "direction",
+          "grossCollectedIqd",
+          "clawbackIqd",
+          "providerFeeIqd",
+          "commissionIqd",
+          "netPayableIqd",
+          "paymentCount",
+          "chargeCount",
+          "settlement",
+          "issuedAt",
+          "cycleStart",
+          "clinicNames",
+          "providerFeeBps",
+          "payoutAccount",
+          "visits",
+          "revenue",
+          "charges",
+          "onlinePayments",
+          "refunds"
+        ]
+      },
+      "SettleStatementDto": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "fib",
+              "cash"
+            ],
+            "description": "Doctors pay Saxlem in cash; Saxlem pays by FIB or cash."
+          },
+          "expectedNetPayableIqd": {
+            "type": "integer",
+            "description": "The net the operator saw: positive Saxlem pays, negative the doctor pays."
+          },
+          "reference": {
+            "type": "string",
+            "maxLength": 120,
+            "description": "FIB reference or receipt number."
+          },
+          "counterpartyName": {
+            "type": "string",
+            "maxLength": 120,
+            "description": "Who handed over or received the money."
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "method",
+          "expectedNetPayableIqd"
         ]
       },
       "StaffQueueEntryResponseDto": {

@@ -41,6 +41,8 @@ export interface AuthenticatedRequest extends Request {
      * clinic (a receptionist who has not chosen yet, or another role).
      */
     doctorIds?: readonly string[];
+    /** Set for a signed-in doctor: their own billing is all they may read. */
+    ownDoctorId?: string;
   };
 }
 
@@ -166,6 +168,9 @@ export class JwtAuthGuard implements CanActivate {
         organizationId: claims.org,
         clinicId: claims.clinic,
         ...(doctorIds.length ? { doctorIds: Object.freeze(doctorIds) } : {}),
+        ...(claims.role === 'doctor' && session.user.staffAccount?.doctor
+          ? { ownDoctorId: session.user.staffAccount.doctor.id }
+          : {}),
       };
     } else if (
       claims.role !== 'patient' &&

@@ -14,6 +14,12 @@ describe('BillingService', () => {
     statement: jest.fn(),
     currentStatements: jest.fn(),
     finalize: jest.fn(),
+    createPlan: jest.fn(),
+    setPlanStatus: jest.fn(),
+    setup: jest.fn(),
+    assignDoctorPlan: jest.fn(),
+    setCycleStart: jest.fn(),
+    creditCommission: jest.fn(),
     materializeCompletion: jest.fn(),
   } as jest.Mocked<BillingRepository>;
   const configuration = {
@@ -110,5 +116,60 @@ describe('BillingService', () => {
       },
       undefined,
     ]);
+  });
+
+  it('lets only Saxlem manage plans, with sane prices and dates', async () => {
+    const service = new BillingService(repository, configuration);
+    const now = new Date('2026-11-17T09:00:00.000Z');
+    expect(() =>
+      service.createPlan(
+        manager,
+        { displayName: 'Pilot', commissionAmountIqd: 0 },
+        'r',
+      ),
+    ).toThrow(ForbiddenException);
+    expect(() =>
+      service.createPlan(
+        platform,
+        { displayName: ' ', commissionAmountIqd: 0 },
+        'r',
+      ),
+    ).toThrow(BadRequestException);
+    expect(() =>
+      service.createPlan(
+        platform,
+        { displayName: 'Big', commissionAmountIqd: -5 },
+        'r',
+      ),
+    ).toThrow(BadRequestException);
+    repository.createPlan.mockResolvedValue({ id: 'plan' });
+    await service.createPlan(
+      platform,
+      { displayName: ' Free pilot ', commissionAmountIqd: 0 },
+      'r',
+    );
+    expect(repository.createPlan.mock.calls[0]?.[1]).toEqual({
+      displayName: 'Free pilot',
+      commissionAmountIqd: 0,
+    });
+    // Plan changes start at Baghdad midnight, today or later.
+    expect(service.fromDay('2026-11-17', now).toISOString()).toBe(
+      '2026-11-16T21:00:00.000Z',
+    );
+    expect(() => service.fromDay('2026-11-16', now)).toThrow(
+      BadRequestException,
+    );
+    expect(() => service.creditCommission(platform, 'c', '  ', 'r')).toThrow(
+      BadRequestException,
+    );
+    await expect(
+      service.setCycleStart(
+        platform,
+        manager.organizationId,
+        '2026-12-01',
+        'r',
+        now,
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
   });
 });

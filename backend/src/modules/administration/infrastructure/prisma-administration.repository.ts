@@ -99,6 +99,8 @@ export class PrismaAdministrationRepository implements AdministrationRepository 
           'Clinic code already exists in this organization.',
         );
       const row = await tx.clinic.create({ data: input });
+      // The first clinic listed starts the organization's 30-day billing cycles.
+      await tx.$executeRaw`UPDATE "organizations" SET "billing_cycle_start" = (now() AT TIME ZONE 'Asia/Baghdad')::date WHERE "id" = ${row.organizationId}::uuid AND "billing_cycle_start" IS NULL`;
       await this.events(
         tx,
         access,
@@ -252,8 +254,11 @@ export class PrismaAdministrationRepository implements AdministrationRepository 
     createdAt: Date;
     updatedAt: Date;
   }): OrganizationRecord {
+    // Field by field: billing columns are not part of this record.
     return Object.freeze({
-      ...row,
+      id: row.id,
+      name: row.name,
+      status: row.status,
       createdAt: row.createdAt.toISOString(),
       updatedAt: row.updatedAt.toISOString(),
     });
