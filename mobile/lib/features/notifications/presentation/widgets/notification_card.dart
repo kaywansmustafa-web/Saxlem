@@ -23,7 +23,7 @@ class NotificationCard extends StatelessWidget {
     return Semantics(
       button: true,
       label:
-          '${unread ? '${context.l10n.unread}. ' : ''}${copy.title}. ${copy.happened}. ${copy.next}',
+          '${unread ? '${context.l10n.unread}. ' : ''}${copy.title}. ${copy.happened}${copy.next.isEmpty ? '' : '. ${copy.next}'}',
       child: Material(
         type: MaterialType.transparency,
         child: Ink(
@@ -106,35 +106,38 @@ class NotificationCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.bodyMedium,
                           ),
-                          const SizedBox(height: 8),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsetsDirectional.only(
-                                  top: 2,
-                                ),
-                                child: Icon(
-                                  Directionality.of(context) ==
-                                          TextDirection.rtl
-                                      ? Icons.subdirectory_arrow_left_rounded
-                                      : Icons.subdirectory_arrow_right_rounded,
-                                  size: 16,
-                                  color: colors.brandPrimary,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              Expanded(
-                                child: Text(
-                                  copy.next,
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: colors.textPrimary,
-                                    fontWeight: FontWeight.w500,
+                          if (copy.next.isNotEmpty) ...[
+                            const SizedBox(height: 8),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.only(
+                                    top: 2,
+                                  ),
+                                  child: Icon(
+                                    Directionality.of(context) ==
+                                            TextDirection.rtl
+                                        ? Icons.subdirectory_arrow_left_rounded
+                                        : Icons
+                                              .subdirectory_arrow_right_rounded,
+                                    size: 16,
+                                    color: colors.brandPrimary,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    copy.next,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: colors.textPrimary,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                           if (group.isGrouped) ...[
                             const SizedBox(height: 10),
                             Container(

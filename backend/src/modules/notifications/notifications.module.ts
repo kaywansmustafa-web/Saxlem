@@ -5,6 +5,7 @@ import { NotificationStreamService } from './application/notification-stream.ser
 import { NOTIFICATION_REPOSITORY } from './domain/notification.repository';
 import { NotificationOutboxWorker } from './infrastructure/notification-outbox.worker';
 import { PrismaNotificationRepository } from './infrastructure/prisma-notification.repository';
+import { PatientReminderWorker } from './infrastructure/patient-reminder.worker';
 import { NotificationsController } from './presentation/notifications.controller';
 
 @Module({
@@ -14,6 +15,7 @@ import { NotificationsController } from './presentation/notifications.controller
     NotificationService,
     NotificationStreamService,
     NotificationOutboxWorker,
+    PatientReminderWorker,
     PrismaNotificationRepository,
     {
       provide: NOTIFICATION_REPOSITORY,

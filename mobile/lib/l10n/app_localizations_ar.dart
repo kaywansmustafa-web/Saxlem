@@ -1275,4 +1275,144 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get slotEvening => 'مساءً';
+
+  @override
+  String get ntfBookedTitle => 'تم تأكيد الحجز';
+
+  @override
+  String get ntfBookedNext => 'سنذكّرك قبل الموعد بيوم وقبله بقليل.';
+
+  @override
+  String get ntfReminderDayTitle => 'موعدك غداً';
+
+  @override
+  String get ntfReminderSoonTitle => 'موعدك قريب';
+
+  @override
+  String get ntfReminderNext =>
+      'سجّل وصولك عند الاستقبال. إذا لم تستطع الحضور، ألغِ الموعد من المواعيد ليستفيد منه غيرك.';
+
+  @override
+  String get ntfCancelledTitle => 'ألغت العيادة موعدك';
+
+  @override
+  String get ntfCancelledNext => 'احجز وقتاً آخر مع الطبيب نفسه أو طبيب آخر.';
+
+  @override
+  String get ntfRescheduledTitle => 'تم تغيير موعدك';
+
+  @override
+  String get ntfRescheduledNext =>
+      'إذا لم يناسبك الوقت الجديد، غيّره أو ألغه من المواعيد.';
+
+  @override
+  String get ntfAlmostTitle => 'اقترب دورك';
+
+  @override
+  String get ntfNextTitle => 'أنت التالي';
+
+  @override
+  String get ntfAlmostNext => 'توجّه إلى صالة الانتظار وابقَ قريباً.';
+
+  @override
+  String get ntfQueueOpenedTitle => 'بدأ الطابور';
+
+  @override
+  String get ntfFollowQueue => 'تابع دورك في الطابور المباشر.';
+
+  @override
+  String get ntfPausedTitle => 'توقف الطابور مؤقتاً';
+
+  @override
+  String get ntfPausedNext => 'مكانك محفوظ. سنخبرك عندما يتحرك مجدداً.';
+
+  @override
+  String get ntfResumedTitle => 'عاد الطابور للحركة';
+
+  @override
+  String get ntfClosedTitle => 'أُغلق الطابور';
+
+  @override
+  String get ntfClosedNext => 'إذا لم يتم فحصك، اسأل استقبال العيادة.';
+
+  @override
+  String get ntfEnqueuedTitle => 'أنت في الطابور';
+
+  @override
+  String get ntfCalledTitle => 'حان دورك';
+
+  @override
+  String get ntfCalledNext => 'تفضّل بالدخول إلى الطبيب الآن.';
+
+  @override
+  String get ntfMissedTitle => 'فاتك دورك';
+
+  @override
+  String get ntfMissedNext => 'تحدّث مع الاستقبال، يمكنهم إعادتك إلى الطابور.';
+
+  @override
+  String get ntfStartedTitle => 'بدأت معاينتك';
+
+  @override
+  String get ntfCompletedTitle => 'انتهت زيارتك';
+
+  @override
+  String get ntfCompletedNext =>
+      'نتمنى لك الشفاء. تحتاج مراجعة؟ احجزها من صفحة الطبيب.';
+
+  @override
+  String get ntfWhyAppointment => 'بخصوص موعد حجزته في ساخلم.';
+
+  @override
+  String get ntfWhyQueue => 'من الطابور المباشر في العيادة.';
+
+  @override
+  String ntfAtClinic(String doctor, String clinic) {
+    return '$doctor في $clinic';
+  }
+
+  @override
+  String ntfTicket(int number) {
+    return 'رقم $number';
+  }
+
+  @override
+  String ntfAhead(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count شخص قبلك',
+      many: '$count شخصاً قبلك',
+      few: '$count أشخاص قبلك',
+      two: 'شخصان قبلك',
+      one: 'شخص واحد قبلك',
+      zero: 'لا أحد قبلك',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ntfDoctorStarted(String doctor) {
+    return 'بدأ $doctor باستقبال المرضى.';
+  }
+
+  @override
+  String ntfDoctorPaused(String doctor) {
+    return 'أوقف $doctor الطابور لفترة قصيرة.';
+  }
+
+  @override
+  String ntfDoctorResumed(String doctor) {
+    return 'عاد $doctor لاستقبال المرضى.';
+  }
+
+  @override
+  String ntfDoctorFinished(String doctor) {
+    return 'أنهى $doctor عمله لهذا اليوم.';
+  }
+
+  @override
+  String ntfCompletedHappened(String doctor) {
+    return 'اكتملت زيارتك عند $doctor.';
+  }
 }

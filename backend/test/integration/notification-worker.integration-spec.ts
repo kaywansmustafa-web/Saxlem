@@ -140,10 +140,21 @@ describe('notification outbox worker', () => {
         ({ patientProfileId }) => patientProfileId === seeded.profile.id,
       ),
     ).toBe(true);
+    // Staff get only the action; patients also see the doctor and ticket.
     expect(
-      notifications.every(({ payload }) =>
+      notifications.every(({ payload, patientProfileId }) =>
         Object.keys(payload as Record<string, unknown>).every(
-          (key) => key === 'actionCode',
+          (key) =>
+            key === 'actionCode' ||
+            (patientProfileId !== null && key === 'context'),
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      patientRows.every(({ payload }) =>
+        Boolean(
+          (payload as { context?: { doctorName?: string } }).context
+            ?.doctorName,
         ),
       ),
     ).toBe(true);

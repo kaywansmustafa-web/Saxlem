@@ -88,12 +88,13 @@ class NotificationDetailsPage extends StatelessWidget {
                       label: strings.whyItHappened,
                       value: copy.why,
                     ),
-                    _Part(
-                      icon: Icons.arrow_circle_right_outlined,
-                      label: strings.whatToDoNext,
-                      value: copy.next,
-                      emphasized: true,
-                    ),
+                    if (copy.next.isNotEmpty)
+                      _Part(
+                        icon: Icons.arrow_circle_right_outlined,
+                        label: strings.whatToDoNext,
+                        value: copy.next,
+                        emphasized: true,
+                      ),
                   ],
                 ),
               ),

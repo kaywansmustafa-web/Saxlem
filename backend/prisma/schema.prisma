@@ -1136,6 +1136,7 @@ model OutboxEvent {
   notifications NotificationRecord[]
 
   @@index([publishedAt, failedAt, nextAttemptAt, occurredAt, id])
+  @@index([aggregateId, eventType])
   @@map("outbox_events")
 }
 

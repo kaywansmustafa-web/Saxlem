@@ -2397,6 +2397,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Evening'**
   String get slotEvening;
+
+  /// No description provided for @ntfBookedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking confirmed'**
+  String get ntfBookedTitle;
+
+  /// No description provided for @ntfBookedNext.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll remind you the day before and shortly before your visit.'**
+  String get ntfBookedNext;
+
+  /// No description provided for @ntfReminderDayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your visit is tomorrow'**
+  String get ntfReminderDayTitle;
+
+  /// No description provided for @ntfReminderSoonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your visit is soon'**
+  String get ntfReminderSoonTitle;
+
+  /// No description provided for @ntfReminderNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in at reception when you arrive. Can\'t come? Cancel in Appointments so someone else can have the time.'**
+  String get ntfReminderNext;
+
+  /// No description provided for @ntfCancelledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The clinic cancelled your visit'**
+  String get ntfCancelledTitle;
+
+  /// No description provided for @ntfCancelledNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Book another time with the same doctor or another one.'**
+  String get ntfCancelledNext;
+
+  /// No description provided for @ntfRescheduledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your visit has a new time'**
+  String get ntfRescheduledTitle;
+
+  /// No description provided for @ntfRescheduledNext.
+  ///
+  /// In en, this message translates to:
+  /// **'If the new time doesn\'t suit you, change or cancel it in Appointments.'**
+  String get ntfRescheduledNext;
+
+  /// No description provided for @ntfAlmostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost your turn'**
+  String get ntfAlmostTitle;
+
+  /// No description provided for @ntfNextTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re next'**
+  String get ntfNextTitle;
+
+  /// No description provided for @ntfAlmostNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Make your way to the waiting area and stay close.'**
+  String get ntfAlmostNext;
+
+  /// No description provided for @ntfQueueOpenedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue is open'**
+  String get ntfQueueOpenedTitle;
+
+  /// No description provided for @ntfFollowQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow your place in the live queue.'**
+  String get ntfFollowQueue;
+
+  /// No description provided for @ntfPausedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue is paused'**
+  String get ntfPausedTitle;
+
+  /// No description provided for @ntfPausedNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Your place is kept. We\'ll tell you when it moves again.'**
+  String get ntfPausedNext;
+
+  /// No description provided for @ntfResumedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue is moving again'**
+  String get ntfResumedTitle;
+
+  /// No description provided for @ntfClosedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue is closed'**
+  String get ntfClosedTitle;
+
+  /// No description provided for @ntfClosedNext.
+  ///
+  /// In en, this message translates to:
+  /// **'If you weren\'t seen, ask the clinic\'s reception.'**
+  String get ntfClosedNext;
+
+  /// No description provided for @ntfEnqueuedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re in the queue'**
+  String get ntfEnqueuedTitle;
+
+  /// No description provided for @ntfCalledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s your turn'**
+  String get ntfCalledTitle;
+
+  /// No description provided for @ntfCalledNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Please go in to the doctor now.'**
+  String get ntfCalledNext;
+
+  /// No description provided for @ntfMissedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You missed your turn'**
+  String get ntfMissedTitle;
+
+  /// No description provided for @ntfMissedNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak to reception — they can put you back in the queue.'**
+  String get ntfMissedNext;
+
+  /// No description provided for @ntfStartedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your consultation has started'**
+  String get ntfStartedTitle;
+
+  /// No description provided for @ntfCompletedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit finished'**
+  String get ntfCompletedTitle;
+
+  /// No description provided for @ntfCompletedNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Get well soon. Need a follow-up? Book it from the doctor\'s page.'**
+  String get ntfCompletedNext;
+
+  /// No description provided for @ntfWhyAppointment.
+  ///
+  /// In en, this message translates to:
+  /// **'About a visit you booked in Saxlem.'**
+  String get ntfWhyAppointment;
+
+  /// No description provided for @ntfWhyQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'From the clinic\'s live queue.'**
+  String get ntfWhyQueue;
+
+  /// No description provided for @ntfAtClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'{doctor} at {clinic}'**
+  String ntfAtClinic(String doctor, String clinic);
+
+  /// No description provided for @ntfTicket.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket {number}'**
+  String ntfTicket(int number);
+
+  /// No description provided for @ntfAhead.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nobody ahead of you} =1{1 person ahead of you} other{{count} people ahead of you}}'**
+  String ntfAhead(int count);
+
+  /// No description provided for @ntfDoctorStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'{doctor} has started seeing patients.'**
+  String ntfDoctorStarted(String doctor);
+
+  /// No description provided for @ntfDoctorPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'{doctor} paused the queue for a short time.'**
+  String ntfDoctorPaused(String doctor);
+
+  /// No description provided for @ntfDoctorResumed.
+  ///
+  /// In en, this message translates to:
+  /// **'{doctor} is seeing patients again.'**
+  String ntfDoctorResumed(String doctor);
+
+  /// No description provided for @ntfDoctorFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'{doctor} has finished for today.'**
+  String ntfDoctorFinished(String doctor);
+
+  /// No description provided for @ntfCompletedHappened.
+  ///
+  /// In en, this message translates to:
+  /// **'Your visit with {doctor} is complete.'**
+  String ntfCompletedHappened(String doctor);
 }
 
 class _AppLocalizationsDelegate

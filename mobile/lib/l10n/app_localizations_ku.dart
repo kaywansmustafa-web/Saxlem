@@ -1290,4 +1290,146 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get slotEvening => 'ئێڤار';
+
+  @override
+  String get ntfBookedTitle => 'ژڤان هاتە پشتراستکرن';
+
+  @override
+  String get ntfBookedNext =>
+      'دێ بیرا تە ئینین رۆژەکێ بەری ژڤانی و هندەکێ بەری ژڤانی.';
+
+  @override
+  String get ntfReminderDayTitle => 'ژڤانێ تە سوبەهی یە';
+
+  @override
+  String get ntfReminderSoonTitle => 'ژڤانێ تە نێزیکە';
+
+  @override
+  String get ntfReminderNext =>
+      'دەمێ دگەهیە کلینیکێ خۆ ل پێشوازیێ تومار بکە. ئەگەر نەشێی بهێی، ژڤانی ژ بەشێ ژڤانان هەلوەشینە دا کەسەکێ دی ب کار بینیت.';
+
+  @override
+  String get ntfCancelledTitle => 'کلینیکێ ژڤانێ تە هەلوەشاند';
+
+  @override
+  String get ntfCancelledNext =>
+      'دەمەکێ دی ل دەڤ هەمان نوژداری یان نوژدارەکێ دی بگرە.';
+
+  @override
+  String get ntfRescheduledTitle => 'ژڤانێ تە دەمەکێ نوی هەیە';
+
+  @override
+  String get ntfRescheduledNext =>
+      'ئەگەر دەمێ نوی بۆ تە نەگونجیت، ژ بەشێ ژڤانان بگهۆڕە یان هەلوەشینە.';
+
+  @override
+  String get ntfAlmostTitle => 'نۆرا تە نێزیک بوو';
+
+  @override
+  String get ntfNextTitle => 'تو یێ دویڤدا یی';
+
+  @override
+  String get ntfAlmostNext => 'بچە جهێ چاڤەڕێبوونێ و نێزیک بمینە.';
+
+  @override
+  String get ntfQueueOpenedTitle => 'رێزبەندی ڤەبوو';
+
+  @override
+  String get ntfFollowQueue => 'جهێ خۆ د رێزبەندییا زندی دا ببینە.';
+
+  @override
+  String get ntfPausedTitle => 'رێزبەندی بۆ دەمەکێ کورت راوەستا';
+
+  @override
+  String get ntfPausedNext =>
+      'جهێ تە پاراستیە. دەمێ دیسان دەست پێ دکەت دێ بێژینە تە.';
+
+  @override
+  String get ntfResumedTitle => 'رێزبەندی دیسان دەست پێ کر';
+
+  @override
+  String get ntfClosedTitle => 'رێزبەندی هاتە گرتن';
+
+  @override
+  String get ntfClosedNext =>
+      'ئەگەر نەهاتیە دیتن، پسیارا پێشوازیا کلینیکێ بکە.';
+
+  @override
+  String get ntfEnqueuedTitle => 'تو د رێزبەندیێ دا یی';
+
+  @override
+  String get ntfCalledTitle => 'نۆرا تە یە';
+
+  @override
+  String get ntfCalledNext => 'هیڤیە نوکە بچە دەڤ نوژداری.';
+
+  @override
+  String get ntfMissedTitle => 'نۆرا تە بۆری';
+
+  @override
+  String get ntfMissedNext =>
+      'دگەل پێشوازیێ باخڤە، دشێن تە ڤەگەڕیننە رێزبەندیێ.';
+
+  @override
+  String get ntfStartedTitle => 'پشکنینا تە دەست پێ کر';
+
+  @override
+  String get ntfCompletedTitle => 'سەرەدانا تە ب دوماهی هات';
+
+  @override
+  String get ntfCompletedNext =>
+      'ب هیڤیا ساخلەمیێ. پێدڤی ب پێداچوونێ هەیە؟ ژ لاپەڕێ نوژداری بگرە.';
+
+  @override
+  String get ntfWhyAppointment => 'دەربارەی ژڤانەکێ تە ل ساخلەم گرتی.';
+
+  @override
+  String get ntfWhyQueue => 'ژ رێزبەندییا زندی یا کلینیکێ.';
+
+  @override
+  String ntfAtClinic(String doctor, String clinic) {
+    return '$doctor ل $clinic';
+  }
+
+  @override
+  String ntfTicket(int number) {
+    return 'ژمارە $number';
+  }
+
+  @override
+  String ntfAhead(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count کەس بەری تە',
+      one: 'ئێک کەس بەری تە',
+      zero: 'کەس بەری تە نینە',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ntfDoctorStarted(String doctor) {
+    return '$doctor دەست ب دیتنا نەخۆشان کر.';
+  }
+
+  @override
+  String ntfDoctorPaused(String doctor) {
+    return '$doctor رێزبەندی بۆ دەمەکێ کورت راگرت.';
+  }
+
+  @override
+  String ntfDoctorResumed(String doctor) {
+    return '$doctor دیسان نەخۆشان دبینیت.';
+  }
+
+  @override
+  String ntfDoctorFinished(String doctor) {
+    return '$doctor کارێ ئەڤرۆ ب دوماهی ئینا.';
+  }
+
+  @override
+  String ntfCompletedHappened(String doctor) {
+    return 'سەرەدانا تە ل دەڤ $doctor تەمام بوو.';
+  }
 }

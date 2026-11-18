@@ -130,6 +130,7 @@ Map<String, Object?> _item({required String? readAt}) => {
   'occurredAt': '2026-08-10T06:00:00Z',
   'createdAt': '2026-08-10T06:00:01Z',
   'readAt': readAt,
+  'context': null,
 };
 final _session = StoredSession(
   phoneNumber: 'redacted',

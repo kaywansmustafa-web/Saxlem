@@ -11,7 +11,7 @@ void main() {
     final client = MockClient((request) async {
       captured = request;
       return http.Response(
-        'id: 42\nevent: notification\ndata: {"id":"11111111-1111-4111-8111-111111111111","patientProfileId":null,"deliverySequence":"42","type":"queue.patient.called","priority":"high","actionCode":"queue.patient.called","occurredAt":"2026-08-10T06:00:00Z","createdAt":"2026-08-10T06:00:01Z","readAt":null}\n\n',
+        'id: 42\nevent: notification\ndata: {"id":"11111111-1111-4111-8111-111111111111","patientProfileId":null,"deliverySequence":"42","type":"queue.patient.called","priority":"high","actionCode":"queue.patient.called","occurredAt":"2026-08-10T06:00:00Z","createdAt":"2026-08-10T06:00:01Z","readAt":null,"context":null}\n\n',
         200,
         headers: {'content-type': 'text/event-stream'},
       );

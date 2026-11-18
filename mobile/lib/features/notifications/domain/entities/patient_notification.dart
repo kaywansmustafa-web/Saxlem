@@ -28,9 +28,15 @@ class NotificationPayload {
     this.previousQueueNumber,
     this.title,
     this.message,
+    this.startsAt,
+    this.ahead,
+    this.appointmentId,
   });
-  final String? doctorName, clinicName, title, message;
-  final int? minutes, queueNumber, previousQueueNumber;
+  final String? doctorName, clinicName, title, message, appointmentId;
+  final int? minutes, queueNumber, previousQueueNumber, ahead;
+
+  /// When the visit is (or now is, after a change by the clinic).
+  final DateTime? startsAt;
 }
 
 class PatientNotification {

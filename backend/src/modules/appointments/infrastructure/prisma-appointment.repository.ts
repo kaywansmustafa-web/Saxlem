@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/database/prisma.service';
+import { notifyPatient } from '../../../common/notifications/patient-notifications';
 import type {
   AppointmentAccess,
   AppointmentProjection,
@@ -457,6 +458,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     action: string,
     requestId: string,
   ) {
+    await this.notifyPatientOf(tx, access, row, action);
     try {
       await tx.appointmentEvent.create({
         data: {
@@ -576,5 +578,40 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     if (error instanceof Error)
       return `${error.name} ${error.message} ${this.errorText((error as Error & { cause?: unknown }).cause)}`;
     return typeof error === 'string' ? error : '';
+  }
+
+  /** Tells the patient (in the app) about a booking or a change the clinic made. */
+  private async notifyPatientOf(
+    tx: Prisma.TransactionClient,
+    access: AppointmentAccess,
+    row: Row,
+    action: string,
+  ) {
+    const type =
+      action === 'appointment.created'
+        ? 'appointment.booked'
+        : access.patient
+          ? null
+          : action === 'appointment.cancelled'
+            ? 'appointment.cancelled.by-clinic'
+            : action === 'appointment.rescheduled'
+              ? 'appointment.rescheduled.by-clinic'
+              : null;
+    if (!type) return;
+    await notifyPatient(tx, {
+      organizationId: row.organizationId,
+      clinicId: row.clinicId,
+      patientProfileId: row.patientProfileId,
+      type,
+      aggregateType: 'appointment',
+      aggregateId: row.id,
+      priority: type === 'appointment.booked' ? 'information' : 'high',
+      context: {
+        appointmentId: row.id,
+        doctorName: row.doctorAssignment.doctor.displayName,
+        clinicName: row.clinic.name,
+        startsAt: row.startsAt.toISOString(),
+      },
+    });
   }
 }

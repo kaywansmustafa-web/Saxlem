@@ -631,5 +631,130 @@
   "alertsSubtitle": "Queue calls and booking updates",
   "slotMorning": "Morning",
   "slotAfternoon": "Afternoon",
-  "slotEvening": "Evening"
+  "slotEvening": "Evening",
+  "ntfBookedTitle": "Booking confirmed",
+  "@ntfBookedTitle": {},
+  "ntfBookedNext": "We'll remind you the day before and shortly before your visit.",
+  "@ntfBookedNext": {},
+  "ntfReminderDayTitle": "Your visit is tomorrow",
+  "@ntfReminderDayTitle": {},
+  "ntfReminderSoonTitle": "Your visit is soon",
+  "@ntfReminderSoonTitle": {},
+  "ntfReminderNext": "Check in at reception when you arrive. Can't come? Cancel in Appointments so someone else can have the time.",
+  "@ntfReminderNext": {},
+  "ntfCancelledTitle": "The clinic cancelled your visit",
+  "@ntfCancelledTitle": {},
+  "ntfCancelledNext": "Book another time with the same doctor or another one.",
+  "@ntfCancelledNext": {},
+  "ntfRescheduledTitle": "Your visit has a new time",
+  "@ntfRescheduledTitle": {},
+  "ntfRescheduledNext": "If the new time doesn't suit you, change or cancel it in Appointments.",
+  "@ntfRescheduledNext": {},
+  "ntfAlmostTitle": "Almost your turn",
+  "@ntfAlmostTitle": {},
+  "ntfNextTitle": "You're next",
+  "@ntfNextTitle": {},
+  "ntfAlmostNext": "Make your way to the waiting area and stay close.",
+  "@ntfAlmostNext": {},
+  "ntfQueueOpenedTitle": "The queue is open",
+  "@ntfQueueOpenedTitle": {},
+  "ntfFollowQueue": "Follow your place in the live queue.",
+  "@ntfFollowQueue": {},
+  "ntfPausedTitle": "The queue is paused",
+  "@ntfPausedTitle": {},
+  "ntfPausedNext": "Your place is kept. We'll tell you when it moves again.",
+  "@ntfPausedNext": {},
+  "ntfResumedTitle": "The queue is moving again",
+  "@ntfResumedTitle": {},
+  "ntfClosedTitle": "The queue is closed",
+  "@ntfClosedTitle": {},
+  "ntfClosedNext": "If you weren't seen, ask the clinic's reception.",
+  "@ntfClosedNext": {},
+  "ntfEnqueuedTitle": "You're in the queue",
+  "@ntfEnqueuedTitle": {},
+  "ntfCalledTitle": "It's your turn",
+  "@ntfCalledTitle": {},
+  "ntfCalledNext": "Please go in to the doctor now.",
+  "@ntfCalledNext": {},
+  "ntfMissedTitle": "You missed your turn",
+  "@ntfMissedTitle": {},
+  "ntfMissedNext": "Speak to reception — they can put you back in the queue.",
+  "@ntfMissedNext": {},
+  "ntfStartedTitle": "Your consultation has started",
+  "@ntfStartedTitle": {},
+  "ntfCompletedTitle": "Visit finished",
+  "@ntfCompletedTitle": {},
+  "ntfCompletedNext": "Get well soon. Need a follow-up? Book it from the doctor's page.",
+  "@ntfCompletedNext": {},
+  "ntfWhyAppointment": "About a visit you booked in Saxlem.",
+  "@ntfWhyAppointment": {},
+  "ntfWhyQueue": "From the clinic's live queue.",
+  "@ntfWhyQueue": {},
+  "ntfAtClinic": "{doctor} at {clinic}",
+  "@ntfAtClinic": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      },
+      "clinic": {
+        "type": "String"
+      }
+    }
+  },
+  "ntfTicket": "Ticket {number}",
+  "@ntfTicket": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "ntfAhead": "{count, plural, =0{Nobody ahead of you} =1{1 person ahead of you} other{{count} people ahead of you}}",
+  "@ntfAhead": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ntfDoctorStarted": "{doctor} has started seeing patients.",
+  "@ntfDoctorStarted": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
+  "ntfDoctorPaused": "{doctor} paused the queue for a short time.",
+  "@ntfDoctorPaused": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
+  "ntfDoctorResumed": "{doctor} is seeing patients again.",
+  "@ntfDoctorResumed": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
+  "ntfDoctorFinished": "{doctor} has finished for today.",
+  "@ntfDoctorFinished": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
+  "ntfCompletedHappened": "Your visit with {doctor} is complete.",
+  "@ntfCompletedHappened": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -42,6 +42,13 @@ class PatientNotificationMapper {
         PatientNotificationType.queueOpened ||
         PatientNotificationType.queueNumberUpdated ||
         PatientNotificationType.almostYourTurn ||
+        PatientNotificationType.calledIn ||
+        PatientNotificationType.missedTurn ||
+        PatientNotificationType.consultationStarted ||
+        PatientNotificationType.visitCompleted ||
+        PatientNotificationType.queuePaused ||
+        PatientNotificationType.queueResumed ||
+        PatientNotificationType.queueClosed ||
         PatientNotificationType.doctorRunningBehind ||
         PatientNotificationType.doctorRunningAhead =>
           NotificationCategory.queue,

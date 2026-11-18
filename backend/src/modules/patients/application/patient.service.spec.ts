@@ -312,12 +312,12 @@ describe('PatientService', () => {
     it('closes the account when nothing is upcoming', async () => {
       const repo = repository();
       await service(repo).closeAccount('user-1', 'req-1');
-      expect(repo.closeAccount).toHaveBeenCalledWith(
+      expect(jest.mocked(repo).closeAccount.mock.calls[0]).toEqual([
         account.id,
         'user-1',
         'req-1',
         expect.any(Date),
-      );
+      ]);
     });
 
     it('refuses while visits are still booked', async () => {

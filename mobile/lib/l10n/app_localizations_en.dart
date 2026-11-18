@@ -1318,4 +1318,147 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get slotEvening => 'Evening';
+
+  @override
+  String get ntfBookedTitle => 'Booking confirmed';
+
+  @override
+  String get ntfBookedNext =>
+      'We\'ll remind you the day before and shortly before your visit.';
+
+  @override
+  String get ntfReminderDayTitle => 'Your visit is tomorrow';
+
+  @override
+  String get ntfReminderSoonTitle => 'Your visit is soon';
+
+  @override
+  String get ntfReminderNext =>
+      'Check in at reception when you arrive. Can\'t come? Cancel in Appointments so someone else can have the time.';
+
+  @override
+  String get ntfCancelledTitle => 'The clinic cancelled your visit';
+
+  @override
+  String get ntfCancelledNext =>
+      'Book another time with the same doctor or another one.';
+
+  @override
+  String get ntfRescheduledTitle => 'Your visit has a new time';
+
+  @override
+  String get ntfRescheduledNext =>
+      'If the new time doesn\'t suit you, change or cancel it in Appointments.';
+
+  @override
+  String get ntfAlmostTitle => 'Almost your turn';
+
+  @override
+  String get ntfNextTitle => 'You\'re next';
+
+  @override
+  String get ntfAlmostNext =>
+      'Make your way to the waiting area and stay close.';
+
+  @override
+  String get ntfQueueOpenedTitle => 'The queue is open';
+
+  @override
+  String get ntfFollowQueue => 'Follow your place in the live queue.';
+
+  @override
+  String get ntfPausedTitle => 'The queue is paused';
+
+  @override
+  String get ntfPausedNext =>
+      'Your place is kept. We\'ll tell you when it moves again.';
+
+  @override
+  String get ntfResumedTitle => 'The queue is moving again';
+
+  @override
+  String get ntfClosedTitle => 'The queue is closed';
+
+  @override
+  String get ntfClosedNext =>
+      'If you weren\'t seen, ask the clinic\'s reception.';
+
+  @override
+  String get ntfEnqueuedTitle => 'You\'re in the queue';
+
+  @override
+  String get ntfCalledTitle => 'It\'s your turn';
+
+  @override
+  String get ntfCalledNext => 'Please go in to the doctor now.';
+
+  @override
+  String get ntfMissedTitle => 'You missed your turn';
+
+  @override
+  String get ntfMissedNext =>
+      'Speak to reception — they can put you back in the queue.';
+
+  @override
+  String get ntfStartedTitle => 'Your consultation has started';
+
+  @override
+  String get ntfCompletedTitle => 'Visit finished';
+
+  @override
+  String get ntfCompletedNext =>
+      'Get well soon. Need a follow-up? Book it from the doctor\'s page.';
+
+  @override
+  String get ntfWhyAppointment => 'About a visit you booked in Saxlem.';
+
+  @override
+  String get ntfWhyQueue => 'From the clinic\'s live queue.';
+
+  @override
+  String ntfAtClinic(String doctor, String clinic) {
+    return '$doctor at $clinic';
+  }
+
+  @override
+  String ntfTicket(int number) {
+    return 'Ticket $number';
+  }
+
+  @override
+  String ntfAhead(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people ahead of you',
+      one: '1 person ahead of you',
+      zero: 'Nobody ahead of you',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ntfDoctorStarted(String doctor) {
+    return '$doctor has started seeing patients.';
+  }
+
+  @override
+  String ntfDoctorPaused(String doctor) {
+    return '$doctor paused the queue for a short time.';
+  }
+
+  @override
+  String ntfDoctorResumed(String doctor) {
+    return '$doctor is seeing patients again.';
+  }
+
+  @override
+  String ntfDoctorFinished(String doctor) {
+    return '$doctor has finished for today.';
+  }
+
+  @override
+  String ntfCompletedHappened(String doctor) {
+    return 'Your visit with $doctor is complete.';
+  }
 }

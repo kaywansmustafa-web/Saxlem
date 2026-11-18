@@ -1,3 +1,5 @@
+import type { PatientNotificationContext } from '../../../common/notifications/patient-notifications';
+
 export const SUPPORTED_QUEUE_NOTIFICATION_EVENTS = [
   'queue.session.opened',
   'queue.session.paused',
@@ -32,6 +34,8 @@ export interface NotificationProjection {
   readonly occurredAt: Date;
   readonly createdAt: Date;
   readonly readAt: Date | null;
+  /** Doctor, clinic, time or ticket, for the patient's own notifications. */
+  readonly context: PatientNotificationContext | null;
 }
 
 export interface NotificationPage {

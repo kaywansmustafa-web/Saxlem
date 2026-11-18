@@ -15869,6 +15869,34 @@
           "entryVersion"
         ]
       },
+      "NotificationContextDto": {
+        "type": "object",
+        "properties": {
+          "appointmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorName": {
+            "type": "string"
+          },
+          "clinicName": {
+            "type": "string"
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ticketNumber": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "ahead": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Patients waiting ahead, for \"almost your turn\"."
+          }
+        }
+      },
       "NotificationItemDto": {
         "type": "object",
         "properties": {
@@ -15911,6 +15939,15 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "context": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NotificationContextDto"
+              }
+            ]
           }
         },
         "required": [
@@ -15922,7 +15959,8 @@
           "actionCode",
           "occurredAt",
           "createdAt",
-          "readAt"
+          "readAt",
+          "context"
         ]
       },
       "NotificationPageDto": {

@@ -23,6 +23,7 @@ class BackendNotificationDto {
       'occurredAt',
       'createdAt',
       'readAt',
+      'context',
     };
     if (json.keys.length != keys.length ||
         json.keys.toSet().difference(keys).isNotEmpty ||
@@ -64,7 +65,7 @@ class BackendNotificationDto {
           : NotificationReadState.read,
       occurredAt: occurred,
       receivedAt: created,
-      payload: const NotificationPayload(),
+      payload: _payload(json['context']),
       action: _action(action),
       profileId: profile == null ? null : PatientProfileId(profile),
       deliverySequence: sequence,
@@ -112,19 +113,62 @@ class BackendNotificationDto {
     return parsed;
   }
 
+  /// Doctor, clinic, time and ticket the backend sends with a patient's own
+  /// notifications. Unknown or malformed fields are dropped, not trusted.
+  static NotificationPayload _payload(Object? value) {
+    if (value == null) return const NotificationPayload();
+    if (value is! Map<String, dynamic>) throw const FormatException();
+    String? text(String key) {
+      final raw = value[key];
+      return raw is String && raw.trim().isNotEmpty && raw.length <= 200
+          ? raw.trim()
+          : null;
+    }
+
+    int? count(String key) {
+      final raw = value[key];
+      return raw is int && raw >= 0 ? raw : null;
+    }
+
+    final starts = value['startsAt'];
+    final appointment = value['appointmentId'];
+    return NotificationPayload(
+      doctorName: text('doctorName'),
+      clinicName: text('clinicName'),
+      queueNumber: count('ticketNumber'),
+      ahead: count('ahead'),
+      startsAt: starts is String && _instant.hasMatch(starts)
+          ? DateTime.tryParse(starts)
+          : null,
+      appointmentId: appointment is String && _uuid.hasMatch(appointment)
+          ? appointment
+          : null,
+    );
+  }
+
   static DateTime? _nullableDate(Object? value) =>
       value == null ? null : _date(value);
   static PatientNotificationType _mappedType(String value) => switch (value) {
-    'queue.session.opened' => PatientNotificationType.queueOpened,
-    'queue.patient.called' ||
-    'queue.patient.recalled' => PatientNotificationType.almostYourTurn,
-    'queue.entry.enqueued' => PatientNotificationType.queueNumberUpdated,
-    'queue.patient.no-response' =>
-      PatientNotificationType.authenticationRequired,
-    'queue.consultation.started' =>
-      PatientNotificationType.appointmentCheckedIn,
-    'queue.consultation.completed' =>
+    'appointment.booked' => PatientNotificationType.bookingConfirmed,
+    'appointment.cancelled.by-clinic' =>
+      PatientNotificationType.appointmentCancelled,
+    'appointment.rescheduled.by-clinic' =>
+      PatientNotificationType.appointmentRescheduled,
+    'appointment.reminder.day-before' =>
+      PatientNotificationType.appointmentReminder24Hours,
+    'appointment.reminder.soon' =>
       PatientNotificationType.appointmentReminder2Hours,
+    'queue.patient.almost' => PatientNotificationType.almostYourTurn,
+    'queue.session.opened' => PatientNotificationType.queueOpened,
+    'queue.session.paused' => PatientNotificationType.queuePaused,
+    'queue.session.resumed' => PatientNotificationType.queueResumed,
+    'queue.session.closed' => PatientNotificationType.queueClosed,
+    'queue.entry.enqueued' => PatientNotificationType.queueNumberUpdated,
+    'queue.patient.called' ||
+    'queue.patient.recalled' => PatientNotificationType.calledIn,
+    'queue.patient.no-response' => PatientNotificationType.missedTurn,
+    'queue.consultation.started' => PatientNotificationType.consultationStarted,
+    'queue.consultation.completed' => PatientNotificationType.visitCompleted,
     _ => PatientNotificationType.systemOfflineMode,
   };
   static NotificationCategory _category(String value) =>
@@ -134,18 +178,20 @@ class BackendNotificationDto {
       ? NotificationCategory.appointment
       : NotificationCategory.system;
   static NotificationAction _action(String value) =>
-      const {
-        'queue.session.opened',
-        'queue.session.paused',
-        'queue.session.resumed',
-        'queue.session.closed',
-        'queue.entry.enqueued',
-        'queue.patient.called',
-        'queue.patient.recalled',
-        'queue.patient.no-response',
-        'queue.consultation.started',
-        'queue.consultation.completed',
-      }.contains(value)
+      value.startsWith('appointment.') ||
+          const {
+            'queue.session.opened',
+            'queue.session.paused',
+            'queue.session.resumed',
+            'queue.session.closed',
+            'queue.entry.enqueued',
+            'queue.patient.called',
+            'queue.patient.recalled',
+            'queue.patient.no-response',
+            'queue.consultation.started',
+            'queue.consultation.completed',
+            'queue.patient.almost',
+          }.contains(value)
       ? const NotificationAction(NotificationDestination.appointment)
       : const NotificationAction.none();
 }
