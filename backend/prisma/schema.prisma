@@ -670,6 +670,7 @@ model Appointment {
   arrival             AppointmentArrival?
   trip                AppointmentTrip?
   review              DoctorReview?
+  earlierTime         EarlierTimeRequest?
   queueEntries        QueueEntry[]
   commissionEntries   CommissionLedgerEntry[]
   statementLines      BillingStatementLine[]
@@ -1499,4 +1500,21 @@ model SavedDoctor {
   @@id([patientAccountId, doctorId])
   @@index([patientAccountId, createdAt])
   @@map("saved_doctors")
+}
+
+/// "Tell me if an earlier time opens" for an upcoming visit.
+model EarlierTimeRequest {
+  appointmentId       String      @id @map("appointment_id") @db.Uuid
+  organizationId      String      @map("organization_id") @db.Uuid
+  clinicId            String      @map("clinic_id") @db.Uuid
+  patientProfileId    String      @map("patient_profile_id") @db.Uuid
+  createdAt           DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// The last earlier time we told the patient about, and when.
+  lastOfferedStartsAt DateTime?   @map("last_offered_starts_at") @db.Timestamptz(3)
+  lastOfferedAt       DateTime?   @map("last_offered_at") @db.Timestamptz(3)
+  appointment         Appointment @relation(fields: [organizationId, clinicId, appointmentId, patientProfileId], references: [organizationId, clinicId, id, patientProfileId], onDelete: Cascade)
+
+  @@unique([organizationId, clinicId, appointmentId, patientProfileId])
+  @@index([createdAt])
+  @@map("earlier_time_requests")
 }

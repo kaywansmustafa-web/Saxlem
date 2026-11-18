@@ -1,3 +1,4 @@
+import '../../../booking/domain/entities/appointment_slot.dart';
 import '../../../reviews/data/review_dto.dart';
 import '../../../reviews/domain/review.dart';
 import '../../../../core/models/patient_profile.dart';
@@ -15,7 +16,8 @@ class BackendPatientAppointmentsRepository
     implements
         PatientAppointmentsRepository,
         DeparturePlanner,
-        VisitReviewSource {
+        VisitReviewSource,
+        EarlierTimeSource {
   BackendPatientAppointmentsRepository(this._api);
   final AuthenticatedApiClient _api;
   static final _uuid = RegExp(
@@ -112,6 +114,84 @@ class BackendPatientAppointmentsRepository
     } on ApiFailure catch (failure) {
       throw AppointmentFailure(_problem(failure, mutation: false));
     }
+  }
+
+  @override
+  Future<EarlierTimeStatus> earlierTime(String appointmentId) async {
+    _uuidValue(appointmentId);
+    try {
+      return _earlier(
+        (await _api.getJson('/appointments/$appointmentId/earlier')).body,
+      );
+    } on FormatException {
+      throw const AppointmentFailure(AppointmentProblem.malformed);
+    } on ApiFailure catch (failure) {
+      throw AppointmentFailure(_problem(failure, mutation: false));
+    }
+  }
+
+  @override
+  Future<EarlierTimeStatus> watchEarlierTime(
+    String appointmentId, {
+    required bool watch,
+  }) async {
+    _uuidValue(appointmentId);
+    try {
+      if (!watch) {
+        await _api.deleteJson('/appointments/$appointmentId/earlier');
+        return const EarlierTimeStatus(watching: false);
+      }
+      return _earlier(
+        (await _api.postJson(
+          '/appointments/$appointmentId/earlier',
+          body: {},
+        )).body,
+      );
+    } on FormatException {
+      throw const AppointmentFailure(AppointmentProblem.malformed);
+    } on MutationNotSentFailure catch (failure) {
+      throw AppointmentFailure(_problem(failure.failure, mutation: false));
+    } on ApiFailure catch (failure) {
+      throw AppointmentFailure(_problem(failure, mutation: false));
+    }
+  }
+
+  static EarlierTimeStatus _earlier(Map<String, dynamic> json) {
+    if (json.keys.toSet().difference({'watching', 'offer'}).isNotEmpty ||
+        json['watching'] is! bool) {
+      throw const FormatException();
+    }
+    final raw = json['offer'];
+    if (raw == null) {
+      return EarlierTimeStatus(watching: json['watching'] as bool);
+    }
+    if (raw is! Map<String, dynamic> ||
+        raw.keys.toSet().difference({
+          'startsAt',
+          'endsAt',
+          'durationMinutes',
+        }).isNotEmpty) {
+      throw const FormatException();
+    }
+    if (raw['startsAt'] is! String || raw['endsAt'] is! String) {
+      throw const FormatException();
+    }
+    final startsAt = DateTime.parse(raw['startsAt'] as String).toUtc();
+    final endsAt = DateTime.parse(raw['endsAt'] as String).toUtc();
+    final duration = raw['durationMinutes'];
+    if (duration is! int ||
+        duration < 5 ||
+        endsAt.difference(startsAt).inMinutes != duration) {
+      throw const FormatException();
+    }
+    return EarlierTimeStatus(
+      watching: json['watching'] as bool,
+      offer: AppointmentSlot(
+        startsAt: startsAt,
+        endsAt: endsAt,
+        durationMinutes: duration,
+      ),
+    );
   }
 
   @override

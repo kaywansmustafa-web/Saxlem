@@ -13,6 +13,7 @@ enum PatientNotificationType {
   consultationStarted,
   visitCompleted,
   reviewRequested,
+  earlierTimeAvailable,
   queuePaused,
   queueResumed,
   queueClosed,

@@ -1815,4 +1815,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get savedFailed => 'تعذّر تحديث الأطباء المحفوظين. حاول مجددًا.';
+
+  @override
+  String get earlierWatch => 'أخبرني إذا توفر موعد أبكر';
+
+  @override
+  String earlierWatchHelp(String doctor) {
+    return 'إذا توفر لدى $doctor موعد أقرب سنخبرك. يبقى موعدك محجوزًا حتى تنقله.';
+  }
+
+  @override
+  String get earlierFound => 'يتوفر موعد أبكر';
+
+  @override
+  String get earlierMove => 'انقل موعدي إلى هذا الوقت';
+
+  @override
+  String get earlierFirstCome => 'من يؤكد أولًا يحصل عليه.';
+
+  @override
+  String get earlierFailed => 'تعذّر تغيير ذلك. حاول مجددًا.';
+
+  @override
+  String get ntfEarlierTitle => 'يتوفر موعد أبكر';
+
+  @override
+  String get ntfEarlierNext =>
+      'افتح موعدك لتنتقل إليه. من يؤكد أولًا يحصل عليه.';
 }

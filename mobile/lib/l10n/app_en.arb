@@ -1010,5 +1010,21 @@
   "savedRemoved": "Removed from saved",
   "@savedRemoved": {},
   "savedFailed": "Couldn't update saved doctors. Try again.",
-  "@savedFailed": {}
+  "@savedFailed": {},
+  "earlierWatch": "Tell me if an earlier time opens",
+  "@earlierWatch": {},
+  "earlierWatchHelp": "If {doctor} has a free time sooner, we'll let you know. Your visit stays booked until you move it.",
+  "@earlierWatchHelp": {"placeholders": {"doctor": {"type": "String"}}},
+  "earlierFound": "An earlier time is free",
+  "@earlierFound": {},
+  "earlierMove": "Move my visit to this time",
+  "@earlierMove": {},
+  "earlierFirstCome": "Whoever confirms first gets it.",
+  "@earlierFirstCome": {},
+  "earlierFailed": "Couldn't change this. Try again.",
+  "@earlierFailed": {},
+  "ntfEarlierTitle": "An earlier time is free",
+  "@ntfEarlierTitle": {},
+  "ntfEarlierNext": "Open your visit to move to it. Whoever confirms first gets it.",
+  "@ntfEarlierNext": {}
 }

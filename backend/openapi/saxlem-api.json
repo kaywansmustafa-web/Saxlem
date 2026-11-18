@@ -6033,6 +6033,117 @@
         ]
       }
     },
+    "/api/v1/appointments/{id}/earlier": {
+      "get": {
+        "operationId": "EarlierTimeController_status",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EarlierStatusDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Am I watching for an earlier time? (patients)",
+        "tags": [
+          "appointments"
+        ]
+      },
+      "post": {
+        "description": "For a visit at least 3 hours away. Offers come as notifications, at most every 6 hours; moving is up to the patient.",
+        "operationId": "EarlierTimeController_watch",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EarlierStatusDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Tell me if an earlier time opens (patients)",
+        "tags": [
+          "appointments"
+        ]
+      },
+      "delete": {
+        "operationId": "EarlierTimeController_stop",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Stop watching for an earlier time (patients)",
+        "tags": [
+          "appointments"
+        ]
+      }
+    },
     "/api/v1/appointments/{id}/arrival": {
       "get": {
         "description": "Patients may read only their appointments; doctors only their appointments; clinic staff are tenant-scoped; platform administrators may cross tenants. Staff reads require a durable arrival.viewed audit. Eligibility is advisory and every mutation revalidates current policy.",
@@ -15077,6 +15188,49 @@
           "dateTo",
           "days",
           "generatedAt"
+        ]
+      },
+      "EarlierOfferDto": {
+        "type": "object",
+        "properties": {
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "durationMinutes": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "startsAt",
+          "endsAt",
+          "durationMinutes"
+        ]
+      },
+      "EarlierStatusDto": {
+        "type": "object",
+        "properties": {
+          "watching": {
+            "type": "boolean"
+          },
+          "offer": {
+            "nullable": true,
+            "description": "The latest earlier time found. It may have been taken since.",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EarlierOfferDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "watching",
+          "offer"
         ]
       },
       "ArrivalEligibilityResponseDto": {

@@ -67,7 +67,8 @@ class PatientNotificationMapper {
         PatientNotificationType.appointmentReminder2Hours ||
         PatientNotificationType.appointmentCancelled ||
         PatientNotificationType.appointmentRescheduled ||
-        PatientNotificationType.reviewRequested =>
+        PatientNotificationType.reviewRequested ||
+        PatientNotificationType.earlierTimeAvailable =>
           NotificationDestination.appointment,
         PatientNotificationType.queueOpened ||
         PatientNotificationType.queueNumberUpdated ||

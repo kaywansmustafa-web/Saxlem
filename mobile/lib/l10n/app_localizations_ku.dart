@@ -1833,4 +1833,31 @@ class AppLocalizationsKu extends AppLocalizations {
   @override
   String get savedFailed =>
       'نەشیاین نوژدارێن پاشەکەفتکری نوی بکەین. دیسان هەول بدە.';
+
+  @override
+  String get earlierWatch => 'ئاگەهدارم بکە ئەگەر دەمەکێ زووتر ڤەبوو';
+
+  @override
+  String earlierWatchHelp(String doctor) {
+    return 'ئەگەر $doctor دەمەکێ زووتر یێ ڤالا هەبیت، دێ ئاگەهدار کەین. ژڤانا تە دمینیت هەتا تو بگوهێزی.';
+  }
+
+  @override
+  String get earlierFound => 'دەمەکێ زووتر یێ ڤالایە';
+
+  @override
+  String get earlierMove => 'ژڤانا من بۆ ڤی دەمی بگوهێزە';
+
+  @override
+  String get earlierFirstCome => 'یێ ئێکەمین پشتڕاست بکەت دێ وەرگریت.';
+
+  @override
+  String get earlierFailed => 'نەشیاین ڤێ بگوهۆڕین. دیسان هەول بدە.';
+
+  @override
+  String get ntfEarlierTitle => 'دەمەکێ زووتر یێ ڤالایە';
+
+  @override
+  String get ntfEarlierNext =>
+      'ژڤانا خۆ ڤەکە دا بۆ وی بگوهێزی. یێ ئێکەمین پشتڕاست بکەت دێ وەرگریت.';
 }

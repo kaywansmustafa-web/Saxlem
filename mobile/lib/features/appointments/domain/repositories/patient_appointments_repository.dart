@@ -1,3 +1,4 @@
+import '../../../booking/domain/entities/appointment_slot.dart';
 import '../entities/appointments_snapshot.dart';
 import '../entities/patient_appointment.dart';
 import '../../../../core/models/patient_profile.dart';
@@ -16,6 +17,24 @@ abstract interface class PatientAppointmentsRepository {
     AppointmentReschedule command,
     String operationId,
   );
+}
+
+/// "Tell me if an earlier time opens".
+class EarlierTimeStatus {
+  const EarlierTimeStatus({required this.watching, this.offer});
+  final bool watching;
+
+  /// The latest earlier time Saxlem found; someone may have taken it since.
+  final AppointmentSlot? offer;
+}
+
+/// Repositories that can watch for an earlier time for a visit.
+abstract interface class EarlierTimeSource {
+  Future<EarlierTimeStatus> earlierTime(String appointmentId);
+  Future<EarlierTimeStatus> watchEarlierTime(
+    String appointmentId, {
+    required bool watch,
+  });
 }
 
 class AppointmentListRequest {

@@ -140,19 +140,24 @@ class AppointmentDetailController extends ChangeNotifier {
     if (!_disposed) notifyListeners();
   }
 
-  Future<void> reschedule(AppointmentSlot slot) async {
+  Future<void> reschedule(AppointmentSlot slot, {bool offered = false}) async {
     final current = state;
     if (current is! AppointmentDetailReady ||
         current.submitting ||
-        current.availability == null ||
-        !current.appointment.canMutate ||
-        !current.availability!.days
-            .expand((day) => day.slots)
-            .any(
-              (item) =>
-                  item.startsAt.isAtSameMomentAs(slot.startsAt) &&
-                  item.durationMinutes == slot.durationMinutes,
-            )) {
+        !current.appointment.canMutate) {
+      return;
+    }
+    // A time from the reschedule picker must be one it showed; an earlier
+    // time Saxlem offered is checked by the server instead.
+    if (!offered &&
+        (current.availability == null ||
+            !current.availability!.days
+                .expand((day) => day.slots)
+                .any(
+                  (item) =>
+                      item.startsAt.isAtSameMomentAs(slot.startsAt) &&
+                      item.durationMinutes == slot.durationMinutes,
+                ))) {
       return;
     }
     final fingerprint =

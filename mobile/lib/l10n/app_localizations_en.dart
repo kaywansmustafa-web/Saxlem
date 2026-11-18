@@ -1862,4 +1862,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get savedFailed => 'Couldn\'t update saved doctors. Try again.';
+
+  @override
+  String get earlierWatch => 'Tell me if an earlier time opens';
+
+  @override
+  String earlierWatchHelp(String doctor) {
+    return 'If $doctor has a free time sooner, we\'ll let you know. Your visit stays booked until you move it.';
+  }
+
+  @override
+  String get earlierFound => 'An earlier time is free';
+
+  @override
+  String get earlierMove => 'Move my visit to this time';
+
+  @override
+  String get earlierFirstCome => 'Whoever confirms first gets it.';
+
+  @override
+  String get earlierFailed => 'Couldn\'t change this. Try again.';
+
+  @override
+  String get ntfEarlierTitle => 'An earlier time is free';
+
+  @override
+  String get ntfEarlierNext =>
+      'Open your visit to move to it. Whoever confirms first gets it.';
 }

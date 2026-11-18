@@ -3279,6 +3279,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t update saved doctors. Try again.'**
   String get savedFailed;
+
+  /// No description provided for @earlierWatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell me if an earlier time opens'**
+  String get earlierWatch;
+
+  /// No description provided for @earlierWatchHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'If {doctor} has a free time sooner, we\'ll let you know. Your visit stays booked until you move it.'**
+  String earlierWatchHelp(String doctor);
+
+  /// No description provided for @earlierFound.
+  ///
+  /// In en, this message translates to:
+  /// **'An earlier time is free'**
+  String get earlierFound;
+
+  /// No description provided for @earlierMove.
+  ///
+  /// In en, this message translates to:
+  /// **'Move my visit to this time'**
+  String get earlierMove;
+
+  /// No description provided for @earlierFirstCome.
+  ///
+  /// In en, this message translates to:
+  /// **'Whoever confirms first gets it.'**
+  String get earlierFirstCome;
+
+  /// No description provided for @earlierFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t change this. Try again.'**
+  String get earlierFailed;
+
+  /// No description provided for @ntfEarlierTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'An earlier time is free'**
+  String get ntfEarlierTitle;
+
+  /// No description provided for @ntfEarlierNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Open your visit to move to it. Whoever confirms first gets it.'**
+  String get ntfEarlierNext;
 }
 
 class _AppLocalizationsDelegate

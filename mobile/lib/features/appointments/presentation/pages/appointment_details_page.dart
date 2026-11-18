@@ -1,3 +1,4 @@
+import '../widgets/earlier_time_card.dart';
 import '../../../reviews/domain/review.dart';
 import '../../../reviews/presentation/visit_review_card.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -195,6 +196,13 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                   doctorName: item.doctor.displayName,
                   source: reviews,
                 ),
+            if (widget.repository case final EarlierTimeSource earlier)
+              EarlierTimeCard(
+                key: ValueKey('earlier-${item.id}-${item.version}'),
+                appointment: item,
+                source: earlier,
+                onMove: (slot) => controller.reschedule(slot, offered: true),
+              ),
             LeaveByPanel(
               appointment: item,
               planner: switch (widget.repository) {

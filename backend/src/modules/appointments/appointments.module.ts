@@ -20,13 +20,22 @@ import {
   TomTomRouteTime,
 } from './infrastructure/route-time';
 import { TripLearningService } from './application/trip-learning.service';
+import { EarlierTimeService } from './application/earlier-time.service';
+import { EarlierTimeWorker } from './infrastructure/earlier-time.worker';
+import { EarlierTimeController } from './presentation/earlier-time.controller';
 @Module({
   imports: [IdentityModule, DoctorsModule],
-  controllers: [AppointmentsController, BookingOptionsController],
+  controllers: [
+    AppointmentsController,
+    BookingOptionsController,
+    EarlierTimeController,
+  ],
   providers: [
     AppointmentService,
     DepartureService,
     TripLearningService,
+    EarlierTimeService,
+    EarlierTimeWorker,
     {
       provide: ROUTE_TIME,
       inject: [BACKEND_CONFIGURATION],
