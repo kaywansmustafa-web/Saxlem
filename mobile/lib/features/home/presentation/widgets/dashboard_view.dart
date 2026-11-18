@@ -1,5 +1,6 @@
 import '../../../appointments/domain/repositories/patient_appointments_repository.dart';
 import 'next_visit_card.dart';
+import 'recent_doctors_strip.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +21,7 @@ class DashboardView extends StatelessWidget {
     required this.onOpenDiscover,
     required this.onOpenAlerts,
     required this.onOpenAppointments,
+    this.onOpenFamily,
     this.profilesController,
     this.appointmentsRepository,
     this.unreadNotifications = 0,
@@ -33,6 +35,9 @@ class DashboardView extends StatelessWidget {
   onOpenDiscover;
   final VoidCallback onOpenAlerts;
   final VoidCallback onOpenAppointments;
+
+  /// Opens family profiles (the Profile tab).
+  final VoidCallback? onOpenFamily;
   final PatientProfilesController? profilesController;
 
   /// When set (signed-in patients), Home shows the next booked visit.
@@ -132,6 +137,17 @@ class DashboardView extends StatelessWidget {
               semanticLabelBuilder: strings.browseSpecialty,
               onSelected: openSpecialty,
             ),
+            if (profiles != null && appointmentsRepository != null)
+              ListenableBuilder(
+                listenable: profiles,
+                builder: (context, _) => RecentDoctorsStrip(
+                  repository: appointmentsRepository!,
+                  profileId: profiles.activeProfileId,
+                  onBook: (doctor) => onOpenDiscover(
+                    criteria: DoctorSearchCriteria(query: doctor.displayName),
+                  ),
+                ),
+              ),
             const SizedBox(height: 22),
             IntrinsicHeight(
               child: Row(
@@ -148,10 +164,10 @@ class DashboardView extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: _QuickTile(
-                      icon: Icons.notifications_active_outlined,
-                      title: strings.alerts,
-                      subtitle: strings.alertsSubtitle,
-                      onTap: onOpenAlerts,
+                      icon: Icons.family_restroom_rounded,
+                      title: strings.familyTileTitle,
+                      subtitle: strings.familyTileSubtitle,
+                      onTap: onOpenFamily ?? onOpenAlerts,
                     ),
                   ),
                 ],

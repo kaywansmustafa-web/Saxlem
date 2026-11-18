@@ -607,5 +607,18 @@
   "directions": "الاتجاهات",
   "callClinic": "اتصال",
   "clinicLocationMissing": "لم تُضف العيادة عنوانها بعد.",
-  "openMapsFailed": "تعذّر فتح الخرائط على هذا الهاتف."
+  "openMapsFailed": "تعذّر فتح الخرائط على هذا الهاتف.",
+  "bookAgainTitle": "احجز مجدداً",
+  "bookAgainAction": "احجز مجدداً عند {doctor}",
+  "familyTileTitle": "العائلة",
+  "familyTileSubtitle": "احجز لأطفالك ووالديك",
+  "addToCalendar": "أضف إلى التقويم",
+  "visitWith": "موعد عند {doctor}",
+  "freeTodayFilter": "متاح اليوم",
+  "noneFreeToday": "لا يوجد وقت متاح اليوم عند هؤلاء الأطباء. ألغِ \"متاح اليوم\" لرؤية أيام أخرى.",
+  "helpTitle": "المساعدة والدعم",
+  "contactSaxlem": "راسل ساخلم عبر واتساب",
+  "termsOfUse": "شروط الاستخدام",
+  "privacyPolicy": "سياسة الخصوصية",
+  "appVersion": "الإصدار {version}"
 }

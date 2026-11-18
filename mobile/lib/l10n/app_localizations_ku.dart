@@ -1470,4 +1470,50 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get openMapsFailed => 'نەشیا نەخشەیێ ل سەر ڤی مۆبایلی ڤەکەت.';
+
+  @override
+  String get bookAgainTitle => 'دیسان بگرە';
+
+  @override
+  String bookAgainAction(String doctor) {
+    return 'دیسان ل دەڤ $doctor بگرە';
+  }
+
+  @override
+  String get familyTileTitle => 'خێزان';
+
+  @override
+  String get familyTileSubtitle => 'بۆ زارۆک و دەیبابێن خۆ بگرە';
+
+  @override
+  String get addToCalendar => 'زێدە بکە بۆ سالنامێ';
+
+  @override
+  String visitWith(String doctor) {
+    return 'ژڤان ل دەڤ $doctor';
+  }
+
+  @override
+  String get freeTodayFilter => 'ئەڤرۆ ڤالایە';
+
+  @override
+  String get noneFreeToday =>
+      'ئەڤرۆ چ دەمێن ڤالا ل دەڤ ڤان نوژداران نەمانە. \"ئەڤرۆ ڤالایە\" ڤەمرینە دا رۆژێن دی ببینی.';
+
+  @override
+  String get helpTitle => 'هاریکاری و پشتگیری';
+
+  @override
+  String get contactSaxlem => 'ب واتسئەپ نامە بۆ ساخلەم بهنێرە';
+
+  @override
+  String get termsOfUse => 'مەرجێن ب کارئینانێ';
+
+  @override
+  String get privacyPolicy => 'سیاسەتا تایبەتمەندیێ';
+
+  @override
+  String appVersion(String version) {
+    return 'وەشان $version';
+  }
 }

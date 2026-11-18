@@ -1501,4 +1501,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openMapsFailed => 'Couldn\'t open maps on this phone.';
+
+  @override
+  String get bookAgainTitle => 'Book again';
+
+  @override
+  String bookAgainAction(String doctor) {
+    return 'Book again with $doctor';
+  }
+
+  @override
+  String get familyTileTitle => 'Family';
+
+  @override
+  String get familyTileSubtitle => 'Book for your children and parents';
+
+  @override
+  String get addToCalendar => 'Add to calendar';
+
+  @override
+  String visitWith(String doctor) {
+    return 'Visit with $doctor';
+  }
+
+  @override
+  String get freeTodayFilter => 'Free today';
+
+  @override
+  String get noneFreeToday =>
+      'None of these doctors has a free time left today. Turn off \"Free today\" to see other days.';
+
+  @override
+  String get helpTitle => 'Help and support';
+
+  @override
+  String get contactSaxlem => 'Message Saxlem on WhatsApp';
+
+  @override
+  String get termsOfUse => 'Terms of use';
+
+  @override
+  String get privacyPolicy => 'Privacy policy';
+
+  @override
+  String appVersion(String version) {
+    return 'Version $version';
+  }
 }

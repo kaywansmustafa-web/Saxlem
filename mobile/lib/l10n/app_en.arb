@@ -782,5 +782,49 @@
   "clinicLocationMissing": "The clinic hasn't added its address yet.",
   "@clinicLocationMissing": {},
   "openMapsFailed": "Couldn't open maps on this phone.",
-  "@openMapsFailed": {}
+  "@openMapsFailed": {},
+  "bookAgainTitle": "Book again",
+  "@bookAgainTitle": {},
+  "bookAgainAction": "Book again with {doctor}",
+  "@bookAgainAction": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
+  "familyTileTitle": "Family",
+  "@familyTileTitle": {},
+  "familyTileSubtitle": "Book for your children and parents",
+  "@familyTileSubtitle": {},
+  "addToCalendar": "Add to calendar",
+  "@addToCalendar": {},
+  "visitWith": "Visit with {doctor}",
+  "@visitWith": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
+  "freeTodayFilter": "Free today",
+  "@freeTodayFilter": {},
+  "noneFreeToday": "None of these doctors has a free time left today. Turn off \"Free today\" to see other days.",
+  "@noneFreeToday": {},
+  "helpTitle": "Help and support",
+  "@helpTitle": {},
+  "contactSaxlem": "Message Saxlem on WhatsApp",
+  "@contactSaxlem": {},
+  "termsOfUse": "Terms of use",
+  "@termsOfUse": {},
+  "privacyPolicy": "Privacy policy",
+  "@privacyPolicy": {},
+  "appVersion": "Version {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  }
 }

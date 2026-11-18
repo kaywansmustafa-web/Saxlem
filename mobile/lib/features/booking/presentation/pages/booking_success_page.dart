@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../../../core/calendar/calendar_link.dart';
 import '../../../../design_system/design_system.dart';
 import '../../domain/entities/booking_confirmation.dart';
 import '../booking_copy.dart';
@@ -191,8 +193,26 @@ class _BookingSuccessPageState extends State<BookingSuccessPage> {
             const SizedBox(height: 8),
           ],
           SaxlemButton(
-            label: context.l10n.viewDoctor,
+            label: context.l10n.addToCalendar,
+            leadingIcon: Icons.event_available_rounded,
             hierarchy: SaxlemButtonHierarchy.secondary,
+            expand: true,
+            onPressed: () => launchUrl(
+              calendarLink(
+                title: context.l10n.visitWith(confirmation.doctorName),
+                startsAt: confirmation.startsAt,
+                endsAt: confirmation.endsAt,
+                location: confirmation.clinicName,
+                details:
+                    '${context.l10n.appointmentReference}: ${confirmation.reference}',
+              ),
+              mode: LaunchMode.externalApplication,
+            ),
+          ),
+          const SizedBox(height: 8),
+          SaxlemButton(
+            label: context.l10n.viewDoctor,
+            hierarchy: SaxlemButtonHierarchy.tertiary,
             expand: true,
             onPressed: onViewDoctor,
           ),

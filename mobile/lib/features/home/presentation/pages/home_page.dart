@@ -202,6 +202,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   DashboardView(
                     onOpenDiscover: _openDiscover,
                     onOpenAlerts: _openNotifications,
+                    onOpenFamily: () => setState(() => _selectedIndex = 3),
                     unreadNotifications: _notifications.unreadCount,
                     onOpenAppointments: () =>
                         setState(() => _selectedIndex = 2),

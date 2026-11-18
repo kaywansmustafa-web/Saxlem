@@ -1,3 +1,5 @@
+import 'package:url_launcher/url_launcher.dart';
+import '../../../../config/environment/support_links.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../../core/models/patient_profile.dart';
@@ -140,11 +142,60 @@ class PatientProfilesPage extends StatelessWidget {
                   ),
               ],
             ),
+            if (SupportLinks.whatsApp != null ||
+                SupportLinks.terms != null ||
+                SupportLinks.privacy != null) ...[
+              const SizedBox(height: 28),
+              Semantics(
+                header: true,
+                child: Text(
+                  context.l10n.helpTitle.toUpperCase(),
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    letterSpacing: .8,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              _SettingsCard(
+                children: [
+                  if (SupportLinks.whatsApp case final uri?)
+                    _SettingsRow(
+                      icon: Icons.chat_outlined,
+                      label: context.l10n.contactSaxlem,
+                      onTap: () => _open(uri),
+                    ),
+                  if (SupportLinks.terms case final uri?)
+                    _SettingsRow(
+                      icon: Icons.description_outlined,
+                      label: context.l10n.termsOfUse,
+                      onTap: () => _open(uri),
+                    ),
+                  if (SupportLinks.privacy case final uri?)
+                    _SettingsRow(
+                      icon: Icons.privacy_tip_outlined,
+                      label: context.l10n.privacyPolicy,
+                      onTap: () => _open(uri),
+                    ),
+                ],
+              ),
+            ],
+            if (SupportLinks.version.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Center(
+                child: Text(
+                  context.l10n.appVersion(SupportLinks.version),
+                  style: theme.textTheme.labelSmall,
+                ),
+              ),
+            ],
           ],
         ),
       );
     },
   );
+
+  static Future<void> _open(Uri uri) =>
+      launchUrl(uri, mode: LaunchMode.externalApplication);
 
   static String _languageName(Locale locale) => switch (locale.languageCode) {
     'ar' => 'العربية',

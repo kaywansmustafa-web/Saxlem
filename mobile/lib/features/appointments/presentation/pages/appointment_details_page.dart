@@ -1,3 +1,8 @@
+import 'package:url_launcher/url_launcher.dart';
+import '../../../../core/calendar/calendar_link.dart';
+import '../../../booking/booking_feature.dart';
+import '../../../booking/domain/entities/booking_clinic_option.dart';
+import '../../../booking/domain/entities/booking_doctor_reference.dart';
 import '../../../discover/domain/entities/clinic_location.dart';
 import '../../../discover/presentation/widgets/clinic_location_tile.dart';
 import '../../../../core/formatting/clinic_format.dart';
@@ -233,6 +238,24 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
             if (item.canMutate) ...[
               const SizedBox(height: 20),
               SaxlemButton(
+                label: context.l10n.addToCalendar,
+                leadingIcon: Icons.event_available_rounded,
+                hierarchy: SaxlemButtonHierarchy.secondary,
+                expand: true,
+                onPressed: () => launchUrl(
+                  calendarLink(
+                    title: context.l10n.visitWith(item.doctor.displayName),
+                    startsAt: item.startsAt,
+                    endsAt: item.endsAt,
+                    location: item.clinicName,
+                    details:
+                        '${context.l10n.appointmentReference}: ${item.reference}',
+                  ),
+                  mode: LaunchMode.externalApplication,
+                ),
+              ),
+              const SizedBox(height: 8),
+              SaxlemButton(
                 label: context.l10n.rescheduleAppointment,
                 leadingIcon: Icons.event_repeat_rounded,
                 hierarchy: SaxlemButtonHierarchy.secondary,
@@ -250,6 +273,32 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                 ),
                 icon: const Icon(Icons.event_busy_rounded, size: 20),
                 label: Text(context.l10n.cancelAppointment),
+              ),
+            ],
+            if (!item.canMutate && widget.profilesController != null) ...[
+              const SizedBox(height: 20),
+              SaxlemButton(
+                label: context.l10n.bookAgainTitle,
+                leadingIcon: Icons.replay_rounded,
+                expand: true,
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => BookingFeature(
+                      doctor: BookingDoctorReference(
+                        id: item.doctor.id,
+                        displayName: item.doctor.displayName,
+                        clinics: [
+                          BookingClinicOption(
+                            id: item.clinicId,
+                            displayName: item.clinicName,
+                          ),
+                        ],
+                      ),
+                      repository: widget.bookingRepository,
+                      profilesController: widget.profilesController!,
+                    ),
+                  ),
+                ),
               ),
             ],
             if (detail.loadingAvailability) ...[

@@ -607,5 +607,18 @@
   "directions": "رێنیشاندان",
   "callClinic": "تەلەفۆن",
   "clinicLocationMissing": "کلینیکێ هێشتا ناڤنیشانێ خۆ زێدە نەکریە.",
-  "openMapsFailed": "نەشیا نەخشەیێ ل سەر ڤی مۆبایلی ڤەکەت."
+  "openMapsFailed": "نەشیا نەخشەیێ ل سەر ڤی مۆبایلی ڤەکەت.",
+  "bookAgainTitle": "دیسان بگرە",
+  "bookAgainAction": "دیسان ل دەڤ {doctor} بگرە",
+  "familyTileTitle": "خێزان",
+  "familyTileSubtitle": "بۆ زارۆک و دەیبابێن خۆ بگرە",
+  "addToCalendar": "زێدە بکە بۆ سالنامێ",
+  "visitWith": "ژڤان ل دەڤ {doctor}",
+  "freeTodayFilter": "ئەڤرۆ ڤالایە",
+  "noneFreeToday": "ئەڤرۆ چ دەمێن ڤالا ل دەڤ ڤان نوژداران نەمانە. \"ئەڤرۆ ڤالایە\" ڤەمرینە دا رۆژێن دی ببینی.",
+  "helpTitle": "هاریکاری و پشتگیری",
+  "contactSaxlem": "ب واتسئەپ نامە بۆ ساخلەم بهنێرە",
+  "termsOfUse": "مەرجێن ب کارئینانێ",
+  "privacyPolicy": "سیاسەتا تایبەتمەندیێ",
+  "appVersion": "وەشان {version}"
 }

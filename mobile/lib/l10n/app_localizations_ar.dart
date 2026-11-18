@@ -1456,4 +1456,50 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get openMapsFailed => 'تعذّر فتح الخرائط على هذا الهاتف.';
+
+  @override
+  String get bookAgainTitle => 'احجز مجدداً';
+
+  @override
+  String bookAgainAction(String doctor) {
+    return 'احجز مجدداً عند $doctor';
+  }
+
+  @override
+  String get familyTileTitle => 'العائلة';
+
+  @override
+  String get familyTileSubtitle => 'احجز لأطفالك ووالديك';
+
+  @override
+  String get addToCalendar => 'أضف إلى التقويم';
+
+  @override
+  String visitWith(String doctor) {
+    return 'موعد عند $doctor';
+  }
+
+  @override
+  String get freeTodayFilter => 'متاح اليوم';
+
+  @override
+  String get noneFreeToday =>
+      'لا يوجد وقت متاح اليوم عند هؤلاء الأطباء. ألغِ \"متاح اليوم\" لرؤية أيام أخرى.';
+
+  @override
+  String get helpTitle => 'المساعدة والدعم';
+
+  @override
+  String get contactSaxlem => 'راسل ساخلم عبر واتساب';
+
+  @override
+  String get termsOfUse => 'شروط الاستخدام';
+
+  @override
+  String get privacyPolicy => 'سياسة الخصوصية';
+
+  @override
+  String appVersion(String version) {
+    return 'الإصدار $version';
+  }
 }

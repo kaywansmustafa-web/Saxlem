@@ -2679,6 +2679,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t open maps on this phone.'**
   String get openMapsFailed;
+
+  /// No description provided for @bookAgainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book again'**
+  String get bookAgainTitle;
+
+  /// No description provided for @bookAgainAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Book again with {doctor}'**
+  String bookAgainAction(String doctor);
+
+  /// No description provided for @familyTileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get familyTileTitle;
+
+  /// No description provided for @familyTileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book for your children and parents'**
+  String get familyTileSubtitle;
+
+  /// No description provided for @addToCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to calendar'**
+  String get addToCalendar;
+
+  /// No description provided for @visitWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit with {doctor}'**
+  String visitWith(String doctor);
+
+  /// No description provided for @freeTodayFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Free today'**
+  String get freeTodayFilter;
+
+  /// No description provided for @noneFreeToday.
+  ///
+  /// In en, this message translates to:
+  /// **'None of these doctors has a free time left today. Turn off \"Free today\" to see other days.'**
+  String get noneFreeToday;
+
+  /// No description provided for @helpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help and support'**
+  String get helpTitle;
+
+  /// No description provided for @contactSaxlem.
+  ///
+  /// In en, this message translates to:
+  /// **'Message Saxlem on WhatsApp'**
+  String get contactSaxlem;
+
+  /// No description provided for @termsOfUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of use'**
+  String get termsOfUse;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String appVersion(String version);
 }
 
 class _AppLocalizationsDelegate
