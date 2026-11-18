@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import type { INestApplication } from '@nestjs/common';
 import type { NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
@@ -48,7 +49,12 @@ interface Bucket {
   resetsAt: number;
 }
 
-/** Fixed one-minute window per address; writes get a fifth of the budget. */
+/**
+ * Fixed one-minute window; writes get a fifth of the budget. Signed-in calls
+ * are budgeted per user (the portals call the API from one server address for
+ * every clinic, and mobile carriers put many patients behind one address);
+ * anonymous calls per address.
+ */
 export function requestBudget(perMinute: number, now = () => Date.now()) {
   const buckets = new Map<string, Bucket>();
   const writeBudget = Math.max(1, Math.floor(perMinute / 5));
@@ -59,7 +65,7 @@ export function requestBudget(perMinute: number, now = () => Date.now()) {
     if (++seen % 500 === 0)
       for (const [key, bucket] of buckets)
         if (bucket.resetsAt <= time) buckets.delete(key);
-    const key = request.ip ?? request.socket.remoteAddress ?? 'unknown';
+    const key = budgetKey(request);
     let bucket = buckets.get(key);
     if (!bucket || bucket.resetsAt <= time) {
       bucket = { all: 0, writes: 0, resetsAt: time + 60_000 };
@@ -86,4 +92,11 @@ export function requestBudget(perMinute: number, now = () => Date.now()) {
     }
     next();
   };
+}
+
+function budgetKey(request: Request): string {
+  const authorization = request.headers.authorization;
+  if (typeof authorization === 'string' && authorization.startsWith('Bearer '))
+    return `user:${createHash('sha256').update(authorization).digest('base64url').slice(0, 22)}`;
+  return `ip:${request.ip ?? request.socket.remoteAddress ?? 'unknown'}`;
 }

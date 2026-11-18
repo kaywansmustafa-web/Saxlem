@@ -6,6 +6,7 @@ function call(
   method = 'GET',
   ip = '10.0.0.1',
   path = '/api/v1/doctors',
+  token?: string,
 ) {
   let status = 200;
   let passed = false;
@@ -17,9 +18,14 @@ function call(
     status = code;
     return response;
   };
-  budget({ method, ip, path, socket: {} } as Request, response, (() => {
-    passed = true;
-  }) as NextFunction);
+  const headers = token ? { authorization: `Bearer ${token}` } : {};
+  budget(
+    { method, ip, path, headers, socket: {} } as unknown as Request,
+    response,
+    (() => {
+      passed = true;
+    }) as NextFunction,
+  );
   return passed ? 200 : status;
 }
 
@@ -45,5 +51,13 @@ describe('requestBudget', () => {
     const budget = requestBudget(1, () => 0);
     for (let i = 0; i < 5; i++)
       expect(call(budget, 'GET', '10.0.0.1', '/health/ready')).toBe(200);
+  });
+
+  it('budgets signed-in users separately even from one server address', () => {
+    const budget = requestBudget(5, () => 0);
+    expect(call(budget, 'POST', '10.0.0.9', '/api/v1/x', 'token-a')).toBe(200);
+    expect(call(budget, 'POST', '10.0.0.9', '/api/v1/x', 'token-a')).toBe(429);
+    expect(call(budget, 'POST', '10.0.0.9', '/api/v1/x', 'token-b')).toBe(200);
+    expect(call(budget, 'POST', '10.0.0.9', '/api/v1/x')).toBe(200);
   });
 });
