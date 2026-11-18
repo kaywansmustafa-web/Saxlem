@@ -65,6 +65,29 @@ export class PrismaDoctorRepository implements DoctorRepository {
       total,
     };
   }
+  async clinicLocation(clinicId: string) {
+    const row = await this.prisma.db.clinic.findFirst({
+      where: {
+        id: clinicId,
+        status: 'active',
+        organization: { status: 'active' },
+        doctorAssignments: {
+          some: { status: 'active', doctor: { status: 'active' } },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        address: true,
+        area: true,
+        city: true,
+        latitude: true,
+        longitude: true,
+        phoneNumber: true,
+      },
+    });
+    return row ? Object.freeze({ ...row }) : null;
+  }
 
   async discoveryOptions(
     criteria: Pick<

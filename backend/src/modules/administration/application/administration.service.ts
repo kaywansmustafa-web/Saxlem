@@ -1,4 +1,8 @@
 import {
+  normalizeClinicLocation,
+  type ClinicLocationInput,
+} from '../../../common/clinics/clinic-location';
+import {
   BadRequestException,
   Inject,
   Injectable,
@@ -113,6 +117,22 @@ export class AdministrationService {
         ? this.encodeCursor(page.next, access, binding, input.pageSize)
         : null,
     });
+  }
+
+  async updateClinicLocation(
+    access: { actorId: string },
+    id: string,
+    input: ClinicLocationInput,
+    requestId: string,
+  ): Promise<ClinicRecord> {
+    const value = await this.repository.updateClinicLocation(
+      access,
+      id,
+      normalizeClinicLocation(input),
+      requestId,
+    );
+    if (!value) throw new NotFoundException('Clinic was not found.');
+    return value;
   }
 
   async clinic(id: string): Promise<ClinicRecord> {

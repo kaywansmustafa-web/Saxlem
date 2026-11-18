@@ -1444,4 +1444,16 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get directions => 'الاتجاهات';
+
+  @override
+  String get callClinic => 'اتصال';
+
+  @override
+  String get clinicLocationMissing => 'لم تُضف العيادة عنوانها بعد.';
+
+  @override
+  String get openMapsFailed => 'تعذّر فتح الخرائط على هذا الهاتف.';
 }

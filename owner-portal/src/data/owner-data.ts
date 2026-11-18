@@ -23,10 +23,17 @@ export const clinicSchema = z
     code: z.string(),
     timezone: z.string(),
     status: z.enum(["active", "inactive"]),
+    address: z.string().nullable(),
+    area: z.string().nullable(),
+    city: z.string().nullable(),
+    latitude: z.number().min(-90).max(90).nullable(),
+    longitude: z.number().min(-180).max(180).nullable(),
+    phoneNumber: z.string().nullable(),
     createdAt: dateTime,
     updatedAt: dateTime,
   })
   .strict();
+export type ClinicRecord = z.infer<typeof clinicSchema>;
 export const organizationPageSchema = z
   .object({
     items: z.array(organizationSchema).max(100),
@@ -419,6 +426,12 @@ export const listClinics = (session: OwnerSession, organizationId?: string) =>
     path: `/api/v1/administration/clinics?${query({ pageSize: 100, organizationId })}`,
     session,
     schema: clinicPageSchema,
+  });
+export const clinicDetail = (session: OwnerSession, id: string) =>
+  ownerApi().request({
+    path: `/api/v1/administration/clinics/${id}`,
+    session,
+    schema: clinicSchema,
   });
 export const listDoctors = (session: OwnerSession, page = 1) =>
   ownerApi().request({

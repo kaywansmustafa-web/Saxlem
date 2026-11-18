@@ -191,6 +191,14 @@ model Clinic {
   code                     String
   timezone                 String
   status                   RecordStatus                      @default(active)
+  /// Street and landmark, as people in the city describe it.
+  address                  String?
+  area                     String?
+  city                     String?
+  latitude                 Float?
+  longitude                Float?
+  /// The clinic's public number for patients (digits, optional leading +).
+  phoneNumber              String?                           @map("phone_number")
   createdAt                DateTime                          @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt                DateTime                          @updatedAt @map("updated_at") @db.Timestamptz(3)
   organization             Organization                      @relation(fields: [organizationId], references: [id], onDelete: Restrict)

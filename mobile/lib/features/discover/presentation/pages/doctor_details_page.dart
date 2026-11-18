@@ -4,6 +4,7 @@ import '../../../../core/localization/localization_extensions.dart';
 import '../../../../design_system/design_system.dart';
 import '../widgets/doctor_result_card.dart';
 import '../widgets/visit_facts.dart';
+import '../widgets/clinic_location_tile.dart';
 import '../../domain/entities/doctor_discovery_result.dart';
 import '../controllers/discover_controller.dart';
 import '../state/discover_state.dart';
@@ -236,7 +237,7 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
                               _Stat(
                                 icon: Icons.work_history_outlined,
                                 label: context.l10n.experienceLabel,
-                                value: context.l10n.yearsExperience(
+                                value: context.l10n.yearsShort(
                                   doctor.yearsOfExperience,
                                 ),
                               ),
@@ -335,41 +336,18 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
                     _Section(
                       title: context.l10n.clinicsLabel,
                       child: Column(
-                        children: doctor.clinics
-                            .map(
-                              (clinic) => Padding(
-                                padding: const EdgeInsetsDirectional.symmetric(
-                                  vertical: 6,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: colors.brandTint,
-                                        borderRadius: BorderRadius.circular(
-                                          SaxlemRadii.small,
-                                        ),
-                                      ),
-                                      child: Icon(
-                                        Icons.local_hospital_outlined,
-                                        size: 20,
-                                        color: colors.brandPrimary,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Text(
-                                        clinic.name,
-                                        style: theme.textTheme.titleSmall,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                            .toList(),
+                        children: [
+                          for (final (index, clinic)
+                              in doctor.clinics.indexed) ...[
+                            if (index > 0)
+                              Divider(height: 24, color: colors.divider),
+                            ClinicLocationTile(
+                              clinicId: clinic.id,
+                              clinicName: clinic.name,
+                              source: widget.controller.clinicLocations,
+                            ),
+                          ],
+                        ],
                       ),
                     ),
                   ],

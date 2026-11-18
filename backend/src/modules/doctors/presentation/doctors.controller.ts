@@ -30,6 +30,8 @@ import {
 import { RequireCapabilities } from '../../identity/presentation/require-capabilities.decorator';
 import {
   ApiErrorEnvelopeDto,
+  ClinicLocationParamsDto,
+  ClinicLocationResponseDto,
   DoctorDetailResponseDto,
   DoctorDiscoveryOptionsResponseDto,
   DoctorDiscoveryOptionsQueryDto,
@@ -82,6 +84,23 @@ export class DoctorsController {
     return this.doctors
       .search(this.access(request), query)
       .then((page) => this.mapper.page(page));
+  }
+
+  @Get('clinics/:clinicId/location')
+  @ApiOperation({
+    summary: "A clinic's address, map location and public phone",
+    description:
+      'For Directions and Call on doctor profiles and appointments. Only active clinics where an active doctor works.',
+  })
+  @ApiOkResponse({ type: ClinicLocationResponseDto })
+  @ApiNotFoundResponse({
+    description: 'Clinic was not found.',
+    type: ApiErrorEnvelopeDto,
+  })
+  clinicLocation(
+    @Param() params: ClinicLocationParamsDto,
+  ): Promise<ClinicLocationResponseDto> {
+    return this.doctors.clinicLocation(params.clinicId);
   }
 
   @Get('discovery-options')

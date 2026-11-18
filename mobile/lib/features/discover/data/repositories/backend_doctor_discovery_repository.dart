@@ -1,5 +1,6 @@
 import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/authenticated_api_client.dart';
+import '../../domain/entities/clinic_location.dart';
 import '../../domain/entities/doctor_discovery_options.dart';
 import '../../domain/entities/doctor_discovery_result.dart';
 import '../../domain/entities/doctor_search_criteria.dart';
@@ -7,7 +8,8 @@ import '../../domain/entities/doctor_search_page.dart';
 import '../../domain/repositories/doctor_discovery_repository.dart';
 import '../dto/backend_doctor_discovery_dto.dart';
 
-class BackendDoctorDiscoveryRepository implements DoctorDiscoveryRepository {
+class BackendDoctorDiscoveryRepository
+    implements DoctorDiscoveryRepository, ClinicLocationSource {
   BackendDoctorDiscoveryRepository(
     this._api, {
     this._parser = const BackendDoctorDiscoveryParser(),
@@ -17,6 +19,18 @@ class BackendDoctorDiscoveryRepository implements DoctorDiscoveryRepository {
   static final _uuid = RegExp(
     r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
   );
+  @override
+  Future<ClinicLocation> clinicLocation(String clinicId) {
+    if (!_uuid.hasMatch(clinicId)) {
+      throw const DoctorDiscoveryFailure(DoctorDiscoveryFailureType.notFound);
+    }
+    return _guard(
+      () async => _parser.clinicLocation(
+        (await _api.getJson('doctors/clinics/$clinicId/location')).body,
+      ),
+    );
+  }
+
   @override
   Future<DoctorDiscoveryOptions> loadOptions() => _guard(
     () async =>

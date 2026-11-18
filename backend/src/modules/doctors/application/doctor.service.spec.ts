@@ -63,6 +63,7 @@ function repository(): jest.Mocked<DoctorRepository> {
     }),
     find: jest.fn().mockResolvedValue(doctor),
     recordView: jest.fn().mockResolvedValue(undefined),
+    clinicLocation: jest.fn().mockResolvedValue(null),
   };
 }
 

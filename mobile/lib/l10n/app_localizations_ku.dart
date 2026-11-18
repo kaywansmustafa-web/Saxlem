@@ -1458,4 +1458,16 @@ class AppLocalizationsKu extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get directions => 'رێنیشاندان';
+
+  @override
+  String get callClinic => 'تەلەفۆن';
+
+  @override
+  String get clinicLocationMissing => 'کلینیکێ هێشتا ناڤنیشانێ خۆ زێدە نەکریە.';
+
+  @override
+  String get openMapsFailed => 'نەشیا نەخشەیێ ل سەر ڤی مۆبایلی ڤەکەت.';
 }

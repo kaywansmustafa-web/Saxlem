@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import type { Prisma } from '@prisma/client';
+import type { ClinicLocation } from '../../../common/clinics/clinic-location';
 import { PrismaService } from '../../../infrastructure/database/prisma.service';
 import type {
   AdministrationAccess,
@@ -264,6 +265,36 @@ export class PrismaAdministrationRepository implements AdministrationRepository 
     });
   }
 
+  async updateClinicLocation(
+    access: { actorId: string },
+    id: string,
+    location: ClinicLocation,
+    requestId: string,
+  ) {
+    return this.prisma.db.$transaction(async (tx) => {
+      const existing = await tx.clinic.findUnique({
+        where: { id },
+        select: { id: true },
+      });
+      if (!existing) return null;
+      const row = await tx.clinic.update({ where: { id }, data: location });
+      await tx.auditEvent.create({
+        data: {
+          actorUserId: access.actorId,
+          organizationId: row.organizationId,
+          clinicId: row.id,
+          action: 'administration.clinic.location.updated',
+          targetType: 'Clinic',
+          targetId: row.id,
+          outcome: 'succeeded',
+          requestId,
+          occurredAt: new Date(),
+        },
+      });
+      return this.clinicRecord(row);
+    });
+  }
+
   private clinicRecord(row: {
     id: string;
     organizationId: string;
@@ -271,11 +302,28 @@ export class PrismaAdministrationRepository implements AdministrationRepository 
     code: string;
     timezone: string;
     status: 'active' | 'inactive';
+    address: string | null;
+    area: string | null;
+    city: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    phoneNumber: string | null;
     createdAt: Date;
     updatedAt: Date;
   }): ClinicRecord {
     return Object.freeze({
-      ...row,
+      id: row.id,
+      organizationId: row.organizationId,
+      name: row.name,
+      code: row.code,
+      timezone: row.timezone,
+      status: row.status,
+      address: row.address,
+      area: row.area,
+      city: row.city,
+      latitude: row.latitude,
+      longitude: row.longitude,
+      phoneNumber: row.phoneNumber,
       createdAt: row.createdAt.toISOString(),
       updatedAt: row.updatedAt.toISOString(),
     });

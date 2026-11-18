@@ -45,7 +45,7 @@ export default async function ClinicsPage({
                 <th>Clinic</th>
                 <th>Code</th>
                 <th>Organization</th>
-                <th>Timezone</th>
+                <th>Location</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -53,14 +53,23 @@ export default async function ClinicsPage({
               {items.map((item) => (
                 <tr key={item.id}>
                   <td>
-                    <strong>{item.name}</strong>
+                    <Link href={`/clinics/${item.id}`}>
+                      <strong>{item.name}</strong>
+                    </Link>
                   </td>
                   <td>{item.code}</td>
                   <td>
                     {organizationName.get(item.organizationId) ??
                       item.organizationId}
                   </td>
-                  <td>{item.timezone}</td>
+                  <td>
+                    {item.latitude !== null && item.address ? (
+                      [item.area, item.city].filter(Boolean).join(", ") ||
+                      "Set"
+                    ) : (
+                      <Link href={`/clinics/${item.id}`}>Add location</Link>
+                    )}
+                  </td>
                   <td>
                     <StatusBadge status={item.status} />
                   </td>

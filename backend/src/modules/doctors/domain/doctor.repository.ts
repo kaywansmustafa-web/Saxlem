@@ -1,3 +1,4 @@
+import type { ClinicLocation } from '../../../common/clinics/clinic-location';
 import type {
   DoctorDiscoveryOptionsProjection,
   DoctorProjection,
@@ -21,7 +22,14 @@ export interface DoctorSearchCriteria {
   readonly forPatients?: boolean;
 }
 
+export interface PublicClinicLocation extends ClinicLocation {
+  readonly id: string;
+  readonly name: string;
+}
+
 export interface DoctorRepository {
+  /** An active clinic where at least one active doctor works, or null. */
+  clinicLocation(clinicId: string): Promise<PublicClinicLocation | null>;
   search(criteria: DoctorSearchCriteria): Promise<{
     readonly items: readonly DoctorProjection[];
     readonly total: number;

@@ -774,5 +774,13 @@
         "type": "int"
       }
     }
-  }
+  },
+  "directions": "Directions",
+  "@directions": {},
+  "callClinic": "Call",
+  "@callClinic": {},
+  "clinicLocationMissing": "The clinic hasn't added its address yet.",
+  "@clinicLocationMissing": {},
+  "openMapsFailed": "Couldn't open maps on this phone.",
+  "@openMapsFailed": {}
 }

@@ -1,3 +1,5 @@
+import '../../../discover/domain/entities/clinic_location.dart';
+import '../../../discover/presentation/widgets/clinic_location_tile.dart';
 import '../../../../core/formatting/clinic_format.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -31,6 +33,7 @@ class AppointmentDetailsPage extends StatefulWidget {
     required this.arrivalRepository,
     required this.liveQueueRepository,
     this.notificationSignals,
+    this.clinicLocations,
     super.key,
   });
   final String appointmentId;
@@ -41,6 +44,7 @@ class AppointmentDetailsPage extends StatefulWidget {
   final PatientArrivalRepository arrivalRepository;
   final LiveQueueRepository liveQueueRepository;
   final Stream<NotificationSignal>? notificationSignals;
+  final ClinicLocationSource? clinicLocations;
 
   @override
   State<AppointmentDetailsPage> createState() => _AppointmentDetailsPageState();
@@ -197,6 +201,14 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                 if (item.cancellationReason case final reason?)
                   _DetailRow(context.l10n.cancellationReason, reason),
               ],
+            ),
+            const SizedBox(height: 16),
+            SaxlemCard(
+              child: ClinicLocationTile(
+                clinicId: item.clinicId,
+                clinicName: item.clinicName,
+                source: widget.clinicLocations,
+              ),
             ),
             const SizedBox(height: 16),
             AppointmentPaymentCard(

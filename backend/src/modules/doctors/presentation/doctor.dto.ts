@@ -162,6 +162,31 @@ export class ApiErrorEnvelopeDto {
   @ApiProperty({ type: ApiErrorBodyDto }) error!: ApiErrorBodyDto;
 }
 
+export class ClinicLocationParamsDto {
+  @ApiProperty({ format: 'uuid' }) @IsUUID() clinicId!: string;
+}
+
+export class ClinicLocationResponseDto {
+  @ApiProperty({ format: 'uuid' }) id!: string;
+  @ApiProperty() name!: string;
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    example: 'Kurdistan St, near the Grand Bazaar',
+  })
+  address!: string | null;
+  @ApiProperty({ type: String, nullable: true, example: 'Nakhoshkhana' })
+  area!: string | null;
+  @ApiProperty({ type: String, nullable: true, example: 'Duhok' })
+  city!: string | null;
+  @ApiProperty({ type: Number, nullable: true, example: 36.8669 })
+  latitude!: number | null;
+  @ApiProperty({ type: Number, nullable: true, example: 42.9886 })
+  longitude!: number | null;
+  @ApiProperty({ type: String, nullable: true, example: '+9647501234567' })
+  phoneNumber!: string | null;
+}
+
 export class DoctorFeesResponseDto {
   @ApiProperty({ type: 'integer', minimum: 0, example: 25000 })
   firstVisitIqd!: number;

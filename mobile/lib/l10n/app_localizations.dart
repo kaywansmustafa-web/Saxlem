@@ -2655,6 +2655,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 year} other{{count} years}}'**
   String yearsShort(int count);
+
+  /// No description provided for @directions.
+  ///
+  /// In en, this message translates to:
+  /// **'Directions'**
+  String get directions;
+
+  /// No description provided for @callClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get callClinic;
+
+  /// No description provided for @clinicLocationMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'The clinic hasn\'t added its address yet.'**
+  String get clinicLocationMissing;
+
+  /// No description provided for @openMapsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open maps on this phone.'**
+  String get openMapsFailed;
 }
 
 class _AppLocalizationsDelegate

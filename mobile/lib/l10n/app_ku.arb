@@ -603,5 +603,9 @@
   "feesTitle": "کرێ",
   "feesNote": "ل کلینیکێ بدە، یان دەمێ ژڤانی دگری د ئەپی دا ب FIB بدە.",
   "nextFreeLabel": "نێزیکترین دەمێ ڤالا",
-  "yearsShort": "{count, plural, other{{count} سال}}"
+  "yearsShort": "{count, plural, other{{count} سال}}",
+  "directions": "رێنیشاندان",
+  "callClinic": "تەلەفۆن",
+  "clinicLocationMissing": "کلینیکێ هێشتا ناڤنیشانێ خۆ زێدە نەکریە.",
+  "openMapsFailed": "نەشیا نەخشەیێ ل سەر ڤی مۆبایلی ڤەکەت."
 }

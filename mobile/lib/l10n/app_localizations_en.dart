@@ -1488,4 +1488,17 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get directions => 'Directions';
+
+  @override
+  String get callClinic => 'Call';
+
+  @override
+  String get clinicLocationMissing =>
+      'The clinic hasn\'t added its address yet.';
+
+  @override
+  String get openMapsFailed => 'Couldn\'t open maps on this phone.';
 }

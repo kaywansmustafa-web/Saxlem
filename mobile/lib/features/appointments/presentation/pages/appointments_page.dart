@@ -1,3 +1,4 @@
+import '../../../discover/domain/entities/clinic_location.dart';
 import 'package:flutter/material.dart';
 import '../controllers/appointments_controller.dart';
 import '../../../../design_system/design_system.dart';
@@ -24,6 +25,7 @@ class AppointmentsPage extends StatelessWidget {
     required this.arrivalRepository,
     required this.liveQueueRepository,
     this.notificationSignals,
+    this.clinicLocations,
     this.profilesController,
     super.key,
   });
@@ -34,6 +36,9 @@ class AppointmentsPage extends StatelessWidget {
   final PatientArrivalRepository arrivalRepository;
   final LiveQueueRepository liveQueueRepository;
   final Stream<NotificationSignal>? notificationSignals;
+
+  /// Where clinics are, for Directions and Call on an appointment.
+  final ClinicLocationSource? clinicLocations;
   final Future<void> Function() onAppointmentsChanged;
   final PatientProfilesController? profilesController;
 
@@ -128,6 +133,7 @@ class AppointmentsPage extends StatelessWidget {
                                 arrivalRepository: arrivalRepository,
                                 liveQueueRepository: liveQueueRepository,
                                 notificationSignals: notificationSignals,
+                                clinicLocations: clinicLocations,
                                 onChanged: onAppointmentsChanged,
                                 profilesController: profilesController,
                               ),

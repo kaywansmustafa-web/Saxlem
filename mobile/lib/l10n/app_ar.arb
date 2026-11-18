@@ -603,5 +603,9 @@
   "feesTitle": "الأجور",
   "feesNote": "ادفع في العيادة، أو داخل التطبيق عبر FIB عند الحجز.",
   "nextFreeLabel": "أقرب وقت متاح",
-  "yearsShort": "{count, plural, =1{سنة واحدة} =2{سنتان} few{{count} سنوات} many{{count} سنة} other{{count} سنة}}"
+  "yearsShort": "{count, plural, =1{سنة واحدة} =2{سنتان} few{{count} سنوات} many{{count} سنة} other{{count} سنة}}",
+  "directions": "الاتجاهات",
+  "callClinic": "اتصال",
+  "clinicLocationMissing": "لم تُضف العيادة عنوانها بعد.",
+  "openMapsFailed": "تعذّر فتح الخرائط على هذا الهاتف."
 }

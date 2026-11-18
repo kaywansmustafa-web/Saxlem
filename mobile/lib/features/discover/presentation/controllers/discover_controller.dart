@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../../domain/entities/doctor_discovery_options.dart';
 import '../../domain/entities/doctor_search_criteria.dart';
 import '../../domain/entities/doctor_search_page.dart';
+import '../../domain/entities/clinic_location.dart';
 import '../../domain/repositories/doctor_discovery_repository.dart';
 import '../state/discover_state.dart';
 
@@ -13,6 +14,12 @@ class DiscoverController extends ChangeNotifier {
     this.debounceDuration = const Duration(milliseconds: 280),
   });
   final DoctorDiscoveryRepository _repository;
+
+  /// Where clinics are, when the repository can tell.
+  ClinicLocationSource? get clinicLocations => switch (_repository) {
+    final ClinicLocationSource source => source,
+    _ => null,
+  };
   final bool guest;
   final Duration debounceDuration;
   DiscoverState state = const DiscoverInitial();

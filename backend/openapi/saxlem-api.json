@@ -546,6 +546,66 @@
         ]
       }
     },
+    "/api/v1/administration/clinics/{clinicId}/location": {
+      "put": {
+        "description": "Patients see this on doctor profiles and appointments, with Directions and Call.",
+        "operationId": "AdministrationController_updateClinicLocation",
+        "parameters": [
+          {
+            "name": "clinicId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateClinicLocationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation or cursor validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The platform administration capability is required."
+          },
+          "404": {
+            "description": "Clinic was not found."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Set a clinic's address, map location and public phone",
+        "tags": [
+          "administration"
+        ]
+      }
+    },
     "/api/v1/billing/plans": {
       "get": {
         "operationId": "BillingController_plans",
@@ -3339,6 +3399,84 @@
           }
         ],
         "summary": "Search the visible doctor directory",
+        "tags": [
+          "doctors"
+        ]
+      }
+    },
+    "/api/v1/doctors/clinics/{clinicId}/location": {
+      "get": {
+        "description": "For Directions and Call on doctor profiles and appointments. Only active clinics where an active doctor works.",
+        "operationId": "DoctorsController_clinicLocation",
+        "parameters": [
+          {
+            "name": "clinicId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicLocationResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Filter, identifier, or pagination validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Role, capability, visibility, or tenant policy denied access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Clinic was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "A clinic's address, map location and public phone",
         "tags": [
           "doctors"
         ]
@@ -10101,6 +10239,30 @@
               "inactive"
             ]
           },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "area": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "number",
+            "nullable": true
+          },
+          "longitude": {
+            "type": "number",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -10117,6 +10279,12 @@
           "code",
           "timezone",
           "status",
+          "address",
+          "area",
+          "city",
+          "latitude",
+          "longitude",
+          "phoneNumber",
           "createdAt",
           "updatedAt"
         ]
@@ -10170,6 +10338,43 @@
           "code",
           "timezone"
         ]
+      },
+      "UpdateClinicLocationDto": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 300
+          },
+          "area": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 120
+          },
+          "city": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 80
+          },
+          "latitude": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -90,
+            "maximum": 90
+          },
+          "longitude": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -180,
+            "maximum": 180
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true,
+            "example": "+9647501234567"
+          }
+        }
       },
       "ApiFieldErrorDto": {
         "type": "object",
@@ -12600,6 +12805,58 @@
           "pageSize",
           "total",
           "totalPages"
+        ]
+      },
+      "ClinicLocationResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string",
+            "nullable": true,
+            "example": "Kurdistan St, near the Grand Bazaar"
+          },
+          "area": {
+            "type": "string",
+            "nullable": true,
+            "example": "Nakhoshkhana"
+          },
+          "city": {
+            "type": "string",
+            "nullable": true,
+            "example": "Duhok"
+          },
+          "latitude": {
+            "type": "number",
+            "nullable": true,
+            "example": 36.8669
+          },
+          "longitude": {
+            "type": "number",
+            "nullable": true,
+            "example": 42.9886
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true,
+            "example": "+9647501234567"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "address",
+          "area",
+          "city",
+          "latitude",
+          "longitude",
+          "phoneNumber"
         ]
       },
       "DoctorDiscoverySpecialtyOptionResponseDto": {

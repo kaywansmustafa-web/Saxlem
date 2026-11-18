@@ -5,6 +5,7 @@ import {
   Headers,
   Param,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -38,6 +39,7 @@ import {
   ClinicPageResponseDto,
   ClinicParamsDto,
   ClinicResponseDto,
+  UpdateClinicLocationDto,
   CreateClinicDto,
   CreateOrganizationDto,
   OrganizationPageResponseDto,
@@ -167,6 +169,29 @@ export class AdministrationController {
   @ApiNotFoundResponse({ description: 'Clinic was not found.' })
   async clinicDetail(@Param() params: ClinicParamsDto) {
     return this.clinic(await this.administration.clinic(params.clinicId));
+  }
+
+  @Put('clinics/:clinicId/location')
+  @ApiOperation({
+    summary: "Set a clinic's address, map location and public phone",
+    description:
+      'Patients see this on doctor profiles and appointments, with Directions and Call.',
+  })
+  @ApiOkResponse({ type: ClinicResponseDto })
+  @ApiNotFoundResponse({ description: 'Clinic was not found.' })
+  async updateClinicLocation(
+    @Req() request: AuthenticatedRequest,
+    @Param() params: ClinicParamsDto,
+    @Body() body: UpdateClinicLocationDto,
+  ) {
+    return this.clinic(
+      await this.administration.updateClinicLocation(
+        this.access(request),
+        params.clinicId,
+        body,
+        request.requestId,
+      ),
+    );
   }
 
   private access(request: AuthenticatedRequest) {
