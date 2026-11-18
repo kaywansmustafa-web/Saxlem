@@ -19,6 +19,31 @@ describe('backend configuration safety', () => {
     },
   );
 
+  it('reads the drive-time settings, empty values included', () => {
+    // As copied from .env.example.
+    expect(
+      loadConfiguration({
+        ...required,
+        ROUTES_PROVIDER: 'estimate',
+        GOOGLE_ROUTES_API_KEY: '',
+        OSRM_BASE_URL: '',
+      }).routing,
+    ).toEqual({ provider: 'estimate', googleApiKey: '', osrmBaseUrl: '' });
+    expect(
+      loadConfiguration({
+        ...required,
+        ROUTES_PROVIDER: 'google',
+        GOOGLE_ROUTES_API_KEY: 'AIza-example-key-0123456789',
+      }).routing.provider,
+    ).toBe('google');
+    expect(() =>
+      loadConfiguration({ ...required, ROUTES_PROVIDER: 'google' }),
+    ).toThrow();
+    expect(() =>
+      loadConfiguration({ ...required, ROUTES_PROVIDER: 'osrm' }),
+    ).toThrow();
+  });
+
   it('accepts an explicit supported environment', () => {
     expect(
       loadConfiguration({ ...required, SAXLEM_BACKEND_ENV: 'development' }),

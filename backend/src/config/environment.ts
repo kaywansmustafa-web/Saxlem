@@ -191,7 +191,11 @@ const configurationSchema = z
      */
     ROUTES_PROVIDER: z.enum(['estimate', 'osrm', 'google']).default('estimate'),
     GOOGLE_ROUTES_API_KEY: z.string().optional(),
-    OSRM_BASE_URL: z.url().optional(),
+    // Empty in .env.example; an empty value means "not set".
+    OSRM_BASE_URL: z.preprocess(
+      (value) => (value === '' ? undefined : value),
+      z.url().optional(),
+    ),
   })
   .superRefine((input, context) => {
     if (
