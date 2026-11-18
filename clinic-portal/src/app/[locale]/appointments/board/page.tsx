@@ -73,27 +73,29 @@ export default async function Page({
   );
   const href = (value: string) => `/${locale}/appointments/board?date=${value}`;
   return (
-    <>
-      <header className="heading">
-        <p className="eyebrow">{cm.appointments}</p>
-        <h1>{date === today ? m.boardTitle : label}</h1>
-        <p>{m.boardHelp}</p>
-        <div className="heading-actions">
-          <AppointmentViews current="board" locale={locale} m={m} />
+    <div className="ax-page">
+      <header className="ax-hero">
+        <div>
+          <p className="ax-eyebrow">{m.dayBoard}</p>
+          <h1 className="ax-title">{date === today ? m.boardTitle : label}</h1>
+          <p className="ax-lead">{m.boardHelp}</p>
+        </div>
+        <div className="ax-hero-side ax-actions">
           <Link
-            className="button-link primary"
+            className="ax-btn ax-btn-primary"
             href={`/${locale}/appointments/new?mode=phone`}
           >
             {m.newBooking}
           </Link>
           <Link
-            className="button-link secondary"
+            className="ax-btn"
             href={`/${locale}/appointments/new?mode=walkIn`}
           >
             {m.walkIn}
           </Link>
         </div>
       </header>
+      <AppointmentViews current="board" locale={locale} m={m} />
       <ReceptionBar view={reception ?? null} locale={locale} />
       <nav className="board-dates" aria-label={m.day}>
         <Link href={href(shift(date, -1))} aria-label={m.previousDay}>
@@ -125,6 +127,6 @@ export default async function Page({
         locale={locale}
         m={m}
       />
-    </>
+    </div>
   );
 }
