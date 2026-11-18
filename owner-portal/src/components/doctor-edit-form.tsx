@@ -79,11 +79,14 @@ export function DoctorEditForm({
           defaultValue={doctor.yearsOfExperience}
         />
       </label>
-      <fieldset className="field">
+      <fieldset className="field fee-fieldset">
         <legend>Fees (IQD)</legend>
         <p className="muted">
-          What patients see and pay. Leave empty to use the standard fee (
-          {doctor.fees.firstVisitIqd.toLocaleString("en-US")} IQD).
+          What patients see and pay. Leave empty to use the standard fee
+          {doctor.customFees.firstVisitIqd === null
+            ? ` (${doctor.fees.firstVisitIqd.toLocaleString("en-US")} IQD)`
+            : ""}
+          .
         </p>
         <label className="field">
           First visit
@@ -94,7 +97,7 @@ export function DoctorEditForm({
             max={5000000}
             step={250}
             inputMode="numeric"
-            placeholder={doctor.fees.firstVisitIqd.toLocaleString("en-US")}
+            placeholder="Standard fee"
             defaultValue={doctor.customFees.firstVisitIqd ?? ""}
           />
         </label>

@@ -281,3 +281,19 @@ table tbody tr:hover {
 .main section:has(> table) {
   overflow-x: auto;
 }
+
+/* Doctor fees */
+.fee-fieldset {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.fee-fieldset legend {
+  margin-bottom: 4px;
+  font-weight: 650;
+}
+.fee-fieldset .muted {
+  margin: 0;
+}
