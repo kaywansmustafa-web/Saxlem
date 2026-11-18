@@ -185,8 +185,30 @@ const configurationSchema = z
       .enum(['auto', 'sms', 'whatsapp', 'telegram'])
       .default('auto'),
     OTPIQ_BASE_URL: z.url().default('https://api.otpiq.com/api'),
+    /**
+     * Drive times for "leave by": google (traffic-aware, needs a key), osrm
+     * (a road-network server, no traffic) or estimate (distance only).
+     */
+    ROUTES_PROVIDER: z.enum(['estimate', 'osrm', 'google']).default('estimate'),
+    GOOGLE_ROUTES_API_KEY: z.string().optional(),
+    OSRM_BASE_URL: z.url().optional(),
   })
   .superRefine((input, context) => {
+    if (
+      input.ROUTES_PROVIDER === 'google' &&
+      (input.GOOGLE_ROUTES_API_KEY ?? '').length < 20
+    )
+      context.addIssue({
+        code: 'custom',
+        path: ['GOOGLE_ROUTES_API_KEY'],
+        message: 'ROUTES_PROVIDER=google needs GOOGLE_ROUTES_API_KEY.',
+      });
+    if (input.ROUTES_PROVIDER === 'osrm' && !input.OSRM_BASE_URL)
+      context.addIssue({
+        code: 'custom',
+        path: ['OSRM_BASE_URL'],
+        message: 'ROUTES_PROVIDER=osrm needs OSRM_BASE_URL.',
+      });
     if (
       input.OTP_PROVIDER === 'otpiq' &&
       (input.OTPIQ_API_KEY ?? '').length < 16
@@ -276,6 +298,11 @@ const configurationSchema = z
         apiKey: input.OTPIQ_API_KEY ?? '',
         channel: input.OTPIQ_CHANNEL,
         baseUrl: input.OTPIQ_BASE_URL.replace(/\/+$/, ''),
+      },
+      routing: {
+        provider: input.ROUTES_PROVIDER,
+        googleApiKey: input.GOOGLE_ROUTES_API_KEY ?? '',
+        osrmBaseUrl: (input.OSRM_BASE_URL ?? '').replace(/\/+$/, ''),
       },
       apiRateLimitPerMinute: input.API_RATE_LIMIT_PER_MINUTE,
       appointmentPastToleranceMinutes: input.APPOINTMENT_PAST_TOLERANCE_MINUTES,

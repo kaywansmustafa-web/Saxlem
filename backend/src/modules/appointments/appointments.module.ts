@@ -10,11 +10,32 @@ import { AppointmentDtoMapper } from './presentation/appointment-dto.mapper';
 import { AppointmentsController } from './presentation/appointments.controller';
 import { BookingOptionsController } from './presentation/booking-options.controller';
 import { BookingOptionsDtoMapper } from './presentation/booking-options-dto.mapper';
+import { BACKEND_CONFIGURATION } from '../../config/configuration.module';
+import type { BackendConfiguration } from '../../config/environment';
+import { DepartureService, ROUTE_TIME } from './application/departure.service';
+import {
+  FallbackRouteTime,
+  GoogleRouteTime,
+  OsrmRouteTime,
+} from './infrastructure/route-time';
 @Module({
   imports: [IdentityModule, DoctorsModule],
   controllers: [AppointmentsController, BookingOptionsController],
   providers: [
     AppointmentService,
+    DepartureService,
+    {
+      provide: ROUTE_TIME,
+      inject: [BACKEND_CONFIGURATION],
+      useFactory: ({ routing }: BackendConfiguration) =>
+        new FallbackRouteTime(
+          routing.provider === 'google'
+            ? new GoogleRouteTime(routing.googleApiKey)
+            : routing.provider === 'osrm'
+              ? new OsrmRouteTime(routing.osrmBaseUrl)
+              : null,
+        ),
+    },
     AppointmentDtoMapper,
     BookingOptionsDtoMapper,
     PrismaAppointmentRepository,

@@ -5524,6 +5524,94 @@
         ]
       }
     },
+    "/api/v1/appointments/{id}/departure": {
+      "post": {
+        "description": "Drive time from the patient's position to the clinic, with traffic when available. The position is used only for this answer: never stored or logged.",
+        "operationId": "AppointmentsController_departure",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepartureRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DepartureResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "When should I leave? (patients)",
+        "tags": [
+          "appointments"
+        ]
+      }
+    },
     "/api/v1/doctors/{doctorId}/booking-options": {
       "get": {
         "description": "Returns advisory slots derived from active doctor-clinic schedules and current appointment conflicts. Appointment creation always revalidates availability. Empty days are successful results. Operational schedule internals are never returned.",
@@ -14283,6 +14371,76 @@
           "startsAt",
           "durationMinutes",
           "version"
+        ]
+      },
+      "DepartureRequestDto": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90,
+            "example": 36.8612
+          },
+          "longitude": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180,
+            "example": 42.9721
+          }
+        },
+        "required": [
+          "latitude",
+          "longitude"
+        ]
+      },
+      "DepartureResponseDto": {
+        "type": "object",
+        "properties": {
+          "leaveAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When to set off."
+          },
+          "arriveBy": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When to be at reception (before the visit, to check in)."
+          },
+          "travelSeconds": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "distanceMeters": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "traffic",
+              "roads",
+              "estimate"
+            ],
+            "description": "traffic: live/predicted traffic; roads: road network only; estimate: distance only."
+          },
+          "parkAndWalkMinutes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "computedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "leaveAt",
+          "arriveBy",
+          "travelSeconds",
+          "distanceMeters",
+          "source",
+          "parkAndWalkMinutes",
+          "computedAt"
         ]
       },
       "BookingSlotResponseDto": {

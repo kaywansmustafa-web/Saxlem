@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Headers,
+  HttpCode,
   Param,
   Patch,
   Post,
@@ -26,6 +27,10 @@ import {
 } from '@nestjs/swagger';
 import { ApiErrorEnvelopeDto } from '../../doctors/presentation/doctor.dto';
 import { AppointmentService } from '../application/appointment.service';
+import {
+  DepartureService,
+  PARK_AND_WALK_MINUTES,
+} from '../application/departure.service';
 import type { AppointmentAccess } from '../domain/appointment';
 import {
   JwtAuthGuard,
@@ -43,6 +48,7 @@ import {
   RescheduleAppointmentDto,
   UpdateAppointmentDto,
 } from './appointment.dto';
+import { DepartureRequestDto, DepartureResponseDto } from './departure.dto';
 import { DayBoardQueryDto, DayBoardResponseDto } from './day-board.dto';
 @ApiTags('appointments')
 @ApiBearerAuth()
@@ -55,6 +61,7 @@ export class AppointmentsController {
   constructor(
     private readonly service: AppointmentService,
     private readonly mapper: AppointmentDtoMapper,
+    private readonly departures: DepartureService,
   ) {}
   @Get()
   @RequireCapabilities('appointment:read')
@@ -263,6 +270,33 @@ export class AppointmentsController {
       ),
     );
   }
+  @Post(':id/departure')
+  @HttpCode(200)
+  @RequireCapabilities('appointment:read')
+  @ApiOperation({
+    summary: 'When should I leave? (patients)',
+    description:
+      "Drive time from the patient's position to the clinic, with traffic when available. The position is used only for this answer: never stored or logged.",
+  })
+  @ApiOkResponse({ type: DepartureResponseDto })
+  @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
+  async departure(
+    @Req() req: AuthenticatedRequest,
+    @Param() p: AppointmentParamsDto,
+    @Body() body: DepartureRequestDto,
+  ): Promise<DepartureResponseDto> {
+    const plan = await this.departures.plan(this.access(req), p.id, body);
+    return {
+      leaveAt: plan.leaveAt.toISOString(),
+      arriveBy: plan.arriveBy.toISOString(),
+      travelSeconds: plan.travelSeconds,
+      distanceMeters: plan.distanceMeters,
+      source: plan.source,
+      parkAndWalkMinutes: PARK_AND_WALK_MINUTES,
+      computedAt: plan.computedAt.toISOString(),
+    };
+  }
+
   private access(req: AuthenticatedRequest): AppointmentAccess {
     if (!req.principal)
       throw new Error('Authentication guard invariant is broken.');
