@@ -4259,6 +4259,71 @@
         ]
       }
     },
+    "/api/v1/patients/me/saved-doctors": {
+      "get": {
+        "operationId": "SavedDoctorsController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedDoctorsResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "My saved doctors, newest first",
+        "tags": [
+          "patients"
+        ]
+      }
+    },
+    "/api/v1/patients/me/saved-doctors/{doctorId}": {
+      "post": {
+        "operationId": "SavedDoctorsController_save",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Save a doctor (again is fine)",
+        "tags": [
+          "patients"
+        ]
+      },
+      "delete": {
+        "operationId": "SavedDoctorsController_remove",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Remove a saved doctor (already gone is fine)",
+        "tags": [
+          "patients"
+        ]
+      }
+    },
     "/api/v1/patients/directory": {
       "get": {
         "operationId": "PatientsController_directory",
@@ -13948,6 +14013,20 @@
         },
         "required": [
           "doctorIds"
+        ]
+      },
+      "SavedDoctorsResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DoctorDetailResponseDto"
+            }
+          }
+        },
+        "required": [
+          "items"
         ]
       },
       "PatientDirectoryListItemResponseDto": {

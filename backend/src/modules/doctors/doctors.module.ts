@@ -13,6 +13,7 @@ import { DOCTOR_SCHEDULE_REPOSITORY } from './domain/doctor-schedule.repository'
 import { PrismaDoctorScheduleRepository } from './infrastructure/prisma-doctor-schedule.repository';
 import { DoctorScheduleDtoMapper } from './presentation/doctor-schedule-dto.mapper';
 import { ClinicHoursController } from './presentation/clinic-hours.controller';
+import { SavedDoctorsController } from './presentation/saved-doctors.controller';
 
 @Module({
   imports: [IdentityModule],
@@ -20,6 +21,7 @@ import { ClinicHoursController } from './presentation/clinic-hours.controller';
     DoctorsController,
     ClinicHoursController,
     ReceptionDoctorsController,
+    SavedDoctorsController,
   ],
   providers: [
     ReceptionDoctorsService,

@@ -1790,4 +1790,29 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get ntfReviewNext =>
       'قيّمها في ثوانٍ. هذا يساعد المرضى الآخرين على الاختيار.';
+
+  @override
+  String get savedDoctorsTitle => 'الأطباء المحفوظون';
+
+  @override
+  String get savedDoctorsEmpty => 'اضغط على القلب في صفحة الطبيب لحفظه هنا.';
+
+  @override
+  String saveDoctor(String doctor) {
+    return 'حفظ $doctor';
+  }
+
+  @override
+  String unsaveDoctor(String doctor) {
+    return 'إزالة $doctor من المحفوظين';
+  }
+
+  @override
+  String get savedAdded => 'تم الحفظ';
+
+  @override
+  String get savedRemoved => 'أزيل من المحفوظين';
+
+  @override
+  String get savedFailed => 'تعذّر تحديث الأطباء المحفوظين. حاول مجددًا.';
 }

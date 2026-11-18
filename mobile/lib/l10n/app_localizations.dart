@@ -3237,6 +3237,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rate it in a few seconds. It helps other patients choose.'**
   String get ntfReviewNext;
+
+  /// No description provided for @savedDoctorsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved doctors'**
+  String get savedDoctorsTitle;
+
+  /// No description provided for @savedDoctorsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the heart on a doctor\'s profile to keep them here.'**
+  String get savedDoctorsEmpty;
+
+  /// No description provided for @saveDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Save {doctor}'**
+  String saveDoctor(String doctor);
+
+  /// No description provided for @unsaveDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {doctor} from saved'**
+  String unsaveDoctor(String doctor);
+
+  /// No description provided for @savedAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get savedAdded;
+
+  /// No description provided for @savedRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from saved'**
+  String get savedRemoved;
+
+  /// No description provided for @savedFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t update saved doctors. Try again.'**
+  String get savedFailed;
 }
 
 class _AppLocalizationsDelegate

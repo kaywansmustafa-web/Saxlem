@@ -1,3 +1,5 @@
+import '../../../saved_doctors/domain/saved_doctors.dart';
+import '../../../saved_doctors/presentation/saved_doctors.dart';
 import '../../../appointments/domain/repositories/patient_appointments_repository.dart';
 import 'next_visit_card.dart';
 import 'recent_doctors_strip.dart';
@@ -184,6 +186,9 @@ class DashboardView extends StatelessWidget {
               )
             else
               specialtyFallback,
+            if (profiles != null && onOpenDoctor != null)
+              if (discoveryRepository case final SavedDoctorsSource saved)
+                SavedDoctorsStrip(source: saved, onOpenDoctor: onOpenDoctor!),
             if (profiles != null && appointmentsRepository != null)
               ListenableBuilder(
                 listenable: profiles,

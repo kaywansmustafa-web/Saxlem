@@ -1806,4 +1806,31 @@ class AppLocalizationsKu extends AppLocalizations {
   @override
   String get ntfReviewNext =>
       'د چەند چرکەیان دا هەلسەنگینە. هاریکاریا نەخوشێن دی دکەت.';
+
+  @override
+  String get savedDoctorsTitle => 'نوژدارێن پاشەکەفتکری';
+
+  @override
+  String get savedDoctorsEmpty =>
+      'ل سەر دلێ ل پەڕا نوژداری بدە دا ل ڤێرە بمینیت.';
+
+  @override
+  String saveDoctor(String doctor) {
+    return '$doctor پاشەکەفت بکە';
+  }
+
+  @override
+  String unsaveDoctor(String doctor) {
+    return '$doctor ژ پاشەکەفتکریان ڕاکە';
+  }
+
+  @override
+  String get savedAdded => 'هاتە پاشەکەفتکرن';
+
+  @override
+  String get savedRemoved => 'ژ پاشەکەفتکریان هاتە ڕاکرن';
+
+  @override
+  String get savedFailed =>
+      'نەشیاین نوژدارێن پاشەکەفتکری نوی بکەین. دیسان هەول بدە.';
 }

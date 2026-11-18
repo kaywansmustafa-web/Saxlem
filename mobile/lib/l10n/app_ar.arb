@@ -700,5 +700,12 @@
   "rateFailed": "تعذّر نشر تقييمك. حاول مجددًا.",
   "rateEditUntil": "يمكنك تغييره حتى {date}.",
   "ntfReviewTitle": "كيف كانت زيارتك؟",
-  "ntfReviewNext": "قيّمها في ثوانٍ. هذا يساعد المرضى الآخرين على الاختيار."
+  "ntfReviewNext": "قيّمها في ثوانٍ. هذا يساعد المرضى الآخرين على الاختيار.",
+  "savedDoctorsTitle": "الأطباء المحفوظون",
+  "savedDoctorsEmpty": "اضغط على القلب في صفحة الطبيب لحفظه هنا.",
+  "saveDoctor": "حفظ {doctor}",
+  "unsaveDoctor": "إزالة {doctor} من المحفوظين",
+  "savedAdded": "تم الحفظ",
+  "savedRemoved": "أزيل من المحفوظين",
+  "savedFailed": "تعذّر تحديث الأطباء المحفوظين. حاول مجددًا."
 }

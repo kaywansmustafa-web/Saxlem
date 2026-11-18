@@ -996,5 +996,19 @@
   "ntfReviewTitle": "How was your visit?",
   "@ntfReviewTitle": {},
   "ntfReviewNext": "Rate it in a few seconds. It helps other patients choose.",
-  "@ntfReviewNext": {}
+  "@ntfReviewNext": {},
+  "savedDoctorsTitle": "Saved doctors",
+  "@savedDoctorsTitle": {},
+  "savedDoctorsEmpty": "Tap the heart on a doctor's profile to keep them here.",
+  "@savedDoctorsEmpty": {},
+  "saveDoctor": "Save {doctor}",
+  "@saveDoctor": {"placeholders": {"doctor": {"type": "String"}}},
+  "unsaveDoctor": "Remove {doctor} from saved",
+  "@unsaveDoctor": {"placeholders": {"doctor": {"type": "String"}}},
+  "savedAdded": "Saved",
+  "@savedAdded": {},
+  "savedRemoved": "Removed from saved",
+  "@savedRemoved": {},
+  "savedFailed": "Couldn't update saved doctors. Try again.",
+  "@savedFailed": {}
 }

@@ -1,3 +1,4 @@
+import '../../../saved_doctors/domain/saved_doctors.dart';
 import '../../../../core/localization/supported_app_locale.dart';
 import 'package:flutter/material.dart';
 import '../../../../design_system/design_system.dart';
@@ -336,6 +337,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             controller: widget.profilesController!,
                             onLogout: _logout,
                             onChangeLanguage: widget.onChangeLanguage,
+                            savedDoctors:
+                                switch (widget.doctorDiscoveryRepository) {
+                                  final SavedDoctorsSource source => source,
+                                  _ => null,
+                                },
+                            onOpenDoctor: _openDoctor,
                           ),
                   ),
                 ],

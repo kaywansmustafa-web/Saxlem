@@ -1,3 +1,4 @@
+import '../../../saved_doctors/presentation/save_doctor_button.dart';
 import '../../../reviews/presentation/doctor_reviews.dart';
 import '../../../reviews/presentation/rating_stars.dart';
 import 'package:flutter/material.dart';
@@ -73,6 +74,20 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
       title: Text(context.l10n.doctorProfile),
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
+      actions: [
+        if (widget.controller.savedDoctors case final saved?)
+          ListenableBuilder(
+            listenable: widget.controller,
+            builder: (context, _) => switch (widget.controller.detailState) {
+              DoctorDetailReady(:final doctor) => SaveDoctorButton(
+                doctorId: doctor.doctorId,
+                doctorName: doctor.doctorDisplayName,
+                source: saved,
+              ),
+              _ => const SizedBox.shrink(),
+            },
+          ),
+      ],
     ),
     body: SaxlemAuraBackdrop(
       child: SafeArea(

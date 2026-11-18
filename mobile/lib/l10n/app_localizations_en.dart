@@ -1836,4 +1836,30 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get ntfReviewNext =>
       'Rate it in a few seconds. It helps other patients choose.';
+
+  @override
+  String get savedDoctorsTitle => 'Saved doctors';
+
+  @override
+  String get savedDoctorsEmpty =>
+      'Tap the heart on a doctor\'s profile to keep them here.';
+
+  @override
+  String saveDoctor(String doctor) {
+    return 'Save $doctor';
+  }
+
+  @override
+  String unsaveDoctor(String doctor) {
+    return 'Remove $doctor from saved';
+  }
+
+  @override
+  String get savedAdded => 'Saved';
+
+  @override
+  String get savedRemoved => 'Removed from saved';
+
+  @override
+  String get savedFailed => 'Couldn\'t update saved doctors. Try again.';
 }

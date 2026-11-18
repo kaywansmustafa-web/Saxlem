@@ -224,6 +224,9 @@ export class PrismaPatientRepository implements PatientRepository {
         where: { patientProfileId: { in: profileIds } },
         data: { anonymous: true, authorName: 'Saxlem patient' },
       });
+      await tx.savedDoctor.deleteMany({
+        where: { patientAccountId: accountId },
+      });
       await tx.patientAccount.update({
         where: { id: accountId },
         data: { normalizedPhoneNumber: `closed:${accountId}` },

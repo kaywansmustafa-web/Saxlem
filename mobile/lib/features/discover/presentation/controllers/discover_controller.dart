@@ -1,3 +1,4 @@
+import '../../../saved_doctors/domain/saved_doctors.dart';
 import '../../../reviews/domain/review.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
@@ -21,6 +22,14 @@ class DiscoverController extends ChangeNotifier {
     final ClinicLocationSource source => source,
     _ => null,
   };
+
+  /// Saved doctors, when the repository keeps them (not for guests).
+  SavedDoctorsSource? get savedDoctors => guest
+      ? null
+      : switch (_repository) {
+          final SavedDoctorsSource source => source,
+          _ => null,
+        };
 
   /// Verified reviews, when the repository can show them.
   DoctorReviewsSource? get reviews => switch (_repository) {

@@ -288,6 +288,7 @@ model PatientAccount {
   profiles              PatientProfile[]
   relationships         FamilyRelationship[]
   activeProfile         PatientAccountActiveProfile?
+  savedDoctors          SavedDoctor[]
 
   @@map("patient_accounts")
 }
@@ -432,6 +433,7 @@ model Doctor {
   /// Saxlem gave more time: no hiding before this.
   billingGraceUntil DateTime?               @map("billing_grace_until") @db.Timestamptz(3)
   reviewStats       DoctorReviewStats?
+  savedBy           SavedDoctor[]
 
   @@unique([organizationId, id])
   @@unique([organizationId, licenseNumber])
@@ -1484,4 +1486,17 @@ model DoctorReviewStats {
   doctor      Doctor   @relation(fields: [doctorId], references: [id], onDelete: Restrict)
 
   @@map("doctor_review_stats")
+}
+
+/// Doctors a patient account keeps for later ("Saved").
+model SavedDoctor {
+  patientAccountId String         @map("patient_account_id") @db.Uuid
+  doctorId         String         @map("doctor_id") @db.Uuid
+  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  patientAccount   PatientAccount @relation(fields: [patientAccountId], references: [id], onDelete: Cascade)
+  doctor           Doctor         @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+
+  @@id([patientAccountId, doctorId])
+  @@index([patientAccountId, createdAt])
+  @@map("saved_doctors")
 }

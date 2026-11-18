@@ -1,3 +1,5 @@
+import '../../../saved_doctors/domain/saved_doctors.dart';
+import '../../../saved_doctors/presentation/saved_doctors.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../config/environment/support_links.dart';
 import 'package:flutter/material.dart';
@@ -16,11 +18,17 @@ class PatientProfilesPage extends StatelessWidget {
     required this.controller,
     this.onLogout,
     this.onChangeLanguage,
+    this.savedDoctors,
+    this.onOpenDoctor,
     super.key,
   });
   final PatientProfilesController controller;
   final Future<void> Function()? onLogout;
   final Future<bool> Function(SupportedAppLocale locale)? onChangeLanguage;
+
+  /// Profile → Saved doctors, when the app can keep them.
+  final SavedDoctorsSource? savedDoctors;
+  final ValueChanged<String>? onOpenDoctor;
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: controller,
@@ -120,6 +128,20 @@ class PatientProfilesPage extends StatelessWidget {
             const SizedBox(height: 10),
             _SettingsCard(
               children: [
+                if (savedDoctors case final saved?)
+                  if (onOpenDoctor case final open?)
+                    _SettingsRow(
+                      icon: Icons.favorite_border_rounded,
+                      label: context.l10n.savedDoctorsTitle,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => SavedDoctorsPage(
+                            source: saved,
+                            onOpenDoctor: open,
+                          ),
+                        ),
+                      ),
+                    ),
                 if (onChangeLanguage != null)
                   _SettingsRow(
                     icon: Icons.translate_rounded,
