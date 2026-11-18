@@ -39,6 +39,7 @@ const en = {
   initial: "First visit",
   followUp: "Follow-up",
   day: "Day",
+  otherDay: "Another day",
   loadingSlots: "Finding free times...",
   noSlots: "No free times on this day. Try another day or doctor.",
   noSlotsToday:
@@ -65,6 +66,9 @@ const en = {
   boardHelp:
     "Every doctor's day at a glance. Tap a free time to book a phone call or a walk-in.",
   today: "Today",
+  tomorrow: "Tomorrow",
+  nextSevenDays: "Next 7 days",
+  quickRange: "Quick range",
   previousDay: "Previous day",
   nextDay: "Next day",
   legend: "Key",
@@ -131,7 +135,8 @@ const ar: BookingMessages = {
   visitType: "نوع الزيارة",
   initial: "زيارة أولى",
   followUp: "مراجعة",
-  day: "اليوم",
+  day: "يوم الموعد",
+  otherDay: "يوم آخر",
   loadingSlots: "جارٍ البحث عن أوقات متاحة...",
   noSlots: "لا توجد أوقات متاحة في هذا اليوم. جرّب يوماً أو طبيباً آخر.",
   noSlotsToday:
@@ -158,6 +163,9 @@ const ar: BookingMessages = {
   boardHelp:
     "يوم كل طبيب في نظرة واحدة. اضغط على وقت متاح لحجز مكالمة هاتفية أو حضور مباشر.",
   today: "اليوم",
+  tomorrow: "غداً",
+  nextSevenDays: "الأيام السبعة القادمة",
+  quickRange: "نطاق سريع",
   previousDay: "اليوم السابق",
   nextDay: "اليوم التالي",
   legend: "دليل الألوان",
@@ -223,6 +231,7 @@ const ku: BookingMessages = {
   initial: "سەرەدانا ئێکێ",
   followUp: "سەرەدانا دووبارە",
   day: "رۆژ",
+  otherDay: "رۆژەکا دی",
   loadingSlots: "ل دەمێن ڤالا دگەڕیێت...",
   noSlots:
     "چ دەمێن ڤالا د ڤێ رۆژێ دا نینن. رۆژەکا دی یان نوژدارەکێ دی تاقی بکە.",
@@ -250,6 +259,9 @@ const ku: BookingMessages = {
   boardHelp:
     "رۆژا هەمی نوژداران ب ئێک نێرین. ل سەر دەمەکێ ڤالا بدە بۆ گرتنا ژڤانا تەلەفۆنێ یان هاتنا راستەوخۆ.",
   today: "ئەڤرۆ",
+  tomorrow: "سوبەهی",
+  nextSevenDays: "حەفت رۆژێن بهێن",
+  quickRange: "دەمێ لەز",
   previousDay: "رۆژا بەری",
   nextDay: "رۆژا پشتی",
   legend: "رێبەرێ رەنگان",
@@ -301,9 +313,15 @@ export const originLabel = (
 export const clockFormat = (locale: Locale, timeZone: string) => ({
   format: (value: Date | string) => formatter(locale, timeZone).time(value),
 });
-export const dayFormat = (locale: Locale, timeZone: string, withTime = false) => ({
+export const dayFormat = (
+  locale: Locale,
+  timeZone: string,
+  withTime = false,
+) => ({
   format: (value: Date | string) => {
     const f = formatter(locale, timeZone);
-    return withTime ? `${f.weekdayDay(value)}${f.comma}${f.time(value)}` : f.weekdayDay(value);
+    return withTime
+      ? `${f.weekdayDay(value)}${f.comma}${f.time(value)}`
+      : f.weekdayDay(value);
   },
 });

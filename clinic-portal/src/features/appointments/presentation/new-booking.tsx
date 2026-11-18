@@ -2,6 +2,7 @@
 import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Locale } from "@/i18n";
+import { formatter } from "@/lib/format";
 import {
   clockFormat,
   dayFormat,
@@ -102,6 +103,17 @@ export function NewBooking({
   const operation = useRef<string>("");
 
   const time = useMemo(() => clockFormat(locale, timezone), [locale, timezone]);
+  const dates = useMemo(() => formatter(locale, timezone), [locale, timezone]);
+  // The next seven clinic days, today first.
+  const week = useMemo(
+    () =>
+      Array.from({ length: 7 }, (_, offset) => {
+        const at = new Date(`${today}T00:00:00.000Z`);
+        at.setUTCDate(at.getUTCDate() + offset);
+        return at.toISOString().slice(0, 10);
+      }),
+    [today],
+  );
   const doctor = doctors.find((item) => item.id === doctorId);
 
   const search = async () => {
@@ -429,57 +441,112 @@ export function NewBooking({
       >
         {step(2, m.stepDoctor, !!doctor && !!patient)}
         {doctors.length ? (
-          <div className="booking-grid">
-            <label>
-              <span id="step-doctor">{m.chooseDoctor}</span>
-              <select
-                disabled={!patient}
-                value={doctorId}
-                onChange={(event) => {
-                  setDoctorId(event.target.value);
-                  void loadSlots({ doctorId: event.target.value });
-                }}
-              >
-                <option value="">-</option>
-                {doctors.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.displayName}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              {m.visitType}
-              <select
-                disabled={!patient}
-                value={type}
-                onChange={(event) => {
-                  const value = event.target.value as VisitType;
-                  setType(value);
-                  void loadSlots({ type: value });
-                }}
-              >
-                <option value="initial">{m.initial}</option>
-                <option value="followUp">{m.followUp}</option>
-              </select>
-            </label>
+          <>
+            <div className="booking-grid">
+              {doctors.length === 1 ? (
+                <div className="booking-field">
+                  <span id="step-doctor" className="booking-label">
+                    {m.stepDoctor}
+                  </span>
+                  <p className="booking-fixed">{doctors[0]!.displayName}</p>
+                </div>
+              ) : (
+                <label>
+                  <span id="step-doctor">{m.chooseDoctor}</span>
+                  <select
+                    disabled={!patient}
+                    value={doctorId}
+                    onChange={(event) => {
+                      setDoctorId(event.target.value);
+                      void loadSlots({ doctorId: event.target.value });
+                    }}
+                  >
+                    <option value="">-</option>
+                    {doctors.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.displayName}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+              <div className="booking-field">
+                <span id="visit-type" className="booking-label">
+                  {m.visitType}
+                </span>
+                <div
+                  className="ax-segment"
+                  role="radiogroup"
+                  aria-labelledby="visit-type"
+                >
+                  {(["initial", "followUp"] as const).map((value) => (
+                    <button
+                      key={value}
+                      type="button"
+                      role="radio"
+                      aria-checked={type === value}
+                      disabled={!patient}
+                      onClick={() => {
+                        setType(value);
+                        void loadSlots({ type: value });
+                      }}
+                    >
+                      {value === "initial" ? m.initial : m.followUp}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
             {!walkIn && (
-              <label>
-                {m.day}
-                <input
-                  type="date"
-                  disabled={!patient}
-                  min={today}
-                  value={date}
-                  onChange={(event) => {
-                    if (!event.target.value) return;
-                    setDate(event.target.value);
-                    void loadSlots({ date: event.target.value });
-                  }}
-                />
-              </label>
+              <div className="booking-field">
+                <span id="booking-day" className="booking-label">
+                  {m.day}
+                </span>
+                <div
+                  className="ax-choice booking-days"
+                  role="radiogroup"
+                  aria-labelledby="booking-day"
+                >
+                  {week.map((value, index) => (
+                    <button
+                      key={value}
+                      type="button"
+                      role="radio"
+                      aria-checked={date === value}
+                      className="ax-choice-item booking-day"
+                      disabled={!patient}
+                      onClick={() => {
+                        setDate(value);
+                        void loadSlots({ date: value });
+                      }}
+                    >
+                      <small>
+                        {index === 0
+                          ? m.today
+                          : dates.weekdayShort(`${value}T12:00:00Z`)}
+                      </small>
+                      <strong>{dates.dayNoYear(`${value}T12:00:00Z`)}</strong>
+                    </button>
+                  ))}
+                  <label className="booking-other-day">
+                    <span className="visually-hidden">{m.otherDay}</span>
+                    <input
+                      type="date"
+                      title={m.otherDay}
+                      disabled={!patient}
+                      min={today}
+                      value={week.includes(date) ? "" : date}
+                      onChange={(event) => {
+                        if (!event.target.value) return;
+                        setDate(event.target.value);
+                        void loadSlots({ date: event.target.value });
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
             )}
-          </div>
+          </>
         ) : (
           <p className="booking-muted">{m.noDoctors}</p>
         )}

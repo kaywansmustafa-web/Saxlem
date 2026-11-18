@@ -450,8 +450,9 @@ describe("queue UI", () => {
     fireEvent.click(
       screen.getByRole("button", { name: productionQueueMessages("en").next }),
     );
-    await screen.findByText("2");
-    expect(screen.getAllByText("Safe Patient")).toHaveLength(2);
+    await waitFor(() =>
+      expect(screen.getAllByText("Safe Patient")).toHaveLength(2),
+    );
     fireEvent.click(
       screen.getByRole("button", { name: productionQueueMessages("en").next }),
     );
