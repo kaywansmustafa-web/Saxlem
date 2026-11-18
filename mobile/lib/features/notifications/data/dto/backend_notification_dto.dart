@@ -50,6 +50,7 @@ class BackendNotificationDto {
       throw const FormatException();
     }
     final mapped = _mappedType(type);
+    final payload = _payload(json['context']);
     return PatientNotification(
       id: NotificationId(id),
       type: mapped,
@@ -65,8 +66,8 @@ class BackendNotificationDto {
           : NotificationReadState.read,
       occurredAt: occurred,
       receivedAt: created,
-      payload: _payload(json['context']),
-      action: _action(action),
+      payload: payload,
+      action: _action(action, payload.appointmentId),
       profileId: profile == null ? null : PatientProfileId(profile),
       deliverySequence: sequence,
       actionCode: action,
@@ -177,23 +178,27 @@ class BackendNotificationDto {
       : value.startsWith('appointment.')
       ? NotificationCategory.appointment
       : NotificationCategory.system;
-  static NotificationAction _action(String value) =>
-      value.startsWith('appointment.') ||
-          const {
-            'queue.session.opened',
-            'queue.session.paused',
-            'queue.session.resumed',
-            'queue.session.closed',
-            'queue.entry.enqueued',
-            'queue.patient.called',
-            'queue.patient.recalled',
-            'queue.patient.no-response',
-            'queue.consultation.started',
-            'queue.consultation.completed',
-            'queue.patient.almost',
-          }.contains(value)
-      ? const NotificationAction(NotificationDestination.appointment)
-      : const NotificationAction.none();
+
+  /// Where tapping goes: the live queue for queue news about a visit, the
+  /// visit itself for booking news, or the Appointments tab when the
+  /// notification doesn't say which visit.
+  static NotificationAction _action(String value, String? appointmentId) {
+    if (value.startsWith('queue.')) {
+      return appointmentId == null
+          ? const NotificationAction(NotificationDestination.appointment)
+          : NotificationAction(
+              NotificationDestination.liveQueue,
+              targetId: appointmentId,
+            );
+    }
+    if (value.startsWith('appointment.')) {
+      return NotificationAction(
+        NotificationDestination.appointment,
+        targetId: appointmentId,
+      );
+    }
+    return const NotificationAction.none();
+  }
 }
 
 // ignore_for_file: curly_braces_in_flow_control_structures

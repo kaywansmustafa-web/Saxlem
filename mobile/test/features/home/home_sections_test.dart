@@ -136,35 +136,40 @@ void main() {
     expect(find.text('Dr. None'), findsNothing);
   });
 
-  testWidgets('on the day, the next visit follows the live queue', (
-    tester,
-  ) async {
-    final now = DateTime.now().toUtc();
-    final starts = now.add(const Duration(minutes: 40));
-    var found = false;
-    await tester.pumpWidget(
-      _app(
-        NextVisitCard(
-          repository: _Visits(starts),
-          profileId: PatientProfileId.me,
-          onOpen: () {},
-          liveQueue: _Queue(),
-          onFound: () => found = true,
-          now: () => now,
+  testWidgets(
+    'on the day, the next visit follows the live queue and opens it',
+    (tester) async {
+      final now = DateTime.now().toUtc();
+      final starts = now.add(const Duration(minutes: 40));
+      var found = false;
+      (String, bool)? opened;
+      await tester.pumpWidget(
+        _app(
+          NextVisitCard(
+            repository: _Visits(starts),
+            profileId: PatientProfileId.me,
+            onOpen: () {},
+            onOpenVisit: (id, {required inQueue}) => opened = (id, inQueue),
+            liveQueue: _Queue(),
+            onFound: () => found = true,
+            now: () => now,
+          ),
         ),
-      ),
-    );
-    await tester.pump();
-    await tester.pump();
-    await tester.pump();
-    expect(found, isTrue);
-    expect(
-      find.textContaining('Ticket 7 · 3 people ahead of you'),
-      findsOneWidget,
-    );
-    // The card keeps polling; stop the timer before the test ends.
-    await tester.pumpWidget(const SizedBox());
-  });
+      );
+      await tester.pump();
+      await tester.pump();
+      await tester.pump();
+      expect(found, isTrue);
+      expect(
+        find.textContaining('Ticket 7 · 3 people ahead of you'),
+        findsOneWidget,
+      );
+      await tester.tap(find.text('Dr. Shilan'));
+      expect(opened, ('a1', true));
+      // The card keeps polling; stop the timer before the test ends.
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
 }
 
 class _Visits implements PatientAppointmentsRepository {

@@ -44,6 +44,21 @@ void main() {
     expect(value.payload.startsAt, DateTime.utc(2026, 8, 11, 7, 30));
     expect(value.action.destination.name, 'appointment');
   });
+  test('queue news about a visit opens its live queue', () {
+    final json = item()
+      ..['context'] = {
+        'appointmentId': '33333333-3333-4333-8333-333333333333',
+        'ticketNumber': 7,
+      };
+    final value = BackendNotificationDto.parse(json);
+    expect(value.action.destination.name, 'liveQueue');
+    expect(value.action.targetId, '33333333-3333-4333-8333-333333333333');
+    // Without a visit it falls back to the Appointments tab.
+    expect(
+      BackendNotificationDto.parse(item()).action.destination.name,
+      'appointment',
+    );
+  });
   test('parses read notification', () {
     final json = item()..['readAt'] = '2026-08-10T09:01:00+03:00';
     expect(BackendNotificationDto.parse(json).isUnread, isFalse);

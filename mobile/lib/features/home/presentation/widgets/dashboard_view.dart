@@ -32,6 +32,7 @@ class DashboardView extends StatelessWidget {
     this.discoveryRepository,
     this.liveQueueRepository,
     this.onOpenDoctor,
+    this.onOpenVisit,
     this.returning,
     super.key,
   });
@@ -44,6 +45,10 @@ class DashboardView extends StatelessWidget {
 
   /// Opens one doctor's page.
   final ValueChanged<String>? onOpenDoctor;
+
+  /// Opens a visit: its live queue, or its page to check in.
+  final void Function(String appointmentId, {required bool inQueue})?
+  onOpenVisit;
 
   /// True once the patient has booked before; "How Saxlem works" is for
   /// first-timers only.
@@ -148,6 +153,7 @@ class DashboardView extends StatelessWidget {
                     profileId: profiles.activeProfileId,
                     onOpen: onOpenAppointments,
                     liveQueue: liveQueueRepository,
+                    onOpenVisit: onOpenVisit,
                     onFound: () => returning?.value = true,
                   ),
                 ),

@@ -19,6 +19,7 @@ class NextVisitCard extends StatefulWidget {
     required this.profileId,
     required this.onOpen,
     this.liveQueue,
+    this.onOpenVisit,
     this.onFound,
     this.now = DateTime.now,
     super.key,
@@ -30,6 +31,11 @@ class NextVisitCard extends StatefulWidget {
 
   /// On the day of the visit, the card follows the live queue.
   final LiveQueueRepository? liveQueue;
+
+  /// Opens this visit: the live queue once the patient is in it, otherwise
+  /// the visit's page (to check in). Falls back to [onOpen].
+  final void Function(String appointmentId, {required bool inQueue})?
+  onOpenVisit;
   final PatientProfileId profileId;
   final VoidCallback onOpen;
   final DateTime Function() now;
@@ -153,7 +159,11 @@ class _NextVisitCardState extends State<NextVisitCard> {
           color: Colors.transparent,
           child: InkWell(
             borderRadius: BorderRadius.circular(SaxlemRadii.hero),
-            onTap: widget.onOpen,
+            onTap: () {
+              final open = widget.onOpenVisit;
+              if (open == null) return widget.onOpen();
+              open(next.id, inQueue: _inQueue);
+            },
             child: Ink(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
@@ -265,6 +275,14 @@ class _NextVisitCardState extends State<NextVisitCard> {
       ),
     );
   }
+
+  bool get _inQueue => switch (_live?.patientEntryStatus) {
+    PatientEntryStatus.waiting ||
+    PatientEntryStatus.called ||
+    PatientEntryStatus.inConsultation ||
+    PatientEntryStatus.noResponse => true,
+    _ => false,
+  };
 
   /// What the live queue says about today's visit, in a patient's words.
   ({IconData icon, String text})? _liveLine(BuildContext context) {

@@ -6,6 +6,9 @@ import '../../../../config/theme/app_colors.dart';
 import '../../../../shared/widgets/navigation/saxlem_bottom_navigation.dart';
 import '../widgets/dashboard_view.dart';
 import '../../../discover/discover_feature.dart';
+import '../../../discover/domain/entities/clinic_location.dart';
+import '../../../live_queue/live_queue_feature.dart';
+import '../../../appointments/presentation/pages/appointment_details_page.dart';
 import '../../../discover/presentation/controllers/discover_controller.dart';
 import '../../../discover/presentation/pages/doctor_details_page.dart';
 import '../../../discover/domain/entities/doctor_search_criteria.dart';
@@ -127,7 +130,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (home != null && !home.isCurrent) {
       Navigator.of(context).popUntil((route) => route == home);
     }
+    final target = action.targetId;
     switch (action.destination) {
+      case NotificationDestination.liveQueue when target != null:
+        _openVisit(target, inQueue: true);
+      case NotificationDestination.appointment when target != null:
+        _openVisit(target, inQueue: false);
       case NotificationDestination.appointment:
       case NotificationDestination.liveQueue:
         setState(() => _selectedIndex = 2);
@@ -140,6 +148,34 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         break;
     }
   }
+
+  /// A visit from Home or a notification: the live queue when the patient
+  /// is in it, otherwise the visit's own page (details, check in).
+  Future<void> _openVisit(String appointmentId, {required bool inQueue}) =>
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => inQueue
+              ? LiveQueueFeature(
+                  appointmentId: appointmentId,
+                  repository: widget.liveQueueRepository,
+                  notificationSignals: _notifications.signals,
+                )
+              : AppointmentDetailsPage(
+                  appointmentId: appointmentId,
+                  repository: widget.appointmentsRepository,
+                  bookingRepository: widget.bookingRepository,
+                  arrivalRepository: widget.arrivalRepository,
+                  liveQueueRepository: widget.liveQueueRepository,
+                  notificationSignals: _notifications.signals,
+                  profilesController: widget.profilesController,
+                  clinicLocations: switch (widget.doctorDiscoveryRepository) {
+                    final ClinicLocationSource source => source,
+                    _ => null,
+                  },
+                  onChanged: () async {},
+                ),
+        ),
+      );
 
   /// One doctor's page, straight from Home (free today, book again).
   Future<void> _openDoctor(String doctorId) {
@@ -236,6 +272,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         ? null
                         : widget.liveQueueRepository,
                     onOpenDoctor: _openDoctor,
+                    onOpenVisit: widget.guestMode ? null : _openVisit,
                     returning: _returning,
                     unreadNotifications: _notifications.unreadCount,
                     onOpenAppointments: () =>
