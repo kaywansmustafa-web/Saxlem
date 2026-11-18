@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -91,6 +99,27 @@ export class DoctorsController {
     return this.doctors
       .discoveryOptions(this.access(request))
       .then((options) => this.mapper.discoveryOptions(options));
+  }
+
+  @Get('me')
+  @RequireCapabilities('doctor:workspace:read')
+  @ApiOperation({
+    summary: "The signed-in doctor's own record",
+    description:
+      'Lets a doctor workspace find its own doctor id, clinic and profile without searching the directory.',
+  })
+  @ApiOkResponse({ type: DoctorDetailResponseDto })
+  @ApiNotFoundResponse({
+    description: 'The signed-in staff account is not linked to a doctor.',
+    type: ApiErrorEnvelopeDto,
+  })
+  me(@Req() request: AuthenticatedRequest) {
+    const own = request.tenant?.ownDoctorId;
+    if (!own)
+      throw new NotFoundException('No doctor is linked to this account.');
+    return this.doctors
+      .get(this.access(request), own, request.requestId, 'details')
+      .then((doctor) => this.mapper.detail(doctor));
   }
 
   @Get(':id')

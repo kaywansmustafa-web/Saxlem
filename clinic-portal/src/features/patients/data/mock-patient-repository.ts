@@ -1,1 +1,0 @@
-import type{PatientRepository}from"../domain/repository";import{mockPatientWorkspaces}from"./mock-patients";export class MockPatientRepository implements PatientRepository{async list(){return structuredClone(mockPatientWorkspaces.map(x=>x.patient))}async get(id:string){return structuredClone(mockPatientWorkspaces.find(x=>x.patient.id===id)??null)}}

@@ -38,7 +38,7 @@ export const routePolicies: readonly RoutePolicy[] = Object.freeze([
     roles: receptionist,
     navigation: true,
     landing: true,
-    placeholder: true,
+    placeholder: false,
     owner: "Sprint 13L",
   },
   {
@@ -47,7 +47,7 @@ export const routePolicies: readonly RoutePolicy[] = Object.freeze([
     roles: receptionist,
     navigation: true,
     landing: false,
-    placeholder: true,
+    placeholder: false,
     owner: "Sprint 13L",
   },
   {
@@ -56,7 +56,7 @@ export const routePolicies: readonly RoutePolicy[] = Object.freeze([
     roles: receptionist,
     navigation: true,
     landing: false,
-    placeholder: true,
+    placeholder: false,
     owner: "Sprint 13L",
   },
   {
@@ -65,7 +65,7 @@ export const routePolicies: readonly RoutePolicy[] = Object.freeze([
     roles: receptionist,
     navigation: true,
     landing: false,
-    placeholder: true,
+    placeholder: false,
     owner: "Sprint 13M",
   },
   {
@@ -74,14 +74,14 @@ export const routePolicies: readonly RoutePolicy[] = Object.freeze([
     roles: receptionist,
     navigation: true,
     landing: false,
-    placeholder: true,
+    placeholder: false,
     owner: "Sprint 13L",
   },
   {
     id: "schedule",
     segment: "schedule",
     roles: ["receptionist"],
-    navigation: true,
+    navigation: false,
     landing: false,
     placeholder: true,
     owner: "Sprint 13L",
@@ -90,7 +90,7 @@ export const routePolicies: readonly RoutePolicy[] = Object.freeze([
     id: "notifications",
     segment: "notifications",
     roles: receptionist,
-    navigation: true,
+    navigation: false,
     landing: false,
     placeholder: true,
     owner: "Sprint 13L",
@@ -98,10 +98,10 @@ export const routePolicies: readonly RoutePolicy[] = Object.freeze([
   {
     id: "settings",
     segment: "settings",
-    roles: ["receptionist", "clinicManager", "platformAdministrator"],
+    roles: ["receptionist", "clinicManager"],
     navigation: true,
     landing: false,
-    placeholder: true,
+    placeholder: false,
     owner: "Sprint 13K-C",
   },
   {
@@ -117,7 +117,7 @@ export const routePolicies: readonly RoutePolicy[] = Object.freeze([
     id: "doctorPatients",
     segment: "doctor/patients",
     roles: ["doctor"],
-    navigation: true,
+    navigation: false,
     landing: false,
     placeholder: false,
     owner: "Sprint 13N",
@@ -135,7 +135,7 @@ export const routePolicies: readonly RoutePolicy[] = Object.freeze([
     id: "doctorNotifications",
     segment: "doctor/notifications",
     roles: ["doctor"],
-    navigation: true,
+    navigation: false,
     landing: false,
     placeholder: false,
     owner: "Sprint 13N",
@@ -146,7 +146,7 @@ export const routePolicies: readonly RoutePolicy[] = Object.freeze([
     roles: ["doctor"],
     navigation: true,
     landing: false,
-    placeholder: true,
+    placeholder: false,
     owner: "Sprint 13K-C",
   },
   {
@@ -214,8 +214,32 @@ export const landingRoute = (locale: Locale, role: PortalStaffRole) =>
   `/${locale}/${routePolicies.find((item) => item.landing && item.roles.includes(role))?.segment ?? "login"}`;
 export const routePath = (locale: Locale, id: PortalRouteId) =>
   `/${locale}/${policy(id).segment}`;
+/** Menu order: the day first, money and settings last. */
+const navigationOrder: readonly PortalRouteId[] = [
+  "dashboard",
+  "doctorWorkspace",
+  "appointments",
+  "liveQueue",
+  "patients",
+  "doctors",
+  "doctorSchedule",
+  "administration",
+  "organizations",
+  "clinics",
+  "clinicManagement",
+  "billing",
+  "doctorBilling",
+  "settings",
+  "doctorSettings",
+];
+const rank = (id: PortalRouteId) => {
+  const index = navigationOrder.indexOf(id);
+  return index === -1 ? navigationOrder.length : index;
+};
 export const navigationFor = (role: PortalStaffRole) =>
-  routePolicies.filter((item) => item.navigation && item.roles.includes(role));
+  routePolicies
+    .filter((item) => item.navigation && item.roles.includes(role))
+    .sort((a, b) => rank(a.id) - rank(b.id));
 export const sectionRoute = (segment: string): PortalRouteId | undefined =>
   routePolicies.find((item) => item.segment === segment)?.id;
 

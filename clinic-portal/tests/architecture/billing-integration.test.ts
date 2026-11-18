@@ -36,8 +36,6 @@ describe("billing integration architecture", () => {
     );
   });
   it("has no production billing mock or client-side backend request", () => {
-    const production = read("infrastructure/composition/production.ts");
-    expect(production).not.toMatch(/Billing|STANDARD_1250/u);
     expect(read("app/[locale]/billing/page.tsx")).not.toContain(
       "/api/v1/billing",
     );

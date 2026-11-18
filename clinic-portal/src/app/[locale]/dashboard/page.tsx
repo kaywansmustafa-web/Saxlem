@@ -1,1 +1,58 @@
-import{notFound}from"next/navigation";import{dashboardService,getSession,appointmentServices,liveQueueServices}from"@portal-composition";import{isLocale,messages}from"@/i18n";import{DashboardView}from"@/features/dashboard/presentation/dashboard-view";export default async function Page({params}:{params:Promise<{locale:string}>}){const{locale}=await params;if(!isLocale(locale))notFound();const m=messages(locale),session=getSession(),service=dashboardService();if(!session||!service)return <div className="state"><div><h1>{m.unavailable}</h1><p>{m.unavailableBody}</p></div></div>;const data=await service.execute(session.clinicId);const appointments=await appointmentServices()?.list.execute(),queue=await liveQueueServices()?.get.execute("queue-karwan");if(appointments){data.metrics.checkedIn=appointments.filter(x=>x.arrival==="arrived"||x.arrival==="queueReady").length;data.arrivals=data.arrivals.filter(x=>appointments.find(a=>a.patient.name===x.patient)?.arrival==="expected")}if(queue){const row=data.queues.find(x=>x.doctor===queue.doctorName);if(row){row.current=String(queue.currentNumber??"-");row.waiting=queue.waiting.length;row.delay=queue.doctorDelayMinutes;row.state=queue.lifecycle==="paused"?"paused":queue.health==="delayed"?"delayed":"onTime"}data.metrics.waiting=queue.waiting.length}return <DashboardView data={data} m={m} locale={locale}/>}
+import { notFound } from "next/navigation";
+import { isLocale } from "@/i18n";
+import { ReceptionSetup, ownDoctorIds } from "@/features/reception/presentation/reception-setup";
+import { currentQueue } from "@/features/workday/load";
+import { ReceptionToday, type DoctorDay } from "@/features/workday/reception-today";
+import { WorkdayError } from "@/features/workday/workday-error";
+import { clinicalComposition } from "@/infrastructure/clinical-composition";
+import { clinicDay } from "@/lib/format";
+
+export const dynamic = "force-dynamic";
+
+/** Free times still ahead today (read at request time). */
+function freeFromNow(slots: readonly { state: string; startsAt: string }[]) {
+  const now = Date.now();
+  return slots.filter((s) => s.state === "free" && new Date(s.startsAt).getTime() > now).length;
+}
+
+export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+  const result = await (async () => {
+    try {
+      const composition = await clinicalComposition(locale),
+        reception = await composition.reception.view();
+      if (reception && !reception.configured) return { ok: true as const, setup: reception };
+      const own = ownDoctorIds(reception),
+        board = await composition.appointments.board(clinicDay()),
+        columns = board.doctors.filter((d) => !own || own.has(d.doctorId)),
+        days: DoctorDay[] = await Promise.all(
+          columns.map(async (column) => {
+            const queue = await currentQueue(composition.queues, composition.context.clinicId, column.doctorId);
+            return {
+              doctorId: column.doctorId,
+              doctorName: column.doctorName,
+              freeLater: freeFromNow(column.slots),
+              appointments: column.slots
+                .filter((s) => s.appointment)
+                .map((s) => ({
+                  id: s.appointment!.id,
+                  startsAt: s.startsAt,
+                  patientName: s.appointment!.patientName,
+                  origin: s.appointment!.origin,
+                  status: s.appointment!.status,
+                })),
+              queue: queue?.summary ?? null,
+              entries: queue?.entries ?? [],
+            };
+          }),
+        );
+      return { ok: true as const, days, timeZone: board.clinicTimezone };
+    } catch (error) {
+      return { ok: false as const, error };
+    }
+  })();
+  if (!result.ok) return <WorkdayError locale={locale} error={result.error} />;
+  if ("setup" in result) return <ReceptionSetup view={result.setup!} locale={locale} />;
+  return <ReceptionToday locale={locale} timeZone={result.timeZone} days={result.days} />;
+}

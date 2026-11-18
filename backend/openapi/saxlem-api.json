@@ -3402,6 +3402,74 @@
         ]
       }
     },
+    "/api/v1/doctors/me": {
+      "get": {
+        "description": "Lets a doctor workspace find its own doctor id, clinic and profile without searching the directory.",
+        "operationId": "DoctorsController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorDetailResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Filter, identifier, or pagination validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Role, capability, visibility, or tenant policy denied access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The signed-in staff account is not linked to a doctor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "The signed-in doctor's own record",
+        "tags": [
+          "doctors"
+        ]
+      }
+    },
     "/api/v1/doctors/{id}": {
       "get": {
         "operationId": "DoctorsController_get",

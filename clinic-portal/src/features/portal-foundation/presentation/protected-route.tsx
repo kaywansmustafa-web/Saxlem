@@ -62,14 +62,7 @@ export async function ProtectedRoute({
     );
   }
   const m = foundationMessages(locale),
-    integrated =
-      route === "appointments" ||
-      route === "patients" ||
-      route === "liveQueue" ||
-      route === "administration" ||
-      route === "organizations" ||
-      route === "clinics" ||
-      route === "billing",
+    integrated = !policy(route).placeholder,
     content =
       integrated || composition.configuration.environment === "development" ? (
         children

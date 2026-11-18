@@ -1,0 +1,9 @@
+import { ProtectedLayout } from "@/features/portal-foundation/presentation/protected-layout";
+
+export default function Layout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
+  return (
+    <ProtectedLayout params={params} route="settings">
+      {children}
+    </ProtectedLayout>
+  );
+}

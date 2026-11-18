@@ -11,6 +11,7 @@ import { BackendDoctorDirectory } from "@/features/live-queue/data/backend-docto
 import { BackendQueueRepository } from "@/features/live-queue/data/backend-queue-repository";
 import { BackendPaymentRepository } from "@/features/payments/data/backend-payment-repository";
 import { BackendReceptionDoctors } from "@/features/reception/data/backend-reception-doctors";
+import { scheduleRecord } from "./doctor-composition";
 
 export async function clinicalComposition(locale?: Locale) {
   const configuration = portalConfiguration();
@@ -25,5 +26,13 @@ export async function clinicalComposition(locale?: Locale) {
     queues: new BackendQueueRepository(api, session),
     payments: new BackendPaymentRepository(api, session),
     reception: new BackendReceptionDoctors(api, session),
+    schedule: (doctorId: string) =>
+      api
+        .request({
+          path: `/api/v1/doctors/${encodeURIComponent(doctorId)}/schedule?clinicId=${encodeURIComponent(session.context!.clinicId)}`,
+          session,
+          schema: scheduleRecord,
+        })
+        .then((result) => result.data),
   });
 }

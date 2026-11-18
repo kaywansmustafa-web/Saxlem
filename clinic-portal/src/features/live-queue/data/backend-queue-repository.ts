@@ -127,7 +127,11 @@ export class BackendQueueRepository {
   entry(
     id: string,
     entryId: string,
-    operation: "recall" | "no-response",
+    operation:
+      | "recall"
+      | "no-response"
+      | "start-consultation"
+      | "complete-consultation",
     sessionVersion: number,
     entryVersion: number,
     key: string,

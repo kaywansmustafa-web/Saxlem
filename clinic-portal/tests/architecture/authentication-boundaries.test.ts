@@ -64,28 +64,12 @@ describe("authentication architecture boundaries", () => {
     expect(publicModels).not.toMatch(/accessToken|refreshToken|secret|cookie|sealed/u);
   });
 
-  it("isolates all legacy mocks behind the exact development composition", () => {
-    const production = read("infrastructure/composition/production.ts");
-    const development = read("infrastructure/composition/development.ts");
-    const nextConfig = readFileSync(resolve(process.cwd(), "next.config.ts"), "utf8");
-    expect(production).not.toMatch(/Mock|mock-|composition\/development|import\(/u);
-    expect(production).toMatch(/dashboardService = \(\): DashboardServices => null/u);
-    expect(development).toMatch(/MockDashboardRepository|MockDoctorSessionRepository/u);
-    expect(nextConfig).toContain('process.env.SAXLEM_PORTAL_ENV === "development"');
-    expect(nextConfig).toContain("composition/production.ts");
-  });
-
-  it("routes every page and legacy route adapter through the build-time composition alias", () => {
-    for (const file of sourceFiles(resolve(root, "app"))) {
+  it("ships no fixture data: every screen reads the backend", () => {
+    for (const file of sourceFiles(root)) {
       const source = read(relative(file));
-      expect(source, relative(file)).not.toMatch(/infrastructure\/composition(?:\/development)?["']/u);
-      expect(source, relative(file)).not.toMatch(/features\/[^"']+\/data\/mock/u);
-      expect(source, relative(file)).not.toMatch(/import\([^)]*(?:mock|composition\/development)/u);
+      expect(relative(file), "mock file").not.toMatch(/(^|\/)mock[-.]/u);
+      expect(source, relative(file)).not.toMatch(/@portal-composition|infrastructure\/composition\/|Mock[A-Z]\w*Repository/u);
     }
-    const consumers = sourceFiles(resolve(root, "app"))
-      .map((file) => read(relative(file)))
-      .filter((source) => source.includes("portal-composition"));
-    expect(consumers.length).toBeGreaterThan(0);
-    expect(consumers.every((source) => source.includes("@portal-composition"))).toBe(true);
+    expect(readFileSync(resolve(process.cwd(), "next.config.ts"), "utf8")).not.toContain("composition");
   });
 });
