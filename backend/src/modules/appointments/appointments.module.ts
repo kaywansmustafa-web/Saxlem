@@ -17,6 +17,7 @@ import {
   FallbackRouteTime,
   GoogleRouteTime,
   OsrmRouteTime,
+  TomTomRouteTime,
 } from './infrastructure/route-time';
 @Module({
   imports: [IdentityModule, DoctorsModule],
@@ -31,9 +32,11 @@ import {
         new FallbackRouteTime(
           routing.provider === 'google'
             ? new GoogleRouteTime(routing.googleApiKey)
-            : routing.provider === 'osrm'
-              ? new OsrmRouteTime(routing.osrmBaseUrl)
-              : null,
+            : routing.provider === 'tomtom'
+              ? new TomTomRouteTime(routing.tomtomApiKey)
+              : routing.provider === 'osrm'
+                ? new OsrmRouteTime(routing.osrmBaseUrl)
+                : null,
         ),
     },
     AppointmentDtoMapper,

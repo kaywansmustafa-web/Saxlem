@@ -6,6 +6,7 @@ import {
   FallbackRouteTime,
   GoogleRouteTime,
   OsrmRouteTime,
+  TomTomRouteTime,
   straightLineMeters,
   type RouteTime,
 } from '../infrastructure/route-time';
@@ -154,5 +155,52 @@ describe('drive time providers', () => {
     const broken = { drive: jest.fn().mockRejectedValue(new Error('down')) };
     const route = await new FallbackRouteTime(broken).drive(home, clinic, now);
     expect(route.source).toBe('estimate');
+  });
+
+  it('reads a TomTom route, and labels it by whether TomTom saw traffic', async () => {
+    const reply = (delay: number) =>
+      jest.fn<Promise<unknown>, [string]>().mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            routes: [
+              {
+                summary: {
+                  travelTimeInSeconds: 903,
+                  lengthInMeters: 8214,
+                  trafficDelayInSeconds: delay,
+                },
+              },
+            ],
+          }),
+      });
+    const quiet = reply(0);
+    const departAt = new Date(Date.now() + 3_600_000);
+    expect(
+      await new TomTomRouteTime(
+        'tomtom-key-0123456789',
+        quiet as unknown as typeof fetch,
+      ).drive(home, clinic, departAt),
+    ).toEqual({ seconds: 903, meters: 8214, source: 'roads' });
+    const url = new URL(quiet.mock.calls[0]![0]);
+    expect(url.pathname).toBe(
+      '/routing/1/calculateRoute/36.85,42.95:36.8669,42.9886/json',
+    );
+    expect(url.searchParams.get('traffic')).toBe('true');
+    expect(url.searchParams.get('departAt')).toBe(
+      departAt.toISOString().replace(/\.\d{3}Z$/, 'Z'),
+    );
+    const busy = reply(120);
+    expect(
+      (
+        await new TomTomRouteTime(
+          'tomtom-key-0123456789',
+          busy as unknown as typeof fetch,
+        ).drive(home, clinic, new Date())
+      ).source,
+    ).toBe('traffic');
+    expect(new URL(busy.mock.calls[0]![0]).searchParams.get('departAt')).toBe(
+      'now',
+    );
   });
 });

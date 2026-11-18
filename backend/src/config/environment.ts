@@ -186,11 +186,15 @@ const configurationSchema = z
       .default('auto'),
     OTPIQ_BASE_URL: z.url().default('https://api.otpiq.com/api'),
     /**
-     * Drive times for "leave by": google (traffic-aware, needs a key), osrm
+     * Drive times for "leave by": google (traffic-aware, needs a key with
+     * billing), tomtom (free key, roads; traffic where TomTom has it), osrm
      * (a road-network server, no traffic) or estimate (distance only).
      */
-    ROUTES_PROVIDER: z.enum(['estimate', 'osrm', 'google']).default('estimate'),
+    ROUTES_PROVIDER: z
+      .enum(['estimate', 'osrm', 'google', 'tomtom'])
+      .default('estimate'),
     GOOGLE_ROUTES_API_KEY: z.string().optional(),
+    TOMTOM_API_KEY: z.string().optional(),
     // Empty in .env.example; an empty value means "not set".
     OSRM_BASE_URL: z.preprocess(
       (value) => (value === '' ? undefined : value),
@@ -206,6 +210,15 @@ const configurationSchema = z
         code: 'custom',
         path: ['GOOGLE_ROUTES_API_KEY'],
         message: 'ROUTES_PROVIDER=google needs GOOGLE_ROUTES_API_KEY.',
+      });
+    if (
+      input.ROUTES_PROVIDER === 'tomtom' &&
+      (input.TOMTOM_API_KEY ?? '').length < 20
+    )
+      context.addIssue({
+        code: 'custom',
+        path: ['TOMTOM_API_KEY'],
+        message: 'ROUTES_PROVIDER=tomtom needs TOMTOM_API_KEY.',
       });
     if (input.ROUTES_PROVIDER === 'osrm' && !input.OSRM_BASE_URL)
       context.addIssue({
@@ -306,6 +319,7 @@ const configurationSchema = z
       routing: {
         provider: input.ROUTES_PROVIDER,
         googleApiKey: input.GOOGLE_ROUTES_API_KEY ?? '',
+        tomtomApiKey: input.TOMTOM_API_KEY ?? '',
         osrmBaseUrl: (input.OSRM_BASE_URL ?? '').replace(/\/+$/, ''),
       },
       apiRateLimitPerMinute: input.API_RATE_LIMIT_PER_MINUTE,

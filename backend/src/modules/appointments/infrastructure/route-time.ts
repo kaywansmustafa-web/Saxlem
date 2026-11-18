@@ -86,6 +86,64 @@ export class OsrmRouteTime implements RouteTimeProvider {
 }
 
 /**
+ * TomTom Routing API. Free up to 2,500 requests a day without a card. Uses
+ * live traffic where TomTom has it and its historic road speeds otherwise;
+ * TomTom has no live traffic for Iraq today, so routes there are labelled
+ * "roads" unless TomTom reports a traffic delay.
+ */
+export class TomTomRouteTime implements RouteTimeProvider {
+  constructor(
+    private readonly apiKey: string,
+    private readonly http: typeof fetch = fetch,
+  ) {}
+
+  async drive(
+    origin: LatLng,
+    destination: LatLng,
+    departAt: Date = new Date(),
+  ): Promise<RouteTime> {
+    const path = `${origin.latitude},${origin.longitude}:${destination.latitude},${destination.longitude}`;
+    const query = new URLSearchParams({
+      key: this.apiKey,
+      traffic: 'true',
+      travelMode: 'car',
+      routeType: 'fastest',
+      // TomTom wants a future time or "now".
+      departAt:
+        departAt.getTime() > Date.now() + 60_000
+          ? departAt.toISOString().replace(/\.\d{3}Z$/, 'Z')
+          : 'now',
+    });
+    const response = await this.http(
+      `https://api.tomtom.com/routing/1/calculateRoute/${path}/json?${query.toString()}`,
+      { signal: AbortSignal.timeout(8000) },
+    );
+    if (!response.ok) throw new Error('ROUTE_UNAVAILABLE');
+    const body = (await response.json()) as {
+      routes?: {
+        summary?: {
+          travelTimeInSeconds?: number;
+          lengthInMeters?: number;
+          trafficDelayInSeconds?: number;
+        };
+      }[];
+    };
+    const summary = body.routes?.[0]?.summary;
+    if (
+      !summary ||
+      !Number.isFinite(summary.travelTimeInSeconds) ||
+      !Number.isFinite(summary.lengthInMeters)
+    )
+      throw new Error('ROUTE_UNAVAILABLE');
+    return {
+      seconds: Math.round(summary.travelTimeInSeconds!),
+      meters: Math.round(summary.lengthInMeters!),
+      source: (summary.trafficDelayInSeconds ?? 0) > 0 ? 'traffic' : 'roads',
+    };
+  }
+}
+
+/**
  * Google Routes API with traffic: live traffic for "now", Google's traffic
  * prediction for a later departure. Billed as Compute Routes Pro.
  */

@@ -28,7 +28,12 @@ describe('backend configuration safety', () => {
         GOOGLE_ROUTES_API_KEY: '',
         OSRM_BASE_URL: '',
       }).routing,
-    ).toEqual({ provider: 'estimate', googleApiKey: '', osrmBaseUrl: '' });
+    ).toEqual({
+      provider: 'estimate',
+      googleApiKey: '',
+      tomtomApiKey: '',
+      osrmBaseUrl: '',
+    });
     expect(
       loadConfiguration({
         ...required,
@@ -41,6 +46,9 @@ describe('backend configuration safety', () => {
     ).toThrow();
     expect(() =>
       loadConfiguration({ ...required, ROUTES_PROVIDER: 'osrm' }),
+    ).toThrow();
+    expect(() =>
+      loadConfiguration({ ...required, ROUTES_PROVIDER: 'tomtom' }),
     ).toThrow();
   });
 
