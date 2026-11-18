@@ -597,5 +597,11 @@
   "ntfDoctorPaused": "{doctor} رێزبەندی بۆ دەمەکێ کورت راگرت.",
   "ntfDoctorResumed": "{doctor} دیسان نەخۆشان دبینیت.",
   "ntfDoctorFinished": "{doctor} کارێ ئەڤرۆ ب دوماهی ئینا.",
-  "ntfCompletedHappened": "سەرەدانا تە ل دەڤ {doctor} تەمام بوو."
+  "ntfCompletedHappened": "سەرەدانا تە ل دەڤ {doctor} تەمام بوو.",
+  "feeFirstVisit": "سەرەدانا ئێکێ",
+  "feeFollowUp": "پێداچوون",
+  "feesTitle": "کرێ",
+  "feesNote": "ل کلینیکێ بدە، یان دەمێ ژڤانی دگری د ئەپی دا ب FIB بدە.",
+  "nextFreeLabel": "نێزیکترین دەمێ ڤالا",
+  "yearsShort": "{count, plural, other{{count} سال}}"
 }

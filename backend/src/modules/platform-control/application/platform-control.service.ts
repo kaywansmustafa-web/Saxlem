@@ -1431,6 +1431,19 @@ export class PlatformControlService {
           },
       licenseNumber: doctor.licenseNumber,
       biography: doctor.biography,
+      fees: {
+        firstVisitIqd:
+          doctor.consultationFeeIqd ??
+          this.configuration.appointmentFoundationFeeIqd,
+        followUpIqd:
+          doctor.followUpFeeIqd ??
+          doctor.consultationFeeIqd ??
+          this.configuration.appointmentFoundationFeeIqd,
+      },
+      customFees: {
+        firstVisitIqd: doctor.consultationFeeIqd,
+        followUpIqd: doctor.followUpFeeIqd,
+      },
       specialties: doctor.specialtyAssignments.map((item) => ({
         id: item.specialty.id,
         code: item.specialty.code,
@@ -1466,6 +1479,12 @@ export class PlatformControlService {
               }
             : {}),
           ...(input.status ? { status: input.status as never } : {}),
+          ...(input.consultationFeeIqd !== undefined
+            ? { consultationFeeIqd: input.consultationFeeIqd }
+            : {}),
+          ...(input.followUpFeeIqd !== undefined
+            ? { followUpFeeIqd: input.followUpFeeIqd }
+            : {}),
           version: { increment: 1 },
         },
       });

@@ -2619,6 +2619,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your visit with {doctor} is complete.'**
   String ntfCompletedHappened(String doctor);
+
+  /// No description provided for @feeFirstVisit.
+  ///
+  /// In en, this message translates to:
+  /// **'First visit'**
+  String get feeFirstVisit;
+
+  /// No description provided for @feeFollowUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow-up'**
+  String get feeFollowUp;
+
+  /// No description provided for @feesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fees'**
+  String get feesTitle;
+
+  /// No description provided for @feesNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay at the clinic, or in the app with FIB when you book.'**
+  String get feesNote;
+
+  /// No description provided for @nextFreeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Next free'**
+  String get nextFreeLabel;
+
+  /// No description provided for @yearsShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 year} other{{count} years}}'**
+  String yearsShort(int count);
 }
 
 class _AppLocalizationsDelegate

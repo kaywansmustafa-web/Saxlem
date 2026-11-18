@@ -1432,4 +1432,30 @@ class AppLocalizationsKu extends AppLocalizations {
   String ntfCompletedHappened(String doctor) {
     return 'سەرەدانا تە ل دەڤ $doctor تەمام بوو.';
   }
+
+  @override
+  String get feeFirstVisit => 'سەرەدانا ئێکێ';
+
+  @override
+  String get feeFollowUp => 'پێداچوون';
+
+  @override
+  String get feesTitle => 'کرێ';
+
+  @override
+  String get feesNote =>
+      'ل کلینیکێ بدە، یان دەمێ ژڤانی دگری د ئەپی دا ب FIB بدە.';
+
+  @override
+  String get nextFreeLabel => 'نێزیکترین دەمێ ڤالا';
+
+  @override
+  String yearsShort(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count سال',
+    );
+    return '$_temp0';
+  }
 }

@@ -15,6 +15,15 @@ void main() {
   test('strict parser accepts authoritative page and detail', () {
     final page = parser.page(_pageJson());
     expect(page.results.single.doctorId, _doctorId);
+    expect(page.results.single.fees?.firstVisitIqd, 25000);
+    expect(page.results.single.fees?.followUpIqd, 15000);
+    expect(
+      () => parser.doctor(
+        _doctorJson()..['fees'] = {'firstVisitIqd': -1, 'followUpIqd': 0},
+        detail: false,
+      ),
+      throwsA(anything),
+    );
     expect(
       parser.doctor(_doctorJson(detail: true), detail: true).biography,
       'Biography',
@@ -234,6 +243,7 @@ Map<String, dynamic> _doctorJson({bool detail = false}) => {
     {'id': _clinicId, 'name': 'Clinic'},
   ],
   'availability': _availability(),
+  'fees': {'firstVisitIqd': 25000, 'followUpIqd': 15000},
   if (detail) ...{
     'firstName': 'Shilan',
     'lastName': 'Ahmed',

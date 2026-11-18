@@ -1461,4 +1461,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String ntfCompletedHappened(String doctor) {
     return 'Your visit with $doctor is complete.';
   }
+
+  @override
+  String get feeFirstVisit => 'First visit';
+
+  @override
+  String get feeFollowUp => 'Follow-up';
+
+  @override
+  String get feesTitle => 'Fees';
+
+  @override
+  String get feesNote =>
+      'Pay at the clinic, or in the app with FIB when you book.';
+
+  @override
+  String get nextFreeLabel => 'Next free';
+
+  @override
+  String yearsShort(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count years',
+      one: '1 year',
+    );
+    return '$_temp0';
+  }
 }

@@ -341,6 +341,12 @@ describe('AppointmentService', () => {
     );
     expect(create.mock.calls[0]![1].feeIqd).toBe(25000);
   });
+  it("charges the doctor's own fee when one is set", async () => {
+    const { service, create, repository } = fixture();
+    repository.doctorFee.mockResolvedValue(35000);
+    await service.create(access, input, 'idem-key-fee2', 'request');
+    expect(create.mock.calls[0]![1].feeIqd).toBe(35000);
+  });
   it('fails closed when a mandatory staff read audit fails', async () => {
     const { service, repository } = fixture();
     repository.auditView.mockRejectedValue(new Error('offline'));
@@ -417,6 +423,7 @@ function fixture() {
     auditView: jest.fn(),
     clinicDoctors: jest.fn().mockResolvedValue([]),
     dayAppointments: jest.fn().mockResolvedValue([]),
+    doctorFee: jest.fn().mockResolvedValue(null),
     hiddenFromApp: jest.fn().mockResolvedValue(false),
   };
   const schedules = {

@@ -36,6 +36,12 @@ class DoctorAvailabilityFoundation {
   final DateTime? updatedAt;
 }
 
+/// What a patient pays at the doctor, in IQD.
+class DoctorFees {
+  const DoctorFees({required this.firstVisitIqd, required this.followUpIqd});
+  final int firstVisitIqd, followUpIqd;
+}
+
 class DoctorDiscoveryResult {
   const DoctorDiscoveryResult({
     required this.doctorId,
@@ -54,7 +60,11 @@ class DoctorDiscoveryResult {
     this.licenseNumber,
     this.biography,
     this.specialties = const [],
+    this.fees,
   });
+
+  /// Null only for fixtures and older backends.
+  final DoctorFees? fees;
   final String doctorId;
   final String doctorDisplayName;
   final String fullName;

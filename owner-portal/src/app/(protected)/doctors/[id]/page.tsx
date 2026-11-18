@@ -31,6 +31,12 @@ export default async function DoctorPage({
             <dd>{doctor.specialty}</dd>
             <dt>Clinics</dt>
             <dd>{doctor.clinics.map((clinic) => clinic.name).join(", ")}</dd>
+            <dt>Fees patients see</dt>
+            <dd>
+              First visit {doctor.fees.firstVisitIqd.toLocaleString("en-US")}{" "}
+              IQD · Follow-up{" "}
+              {doctor.fees.followUpIqd.toLocaleString("en-US")} IQD
+            </dd>
           </dl>
         </section>
         <DoctorEditForm doctor={doctor} />

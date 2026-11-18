@@ -12112,6 +12112,25 @@
           "updatedAt"
         ]
       },
+      "DoctorFeesResponseDto": {
+        "type": "object",
+        "properties": {
+          "firstVisitIqd": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 25000
+          },
+          "followUpIqd": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 15000
+          }
+        },
+        "required": [
+          "firstVisitIqd",
+          "followUpIqd"
+        ]
+      },
       "SpecialtyResponseDto": {
         "type": "object",
         "properties": {
@@ -12136,6 +12155,23 @@
           "code",
           "displayName",
           "isPrimary"
+        ]
+      },
+      "DoctorCustomFeesResponseDto": {
+        "type": "object",
+        "properties": {
+          "firstVisitIqd": {
+            "type": "integer",
+            "nullable": true
+          },
+          "followUpIqd": {
+            "type": "integer",
+            "nullable": true
+          }
+        },
+        "required": [
+          "firstVisitIqd",
+          "followUpIqd"
         ]
       },
       "PlatformDoctorDetailResponseDto": {
@@ -12206,6 +12242,14 @@
           "availability": {
             "$ref": "#/components/schemas/DoctorAvailabilityResponseDto"
           },
+          "fees": {
+            "description": "What the patient pays at this doctor, in IQD.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DoctorFeesResponseDto"
+              }
+            ]
+          },
           "firstName": {
             "type": "string",
             "example": "Shilan"
@@ -12231,6 +12275,14 @@
           "version": {
             "type": "integer",
             "minimum": 1
+          },
+          "customFees": {
+            "description": "Fees set for this doctor; null fields use the default.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DoctorCustomFeesResponseDto"
+              }
+            ]
           }
         },
         "required": [
@@ -12245,12 +12297,14 @@
           "profileImageUrl",
           "clinics",
           "availability",
+          "fees",
           "firstName",
           "lastName",
           "licenseNumber",
           "biography",
           "specialties",
-          "version"
+          "version",
+          "customFees"
         ]
       },
       "PlatformSpecialtyResponseDto": {
@@ -12300,6 +12354,20 @@
               "inactive",
               "archived"
             ]
+          },
+          "consultationFeeIqd": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 5000000,
+            "nullable": true,
+            "description": "First-visit fee in IQD; null returns to the platform default."
+          },
+          "followUpFeeIqd": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 5000000,
+            "nullable": true,
+            "description": "Follow-up fee in IQD; null uses the first-visit fee."
           },
           "version": {
             "type": "integer",
@@ -12469,6 +12537,14 @@
           },
           "availability": {
             "$ref": "#/components/schemas/DoctorAvailabilityResponseDto"
+          },
+          "fees": {
+            "description": "What the patient pays at this doctor, in IQD.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DoctorFeesResponseDto"
+              }
+            ]
           }
         },
         "required": [
@@ -12482,7 +12558,8 @@
           "languages",
           "profileImageUrl",
           "clinics",
-          "availability"
+          "availability",
+          "fees"
         ]
       },
       "DoctorPageResponseDto": {
@@ -12697,6 +12774,14 @@
           "availability": {
             "$ref": "#/components/schemas/DoctorAvailabilityResponseDto"
           },
+          "fees": {
+            "description": "What the patient pays at this doctor, in IQD.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DoctorFeesResponseDto"
+              }
+            ]
+          },
           "firstName": {
             "type": "string",
             "example": "Shilan"
@@ -12732,6 +12817,7 @@
           "profileImageUrl",
           "clinics",
           "availability",
+          "fees",
           "firstName",
           "lastName",
           "licenseNumber",
@@ -12795,6 +12881,9 @@
             "items": {
               "$ref": "#/components/schemas/SpecialtyResponseDto"
             }
+          },
+          "fees": {
+            "$ref": "#/components/schemas/DoctorFeesResponseDto"
           }
         },
         "required": [
@@ -12808,7 +12897,8 @@
           "biography",
           "languages",
           "profileImageUrl",
-          "specialties"
+          "specialties",
+          "fees"
         ]
       },
       "ClinicAvailabilityResponseDto": {

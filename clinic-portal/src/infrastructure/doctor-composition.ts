@@ -33,6 +33,10 @@ const profileRecord = z
     biography: z.string().nullable().optional(),
     languages: z.array(z.string()).optional(),
     gender: z.string().nullable().optional(),
+    fees: z
+      .object({ firstVisitIqd: z.number().int(), followUpIqd: z.number().int() })
+      .passthrough()
+      .optional(),
   })
   .passthrough();
 export type DoctorProfile = z.infer<typeof profileRecord>;

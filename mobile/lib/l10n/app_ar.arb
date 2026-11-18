@@ -597,5 +597,11 @@
   "ntfDoctorPaused": "أوقف {doctor} الطابور لفترة قصيرة.",
   "ntfDoctorResumed": "عاد {doctor} لاستقبال المرضى.",
   "ntfDoctorFinished": "أنهى {doctor} عمله لهذا اليوم.",
-  "ntfCompletedHappened": "اكتملت زيارتك عند {doctor}."
+  "ntfCompletedHappened": "اكتملت زيارتك عند {doctor}.",
+  "feeFirstVisit": "الزيارة الأولى",
+  "feeFollowUp": "المراجعة",
+  "feesTitle": "الأجور",
+  "feesNote": "ادفع في العيادة، أو داخل التطبيق عبر FIB عند الحجز.",
+  "nextFreeLabel": "أقرب وقت متاح",
+  "yearsShort": "{count, plural, =1{سنة واحدة} =2{سنتان} few{{count} سنوات} many{{count} سنة} other{{count} سنة}}"
 }

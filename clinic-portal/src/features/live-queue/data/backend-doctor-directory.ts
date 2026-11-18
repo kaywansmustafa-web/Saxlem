@@ -25,6 +25,12 @@ const doctor = z
         updatedAt: z.string().datetime({ offset: true }).nullable(),
       })
       .strict(),
+    fees: z
+      .object({
+        firstVisitIqd: z.number().int().nonnegative(),
+        followUpIqd: z.number().int().nonnegative(),
+      })
+      .strict(),
   })
   .strict();
 const page = z

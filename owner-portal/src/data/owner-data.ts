@@ -60,6 +60,12 @@ export const doctorSchema = z
     profileImageUrl: z.string().url().nullable(),
     clinics: z.array(z.object({ id, name: z.string() }).strict()),
     availability: availabilitySchema,
+    fees: z
+      .object({
+        firstVisitIqd: z.number().int().nonnegative(),
+        followUpIqd: z.number().int().nonnegative(),
+      })
+      .strict(),
   })
   .strict();
 export const doctorDetailSchema = doctorSchema
@@ -79,6 +85,12 @@ export const doctorDetailSchema = doctorSchema
         .strict(),
     ),
     version: z.number().int().positive(),
+    customFees: z
+      .object({
+        firstVisitIqd: z.number().int().nonnegative().nullable(),
+        followUpIqd: z.number().int().nonnegative().nullable(),
+      })
+      .strict(),
   })
   .strict();
 export const doctorPageSchema = z

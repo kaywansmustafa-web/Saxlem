@@ -16,6 +16,7 @@ import {
   Max,
   MaxLength,
   Min,
+  ValidateIf,
 } from 'class-validator';
 
 export class PlatformPageQueryDto {
@@ -477,6 +478,33 @@ export class UpdateDoctorAdminDto {
   @IsOptional()
   @IsEnum(['active', 'inactive', 'archived'])
   status?: string;
+  @ApiPropertyOptional({
+    type: 'integer',
+    minimum: 0,
+    maximum: 5000000,
+    nullable: true,
+    description:
+      'First-visit fee in IQD; null returns to the platform default.',
+  })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsInt()
+  @Min(0)
+  @Max(5000000)
+  consultationFeeIqd?: number | null;
+  @ApiPropertyOptional({
+    type: 'integer',
+    minimum: 0,
+    maximum: 5000000,
+    nullable: true,
+    description: 'Follow-up fee in IQD; null uses the first-visit fee.',
+  })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsInt()
+  @Min(0)
+  @Max(5000000)
+  followUpFeeIqd?: number | null;
   @ApiProperty({ type: 'integer', minimum: 1 })
   @IsInt()
   @Min(1)
@@ -495,8 +523,18 @@ export class DoctorMutationResponseDto {
   @ApiPropertyOptional({ format: 'date-time' }) activationExpiresAt?: string;
   @ApiProperty({ type: 'integer' }) version!: number;
 }
+export class DoctorCustomFeesResponseDto {
+  @ApiProperty({ type: 'integer', nullable: true }) firstVisitIqd!:
+    number | null;
+  @ApiProperty({ type: 'integer', nullable: true }) followUpIqd!: number | null;
+}
 export class PlatformDoctorDetailResponseDto extends DoctorDetailResponseDto {
   @ApiProperty({ type: 'integer', minimum: 1 }) version!: number;
+  @ApiProperty({
+    type: DoctorCustomFeesResponseDto,
+    description: 'Fees set for this doctor; null fields use the default.',
+  })
+  customFees!: DoctorCustomFeesResponseDto;
 }
 export class PlatformSpecialtyResponseDto {
   @ApiProperty({ format: 'uuid' }) id!: string;

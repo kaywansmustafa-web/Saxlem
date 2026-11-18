@@ -1,3 +1,4 @@
+import { formatter } from "@/lib/format";
 import Link from "next/link";
 import type { Locale } from "@/i18n";
 import type { DoctorProfile } from "@/infrastructure/doctor-composition";
@@ -70,6 +71,18 @@ export function SettingsView({
                 <dd>{profile.languages.map((l) => m.languageNames[l] ?? l).join(", ")}</dd>
               </div>
             ) : null}
+            {profile.fees && (
+              <>
+                <div>
+                  <dt>{m.firstVisitFee}</dt>
+                  <dd>{formatter(locale).iqd(profile.fees.firstVisitIqd)}</dd>
+                </div>
+                <div>
+                  <dt>{m.followUpFee}</dt>
+                  <dd>{formatter(locale).iqd(profile.fees.followUpIqd)}</dd>
+                </div>
+              </>
+            )}
           </dl>
           <p className="ax-hint">{m.profileChanges}</p>
         </section>

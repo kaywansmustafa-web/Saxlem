@@ -1415,4 +1415,33 @@ class AppLocalizationsAr extends AppLocalizations {
   String ntfCompletedHappened(String doctor) {
     return 'اكتملت زيارتك عند $doctor.';
   }
+
+  @override
+  String get feeFirstVisit => 'الزيارة الأولى';
+
+  @override
+  String get feeFollowUp => 'المراجعة';
+
+  @override
+  String get feesTitle => 'الأجور';
+
+  @override
+  String get feesNote => 'ادفع في العيادة، أو داخل التطبيق عبر FIB عند الحجز.';
+
+  @override
+  String get nextFreeLabel => 'أقرب وقت متاح';
+
+  @override
+  String yearsShort(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count سنة',
+      many: '$count سنة',
+      few: '$count سنوات',
+      two: 'سنتان',
+      one: 'سنة واحدة',
+    );
+    return '$_temp0';
+  }
 }

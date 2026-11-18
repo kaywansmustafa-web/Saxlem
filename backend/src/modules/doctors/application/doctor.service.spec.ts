@@ -19,6 +19,8 @@ const doctor: DoctorProjection = {
   status: 'active',
   licenseNumber: 'KRI-1234',
   yearsOfExperience: 12,
+  consultationFeeIqd: null,
+  followUpFeeIqd: null,
   biography: '',
   languages: ['badiniKurdish'],
   profilePhotoKey: null,

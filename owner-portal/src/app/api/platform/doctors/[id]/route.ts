@@ -9,6 +9,8 @@ const body = z
     yearsOfExperience: z.number().int().min(0).max(80),
     languages: z.array(z.string().trim().min(2).max(40)).max(12),
     status: z.enum(["active", "inactive", "archived"]),
+    consultationFeeIqd: z.number().int().min(0).max(5_000_000).nullable(),
+    followUpFeeIqd: z.number().int().min(0).max(5_000_000).nullable(),
     version: z.number().int().positive(),
   })
   .strict();

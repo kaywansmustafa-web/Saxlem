@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../../design_system/design_system.dart';
 import '../widgets/doctor_result_card.dart';
+import '../widgets/visit_facts.dart';
 import '../../domain/entities/doctor_discovery_result.dart';
 import '../controllers/discover_controller.dart';
 import '../state/discover_state.dart';
@@ -228,26 +229,71 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
                           ],
                         ),
                         const SizedBox(height: 18),
-                        Row(
-                          children: [
-                            _Stat(
-                              icon: Icons.work_history_outlined,
-                              label: context.l10n.experienceLabel,
-                              value: context.l10n.yearsExperience(
-                                doctor.yearsOfExperience,
+                        IntrinsicHeight(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _Stat(
+                                icon: Icons.work_history_outlined,
+                                label: context.l10n.experienceLabel,
+                                value: context.l10n.yearsExperience(
+                                  doctor.yearsOfExperience,
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 10),
-                            _Stat(
-                              icon: Icons.person_outline_rounded,
-                              label: context.l10n.gender,
-                              value: _genderLabel(doctor.gender),
-                            ),
-                          ],
+                              const SizedBox(width: 10),
+                              if (doctor.fees case final fees?)
+                                _Stat(
+                                  icon: Icons.payments_outlined,
+                                  label: context.l10n.feeFirstVisit,
+                                  value: feeText(context, fees.firstVisitIqd),
+                                )
+                              else
+                                _Stat(
+                                  icon: Icons.person_outline_rounded,
+                                  label: context.l10n.gender,
+                                  value: _genderLabel(doctor.gender),
+                                ),
+                              if (doctor.availability.nextAvailableAt
+                                  case final next?) ...[
+                                const SizedBox(width: 10),
+                                _Stat(
+                                  icon: Icons.event_available_rounded,
+                                  label: context.l10n.nextFreeLabel,
+                                  value: nextFreeText(context, next),
+                                ),
+                              ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
+                  if (doctor.fees case final fees?) ...[
+                    const SizedBox(height: 14),
+                    _Section(
+                      title: context.l10n.feesTitle,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _FeeRow(
+                            label: context.l10n.feeFirstVisit,
+                            value: feeText(context, fees.firstVisitIqd),
+                          ),
+                          _FeeRow(
+                            label: context.l10n.feeFollowUp,
+                            value: feeText(context, fees.followUpIqd),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            context.l10n.feesNote,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   if (doctor.biography case final biography?) ...[
                     const SizedBox(height: 14),
                     _Section(
@@ -445,17 +491,23 @@ class _Stat extends StatelessWidget {
           color: colors.surfaceSunken,
           borderRadius: BorderRadius.circular(SaxlemRadii.medium),
         ),
-        child: Row(
+        // Stacked, so three facts fit side by side on a phone.
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(icon, size: 20, color: colors.brandPrimary),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(label, style: theme.textTheme.labelSmall),
-                  Text(value, style: theme.textTheme.titleSmall),
-                ],
+            const SizedBox(height: 8),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.labelSmall,
+            ),
+            Text(
+              value,
+              maxLines: 2,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w700,
               ),
             ),
           ],
@@ -463,4 +515,27 @@ class _Stat extends StatelessWidget {
       ),
     );
   }
+}
+
+class _FeeRow extends StatelessWidget {
+  const _FeeRow({required this.label, required this.value});
+  final String label, value;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsetsDirectional.symmetric(vertical: 6),
+    child: Row(
+      children: [
+        Expanded(
+          child: Text(label, style: Theme.of(context).textTheme.bodyLarge),
+        ),
+        Text(
+          value,
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+        ),
+      ],
+    ),
+  );
 }

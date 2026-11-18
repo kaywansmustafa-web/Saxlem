@@ -5,6 +5,11 @@ import type {
   AppointmentWrite,
 } from './appointment';
 export interface AppointmentRepository {
+  /** The doctor's own fee for this kind of visit, or null for the default. */
+  doctorFee(
+    doctorId: string,
+    type: 'initial' | 'followUp',
+  ): Promise<number | null>;
   /** True while a doctor is hidden from the patient app for an overdue
    * Saxlem balance. */
   hiddenFromApp(doctorId: string): Promise<boolean>;

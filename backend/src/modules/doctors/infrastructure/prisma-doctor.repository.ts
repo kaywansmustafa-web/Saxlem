@@ -379,6 +379,8 @@ export class PrismaDoctorRepository implements DoctorRepository {
         ...doctor.languages,
       ]) as DoctorProjection['languages'],
       profilePhotoKey: doctor.profilePhotoKey,
+      consultationFeeIqd: doctor.consultationFeeIqd,
+      followUpFeeIqd: doctor.followUpFeeIqd,
       profileImageUrl: null,
       specialty: primary?.displayName ?? '',
       specialties: Object.freeze(specialties),

@@ -4,6 +4,7 @@ import '../../../../core/localization/localization_extensions.dart';
 import '../../../../design_system/design_system.dart';
 import '../../domain/entities/doctor_discovery_result.dart';
 import 'applied_doctor_filters.dart';
+import 'visit_facts.dart';
 
 class DoctorResultCard extends StatelessWidget {
   const DoctorResultCard({
@@ -26,6 +27,10 @@ class DoctorResultCard extends StatelessWidget {
         '${strings.clinicsLabel}: ${doctor.clinics.map((item) => item.name).join(', ')}',
       if (doctor.languages.isNotEmpty)
         '${strings.languagesLabel}: ${doctor.languages.map((item) => localizedDoctorLanguage(context, item)).join(', ')}',
+      if (doctor.fees case final fees?)
+        '${strings.feeFirstVisit}: ${feeText(context, fees.firstVisitIqd)}',
+      if (doctor.availability.nextAvailableAt case final next?)
+        '${strings.nextFreeLabel}: ${nextFreeText(context, next)}',
       doctor.photoUrl == null
           ? strings.profileImageFallback(doctor.doctorDisplayName)
           : strings.profileImageLabel(doctor.doctorDisplayName),
@@ -113,22 +118,36 @@ class DoctorResultCard extends StatelessWidget {
             const SizedBox(height: 8),
             Divider(height: 16, color: colors.divider),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Flexible(
-                  child: Text(
-                    strings.viewProfile,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: colors.brandPrimary,
+                if (doctor.fees case final fees?)
+                  Expanded(
+                    child: _Fact(
+                      label: strings.feeFirstVisit,
+                      value: feeText(context, fees.firstVisitIqd),
                     ),
                   ),
-                ),
-                const SizedBox(width: 4),
+                if (doctor.availability.nextAvailableAt case final next?)
+                  Expanded(
+                    child: _Fact(
+                      label: strings.nextFreeLabel,
+                      value: nextFreeText(context, next),
+                      accent: true,
+                    ),
+                  ),
+                if (doctor.fees == null &&
+                    doctor.availability.nextAvailableAt == null)
+                  Expanded(
+                    child: Text(
+                      strings.viewProfile,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: colors.brandPrimary,
+                      ),
+                    ),
+                  ),
                 Icon(
                   Directionality.of(context) == TextDirection.rtl
-                      ? Icons.arrow_back_rounded
-                      : Icons.arrow_forward_rounded,
-                  size: 18,
+                      ? Icons.chevron_left_rounded
+                      : Icons.chevron_right_rounded,
                   color: colors.brandPrimary,
                 ),
               ],
@@ -186,6 +205,42 @@ class _Info extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// A small label over a bold value, for the card's footer.
+class _Fact extends StatelessWidget {
+  const _Fact({required this.label, required this.value, this.accent = false});
+  final String label, value;
+  final bool accent;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = context.saxlemColors;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: colors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: theme.textTheme.titleSmall?.copyWith(
+            color: accent ? colors.brandPrimary : colors.textPrimary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
     );
   }
 }

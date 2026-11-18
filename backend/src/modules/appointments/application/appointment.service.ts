@@ -175,7 +175,7 @@ export class AppointmentService {
       clinicTimezone: clinic.timezone.identifier,
       appointmentType,
       durationMinutes,
-      feeIqd: this.configuration.appointmentFoundationFeeIqd,
+      feeIqd: await this.fee(doctorId, appointmentType),
       currency: 'IQD',
       dateFrom,
       dateTo,
@@ -235,7 +235,10 @@ export class AppointmentService {
       this.repository.replay(access, command),
     );
     if (replay) return replay;
-    const write = this.write(access, input);
+    const write = Object.freeze({
+      ...this.write(access, input),
+      feeIqd: await this.fee(input.doctorId, input.type),
+    });
     this.validateTime(write);
     if (!access.patient) this.requireOwnDoctor(access, input.doctorId);
     // Phone and walk-in bookings still work for a hidden doctor.
@@ -370,6 +373,14 @@ export class AppointmentService {
     if (!item) throw new ConflictException('Appointment version is stale.');
     return item;
   }
+  /** The doctor's own fee for this kind of visit, or the platform default. */
+  private async fee(doctorId: string, type: 'initial' | 'followUp') {
+    return (
+      (await this.repository.doctorFee(doctorId, type)) ??
+      this.configuration.appointmentFoundationFeeIqd
+    );
+  }
+
   private write(
     access: AppointmentAccess,
     input: CreateAppointmentInput,

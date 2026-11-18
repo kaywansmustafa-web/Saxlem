@@ -33,6 +33,17 @@ type Row = Prisma.AppointmentGetPayload<{ include: typeof include }>;
 export class PrismaAppointmentRepository implements AppointmentRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  async doctorFee(doctorId: string, type: 'initial' | 'followUp') {
+    const doctor = await this.prisma.db.doctor.findUnique({
+      where: { id: doctorId },
+      select: { consultationFeeIqd: true, followUpFeeIqd: true },
+    });
+    if (!doctor) return null;
+    return type === 'followUp'
+      ? (doctor.followUpFeeIqd ?? doctor.consultationFeeIqd)
+      : doctor.consultationFeeIqd;
+  }
+
   async hiddenFromApp(doctorId: string) {
     const doctor = await this.prisma.db.doctor.findUnique({
       where: { id: doctorId },

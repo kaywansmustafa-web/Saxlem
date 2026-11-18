@@ -756,5 +756,23 @@
         "type": "String"
       }
     }
+  },
+  "feeFirstVisit": "First visit",
+  "@feeFirstVisit": {},
+  "feeFollowUp": "Follow-up",
+  "@feeFollowUp": {},
+  "feesTitle": "Fees",
+  "@feesTitle": {},
+  "feesNote": "Pay at the clinic, or in the app with FIB when you book.",
+  "@feesNote": {},
+  "nextFreeLabel": "Next free",
+  "@nextFreeLabel": {},
+  "yearsShort": "{count, plural, =1{1 year} other{{count} years}}",
+  "@yearsShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

@@ -162,6 +162,13 @@ export class ApiErrorEnvelopeDto {
   @ApiProperty({ type: ApiErrorBodyDto }) error!: ApiErrorBodyDto;
 }
 
+export class DoctorFeesResponseDto {
+  @ApiProperty({ type: 'integer', minimum: 0, example: 25000 })
+  firstVisitIqd!: number;
+  @ApiProperty({ type: 'integer', minimum: 0, example: 15000 })
+  followUpIqd!: number;
+}
+
 export class DoctorListItemResponseDto {
   @ApiProperty({ format: 'uuid' }) id!: string;
   @ApiProperty({ example: 'Dr. Shilan Ahmed' }) displayName!: string;
@@ -191,6 +198,11 @@ export class DoctorListItemResponseDto {
   clinics!: DoctorClinicResponseDto[];
   @ApiProperty({ type: DoctorAvailabilityResponseDto })
   availability!: DoctorAvailabilityResponseDto;
+  @ApiProperty({
+    type: DoctorFeesResponseDto,
+    description: 'What the patient pays at this doctor, in IQD.',
+  })
+  fees!: DoctorFeesResponseDto;
 }
 
 export class DoctorDetailResponseDto extends DoctorListItemResponseDto {
@@ -219,6 +231,7 @@ export class DoctorProfessionalProfileResponseDto {
     string | null;
   @ApiProperty({ type: SpecialtyResponseDto, isArray: true })
   specialties!: SpecialtyResponseDto[];
+  @ApiProperty({ type: DoctorFeesResponseDto }) fees!: DoctorFeesResponseDto;
 }
 
 export class DoctorPageResponseDto {

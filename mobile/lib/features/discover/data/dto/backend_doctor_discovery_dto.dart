@@ -62,6 +62,7 @@ class BackendDoctorDiscoveryParser {
       'profileImageUrl',
       'clinics',
       'availability',
+      'fees',
     };
     final detailKeys = {
       'firstName',
@@ -114,6 +115,7 @@ class BackendDoctorDiscoveryParser {
       languages: languages,
       clinics: clinics,
       availability: availability(_map(json['availability'])),
+      fees: fees(_map(json['fees'])),
       photoUrl: image,
       firstName: detail ? _text(json['firstName'], 1, 120) : null,
       lastName: detail ? _text(json['lastName'], 1, 120) : null,
@@ -300,6 +302,14 @@ class BackendDoctorDiscoveryParser {
       value is List<Object?> && value.length <= max
       ? value
       : throw const DoctorContractException();
+  static DoctorFees fees(Map<String, dynamic> json) {
+    _keys(json, {'firstVisitIqd', 'followUpIqd'});
+    return DoctorFees(
+      firstVisitIqd: _integer(json['firstVisitIqd'], 0, 5000000),
+      followUpIqd: _integer(json['followUpIqd'], 0, 5000000),
+    );
+  }
+
   static void _keys(Map<String, dynamic> value, Set<String> expected) {
     if (value.keys.toSet().difference(expected).isNotEmpty ||
         expected.difference(value.keys.toSet()).isNotEmpty) {
