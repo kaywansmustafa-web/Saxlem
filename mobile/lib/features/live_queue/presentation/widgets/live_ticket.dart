@@ -405,6 +405,19 @@ class _RingPainter extends CustomPainter {
         ..color = track,
     );
     if (progress <= 0) return;
+    // v3: a soft aura glow under the progress.
+    canvas.drawArc(
+      arcRect,
+      -math.pi / 2,
+      math.pi * 2 * progress.clamp(0, 1),
+      false,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = stroke + 6
+        ..strokeCap = StrokeCap.round
+        ..color = start.withValues(alpha: .28)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 7),
+    );
     canvas.drawArc(
       arcRect,
       -math.pi / 2,

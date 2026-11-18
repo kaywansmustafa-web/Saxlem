@@ -56,6 +56,13 @@ class BookingController extends ChangeNotifier {
   bool confirming = false;
   BookingAvailability? availability;
   void load() {
+    // One clinic means nothing to choose: pick it so the patient never sees
+    // a one-item list.
+    if (clinic == null && doctor.clinics.length == 1) {
+      clinic = doctor.clinics.single;
+      paymentOptions = null;
+      paymentMethod = PaymentMethod.counter;
+    }
     state = BookingSetup(doctor);
     notifyListeners();
   }

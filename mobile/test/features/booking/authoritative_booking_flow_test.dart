@@ -28,10 +28,8 @@ void main() {
     await tester.pumpWidget(_app(repository, profiles));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(DropdownButtonFormField<BookingClinicOption>));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Saxlem Clinic').last);
-    await tester.pumpAndSettle();
+    // A doctor with one clinic: it is chosen for the patient.
+    expect(find.text('Saxlem Clinic'), findsWidgets);
     await tester.enterText(find.byType(TextFormField), 'Consultation');
     await tester.tap(find.text('Check availability'));
     await tester.pumpAndSettle();
@@ -62,10 +60,8 @@ void main() {
     await profiles.load();
     await tester.pumpWidget(_app(repository, profiles, payments: payments));
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(DropdownButtonFormField<BookingClinicOption>));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Saxlem Clinic').last);
-    await tester.pumpAndSettle();
+    // A doctor with one clinic: it is chosen for the patient.
+    expect(find.text('Saxlem Clinic'), findsWidgets);
     await tester.enterText(find.byType(TextFormField), 'Consultation');
     await tester.tap(find.text('Check availability'));
     await tester.pumpAndSettle();

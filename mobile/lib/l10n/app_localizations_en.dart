@@ -1309,4 +1309,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get alertsSubtitle => 'Queue calls and booking updates';
+
+  @override
+  String get slotMorning => 'Morning';
+
+  @override
+  String get slotAfternoon => 'Afternoon';
+
+  @override
+  String get slotEvening => 'Evening';
 }

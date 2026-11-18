@@ -50,6 +50,14 @@ class SaxlemTextField extends StatelessWidget {
     decoration: InputDecoration(
       labelText: label,
       hintText: hint,
+      // A spaced-out style (the code field) must not stretch the hint.
+      hintStyle: style == null
+          ? null
+          : Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              letterSpacing: 0,
+              fontWeight: FontWeight.w400,
+            ),
       errorText: errorText,
       prefixText: prefixText,
       counterText: '',

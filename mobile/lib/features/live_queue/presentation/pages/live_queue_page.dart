@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../design_system/design_system.dart';
 import '../../../../core/localization/localization_extensions.dart';
-import '../../../../design_system/components/actions/saxlem_button.dart';
-import '../../../../design_system/components/feedback/saxlem_state_view.dart';
-import '../../../../design_system/components/layout/saxlem_responsive_content.dart';
-import '../../../../design_system/foundations/saxlem_radii.dart';
-import '../../../../design_system/theme/saxlem_colors.dart';
 import '../../domain/entities/patient_queue_status.dart';
 import '../../domain/repositories/live_queue_repository.dart';
 import '../controllers/live_queue_controller.dart';
@@ -16,13 +12,21 @@ class LiveQueuePage extends StatelessWidget {
   final LiveQueueController controller;
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(context.l10n.liveQueue)),
-    body: SafeArea(
-      child: ListenableBuilder(
-        listenable: controller,
-        builder: (context, _) => AnimatedSwitcher(
-          duration: const Duration(milliseconds: 200),
-          child: _body(context, controller.state),
+    extendBodyBehindAppBar: true,
+    appBar: AppBar(
+      title: Text(context.l10n.liveQueue),
+      backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+    ),
+    body: SaxlemAuraBackdrop(
+      strength: .7,
+      child: SafeArea(
+        child: ListenableBuilder(
+          listenable: controller,
+          builder: (context, _) => AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            child: _body(context, controller.state),
+          ),
         ),
       ),
     ),

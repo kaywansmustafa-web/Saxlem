@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import '../../../../core/formatting/clinic_format.dart';
 
 import '../../../../design_system/foundations/saxlem_elevation.dart';
 import '../../../../design_system/foundations/saxlem_motion.dart';
@@ -35,15 +35,8 @@ class _BookingDayPickerState extends State<BookingDayPicker> {
     return index < 0 ? 0 : index;
   }
 
-  String _format(BuildContext context, DateTime date, String pattern) {
-    final code = Localizations.localeOf(context).languageCode;
-    final locale = code == 'ku' ? 'ar' : code;
-    try {
-      return DateFormat(pattern, locale).format(date);
-    } catch (_) {
-      return DateFormat(pattern, 'en').format(date);
-    }
-  }
+  String _lang(BuildContext context) =>
+      Localizations.localeOf(context).languageCode;
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +55,10 @@ class _BookingDayPickerState extends State<BookingDayPicker> {
               final item = widget.days[i];
               final selected = i == _selected;
               final open = item.slots.isNotEmpty;
-              final fullDate = MaterialLocalizations.of(
-                context,
-              ).formatMediumDate(item.date);
+              final fullDate = ClinicFormat.weekdayDay(
+                item.date,
+                _lang(context),
+              );
               return Padding(
                 padding: EdgeInsetsDirectional.only(
                   end: i == widget.days.length - 1 ? 0 : 10,
@@ -97,7 +91,10 @@ class _BookingDayPickerState extends State<BookingDayPicker> {
                         child: Column(
                           children: [
                             Text(
-                              _format(context, item.date, 'E'),
+                              ClinicFormat.weekdayShort(
+                                item.date,
+                                _lang(context),
+                              ),
                               maxLines: 1,
                               style: theme.textTheme.labelSmall?.copyWith(
                                 color: selected
@@ -107,7 +104,7 @@ class _BookingDayPickerState extends State<BookingDayPicker> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              _format(context, item.date, 'd'),
+                              '${item.date.day}',
                               style: theme.textTheme.titleLarge?.copyWith(
                                 color: selected
                                     ? colors.onFill
@@ -146,7 +143,7 @@ class _BookingDayPickerState extends State<BookingDayPicker> {
         Semantics(
           header: true,
           child: Text(
-            MaterialLocalizations.of(context).formatFullDate(day.date),
+            ClinicFormat.weekdayDay(day.date, _lang(context)),
             style: theme.textTheme.titleMedium,
           ),
         ),

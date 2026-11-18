@@ -628,5 +628,8 @@
   "stepBook": "Book in the app",
   "stepCheckIn": "Check in at reception",
   "stepCalled": "Get called on your phone",
-  "alertsSubtitle": "Queue calls and booking updates"
+  "alertsSubtitle": "Queue calls and booking updates",
+  "slotMorning": "Morning",
+  "slotAfternoon": "Afternoon",
+  "slotEvening": "Evening"
 }

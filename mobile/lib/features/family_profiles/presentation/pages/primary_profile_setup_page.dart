@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/localization_extensions.dart';
-import '../../../../core/localization/localized_dates.dart';
+import '../../../../core/formatting/clinic_format.dart';
 import '../../../../core/models/patient_profile.dart';
 import '../../../../design_system/design_system.dart';
 import '../controllers/patient_profiles_controller.dart';
@@ -76,7 +76,10 @@ class _PrimaryProfileSetupPageState extends State<PrimaryProfileSetupPage> {
               const SizedBox(height: SaxlemSpacing.two),
               SaxlemPickerField(
                 label: context.l10n.dateOfBirth,
-                value: formatLocalizedDate(context, dateOfBirth, 'yMMMd'),
+                value: ClinicFormat.day(
+                  dateOfBirth,
+                  Localizations.localeOf(context).languageCode,
+                ),
                 icon: Icons.calendar_today_rounded,
                 onTap:
                     widget.controller.status == PatientProfilesStatus.submitting

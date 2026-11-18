@@ -44,6 +44,62 @@ abstract final class ClinicFormat {
     'کانوونا ئێکێ',
   ];
 
+  // Monday first, as DateTime.weekday counts. Badini names match the portals.
+  static const _enWeek = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
+  static const _arWeek = [
+    'الاثنين',
+    'الثلاثاء',
+    'الأربعاء',
+    'الخميس',
+    'الجمعة',
+    'السبت',
+    'الأحد',
+  ];
+  static const _kuWeek = [
+    'دووشەمب',
+    'سێشەمب',
+    'چارشەمب',
+    'پێنجشەمب',
+    'ئەینی',
+    'شەمبی',
+    'یەکشەمب',
+  ];
+
+  /// "Aug" / "آب" / "تەباخ".
+  static String month(DateTime value, String languageCode) =>
+      switch (languageCode) {
+        'ar' => _ar,
+        'ku' => _ku,
+        _ => _en,
+      }[value.month - 1];
+
+  /// "Sat" / "السبت" / "شەمبی" for a day chip.
+  static String weekdayShort(DateTime value, String languageCode) =>
+      switch (languageCode) {
+        'ar' => _arWeek[value.weekday - 1],
+        'ku' => _kuWeek[value.weekday - 1],
+        _ => _enWeek[value.weekday - 1].substring(0, 3),
+      };
+
+  /// "Saturday, 10 Aug 2030" / "السبت، 10 آب 2030".
+  static String weekdayDay(DateTime value, String languageCode) {
+    final name = switch (languageCode) {
+      'ar' => _arWeek[value.weekday - 1],
+      'ku' => _kuWeek[value.weekday - 1],
+      _ => _enWeek[value.weekday - 1],
+    };
+    final comma = languageCode == 'en' ? ',' : '،';
+    return '$name$comma ${day(value, languageCode)}';
+  }
+
   /// "10 Aug 2030" / "10 آب 2030" / "10 تەباخ 2030".
   static String day(DateTime value, String languageCode) {
     final months = switch (languageCode) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../foundations/saxlem_elevation.dart';
 import '../../theme/saxlem_colors.dart';
 
 class SaxlemAvatar extends StatelessWidget {
@@ -17,19 +18,25 @@ class SaxlemAvatar extends StatelessWidget {
   final double size;
   final IconData icon;
 
-  /// Adds the aqua ring used for doctors on cards and tickets.
+  /// Doctors (v3): a rounded square in the deep aura with white initials and
+  /// a soft glow, so a doctor reads differently from a patient at a glance.
   final bool ring;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.saxlemColors;
     final fallback = initials == null
-        ? Icon(icon, size: size * .55, color: colors.brandPrimary)
+        ? Icon(
+            icon,
+            size: size * .55,
+            color: ring ? colors.onFill : colors.brandPrimary,
+          )
         : Center(
             child: Text(
               initials!,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: colors.brandPrimary,
+                color: ring ? colors.onFill : colors.brandPrimary,
+                fontWeight: FontWeight.w700,
                 fontFamily: Theme.of(context).textTheme.titleLarge?.fontFamily,
                 fontSize: size * .32,
               ),
@@ -42,16 +49,13 @@ class SaxlemAvatar extends StatelessWidget {
         width: size,
         height: size,
         clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          color: colors.brandTint,
-          shape: BoxShape.circle,
-          boxShadow: ring
-              ? [
-                  BoxShadow(color: colors.surfaceRaised, spreadRadius: 2),
-                  BoxShadow(color: colors.auraEnd, spreadRadius: 4),
-                ]
-              : null,
-        ),
+        decoration: ring
+            ? BoxDecoration(
+                gradient: colors.deepAura,
+                borderRadius: BorderRadius.circular(size * .34),
+                boxShadow: SaxlemElevation.glow(colors.brandPrimary),
+              )
+            : BoxDecoration(color: colors.brandTint, shape: BoxShape.circle),
         child: imageUrl == null
             ? fallback
             : Image.network(

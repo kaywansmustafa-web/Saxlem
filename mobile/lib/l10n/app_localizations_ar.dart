@@ -1266,4 +1266,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get alertsSubtitle => 'نداءات الدور وتحديثات الحجز';
+
+  @override
+  String get slotMorning => 'صباحاً';
+
+  @override
+  String get slotAfternoon => 'ظهراً';
+
+  @override
+  String get slotEvening => 'مساءً';
 }

@@ -2,7 +2,6 @@ import '../../../../core/formatting/clinic_format.dart';
 import 'package:flutter/material.dart';
 import '../../domain/entities/patient_appointment.dart';
 import '../../../../core/localization/localization_extensions.dart';
-import '../../../../core/localization/localized_dates.dart';
 import '../../../../design_system/components/content/saxlem_status_pill.dart';
 import '../../../../design_system/foundations/saxlem_elevation.dart';
 import '../../../../design_system/foundations/saxlem_radii.dart';
@@ -162,6 +161,8 @@ class AppointmentDateTile extends StatelessWidget {
     final colors = context.saxlemColors;
     final theme = Theme.of(context);
     final ink = highlighted ? colors.onFill : colors.brandPrimary;
+    final lang = Localizations.localeOf(context).languageCode;
+    final at = ClinicFormat.atClinic(date);
     return Container(
       width: size,
       padding: const EdgeInsetsDirectional.symmetric(vertical: 10),
@@ -172,15 +173,18 @@ class AppointmentDateTile extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(
-            formatLocalizedDate(context, date, 'MMM'),
-            maxLines: 1,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: ink.withValues(alpha: highlighted ? .9 : 1),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              ClinicFormat.month(at, lang),
+              maxLines: 1,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: ink.withValues(alpha: highlighted ? .9 : 1),
+              ),
             ),
           ),
           Text(
-            formatLocalizedDate(context, date, 'd'),
+            '${at.day}',
             style: theme.textTheme.headlineSmall?.copyWith(
               color: ink,
               height: 1.1,
@@ -188,8 +192,10 @@ class AppointmentDateTile extends StatelessWidget {
             ),
           ),
           Text(
-            formatLocalizedDate(context, date, 'E'),
+            ClinicFormat.weekdayShort(at, lang),
             maxLines: 1,
+            overflow: TextOverflow.fade,
+            softWrap: false,
             style: theme.textTheme.labelSmall?.copyWith(
               color: highlighted
                   ? colors.onFill.withValues(alpha: .9)

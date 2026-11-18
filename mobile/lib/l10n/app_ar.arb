@@ -557,5 +557,8 @@
   "stepBook": "احجز من التطبيق",
   "stepCheckIn": "سجّل حضورك عند الاستقبال",
   "stepCalled": "يصلك النداء على هاتفك",
-  "alertsSubtitle": "نداءات الدور وتحديثات الحجز"
+  "alertsSubtitle": "نداءات الدور وتحديثات الحجز",
+  "slotMorning": "صباحاً",
+  "slotAfternoon": "ظهراً",
+  "slotEvening": "مساءً"
 }

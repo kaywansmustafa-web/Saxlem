@@ -1281,4 +1281,13 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get alertsSubtitle => 'گازیێن رێزێ و نووکرنێن ژڤانان';
+
+  @override
+  String get slotMorning => 'سپێدە';
+
+  @override
+  String get slotAfternoon => 'نیڤرۆ';
+
+  @override
+  String get slotEvening => 'ئێڤار';
 }

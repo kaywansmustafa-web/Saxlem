@@ -1,5 +1,6 @@
 import '../../../../core/localization/supported_app_locale.dart';
 import 'package:flutter/material.dart';
+import '../../../../design_system/design_system.dart';
 
 import '../../../../config/theme/app_colors.dart';
 import '../../../../shared/widgets/navigation/saxlem_bottom_navigation.dart';
@@ -183,60 +184,68 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         ? null
                         : widget.appointmentsRepository,
                   ),
-                  DiscoverFeature(
-                    repository: widget.doctorDiscoveryRepository,
-                    bookingRepository: widget.bookingRepository,
-                    onAuthenticationRequired: _logout,
-                    key: ValueKey(_discoverRequest),
-                    initialCriteria: _discoverCriteria,
-                    focusSearch: _focusDiscover,
-                    openFilters: _openDiscoverFilters,
-                    onOpenAppointments: () =>
-                        setState(() => _selectedIndex = 2),
-                    guestMode: widget.guestMode,
-                    profilesController: widget.profilesController,
+                  _quietAura(
+                    DiscoverFeature(
+                      repository: widget.doctorDiscoveryRepository,
+                      bookingRepository: widget.bookingRepository,
+                      onAuthenticationRequired: _logout,
+                      key: ValueKey(_discoverRequest),
+                      initialCriteria: _discoverCriteria,
+                      focusSearch: _focusDiscover,
+                      openFilters: _openDiscoverFilters,
+                      onOpenAppointments: () =>
+                          setState(() => _selectedIndex = 2),
+                      guestMode: widget.guestMode,
+                      profilesController: widget.profilesController,
+                    ),
                   ),
-                  widget.guestMode
-                      ? InformationalPage(
-                          title: strings.personalizedFeatureTitle,
-                          message: strings.personalizedFeatureBody,
-                          icon: Icons.lock_outline_rounded,
-                          semanticLabel: strings.informationalScreen,
-                          actionLabel: strings.verifyNumber,
-                          onAction: _logout,
-                        )
-                      : AppointmentsFeature(
-                          repository: widget.appointmentsRepository,
-                          bookingRepository: widget.bookingRepository,
-                          arrivalRepository: widget.arrivalRepository,
-                          liveQueueRepository: widget.liveQueueRepository,
-                          notificationSignals: _notifications.signals,
-                          onOpenDiscover: () => _openDiscover(),
-                          profilesController: widget.profilesController,
-                          doctorDiscoveryRepository:
-                              widget.doctorDiscoveryRepository,
-                          onAuthenticationRequired: _logout,
-                        ),
-                  NotificationsFeature(
-                    controller: _notifications,
-                    profilesController: widget.profilesController,
+                  _quietAura(
+                    widget.guestMode
+                        ? InformationalPage(
+                            title: strings.personalizedFeatureTitle,
+                            message: strings.personalizedFeatureBody,
+                            icon: Icons.lock_outline_rounded,
+                            semanticLabel: strings.informationalScreen,
+                            actionLabel: strings.verifyNumber,
+                            onAction: _logout,
+                          )
+                        : AppointmentsFeature(
+                            repository: widget.appointmentsRepository,
+                            bookingRepository: widget.bookingRepository,
+                            arrivalRepository: widget.arrivalRepository,
+                            liveQueueRepository: widget.liveQueueRepository,
+                            notificationSignals: _notifications.signals,
+                            onOpenDiscover: () => _openDiscover(),
+                            profilesController: widget.profilesController,
+                            doctorDiscoveryRepository:
+                                widget.doctorDiscoveryRepository,
+                            onAuthenticationRequired: _logout,
+                          ),
                   ),
-                  widget.guestMode || widget.profilesController == null
-                      ? InformationalPage(
-                          title: strings.profileTitle,
-                          message: strings.profileBody,
-                          icon: Icons.person_outline_rounded,
-                          semanticLabel: strings.informationalScreen,
-                          actionLabel: widget.guestMode
-                              ? strings.verifyNumber
-                              : strings.logOut,
-                          onAction: _logout,
-                        )
-                      : PatientProfilesPage(
-                          controller: widget.profilesController!,
-                          onLogout: _logout,
-                          onChangeLanguage: widget.onChangeLanguage,
-                        ),
+                  _quietAura(
+                    NotificationsFeature(
+                      controller: _notifications,
+                      profilesController: widget.profilesController,
+                    ),
+                  ),
+                  _quietAura(
+                    widget.guestMode || widget.profilesController == null
+                        ? InformationalPage(
+                            title: strings.profileTitle,
+                            message: strings.profileBody,
+                            icon: Icons.person_outline_rounded,
+                            semanticLabel: strings.informationalScreen,
+                            actionLabel: widget.guestMode
+                                ? strings.verifyNumber
+                                : strings.logOut,
+                            onAction: _logout,
+                          )
+                        : PatientProfilesPage(
+                            controller: widget.profilesController!,
+                            onLogout: _logout,
+                            onChangeLanguage: widget.onChangeLanguage,
+                          ),
+                  ),
                 ],
               ),
             ),
@@ -260,4 +269,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       ),
     );
   }
+
+  /// Every tab sits on the same quiet aura as Home.
+  static Widget _quietAura(Widget child) =>
+      SaxlemAuraBackdrop(strength: .55, height: 320, child: child);
 }

@@ -26,99 +26,103 @@ class NotificationDetailsPage extends StatelessWidget {
     final copy = NotificationCopy(strings).forItem(item);
     return Scaffold(
       appBar: AppBar(title: Text(strings.notificationDetails)),
-      body: SaxlemResponsiveContent(
-        child: ListView(
-          padding: const EdgeInsetsDirectional.symmetric(
-            vertical: SaxlemSpacing.three,
-          ),
-          children: [
-            if (profilesController != null) ...[
-              PatientSelector(
-                controller: profilesController!,
-                label: strings.currentPatient,
-              ),
-              const SizedBox(height: SaxlemSpacing.two),
-            ],
-            SaxlemCard(
-              radius: SaxlemRadii.hero,
-              padding: const EdgeInsetsDirectional.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Builder(
-                    builder: (context) {
-                      final (tint, ink) = notificationCategoryColors(
-                        context,
-                        item.category,
-                      );
-                      return Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: tint,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          notificationCategoryIcon(item.category),
-                          color: ink,
-                          size: 28,
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 14),
-                  Semantics(
-                    header: true,
-                    child: Text(
-                      copy.title,
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  _Part(
-                    icon: Icons.info_outline_rounded,
-                    label: strings.whatHappened,
-                    value: copy.happened,
-                  ),
-                  _Part(
-                    icon: Icons.help_outline_rounded,
-                    label: strings.whyItHappened,
-                    value: copy.why,
-                  ),
-                  _Part(
-                    icon: Icons.arrow_circle_right_outlined,
-                    label: strings.whatToDoNext,
-                    value: copy.next,
-                    emphasized: true,
-                  ),
-                ],
-              ),
+      body: SaxlemAuraBackdrop(
+        strength: .55,
+        height: 300,
+        child: SaxlemResponsiveContent(
+          child: ListView(
+            padding: const EdgeInsetsDirectional.symmetric(
+              vertical: SaxlemSpacing.three,
             ),
-            if (group.isGrouped) ...[
-              const SizedBox(height: SaxlemSpacing.two),
-              Text(
-                strings.queueUpdates,
-                style: Theme.of(context).textTheme.titleMedium,
+            children: [
+              if (profilesController != null) ...[
+                PatientSelector(
+                  controller: profilesController!,
+                  label: strings.currentPatient,
+                ),
+                const SizedBox(height: SaxlemSpacing.two),
+              ],
+              SaxlemCard(
+                radius: SaxlemRadii.hero,
+                padding: const EdgeInsetsDirectional.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Builder(
+                      builder: (context) {
+                        final (tint, ink) = notificationCategoryColors(
+                          context,
+                          item.category,
+                        );
+                        return Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: tint,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            notificationCategoryIcon(item.category),
+                            color: ink,
+                            size: 28,
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 14),
+                    Semantics(
+                      header: true,
+                      child: Text(
+                        copy.title,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    _Part(
+                      icon: Icons.info_outline_rounded,
+                      label: strings.whatHappened,
+                      value: copy.happened,
+                    ),
+                    _Part(
+                      icon: Icons.help_outline_rounded,
+                      label: strings.whyItHappened,
+                      value: copy.why,
+                    ),
+                    _Part(
+                      icon: Icons.arrow_circle_right_outlined,
+                      label: strings.whatToDoNext,
+                      value: copy.next,
+                      emphasized: true,
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: SaxlemSpacing.one),
-              ...group.notifications.reversed.map((entry) {
-                final entryCopy = NotificationCopy(strings).forItem(entry);
-                return Padding(
-                  padding: const EdgeInsetsDirectional.only(
-                    bottom: SaxlemSpacing.one,
-                  ),
-                  child: SaxlemCard(child: Text(entryCopy.happened)),
-                );
-              }),
+              if (group.isGrouped) ...[
+                const SizedBox(height: SaxlemSpacing.two),
+                Text(
+                  strings.queueUpdates,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: SaxlemSpacing.one),
+                ...group.notifications.reversed.map((entry) {
+                  final entryCopy = NotificationCopy(strings).forItem(entry);
+                  return Padding(
+                    padding: const EdgeInsetsDirectional.only(
+                      bottom: SaxlemSpacing.one,
+                    ),
+                    child: SaxlemCard(child: Text(entryCopy.happened)),
+                  );
+                }),
+              ],
+              const SizedBox(height: SaxlemSpacing.three),
+              if (item.action.destination != NotificationDestination.none)
+                SaxlemButton(
+                  label: strings.viewUpdate,
+                  onPressed: () => controller.perform(item.action),
+                  expand: true,
+                ),
             ],
-            const SizedBox(height: SaxlemSpacing.three),
-            if (item.action.destination != NotificationDestination.none)
-              SaxlemButton(
-                label: strings.viewUpdate,
-                onPressed: () => controller.perform(item.action),
-                expand: true,
-              ),
-          ],
+          ),
         ),
       ),
     );

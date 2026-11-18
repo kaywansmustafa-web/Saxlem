@@ -110,20 +110,27 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(context.l10n.appointmentDetails)),
-    body: SafeArea(
-      top: false,
-      child: ListenableBuilder(
-        listenable: controller,
-        builder: (context, _) => switch (controller.state) {
-          AppointmentDetailLoading() => const Center(
-            child: CircularProgressIndicator(),
-          ),
-          AppointmentDetailFailure(:final problem) => _failure(problem),
-          AppointmentDetailReady() => _ready(
-            controller.state as AppointmentDetailReady,
-          ),
-        },
+    appBar: AppBar(
+      title: Text(context.l10n.appointmentDetails),
+      backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+    ),
+    body: SaxlemAuraBackdrop(
+      strength: .7,
+      child: SafeArea(
+        top: false,
+        child: ListenableBuilder(
+          listenable: controller,
+          builder: (context, _) => switch (controller.state) {
+            AppointmentDetailLoading() => const Center(
+              child: CircularProgressIndicator(),
+            ),
+            AppointmentDetailFailure(:final problem) => _failure(problem),
+            AppointmentDetailReady() => _ready(
+              controller.state as AppointmentDetailReady,
+            ),
+          },
+        ),
       ),
     ),
   );

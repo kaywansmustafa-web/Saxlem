@@ -2379,6 +2379,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Queue calls and booking updates'**
   String get alertsSubtitle;
+
+  /// No description provided for @slotMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning'**
+  String get slotMorning;
+
+  /// No description provided for @slotAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Afternoon'**
+  String get slotAfternoon;
+
+  /// No description provided for @slotEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening'**
+  String get slotEvening;
 }
 
 class _AppLocalizationsDelegate

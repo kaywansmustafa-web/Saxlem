@@ -557,5 +557,8 @@
   "stepBook": "د ئەپێ دا ژڤانی بگرە",
   "stepCheckIn": "ل پێشوازیێ هاتنا خۆ تۆمار بکە",
   "stepCalled": "ل سەر مۆبایلا خۆ گازی تە دهێتە کرن",
-  "alertsSubtitle": "گازیێن رێزێ و نووکرنێن ژڤانان"
+  "alertsSubtitle": "گازیێن رێزێ و نووکرنێن ژڤانان",
+  "slotMorning": "سپێدە",
+  "slotAfternoon": "نیڤرۆ",
+  "slotEvening": "ئێڤار"
 }

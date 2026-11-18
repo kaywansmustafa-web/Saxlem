@@ -64,24 +64,34 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(context.l10n.doctorProfile)),
-    body: ListenableBuilder(
-      listenable: widget.controller,
-      builder: (context, _) => switch (widget.controller.detailState) {
-        DoctorDetailInitial() || DoctorDetailLoading() => Semantics(
-          liveRegion: true,
-          label: context.l10n.loadingDoctors,
-          child: const Center(child: CircularProgressIndicator()),
+    extendBodyBehindAppBar: true,
+    appBar: AppBar(
+      title: Text(context.l10n.doctorProfile),
+      backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+    ),
+    body: SaxlemAuraBackdrop(
+      child: SafeArea(
+        bottom: false,
+        child: ListenableBuilder(
+          listenable: widget.controller,
+          builder: (context, _) => switch (widget.controller.detailState) {
+            DoctorDetailInitial() || DoctorDetailLoading() => Semantics(
+              liveRegion: true,
+              label: context.l10n.loadingDoctors,
+              child: const Center(child: CircularProgressIndicator()),
+            ),
+            DoctorDetailNotFound() => SaxlemStateView(
+              kind: SaxlemStateKind.empty,
+              title: context.l10n.doctorNotFound,
+              message: context.l10n.doctorNotFoundBody,
+              icon: Icons.person_off_outlined,
+            ),
+            DoctorDetailFailure(:final problem) => _failure(problem),
+            DoctorDetailReady(:final doctor) => _profile(doctor),
+          },
         ),
-        DoctorDetailNotFound() => SaxlemStateView(
-          kind: SaxlemStateKind.empty,
-          title: context.l10n.doctorNotFound,
-          message: context.l10n.doctorNotFoundBody,
-          icon: Icons.person_off_outlined,
-        ),
-        DoctorDetailFailure(:final problem) => _failure(problem),
-        DoctorDetailReady(:final doctor) => _profile(doctor),
-      },
+      ),
     ),
   );
 
@@ -156,7 +166,7 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
                       color: colors.surfaceRaised,
                       borderRadius: BorderRadius.circular(SaxlemRadii.hero),
                       border: Border.all(color: colors.border),
-                      boxShadow: SaxlemElevation.level2(colors.night),
+                      boxShadow: SaxlemElevation.level1(colors.night),
                     ),
                     child: Column(
                       children: [
