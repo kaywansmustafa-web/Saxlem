@@ -21,4 +21,8 @@ class UnavailablePatientProfilesRepository
   Stream<PatientProfilesSnapshot> watch() => const Stream.empty();
   @override
   Future<void> dispose() async {}
+
+  @override
+  Future<DeleteAccountOutcome> deleteAccount() async =>
+      DeleteAccountOutcome.failed;
 }

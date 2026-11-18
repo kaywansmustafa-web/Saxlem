@@ -1,3 +1,4 @@
+import '../../../../core/formatting/clinic_format.dart';
 import 'dart:convert';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
@@ -267,7 +268,7 @@ class _Waiting extends StatelessWidget {
               const SizedBox(height: 10),
               Text(
                 context.l10n.paymentLinkValidUntil(
-                  TimeOfDay.fromDateTime(validUntil.toLocal()).format(context),
+                  ClinicFormat.time(validUntil),
                 ),
                 textAlign: TextAlign.center,
                 style: theme.textTheme.labelSmall?.copyWith(

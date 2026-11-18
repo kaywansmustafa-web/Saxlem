@@ -149,7 +149,7 @@
   "@iqdAmount": {
     "placeholders": {
       "amount": {
-        "type": "int"
+        "type": "String"
       }
     }
   },
@@ -531,7 +531,17 @@
   "paymentProblemNotAccepted": "لا يمكن تغيير هذه الدفعة الآن.",
   "paymentProblemGeneric": "حدث خطأ في الدفع. موعدك ما زال محجوزاً.",
   "paymentBookedPayNext": "تم الحجز! خطوة أخيرة: ادفع ثمن زيارتك.",
-  "paymentSecureNote": "تذهب أموالك مباشرة إلى حساب العيادة المصرفي. لا يرى ساخلەم بياناتك المصرفية أبداً.",
+  "paymentSecureNote": "تدفع داخل تطبيق FIB. لا يرى ساخلم بيانات بطاقتك أو حسابك المصرفي.",
   "paymentLinkValidUntil": "الرابط صالح حتى {time}",
-  "paymentFibNotOpened": "تعذّر فتح FIB. ثبّت تطبيق FIB أو حدّثه، أو امسح رمز QR من هاتف آخر."
+  "paymentFibNotOpened": "تعذّر فتح FIB. ثبّت تطبيق FIB أو حدّثه، أو امسح رمز QR من هاتف آخر.",
+  "settingsTitle": "الإعدادات",
+  "appLanguage": "لغة التطبيق",
+  "deleteAccount": "حذف الحساب",
+  "deleteAccountTitle": "حذف حسابك في ساخلم؟",
+  "deleteAccountBody": "سيتم تسجيل خروجك من كل الأجهزة وإزالة ملفات عائلتك من التطبيق. تحتفظ العيادات بسجل الزيارات السابقة.",
+  "deleteAccountConfirm": "احذف حسابي",
+  "deleteAccountUpcoming": "ألغِ مواعيدك القادمة أولاً ثم حاول مرة أخرى.",
+  "deleteAccountFailed": "تعذر حذف حسابك. تحقق من الاتصال وحاول مرة أخرى.",
+  "cancelAction": "إلغاء",
+  "languageSaved": "تم تغيير اللغة"
 }

@@ -149,7 +149,7 @@
   "@iqdAmount": {
     "placeholders": {
       "amount": {
-        "type": "int"
+        "type": "String"
       }
     }
   },
@@ -531,7 +531,17 @@
   "paymentProblemNotAccepted": "ئەڤ پارەدانە نوکە ناهێتە گوهۆڕین.",
   "paymentProblemGeneric": "تشتەک د پارەدانێ دا خەلەت چوو. ژڤانا تە هێشتا یا گرتییە.",
   "paymentBookedPayNext": "هاتە گرتن! پێنگاڤا دووماهیێ: پارەیێ سەرەدانا خو بدە.",
-  "paymentSecureNote": "پارێ تە راستەوخۆ دچیتە هەژمارا بانکێ یا کلینیکێ. ساخلەم چو جاران زانیاریێن بانکا تە نابینیت.",
+  "paymentSecureNote": "تو د ئەپێ FIB دا پارەی ددەی. ساخلەم زانیاریێن کارتا تە یان هەژمارا بانکێ نابینیت.",
   "paymentLinkValidUntil": "لینک تا {time} دەربازە",
-  "paymentFibNotOpened": "مە نەشیا FIB ڤەکەین. ئەپێ FIB دابەزینە یان نوی بکە، یان کۆدێ QR ژ مۆبایلەکێ دی سکان بکە."
+  "paymentFibNotOpened": "مە نەشیا FIB ڤەکەین. ئەپێ FIB دابەزینە یان نوی بکە، یان کۆدێ QR ژ مۆبایلەکێ دی سکان بکە.",
+  "settingsTitle": "رێکخستن",
+  "appLanguage": "زمانێ ئەپێ",
+  "deleteAccount": "ژێبرنا هەژمارێ",
+  "deleteAccountTitle": "هەژمارا خۆ یا ساخلەم ژێ دبەی؟",
+  "deleteAccountBody": "تو ژ هەمی ئامیران دێ دەرکەڤی و پرۆفایلێن خێزانا تە ژ ئەپێ دێ هێنە لابرن. نۆرینگەه تۆمارا سەرەدانێن بۆری دپارێزن.",
+  "deleteAccountConfirm": "هەژمارا من ژێ ببە",
+  "deleteAccountUpcoming": "پێشی ژڤانێن خۆ یێن بێن هەلوەشینە، پاشان دووبارە هەول بدە.",
+  "deleteAccountFailed": "مە نەشیا هەژمارا تە ژێ ببەین. پەیوەندیێ بپشکنە و دووبارە هەول بدە.",
+  "cancelAction": "هەلوەشاندن",
+  "languageSaved": "زمان هاتە گوهۆڕین"
 }

@@ -66,6 +66,7 @@ class _BookingSuccessPageState extends State<BookingSuccessPage> {
     final date = copy.date(
       confirmation.startsAt,
       timezone: confirmation.clinicTimezone,
+      languageCode: Localizations.localeOf(context).languageCode,
     );
     final time = copy.time(
       confirmation.startsAt,

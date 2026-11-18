@@ -280,6 +280,7 @@ class _AppBootstrapState extends State<_AppBootstrap> {
     return HomePage(
       guestMode: controller.guestMode,
       onLogout: _logout,
+      onChangeLanguage: controller.changeLocale,
       profilesController: activeProfiles,
       doctorDiscoveryRepository: widget.doctorDiscoveryRepository,
       bookingRepository: widget.bookingRepository,

@@ -46,6 +46,9 @@ class ApiClient {
     idempotencyKey: idempotencyKey,
   );
 
+  Future<ApiResponse> deleteJson(String path, {String? bearerToken}) =>
+      _send('DELETE', path, bearerToken: bearerToken);
+
   Future<ApiResponse> getJson(
     String path, {
     String? bearerToken,

@@ -1,3 +1,4 @@
+import '../../../../core/formatting/clinic_format.dart';
 import 'package:flutter/material.dart';
 import '../../domain/entities/patient_appointment.dart';
 import '../../../../core/localization/localization_extensions.dart';
@@ -22,11 +23,11 @@ class AppointmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.saxlemColors;
     final theme = Theme.of(context);
-    final material = MaterialLocalizations.of(context);
-    final date = material.formatMediumDate(appointment.startsAt);
-    final time = material.formatTimeOfDay(
-      TimeOfDay.fromDateTime(appointment.startsAt),
+    final date = ClinicFormat.clinicDay(
+      appointment.startsAt,
+      Localizations.localeOf(context).languageCode,
     );
+    final time = ClinicFormat.time(appointment.startsAt);
     final now = DateTime.now();
     final isToday = DateUtils.isSameDay(appointment.startsAt, now);
     return Semantics(

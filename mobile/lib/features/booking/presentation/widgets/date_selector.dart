@@ -15,7 +15,10 @@ class DateSelector extends StatelessWidget {
         return Semantics(
           button: enabled,
           enabled: enabled,
-          label: copy.date(day.date),
+          label: copy.date(
+            day.date,
+            languageCode: Localizations.localeOf(context).languageCode,
+          ),
           child: ListTile(
             onTap: enabled ? () => onSelected(day) : null,
             leading: Icon(
@@ -23,7 +26,12 @@ class DateSelector extends StatelessWidget {
                   ? Icons.calendar_month_rounded
                   : Icons.event_busy_outlined,
             ),
-            title: Text(copy.date(day.date)),
+            title: Text(
+              copy.date(
+                day.date,
+                languageCode: Localizations.localeOf(context).languageCode,
+              ),
+            ),
             subtitle: Text('${day.slots.length}'),
             trailing: enabled
                 ? const Icon(Icons.arrow_forward_ios_rounded, size: 16)

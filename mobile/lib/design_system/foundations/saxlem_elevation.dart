@@ -6,16 +6,18 @@ abstract final class SaxlemElevation {
   static const List<BoxShadow> none = [];
   static const Color _night = Color(0xFF0B1533);
 
+  /// v3: a hairline contact shadow plus a wide, soft lift.
   static List<BoxShadow> level1(Color shadow) => [
     BoxShadow(
-      color: _night.withValues(alpha: .05),
+      color: _night.withValues(alpha: .04),
       blurRadius: 2,
       offset: const Offset(0, 1),
     ),
     BoxShadow(
-      color: _night.withValues(alpha: .06),
-      blurRadius: 16,
-      offset: const Offset(0, 4),
+      color: _night.withValues(alpha: .08),
+      blurRadius: 28,
+      spreadRadius: -12,
+      offset: const Offset(0, 10),
     ),
   ];
 

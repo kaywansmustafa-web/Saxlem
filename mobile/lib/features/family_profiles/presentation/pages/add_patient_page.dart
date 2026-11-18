@@ -1,6 +1,6 @@
+import '../../../../core/formatting/clinic_format.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/localization/localization_extensions.dart';
-import '../../../../core/localization/localized_dates.dart';
 import '../../../../core/models/patient_profile.dart';
 import '../../../../design_system/design_system.dart';
 import '../controllers/patient_profiles_controller.dart';
@@ -16,7 +16,9 @@ class _AddPatientPageState extends State<AddPatientPage> {
   String first = '', last = '';
   PatientRelationship relationship = PatientRelationship.other;
   PatientGender gender = PatientGender.unspecified;
-  DateTime birth = DateTime(2000, 1, 1);
+
+  /// Never guessed: the family member's real date of birth, chosen on purpose.
+  DateTime? birth;
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text(context.l10n.addPatient)),
@@ -75,14 +77,22 @@ class _AddPatientPageState extends State<AddPatientPage> {
           const SizedBox(height: SaxlemSpacing.two),
           SaxlemPickerField(
             label: context.l10n.dateOfBirth,
-            value: formatLocalizedDate(context, birth, 'yMMMd'),
+            value: birth == null
+                ? context.l10n.chooseDate
+                : ClinicFormat.day(
+                    birth!,
+                    Localizations.localeOf(context).languageCode,
+                  ),
             icon: Icons.calendar_today_rounded,
             onTap: () async {
               final value = await showDatePicker(
                 context: context,
                 firstDate: DateTime(1900),
                 lastDate: DateTime.now(),
-                initialDate: birth,
+                initialDate: birth ?? DateTime(DateTime.now().year - 30),
+                initialDatePickerMode: birth == null
+                    ? DatePickerMode.year
+                    : DatePickerMode.day,
               );
               if (value != null) setState(() => birth = value);
             },
@@ -103,6 +113,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
             onPressed:
                 first.trim().isEmpty ||
                     last.trim().isEmpty ||
+                    birth == null ||
                     widget.controller.status == PatientProfilesStatus.submitting
                 ? null
                 : () async {
@@ -111,7 +122,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                       firstName: first,
                       lastName: last,
                       gender: gender,
-                      dateOfBirth: birth,
+                      dateOfBirth: birth!,
                     );
                     if (context.mounted && success) Navigator.pop(context);
                   },

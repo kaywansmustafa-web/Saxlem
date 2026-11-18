@@ -132,4 +132,7 @@ class PatientProfilesController extends ChangeNotifier {
     _repository.dispose();
     super.dispose();
   }
+
+  /// Deletes the signed-in patient's account; the caller signs out on success.
+  Future<DeleteAccountOutcome> deleteAccount() => _repository.deleteAccount();
 }

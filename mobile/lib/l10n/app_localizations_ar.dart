@@ -346,7 +346,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String iqdAmount(int amount) {
+  String iqdAmount(String amount) {
     return '$amount د.ع';
   }
 
@@ -1179,7 +1179,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get paymentSecureNote =>
-      'تذهب أموالك مباشرة إلى حساب العيادة المصرفي. لا يرى ساخلەم بياناتك المصرفية أبداً.';
+      'تدفع داخل تطبيق FIB. لا يرى ساخلم بيانات بطاقتك أو حسابك المصرفي.';
 
   @override
   String paymentLinkValidUntil(String time) {
@@ -1189,4 +1189,37 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get paymentFibNotOpened =>
       'تعذّر فتح FIB. ثبّت تطبيق FIB أو حدّثه، أو امسح رمز QR من هاتف آخر.';
+
+  @override
+  String get settingsTitle => 'الإعدادات';
+
+  @override
+  String get appLanguage => 'لغة التطبيق';
+
+  @override
+  String get deleteAccount => 'حذف الحساب';
+
+  @override
+  String get deleteAccountTitle => 'حذف حسابك في ساخلم؟';
+
+  @override
+  String get deleteAccountBody =>
+      'سيتم تسجيل خروجك من كل الأجهزة وإزالة ملفات عائلتك من التطبيق. تحتفظ العيادات بسجل الزيارات السابقة.';
+
+  @override
+  String get deleteAccountConfirm => 'احذف حسابي';
+
+  @override
+  String get deleteAccountUpcoming =>
+      'ألغِ مواعيدك القادمة أولاً ثم حاول مرة أخرى.';
+
+  @override
+  String get deleteAccountFailed =>
+      'تعذر حذف حسابك. تحقق من الاتصال وحاول مرة أخرى.';
+
+  @override
+  String get cancelAction => 'إلغاء';
+
+  @override
+  String get languageSaved => 'تم تغيير اللغة';
 }

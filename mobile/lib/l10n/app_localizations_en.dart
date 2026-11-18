@@ -353,7 +353,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String iqdAmount(int amount) {
+  String iqdAmount(String amount) {
     return '$amount IQD';
   }
 
@@ -1222,7 +1222,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paymentSecureNote =>
-      'Your money goes straight to the clinic\'s bank account. Saxlem never sees your bank details.';
+      'You pay inside the FIB app. Saxlem never sees your card or bank details.';
 
   @override
   String paymentLinkValidUntil(String time) {
@@ -1232,4 +1232,37 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get paymentFibNotOpened =>
       'We couldn\'t open FIB. Install or update the FIB app, or scan the QR code from another phone.';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get appLanguage => 'App language';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountTitle => 'Delete your Saxlem account?';
+
+  @override
+  String get deleteAccountBody =>
+      'You\'ll be signed out on every device and your family profiles will be removed from the app. Clinics keep the record of visits you already had.';
+
+  @override
+  String get deleteAccountConfirm => 'Delete my account';
+
+  @override
+  String get deleteAccountUpcoming =>
+      'Cancel your upcoming appointments first, then try again.';
+
+  @override
+  String get deleteAccountFailed =>
+      'We couldn\'t delete your account. Check your connection and try again.';
+
+  @override
+  String get cancelAction => 'Cancel';
+
+  @override
+  String get languageSaved => 'Language changed';
 }

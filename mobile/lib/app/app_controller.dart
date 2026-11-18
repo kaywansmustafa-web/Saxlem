@@ -111,6 +111,23 @@ class AppController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Changes the app language from Settings without leaving the session.
+  Future<bool> changeLocale(SupportedAppLocale locale) async {
+    if (savingLocale || selectedLocale == locale) return false;
+    savingLocale = true;
+    notifyListeners();
+    try {
+      await _localeRepository.save(locale);
+      selectedLocale = locale;
+      return true;
+    } catch (_) {
+      return false;
+    } finally {
+      savingLocale = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> logout() async {
     await _authRepository.logout();
     session = const AuthSession.guest();

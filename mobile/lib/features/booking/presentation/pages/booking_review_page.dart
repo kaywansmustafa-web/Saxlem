@@ -109,6 +109,9 @@ class BookingReviewPage extends StatelessWidget {
                               copy.date(
                                 d.slot.startsAt,
                                 timezone: d.options.clinicTimezone,
+                                languageCode: Localizations.localeOf(
+                                  context,
+                                ).languageCode,
                               ),
                               style: theme.textTheme.labelMedium?.copyWith(
                                 color: colors.onFill.withValues(alpha: .88),

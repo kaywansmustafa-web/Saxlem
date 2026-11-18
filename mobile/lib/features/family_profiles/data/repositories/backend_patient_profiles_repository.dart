@@ -97,6 +97,23 @@ class BackendPatientProfilesRepository implements PatientProfilesRepository {
   }
 
   @override
+  Future<DeleteAccountOutcome> deleteAccount() async {
+    try {
+      await _api.deleteJson('patients/me');
+      _snapshot = null;
+      return DeleteAccountOutcome.deleted;
+    } on ApiFailure catch (failure) {
+      return failure.statusCode == 409
+          ? DeleteAccountOutcome.upcomingAppointments
+          : DeleteAccountOutcome.failed;
+    } on MutationNotSentFailure {
+      return DeleteAccountOutcome.failed;
+    } on AuthFailure {
+      return DeleteAccountOutcome.failed;
+    }
+  }
+
+  @override
   Stream<PatientProfilesSnapshot> watch() => _changes.stream;
 
   @override

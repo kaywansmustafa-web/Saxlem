@@ -746,7 +746,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{amount} IQD'**
-  String iqdAmount(int amount);
+  String iqdAmount(String amount);
 
   /// No description provided for @appointmentIdValue.
   ///
@@ -2221,7 +2221,7 @@ abstract class AppLocalizations {
   /// No description provided for @paymentSecureNote.
   ///
   /// In en, this message translates to:
-  /// **'Your money goes straight to the clinic\'s bank account. Saxlem never sees your bank details.'**
+  /// **'You pay inside the FIB app. Saxlem never sees your card or bank details.'**
   String get paymentSecureNote;
 
   /// Shown under the online payment code.
@@ -2235,6 +2235,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We couldn\'t open FIB. Install or update the FIB app, or scan the QR code from another phone.'**
   String get paymentFibNotOpened;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @appLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'App language'**
+  String get appLanguage;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your Saxlem account?'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll be signed out on every device and your family profiles will be removed from the app. Clinics keep the record of visits you already had.'**
+  String get deleteAccountBody;
+
+  /// No description provided for @deleteAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get deleteAccountConfirm;
+
+  /// No description provided for @deleteAccountUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel your upcoming appointments first, then try again.'**
+  String get deleteAccountUpcoming;
+
+  /// No description provided for @deleteAccountFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t delete your account. Check your connection and try again.'**
+  String get deleteAccountFailed;
+
+  /// No description provided for @cancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelAction;
+
+  /// No description provided for @languageSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Language changed'**
+  String get languageSaved;
 }
 
 class _AppLocalizationsDelegate

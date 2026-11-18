@@ -1,3 +1,4 @@
+import '../../../../core/formatting/clinic_format.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../../design_system/design_system.dart';
@@ -179,7 +180,7 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                 _DetailRow(context.l10n.appointmentReason, item.reason),
                 _DetailRow(
                   context.l10n.fee,
-                  context.l10n.iqdAmount(item.feeIqd),
+                  context.l10n.iqdAmount(ClinicFormat.number(item.feeIqd)),
                 ),
                 _DetailRow(
                   context.l10n.duration,
@@ -339,7 +340,7 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
     return switch (arrival.eligibility.reason) {
       ArrivalEligibilityReason.tooEarly
           when arrival.eligibility.opensAt != null =>
-        '${context.l10n.queueOpensAppointmentDay} ${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(arrival.eligibility.opensAt!))}',
+        '${context.l10n.queueOpensAppointmentDay} ${ClinicFormat.time(arrival.eligibility.opensAt!)}',
       ArrivalEligibilityReason.tooLate ||
       ArrivalEligibilityReason.invalidAppointmentStatus ||
       ArrivalEligibilityReason.unavailable => context.l10n.actionUnavailable,
@@ -488,7 +489,6 @@ class _AppointmentHero extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.saxlemColors;
     final theme = Theme.of(context);
-    final material = MaterialLocalizations.of(context);
     final active = appointment.canMutate;
     final ink = active ? colors.onFill : colors.textPrimary;
     final sub = active
@@ -605,14 +605,15 @@ class _AppointmentHero extends StatelessWidget {
               children: [
                 chip(
                   Icons.calendar_today_rounded,
-                  material.formatMediumDate(appointment.startsAt),
+                  ClinicFormat.clinicDay(
+                    appointment.startsAt,
+                    Localizations.localeOf(context).languageCode,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 chip(
                   Icons.schedule_rounded,
-                  material.formatTimeOfDay(
-                    TimeOfDay.fromDateTime(appointment.startsAt),
-                  ),
+                  ClinicFormat.time(appointment.startsAt),
                 ),
               ],
             ),

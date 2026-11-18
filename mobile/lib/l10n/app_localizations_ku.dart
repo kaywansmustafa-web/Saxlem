@@ -350,7 +350,7 @@ class AppLocalizationsKu extends AppLocalizations {
   }
 
   @override
-  String iqdAmount(int amount) {
+  String iqdAmount(String amount) {
     return '$amount د.ع';
   }
 
@@ -1194,7 +1194,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get paymentSecureNote =>
-      'پارێ تە راستەوخۆ دچیتە هەژمارا بانکێ یا کلینیکێ. ساخلەم چو جاران زانیاریێن بانکا تە نابینیت.';
+      'تو د ئەپێ FIB دا پارەی ددەی. ساخلەم زانیاریێن کارتا تە یان هەژمارا بانکێ نابینیت.';
 
   @override
   String paymentLinkValidUntil(String time) {
@@ -1204,4 +1204,37 @@ class AppLocalizationsKu extends AppLocalizations {
   @override
   String get paymentFibNotOpened =>
       'مە نەشیا FIB ڤەکەین. ئەپێ FIB دابەزینە یان نوی بکە، یان کۆدێ QR ژ مۆبایلەکێ دی سکان بکە.';
+
+  @override
+  String get settingsTitle => 'رێکخستن';
+
+  @override
+  String get appLanguage => 'زمانێ ئەپێ';
+
+  @override
+  String get deleteAccount => 'ژێبرنا هەژمارێ';
+
+  @override
+  String get deleteAccountTitle => 'هەژمارا خۆ یا ساخلەم ژێ دبەی؟';
+
+  @override
+  String get deleteAccountBody =>
+      'تو ژ هەمی ئامیران دێ دەرکەڤی و پرۆفایلێن خێزانا تە ژ ئەپێ دێ هێنە لابرن. نۆرینگەه تۆمارا سەرەدانێن بۆری دپارێزن.';
+
+  @override
+  String get deleteAccountConfirm => 'هەژمارا من ژێ ببە';
+
+  @override
+  String get deleteAccountUpcoming =>
+      'پێشی ژڤانێن خۆ یێن بێن هەلوەشینە، پاشان دووبارە هەول بدە.';
+
+  @override
+  String get deleteAccountFailed =>
+      'مە نەشیا هەژمارا تە ژێ ببەین. پەیوەندیێ بپشکنە و دووبارە هەول بدە.';
+
+  @override
+  String get cancelAction => 'هەلوەشاندن';
+
+  @override
+  String get languageSaved => 'زمان هاتە گوهۆڕین';
 }

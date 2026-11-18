@@ -1,3 +1,4 @@
+import '../../../../core/localization/supported_app_locale.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../config/theme/app_colors.dart';
@@ -31,6 +32,7 @@ class HomePage extends StatefulWidget {
   const HomePage({
     this.guestMode = false,
     this.onLogout,
+    this.onChangeLanguage,
     this.profilesController,
     this.doctorDiscoveryRepository =
         const UnavailableDoctorDiscoveryRepository(),
@@ -44,6 +46,7 @@ class HomePage extends StatefulWidget {
   });
   final bool guestMode;
   final Future<void> Function()? onLogout;
+  final Future<bool> Function(SupportedAppLocale locale)? onChangeLanguage;
   final PatientProfilesController? profilesController;
   final DoctorDiscoveryRepository doctorDiscoveryRepository;
   final BookingRepository bookingRepository;
@@ -229,6 +232,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       : PatientProfilesPage(
                           controller: widget.profilesController!,
                           onLogout: _logout,
+                          onChangeLanguage: widget.onChangeLanguage,
                         ),
                 ],
               ),
