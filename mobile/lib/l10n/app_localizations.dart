@@ -2349,6 +2349,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tomorrow'**
   String get tomorrowChip;
+
+  /// No description provided for @howItWorks.
+  ///
+  /// In en, this message translates to:
+  /// **'How Saxlem works'**
+  String get howItWorks;
+
+  /// No description provided for @stepBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Book in the app'**
+  String get stepBook;
+
+  /// No description provided for @stepCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in at reception'**
+  String get stepCheckIn;
+
+  /// No description provided for @stepCalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Get called on your phone'**
+  String get stepCalled;
+
+  /// No description provided for @alertsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue calls and booking updates'**
+  String get alertsSubtitle;
 }
 
 class _AppLocalizationsDelegate

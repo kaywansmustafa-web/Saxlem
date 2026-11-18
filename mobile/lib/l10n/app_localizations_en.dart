@@ -1294,4 +1294,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tomorrowChip => 'Tomorrow';
+
+  @override
+  String get howItWorks => 'How Saxlem works';
+
+  @override
+  String get stepBook => 'Book in the app';
+
+  @override
+  String get stepCheckIn => 'Check in at reception';
+
+  @override
+  String get stepCalled => 'Get called on your phone';
+
+  @override
+  String get alertsSubtitle => 'Queue calls and booking updates';
 }

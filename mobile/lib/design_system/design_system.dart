@@ -6,6 +6,7 @@ export 'components/content/saxlem_details_list.dart';
 export 'components/content/saxlem_section_header.dart';
 export 'components/content/saxlem_status_pill.dart';
 export 'components/feedback/saxlem_state_view.dart';
+export 'components/layout/saxlem_aura_backdrop.dart';
 export 'components/layout/saxlem_responsive_content.dart';
 export 'components/navigation/saxlem_navigation_bar.dart';
 export 'components/navigation/saxlem_segmented_tabs.dart';

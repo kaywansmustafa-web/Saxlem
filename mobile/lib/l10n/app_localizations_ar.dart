@@ -1251,4 +1251,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tomorrowChip => 'غداً';
+
+  @override
+  String get howItWorks => 'كيف يعمل ساخلم';
+
+  @override
+  String get stepBook => 'احجز من التطبيق';
+
+  @override
+  String get stepCheckIn => 'سجّل حضورك عند الاستقبال';
+
+  @override
+  String get stepCalled => 'يصلك النداء على هاتفك';
+
+  @override
+  String get alertsSubtitle => 'نداءات الدور وتحديثات الحجز';
 }

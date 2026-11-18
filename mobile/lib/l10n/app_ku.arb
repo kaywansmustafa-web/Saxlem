@@ -552,5 +552,10 @@
   "browseSpecialty": "نوژدارێن {specialty} ببینە",
   "nextVisitTitle": "سەرەدانا تە یا بێت",
   "todayChip": "ئەڤرۆ",
-  "tomorrowChip": "سوبەهی"
+  "tomorrowChip": "سوبەهی",
+  "howItWorks": "ساخلەم چاوا کار دکەت",
+  "stepBook": "د ئەپێ دا ژڤانی بگرە",
+  "stepCheckIn": "ل پێشوازیێ هاتنا خۆ تۆمار بکە",
+  "stepCalled": "ل سەر مۆبایلا خۆ گازی تە دهێتە کرن",
+  "alertsSubtitle": "گازیێن رێزێ و نووکرنێن ژڤانان"
 }

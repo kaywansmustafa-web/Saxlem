@@ -14,72 +14,103 @@ class PhoneNumberPage extends StatelessWidget {
     final strings = context.l10n;
     final state = controller.state;
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         leading: BackButton(onPressed: controller.showWelcome),
         title: Text(strings.appName),
       ),
-      body: SafeArea(
-        child: SaxlemResponsiveContent(
-          child: ListView(
-            padding: const EdgeInsetsDirectional.symmetric(
-              vertical: SaxlemSpacing.three,
-            ),
-            children: [
-              Text(
-                strings.phoneTitle,
-                style: Theme.of(context).textTheme.headlineMedium,
+      body: SaxlemAuraBackdrop(
+        strength: .8,
+        child: SafeArea(
+          child: SaxlemResponsiveContent(
+            child: ListView(
+              padding: const EdgeInsetsDirectional.symmetric(
+                vertical: SaxlemSpacing.three,
               ),
-              const SizedBox(height: SaxlemSpacing.one),
-              Text(strings.phoneBody),
-              const SizedBox(height: SaxlemSpacing.three),
-              SaxlemCard(
-                onTap: () => _selectCountry(context),
-                semanticLabel: strings.country,
-                child: Row(
-                  children: [
-                    const Icon(Icons.public_rounded),
-                    const SizedBox(width: SaxlemSpacing.two),
-                    Expanded(
-                      child: Text(
-                        '${controller.country.isoCode == 'IQ' ? strings.iraq : controller.country.isoCode}  ${controller.country.callingCode}',
+              children: [
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Container(
+                    width: 64,
+                    height: 64,
+                    alignment: AlignmentDirectional.center,
+                    decoration: BoxDecoration(
+                      gradient: context.saxlemColors.deepAura,
+                      borderRadius: BorderRadius.circular(22),
+                      boxShadow: SaxlemElevation.glow(
+                        context.saxlemColors.brandPrimary,
                       ),
                     ),
-                    const Icon(Icons.expand_more_rounded),
-                  ],
+                    child: Icon(
+                      Icons.phone_iphone_rounded,
+                      color: context.saxlemColors.onFill,
+                      size: 30,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: SaxlemSpacing.two),
-              SaxlemTextField(
-                label: strings.phoneNumber,
-                hint: strings.phoneHint,
-                prefixText: '${controller.country.callingCode} ',
-                autofocus: true,
-                keyboardType: TextInputType.phone,
-                textInputAction: TextInputAction.done,
-                autofillHints: const [AutofillHints.telephoneNumberNational],
-                enabled: !state.loading,
-                errorText: state.errorCode == 'phone'
-                    ? strings.phoneInvalid
-                    : null,
-                onChanged: controller.updatePhone,
-                onSubmitted: (_) => controller.requestOtp(),
-              ),
-              if (state.errorCode == 'request' ||
-                  state.errorCode == 'unavailable') ...[
-                const SizedBox(height: SaxlemSpacing.one),
+                const SizedBox(height: 22),
                 Text(
-                  strings.authUnavailable,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                  strings.phoneTitle,
+                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: SaxlemSpacing.one),
+                Text(strings.phoneBody),
+                const SizedBox(height: SaxlemSpacing.three),
+                SaxlemCard(
+                  onTap: () => _selectCountry(context),
+                  semanticLabel: strings.country,
+                  child: Row(
+                    children: [
+                      const Icon(Icons.public_rounded),
+                      const SizedBox(width: SaxlemSpacing.two),
+                      Expanded(
+                        child: Text(
+                          '${controller.country.isoCode == 'IQ' ? strings.iraq : controller.country.isoCode}  ${controller.country.callingCode}',
+                        ),
+                      ),
+                      const Icon(Icons.expand_more_rounded),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: SaxlemSpacing.two),
+                SaxlemTextField(
+                  label: strings.phoneNumber,
+                  hint: strings.phoneHint,
+                  prefixText: '${controller.country.callingCode} ',
+                  autofocus: true,
+                  keyboardType: TextInputType.phone,
+                  textInputAction: TextInputAction.done,
+                  autofillHints: const [AutofillHints.telephoneNumberNational],
+                  enabled: !state.loading,
+                  errorText: state.errorCode == 'phone'
+                      ? strings.phoneInvalid
+                      : null,
+                  onChanged: controller.updatePhone,
+                  onSubmitted: (_) => controller.requestOtp(),
+                ),
+                if (state.errorCode == 'request' ||
+                    state.errorCode == 'unavailable') ...[
+                  const SizedBox(height: SaxlemSpacing.one),
+                  Text(
+                    strings.authUnavailable,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: SaxlemSpacing.three),
+                SaxlemButton(
+                  label: strings.sendCode,
+                  onPressed: controller.requestOtp,
+                  loading: state.loading,
+                  expand: true,
                 ),
               ],
-              const SizedBox(height: SaxlemSpacing.three),
-              SaxlemButton(
-                label: strings.sendCode,
-                onPressed: controller.requestOtp,
-                loading: state.loading,
-                expand: true,
-              ),
-            ],
+            ),
           ),
         ),
       ),

@@ -552,5 +552,10 @@
   "browseSpecialty": "تصفح أطباء {specialty}",
   "nextVisitTitle": "زيارتك القادمة",
   "todayChip": "اليوم",
-  "tomorrowChip": "غداً"
+  "tomorrowChip": "غداً",
+  "howItWorks": "كيف يعمل ساخلم",
+  "stepBook": "احجز من التطبيق",
+  "stepCheckIn": "سجّل حضورك عند الاستقبال",
+  "stepCalled": "يصلك النداء على هاتفك",
+  "alertsSubtitle": "نداءات الدور وتحديثات الحجز"
 }

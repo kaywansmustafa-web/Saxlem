@@ -623,5 +623,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "howItWorks": "How Saxlem works",
+  "stepBook": "Book in the app",
+  "stepCheckIn": "Check in at reception",
+  "stepCalled": "Get called on your phone",
+  "alertsSubtitle": "Queue calls and booking updates"
 }

@@ -41,8 +41,11 @@ class PatientAppointmentDto {
         present.difference(keys).isNotEmpty ||
         keys.difference(present).isNotEmpty ||
         (origin != null &&
-            !const ['patientBooked', 'clinicCreated', 'walkIn']
-                .contains(origin))) {
+            !const [
+              'patientBooked',
+              'clinicCreated',
+              'walkIn',
+            ].contains(origin))) {
       throw const FormatException();
     }
     final id = _uuidValue(json, 'id');

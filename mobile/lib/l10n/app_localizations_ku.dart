@@ -1266,4 +1266,19 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get tomorrowChip => 'سوبەهی';
+
+  @override
+  String get howItWorks => 'ساخلەم چاوا کار دکەت';
+
+  @override
+  String get stepBook => 'د ئەپێ دا ژڤانی بگرە';
+
+  @override
+  String get stepCheckIn => 'ل پێشوازیێ هاتنا خۆ تۆمار بکە';
+
+  @override
+  String get stepCalled => 'ل سەر مۆبایلا خۆ گازی تە دهێتە کرن';
+
+  @override
+  String get alertsSubtitle => 'گازیێن رێزێ و نووکرنێن ژڤانان';
 }
