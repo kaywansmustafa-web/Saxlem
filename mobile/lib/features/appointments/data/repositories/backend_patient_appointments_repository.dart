@@ -110,6 +110,33 @@ class BackendPatientAppointmentsRepository
   }
 
   @override
+  Future<OnTheWay> onTheWay(String appointmentId, GeoPoint from) async {
+    _uuidValue(appointmentId);
+    if (from.latitude.abs() > 90 ||
+        from.longitude.abs() > 180 ||
+        from.latitude.isNaN ||
+        from.longitude.isNaN) {
+      throw const AppointmentFailure(AppointmentProblem.validation);
+    }
+    try {
+      final response = await _api.postJson(
+        '/appointments/$appointmentId/on-the-way',
+        body: {
+          'latitude': double.parse(from.latitude.toStringAsFixed(5)),
+          'longitude': double.parse(from.longitude.toStringAsFixed(5)),
+        },
+      );
+      return DeparturePlanDto.parseOnTheWay(response.body);
+    } on FormatException {
+      throw const AppointmentFailure(AppointmentProblem.malformed);
+    } on MutationNotSentFailure catch (failure) {
+      throw AppointmentFailure(_problem(failure.failure, mutation: false));
+    } on ApiFailure catch (failure) {
+      throw AppointmentFailure(_problem(failure, mutation: false));
+    }
+  }
+
+  @override
   Future<PatientAppointment> cancel(
     AppointmentCancellation command,
     String operationId,

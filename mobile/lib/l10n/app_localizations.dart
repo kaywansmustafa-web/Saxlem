@@ -3051,6 +3051,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{minutes} min drive'**
   String minutesShortDrive(int minutes);
+
+  /// No description provided for @leaveOnMyWay.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m on my way'**
+  String get leaveOnMyWay;
+
+  /// No description provided for @leaveOnMyWayNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Lets the clinic know when to expect you. Your location isn\'t shared.'**
+  String get leaveOnMyWayNote;
+
+  /// No description provided for @leaveOnMyWayFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t tell the clinic. Try again.'**
+  String get leaveOnMyWayFailed;
+
+  /// No description provided for @leaveOnTheWayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'On your way'**
+  String get leaveOnTheWayTitle;
+
+  /// No description provided for @leaveExpectedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'The clinic expects you at about {time}'**
+  String leaveExpectedAt(String time);
+
+  /// No description provided for @leaveReceptionSees.
+  ///
+  /// In en, this message translates to:
+  /// **'Reception can see you\'re coming.'**
+  String get leaveReceptionSees;
+
+  /// No description provided for @leaveExpectedShort.
+  ///
+  /// In en, this message translates to:
+  /// **'On your way · expected {time}'**
+  String leaveExpectedShort(String time);
+
+  /// No description provided for @leaveLearned.
+  ///
+  /// In en, this message translates to:
+  /// **'with usual traffic at this hour'**
+  String get leaveLearned;
 }
 
 class _AppLocalizationsDelegate

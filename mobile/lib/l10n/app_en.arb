@@ -934,5 +934,21 @@
   "leaveAlertBody": "Leave by {leave} to see {doctor} at {time} · {minutes} min drive",
   "@leaveAlertBody": {"placeholders": {"leave": {"type": "String"}, "doctor": {"type": "String"}, "time": {"type": "String"}, "minutes": {"type": "int"}}},
   "minutesShortDrive": "{minutes} min drive",
-  "@minutesShortDrive": {"placeholders": {"minutes": {"type": "int"}}}
+  "@minutesShortDrive": {"placeholders": {"minutes": {"type": "int"}}},
+  "leaveOnMyWay": "I'm on my way",
+  "@leaveOnMyWay": {},
+  "leaveOnMyWayNote": "Lets the clinic know when to expect you. Your location isn't shared.",
+  "@leaveOnMyWayNote": {},
+  "leaveOnMyWayFailed": "Couldn't tell the clinic. Try again.",
+  "@leaveOnMyWayFailed": {},
+  "leaveOnTheWayTitle": "On your way",
+  "@leaveOnTheWayTitle": {},
+  "leaveExpectedAt": "The clinic expects you at about {time}",
+  "@leaveExpectedAt": {"placeholders": {"time": {"type": "String"}}},
+  "leaveReceptionSees": "Reception can see you're coming.",
+  "@leaveReceptionSees": {},
+  "leaveExpectedShort": "On your way · expected {time}",
+  "@leaveExpectedShort": {"placeholders": {"time": {"type": "String"}}},
+  "leaveLearned": "with usual traffic at this hour",
+  "@leaveLearned": {}
 }

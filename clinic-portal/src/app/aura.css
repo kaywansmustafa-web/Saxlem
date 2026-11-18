@@ -273,6 +273,7 @@ dialog .row-actions button{min-height:46px;padding:0 20px;border:0}
 [dir=rtl] .board-cell.booked.walkin{box-shadow:inset -4px 0 0 var(--slot-walkin)}
 .board-patient{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .board-tag{font-size:.72rem;font-weight:700}
+.board-on-the-way{align-self:flex-start;margin-top:2px;padding:1px 8px;border-radius:999px;font-size:.7rem;font-weight:700;background:var(--positive-bg);color:var(--positive)}
 .board-cell.app .board-tag{color:var(--slot-app)}
 .board-cell.phone .board-tag{color:var(--slot-phone)}
 .board-cell.walkin .board-tag{color:var(--slot-walkin)}

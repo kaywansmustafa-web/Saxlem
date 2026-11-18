@@ -171,6 +171,14 @@ export class AppointmentResponseDto {
     description: 'Required for optimistic-concurrency commands.',
   })
   version!: number;
+  @ApiProperty({
+    format: 'date-time',
+    nullable: true,
+    type: String,
+    description:
+      'The patient said they are on their way: when they should reach reception. Null otherwise, and once they check in.',
+  })
+  onTheWayEta!: string | null;
 }
 export class AppointmentPageResponseDto {
   @ApiProperty({ type: AppointmentResponseDto, isArray: true })

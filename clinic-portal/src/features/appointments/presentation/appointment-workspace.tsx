@@ -53,6 +53,14 @@ export function AppointmentWorkspace({
             [m.doctor, a.doctorName],
             [m.clinic, a.clinicName],
             [m.status, m[a.status]],
+            ...(a.onTheWayEta
+              ? [
+                  [
+                    bookingMessages(locale).onTheWayLabel,
+                    formatter(locale).time(a.onTheWayEta),
+                  ],
+                ]
+              : []),
             [
               bookingMessages(locale).source,
               originLabel(a.origin, bookingMessages(locale)) ?? "-",

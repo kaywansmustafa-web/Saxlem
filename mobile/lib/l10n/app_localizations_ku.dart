@@ -1685,4 +1685,34 @@ class AppLocalizationsKu extends AppLocalizations {
   String minutesShortDrive(int minutes) {
     return '$minutes خولەک ب ترومبێلێ';
   }
+
+  @override
+  String get leaveOnMyWay => 'ئەز ل ڕێکێ مە';
+
+  @override
+  String get leaveOnMyWayNote =>
+      'کلینیک دێ زانیت تو کەنگی دگەهی. جهێ تە ناهێتە پارڤەکرن.';
+
+  @override
+  String get leaveOnMyWayFailed =>
+      'نەشیاین کلینیکێ ئاگەهدار بکەین. دیسان هەول بدە.';
+
+  @override
+  String get leaveOnTheWayTitle => 'تو ل ڕێکێ یی';
+
+  @override
+  String leaveExpectedAt(String time) {
+    return 'کلینیک ل دۆر دەمژمێر $time چاڤەڕێی تە یە';
+  }
+
+  @override
+  String get leaveReceptionSees => 'پێشوازی دبینیت کو تو دهێی.';
+
+  @override
+  String leaveExpectedShort(String time) {
+    return 'ل ڕێکێ یی · دێ گەهی $time';
+  }
+
+  @override
+  String get leaveLearned => 'دگەل قەرەبالغیا ئاسایی د ڤێ دەمژمێرێ دا';
 }

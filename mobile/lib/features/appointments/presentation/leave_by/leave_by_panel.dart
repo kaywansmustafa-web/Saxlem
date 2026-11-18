@@ -232,6 +232,26 @@ class _LeaveByPanelState extends State<LeaveByPanel> {
             strings.leaveArriveBy(ClinicFormat.time(plan.arriveBy)),
             style: theme.textTheme.bodyMedium,
           ),
+          if (controller.canSayOnMyWay(plan)) ...[
+            const SizedBox(height: 12),
+            SaxlemButton(
+              label: strings.leaveOnMyWay,
+              leadingIcon: Icons.near_me_rounded,
+              expand: true,
+              onPressed: controller.onMyWay,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              controller.onMyWayFailed
+                  ? strings.leaveOnMyWayFailed
+                  : strings.leaveOnMyWayNote,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: controller.onMyWayFailed
+                    ? colors.criticalContent
+                    : colors.textMuted,
+              ),
+            ),
+          ],
           Align(
             alignment: AlignmentDirectional.centerStart,
             child: TextButton(
@@ -271,6 +291,49 @@ class _LeaveByPanelState extends State<LeaveByPanel> {
               await controller.openSettings();
               await controller.refresh();
             },
+          ),
+        ],
+      ),
+      LeaveByOnTheWay(:final arrivalEta) => Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: colors.positiveSurface,
+              borderRadius: BorderRadius.circular(SaxlemRadii.small),
+            ),
+            child: Icon(
+              Icons.near_me_rounded,
+              size: 20,
+              color: colors.positiveContent,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  strings.leaveOnTheWayTitle,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  strings.leaveExpectedAt(ClinicFormat.time(arrivalEta)),
+                  style: theme.textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  strings.leaveReceptionSees,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colors.textMuted,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -339,12 +402,22 @@ class _LeaveByPanelState extends State<LeaveByPanel> {
         strings.leaveWorking,
         null,
       ),
-      LeaveByReady(:final plan) => (
+      LeaveByReady(:final plan) when controller.canSayOnMyWay(plan) => (
         _late(plan)
             ? Icons.warning_amber_rounded
             : Icons.directions_car_rounded,
+        '${_headline(strings, plan)} · ${strings.leaveOnMyWay}',
+        controller.onMyWay,
+      ),
+      LeaveByReady(:final plan) => (
+        Icons.directions_car_rounded,
         // Short enough for one line on a phone; the visit page has the rest.
         '${_headline(strings, plan)} · ${strings.minutesShortDrive(plan.travelMinutes)}',
+        null,
+      ),
+      LeaveByOnTheWay(:final arrivalEta) => (
+        Icons.near_me_rounded,
+        strings.leaveExpectedShort(ClinicFormat.time(arrivalEta)),
         null,
       ),
       LeaveByBlocked(:final problem) => (
@@ -441,6 +514,7 @@ class _LeaveByPanelState extends State<LeaveByPanel> {
       DepartureSource.traffic => strings.leaveWithTraffic,
       DepartureSource.roads => strings.leaveNoTraffic,
       DepartureSource.estimate => strings.leaveEstimate,
+      DepartureSource.learned => strings.leaveLearned,
     },
     if (approximate) strings.leaveApproximate,
   ].join(' · ');

@@ -44,6 +44,12 @@ class LeaveByFailed extends LeaveByState {
   const LeaveByFailed();
 }
 
+/// The patient said "I'm on my way"; the clinic expects them at [arrivalEta].
+class LeaveByOnTheWay extends LeaveByState {
+  const LeaveByOnTheWay(this.arrivalEta);
+  final DateTime arrivalEta;
+}
+
 /// Works out when to leave for one visit and keeps it current while it's on
 /// screen: the drive is re-checked every 5 minutes (traffic changes), and the
 /// phone alert is moved to match.
@@ -84,7 +90,21 @@ class LeaveByController extends ChangeNotifier {
     return appointment.canMutate && until > Duration.zero && until <= window;
   }
 
+  /// "I'm on my way" is offered from this long before the leave time.
+  static const onMyWayFrom = Duration(minutes: 45);
+
+  /// Set when telling the clinic failed; the panel offers to try again.
+  bool onMyWayFailed = false;
+
+  bool canSayOnMyWay(DeparturePlan plan) =>
+      !now().isBefore(plan.leaveAt.subtract(onMyWayFrom));
+
   Future<void> start() async {
+    if (appointment.onTheWayEta case final eta?
+        when appointment.canMutate && appointment.endsAt.isAfter(now())) {
+      await services.alerts.cancel(appointment.id);
+      return _set(LeaveByOnTheWay(eta));
+    }
     if (!relevant) {
       // Cancelled, moved further out, or under way: no alert should fire.
       if (!appointment.canMutate ||
@@ -102,6 +122,26 @@ class LeaveByController extends ChangeNotifier {
     await services.consent.give();
     await services.alerts.ask();
     await refresh(ask: true);
+  }
+
+  /// Tells the clinic the patient has set off, from where they are now.
+  Future<void> onMyWay() async {
+    if (_busy || _disposed) return;
+    _busy = true;
+    onMyWayFailed = false;
+    notifyListeners();
+    try {
+      final from = await services.locator.current(ask: false);
+      final trip = await planner.onTheWay(appointment.id, from);
+      _refresh?.cancel();
+      await services.alerts.cancel(appointment.id);
+      _set(LeaveByOnTheWay(trip.arrivalEta));
+    } catch (_) {
+      onMyWayFailed = true;
+      if (!_disposed) notifyListeners();
+    } finally {
+      _busy = false;
+    }
   }
 
   /// The patient turned it off: forget everything and stop the alert.

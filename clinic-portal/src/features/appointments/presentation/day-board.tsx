@@ -190,6 +190,7 @@ export function DayBoard({
                             slot={slot}
                             m={m}
                             locale={locale}
+                            time={time}
                             onPick={() =>
                               open({
                                 doctorId: doctor.doctorId,
@@ -260,11 +261,13 @@ function Cell({
   slot,
   m,
   locale,
+  time,
   onPick,
 }: {
   slot: Slot;
   m: BookingMessages;
   locale: Locale;
+  time: { format: (value: Date | string) => string };
   onPick: () => void;
 }) {
   if (slot.state === "booked" && slot.appointment) {
@@ -292,6 +295,11 @@ function Cell({
           {label}
           {status && ` · ${status}`}
         </span>
+        {a.onTheWayEta && (
+          <span className="board-on-the-way">
+            {m.onTheWay.replace("{time}", time.format(a.onTheWayEta))}
+          </span>
+        )}
       </Link>
     );
   }

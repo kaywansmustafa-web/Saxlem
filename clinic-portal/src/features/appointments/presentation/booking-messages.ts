@@ -94,6 +94,8 @@ const en = {
   holding: "{time} with {doctor}. Choose the patient to confirm.",
   completedTag: "Done",
   noShowTag: "No-show",
+  onTheWay: "On the way · {time}",
+  onTheWayLabel: "On the way, expected at",
 };
 
 export type BookingMessages = typeof en;
@@ -191,6 +193,8 @@ const ar: BookingMessages = {
   holding: "{time} مع {doctor}. اختر المريض للتأكيد.",
   completedTag: "مكتمل",
   noShowTag: "لم يحضر",
+  onTheWay: "في الطريق · {time}",
+  onTheWayLabel: "في الطريق، متوقع الساعة",
 };
 
 const ku: BookingMessages = {
@@ -287,6 +291,8 @@ const ku: BookingMessages = {
   holding: "{time} دگەل {doctor}. نەخۆشی هەلبژێرە بۆ پشتراستکرنێ.",
   completedTag: "تەمام",
   noShowTag: "نەهات",
+  onTheWay: "ل ڕێکێ یە · {time}",
+  onTheWayLabel: "ل ڕێکێ یە، دێ گەهیت دەمژمێر",
 };
 
 export const bookingMessages = (locale: Locale): BookingMessages =>

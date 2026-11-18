@@ -33,9 +33,11 @@ class PatientAppointmentDto {
       'cancellationReason',
       'version',
     };
-    // `origin` (app, phone or walk-in) is optional so older and newer
-    // backends both parse.
-    final present = json.keys.toSet()..remove('origin');
+    // `origin` (app, phone or walk-in) and `onTheWayEta` are optional so
+    // older and newer backends both parse.
+    final present = json.keys.toSet()
+      ..remove('origin')
+      ..remove('onTheWayEta');
     final origin = json['origin'];
     if (present.length != keys.length ||
         present.difference(keys).isNotEmpty ||
@@ -101,6 +103,9 @@ class PatientAppointmentDto {
       },
       cancellationReason: cancellation as String?,
       version: _integer(json, 'version', minimum: 1),
+      onTheWayEta: json['onTheWayEta'] == null
+          ? null
+          : _dateTime(json, 'onTheWayEta'),
     );
   }
 

@@ -23,6 +23,7 @@ export class AppointmentDtoMapper {
       status: source.status,
       cancellationReason: source.cancellationReason,
       version: source.version,
+      onTheWayEta: source.onTheWayEta ?? null,
     };
   }
 }

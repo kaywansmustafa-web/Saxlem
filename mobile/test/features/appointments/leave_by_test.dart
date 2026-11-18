@@ -65,11 +65,25 @@ class _Planner implements DeparturePlanner {
   DeparturePlan? result;
   AppointmentProblem? problem;
   final asked = <GeoPoint>[];
+  final onTheWayFrom = <GeoPoint>[];
   @override
   Future<DeparturePlan> departure(String appointmentId, GeoPoint from) async {
     asked.add(from);
     if (problem case final problem?) throw AppointmentFailure(problem);
     return result ?? plan();
+  }
+
+  @override
+  Future<OnTheWay> onTheWay(String appointmentId, GeoPoint from) async {
+    onTheWayFrom.add(from);
+    if (problem case final problem?) throw AppointmentFailure(problem);
+    return OnTheWay(
+      onTheWayAt: now,
+      arrivalEta: DateTime.utc(2026, 11, 18, 6, 47),
+      travel: const Duration(minutes: 16),
+      distanceMeters: 8210,
+      source: DepartureSource.learned,
+    );
   }
 }
 
@@ -154,6 +168,31 @@ void main() {
       expect(parsed.leaveAt, DateTime.utc(2026, 11, 18, 6, 31));
       expect(parsed.travelMinutes, 14);
       expect(parsed.source, DepartureSource.traffic);
+    });
+
+    test('reads "learned" times and the on-the-way answer', () {
+      expect(
+        DeparturePlanDto.parse({...body(), 'source': 'learned'}).source,
+        DepartureSource.learned,
+      );
+      final trip = DeparturePlanDto.parseOnTheWay({
+        'onTheWayAt': '2026-11-18T06:25:00.000Z',
+        'arrivalEta': '2026-11-18T06:47:00.000Z',
+        'travelSeconds': 1020,
+        'distanceMeters': 8210,
+        'source': 'roads',
+      });
+      expect(trip.arrivalEta, DateTime.utc(2026, 11, 18, 6, 47));
+      expect(
+        () => DeparturePlanDto.parseOnTheWay({
+          'onTheWayAt': '2026-11-18T06:25:00.000Z',
+          'arrivalEta': '2026-11-18T06:20:00.000Z',
+          'travelSeconds': 1020,
+          'distanceMeters': 8210,
+          'source': 'roads',
+        }),
+        throwsFormatException,
+      );
     });
 
     test(
@@ -309,6 +348,77 @@ void main() {
       late.dispose();
     });
 
+    test('"I\'m on my way" tells the clinic and drops the alert', () async {
+      consent.value = true;
+      final early = controller();
+      await early.start();
+      // Too early to be setting off: not offered yet.
+      expect(early.canSayOnMyWay(plan()), isFalse);
+      early.dispose();
+
+      final leaving = controller(at: DateTime.utc(2026, 11, 18, 6, 20));
+      await leaving.start();
+      final ready = leaving.state as LeaveByReady;
+      expect(leaving.canSayOnMyWay(ready.plan), isTrue);
+      await leaving.onMyWay();
+      expect(planner.onTheWayFrom, [home]);
+      expect(
+        (leaving.state as LeaveByOnTheWay).arrivalEta,
+        DateTime.utc(2026, 11, 18, 6, 47),
+      );
+      expect(alerts.cancelled, contains(visit().id));
+      leaving.dispose();
+    });
+
+    test(
+      'a visit already on the way shows that, without reading location',
+      () async {
+        final leave = LeaveByController(
+          appointment: PatientAppointment(
+            id: visit().id,
+            doctor: visit().doctor,
+            clinicId: 'c1',
+            clinicName: 'Hillview Clinic',
+            reference: 'SX-2026-000001',
+            profileId: PatientProfileId.me,
+            patientName: 'Avin',
+            type: PatientAppointmentType.initial,
+            reason: 'Check-up',
+            startsAt: visitAt,
+            endsAt: visitAt.add(const Duration(minutes: 20)),
+            status: PatientAppointmentStatus.confirmed,
+            feeIqd: 25000,
+            durationMinutes: 20,
+            version: 1,
+            onTheWayEta: DateTime.utc(2026, 11, 18, 6, 47),
+          ),
+          planner: planner,
+          services: LeaveByServices(
+            locator: locator,
+            alerts: alerts,
+            consent: consent,
+          ),
+          alertFor: _alertFor,
+          now: () => now,
+        );
+        await leave.start();
+        expect(leave.state, isA<LeaveByOnTheWay>());
+        expect(locator.asks, isEmpty);
+        leave.dispose();
+      },
+    );
+
+    test('a failed "on my way" keeps the plan and says so', () async {
+      consent.value = true;
+      final leaving = controller(at: DateTime.utc(2026, 11, 18, 6, 20));
+      await leaving.start();
+      planner.problem = AppointmentProblem.offline;
+      await leaving.onMyWay();
+      expect(leaving.state, isA<LeaveByReady>());
+      expect(leaving.onMyWayFailed, isTrue);
+      leaving.dispose();
+    });
+
     test('"Stop using my location" forgets it and drops the alert', () async {
       consent.value = true;
       final leave = controller();
@@ -398,6 +508,37 @@ void main() {
       expect(find.text('انطلق قبل 09:31'), findsOneWidget);
     });
 
+    testWidgets('near the time, "I\'m on my way" lets reception know', (
+      tester,
+    ) async {
+      final planner = _Planner();
+      await tester.pumpWidget(
+        _app(
+          LeaveByPanel(
+            appointment: visit(),
+            planner: planner,
+            services: services(),
+            now: () => DateTime.utc(2026, 11, 18, 6, 20),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.text(
+          'Lets the clinic know when to expect you. Your location isn\'t shared.',
+        ),
+        findsOneWidget,
+      );
+      await tester.tap(find.text("I'm on my way"));
+      await tester.pumpAndSettle();
+      expect(find.text('On your way'), findsOneWidget);
+      expect(
+        find.text('The clinic expects you at about 09:47'),
+        findsOneWidget,
+      );
+      expect(planner.onTheWayFrom, hasLength(1));
+    });
+
     testWidgets('Home\'s next visit card carries the leave time', (
       tester,
     ) async {
@@ -419,10 +560,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(
-        find.text('Leave by 09:31 · 14 min drive'),
-        findsOneWidget,
-      );
+      expect(find.text('Leave by 09:31 · 14 min drive'), findsOneWidget);
       // Alerts for visits no longer coming up are dropped.
       expect(alerts.kept.single, {visit().id});
     });

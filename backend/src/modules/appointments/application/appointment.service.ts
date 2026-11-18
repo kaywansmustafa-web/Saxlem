@@ -652,6 +652,7 @@ export class AppointmentService {
         origin: item.origin,
         status: item.status,
         patientName: item.patientName,
+        onTheWayEta: item.onTheWayEta ?? null,
       });
     const board = doctors.map((doctor, index): DayBoardDoctor => {
       const clinic = schedules[index];

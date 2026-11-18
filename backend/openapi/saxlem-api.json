@@ -5612,6 +5612,104 @@
         ]
       }
     },
+    "/api/v1/appointments/{id}/on-the-way": {
+      "post": {
+        "description": "Tells reception when to expect the patient. The position is used only to work out the drive and is never stored; Saxlem keeps the routed drive time until the patient checks in, then only as anonymous drive-time totals. Accepted from 6 hours before the visit until it ends, before check-in.",
+        "operationId": "AppointmentsController_onTheWay",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepartureRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnTheWayResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "I'm on my way (patients)",
+        "tags": [
+          "appointments"
+        ]
+      }
+    },
     "/api/v1/doctors/{doctorId}/booking-options": {
       "get": {
         "description": "Returns advisory slots derived from active doctor-clinic schedules and current appointment conflicts. Appointment creation always revalidates availability. Empty days are successful results. Operational schedule internals are never returned.",
@@ -14078,6 +14176,12 @@
           "version": {
             "type": "integer",
             "description": "Required for optimistic-concurrency commands."
+          },
+          "onTheWayEta": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "The patient said they are on their way: when they should reach reception. Null otherwise, and once they check in."
           }
         },
         "required": [
@@ -14098,7 +14202,8 @@
           "feeIqd",
           "status",
           "cancellationReason",
-          "version"
+          "version",
+          "onTheWayEta"
         ]
       },
       "AppointmentPageResponseDto": {
@@ -14150,6 +14255,12 @@
           },
           "patientName": {
             "type": "string"
+          },
+          "onTheWayEta": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "On their way: when they should reach reception."
           }
         },
         "required": [
@@ -14157,7 +14268,8 @@
           "reference",
           "origin",
           "status",
-          "patientName"
+          "patientName",
+          "onTheWayEta"
         ]
       },
       "DayBoardSlotDto": {
@@ -14420,9 +14532,10 @@
             "enum": [
               "traffic",
               "roads",
-              "estimate"
+              "estimate",
+              "learned"
             ],
-            "description": "traffic: live/predicted traffic; roads: road network only; estimate: distance only."
+            "description": "traffic: live/predicted traffic; roads: road network only; estimate: distance only; learned: roads or estimate corrected by how long real Saxlem trips took at that hour."
           },
           "parkAndWalkMinutes": {
             "type": "integer",
@@ -14441,6 +14554,44 @@
           "source",
           "parkAndWalkMinutes",
           "computedAt"
+        ]
+      },
+      "OnTheWayResponseDto": {
+        "type": "object",
+        "properties": {
+          "onTheWayAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "arrivalEta": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the patient should reach reception."
+          },
+          "travelSeconds": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "distanceMeters": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "traffic",
+              "roads",
+              "estimate",
+              "learned"
+            ]
+          }
+        },
+        "required": [
+          "onTheWayAt",
+          "arrivalEta",
+          "travelSeconds",
+          "distanceMeters",
+          "source"
         ]
       },
       "BookingSlotResponseDto": {

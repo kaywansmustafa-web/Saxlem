@@ -11,6 +11,7 @@ import {
   type RouteTime,
 } from '../infrastructure/route-time';
 import { DepartureService } from './departure.service';
+import type { TripLearningService } from './trip-learning.service';
 
 const patient = {
   actorId: 'u1',
@@ -26,24 +27,50 @@ function service(
   routes: (at: Date) => RouteTime,
   appointment: Record<string, unknown> = {},
   clinicPin: { latitude: number | null; longitude: number | null } = clinic,
+  learned: { factor: number; trips: number } = { factor: 1, trips: 0 },
+  arrival: { status: string } | null = null,
 ) {
   const drive = jest.fn((_a, _b, at: Date) => Promise.resolve(routes(at)));
+  const factor = jest
+    .fn<Promise<{ factor: number; trips: number }>, unknown[]>()
+    .mockResolvedValue(learned);
+  const upsert = jest
+    .fn<Promise<object>, [{ create: object }]>()
+    .mockResolvedValue({});
   return {
     drive,
+    factor,
+    upsert,
     departures: new DepartureService(
       {
         get: jest.fn().mockResolvedValue({
+          id: 'a1',
+          organizationId: 'o1',
           clinicId: 'c1',
           startsAt: '2026-11-18T07:00:00.000Z', // 10:00
+          endsAt: '2026-11-18T07:20:00.000Z',
           type: 'initial',
           status: 'confirmed',
           ...appointment,
         }),
       } as unknown as AppointmentRepository,
       {
-        db: { clinic: { findUnique: jest.fn().mockResolvedValue(clinicPin) } },
+        db: {
+          clinic: {
+            findUnique: jest.fn().mockResolvedValue({
+              ...clinicPin,
+              city: 'Duhok',
+              timezone: 'Asia/Baghdad',
+            }),
+          },
+          appointmentArrival: {
+            findUnique: jest.fn().mockResolvedValue(arrival),
+          },
+          appointmentTrip: { upsert },
+        },
       } as unknown as PrismaService,
       { drive },
+      { factor } as unknown as TripLearningService,
     ),
   };
 }
@@ -103,6 +130,79 @@ describe('when to leave', () => {
         now,
       ),
     ).rejects.toThrow('map location');
+  });
+
+  it('corrects a road-only drive with what real Saxlem trips took', async () => {
+    const roads = () => ({
+      seconds: 600,
+      meters: 5000,
+      source: 'roads' as const,
+    });
+    const few = service(roads, {}, clinic, { factor: 1.5, trips: 2 });
+    expect((await few.departures.plan(patient, 'a1', home, now)).source).toBe(
+      'roads',
+    );
+    const { departures, factor } = service(roads, {}, clinic, {
+      factor: 1.5,
+      trips: 12,
+    });
+    const plan = await departures.plan(patient, 'a1', home, now);
+    expect(plan.source).toBe('learned');
+    expect(plan.travelSeconds).toBe(900);
+    // 10:00 − 10 check-in − 5 park − 15 drive.
+    expect(plan.leaveAt.toISOString()).toBe('2026-11-18T06:30:00.000Z');
+    // Asked about the hour they would leave at.
+    expect(factor.mock.calls[0]![0]).toEqual({
+      id: 'c1',
+      city: 'Duhok',
+      timezone: 'Asia/Baghdad',
+    });
+    expect((factor.mock.calls[0]![3] as Date).toISOString()).toBe(
+      '2026-11-18T06:35:00.000Z',
+    );
+  });
+
+  it('"on my way" gives reception an arrival time and keeps only the drive time', async () => {
+    const at = new Date('2026-11-18T06:30:00.000Z');
+    const { departures, upsert } = service(
+      () => ({ seconds: 840, meters: 8200, source: 'roads' }),
+      {},
+      clinic,
+      { factor: 1.25, trips: 5 },
+    );
+    const trip = await departures.onTheWay(patient, 'a1', home, at);
+    // 14 min × 1.25 = 17.5 min, plus 5 to park.
+    expect(trip.arrivalEta.toISOString()).toBe('2026-11-18T06:52:30.000Z');
+    expect(trip.source).toBe('learned');
+    const stored = upsert.mock.calls[0]![0].create;
+    expect(stored).toEqual({
+      appointmentId: 'a1',
+      organizationId: 'o1',
+      clinicId: 'c1',
+      startedAt: at,
+      arrivalEta: trip.arrivalEta,
+      routeSeconds: 840,
+      distanceBand: 1,
+      basis: 0,
+    });
+    expect(JSON.stringify(stored)).not.toContain('36.85');
+  });
+
+  it('"on my way" only on the day, before check-in', async () => {
+    const ok = () => ({ seconds: 60, meters: 900, source: 'roads' as const });
+    await expect(
+      service(ok).departures.onTheWay(
+        patient,
+        'a1',
+        home,
+        new Date('2026-11-17T20:00:00.000Z'),
+      ),
+    ).rejects.toBeInstanceOf(ConflictException);
+    await expect(
+      service(ok, {}, clinic, undefined, {
+        status: 'arrived',
+      }).departures.onTheWay(patient, 'a1', home, now),
+    ).rejects.toThrow('already arrived');
   });
 });
 

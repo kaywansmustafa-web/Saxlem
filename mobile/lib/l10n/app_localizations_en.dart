@@ -1716,4 +1716,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String minutesShortDrive(int minutes) {
     return '$minutes min drive';
   }
+
+  @override
+  String get leaveOnMyWay => 'I\'m on my way';
+
+  @override
+  String get leaveOnMyWayNote =>
+      'Lets the clinic know when to expect you. Your location isn\'t shared.';
+
+  @override
+  String get leaveOnMyWayFailed => 'Couldn\'t tell the clinic. Try again.';
+
+  @override
+  String get leaveOnTheWayTitle => 'On your way';
+
+  @override
+  String leaveExpectedAt(String time) {
+    return 'The clinic expects you at about $time';
+  }
+
+  @override
+  String get leaveReceptionSees => 'Reception can see you\'re coming.';
+
+  @override
+  String leaveExpectedShort(String time) {
+    return 'On your way · expected $time';
+  }
+
+  @override
+  String get leaveLearned => 'with usual traffic at this hour';
 }

@@ -669,5 +669,13 @@
   "leaveAlertChannel": "دەمێ دەرکەفتنێ",
   "leaveAlertTitle": "دەمێ خۆ ئامادەکرنێ یە بۆ ژڤانا تە",
   "leaveAlertBody": "بەری {leave} دەرکەڤە بۆ ژڤانا {doctor} دەمژمێر {time} · {minutes} خولەک ب ترومبێلێ",
-  "minutesShortDrive": "{minutes} خولەک ب ترومبێلێ"
+  "minutesShortDrive": "{minutes} خولەک ب ترومبێلێ",
+  "leaveOnMyWay": "ئەز ل ڕێکێ مە",
+  "leaveOnMyWayNote": "کلینیک دێ زانیت تو کەنگی دگەهی. جهێ تە ناهێتە پارڤەکرن.",
+  "leaveOnMyWayFailed": "نەشیاین کلینیکێ ئاگەهدار بکەین. دیسان هەول بدە.",
+  "leaveOnTheWayTitle": "تو ل ڕێکێ یی",
+  "leaveExpectedAt": "کلینیک ل دۆر دەمژمێر {time} چاڤەڕێی تە یە",
+  "leaveReceptionSees": "پێشوازی دبینیت کو تو دهێی.",
+  "leaveExpectedShort": "ل ڕێکێ یی · دێ گەهی {time}",
+  "leaveLearned": "دگەل قەرەبالغیا ئاسایی د ڤێ دەمژمێرێ دا"
 }

@@ -48,7 +48,11 @@ import {
   RescheduleAppointmentDto,
   UpdateAppointmentDto,
 } from './appointment.dto';
-import { DepartureRequestDto, DepartureResponseDto } from './departure.dto';
+import {
+  DepartureRequestDto,
+  DepartureResponseDto,
+  OnTheWayResponseDto,
+} from './departure.dto';
 import { DayBoardQueryDto, DayBoardResponseDto } from './day-board.dto';
 @ApiTags('appointments')
 @ApiBearerAuth()
@@ -294,6 +298,32 @@ export class AppointmentsController {
       source: plan.source,
       parkAndWalkMinutes: PARK_AND_WALK_MINUTES,
       computedAt: plan.computedAt.toISOString(),
+    };
+  }
+
+  @Post(':id/on-the-way')
+  @HttpCode(200)
+  @RequireCapabilities('appointment:read')
+  @ApiOperation({
+    summary: "I'm on my way (patients)",
+    description:
+      'Tells reception when to expect the patient. The position is used only to work out the drive and is never stored; Saxlem keeps the routed drive time until the patient checks in, then only as anonymous drive-time totals. Accepted from 6 hours before the visit until it ends, before check-in.',
+  })
+  @ApiOkResponse({ type: OnTheWayResponseDto })
+  @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
+  @ApiConflictResponse({ type: ApiErrorEnvelopeDto })
+  async onTheWay(
+    @Req() req: AuthenticatedRequest,
+    @Param() p: AppointmentParamsDto,
+    @Body() body: DepartureRequestDto,
+  ): Promise<OnTheWayResponseDto> {
+    const trip = await this.departures.onTheWay(this.access(req), p.id, body);
+    return {
+      onTheWayAt: trip.onTheWayAt.toISOString(),
+      arrivalEta: trip.arrivalEta.toISOString(),
+      travelSeconds: trip.travelSeconds,
+      distanceMeters: trip.distanceMeters,
+      source: trip.source,
     };
   }
 

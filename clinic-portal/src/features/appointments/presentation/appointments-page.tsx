@@ -197,6 +197,14 @@ export function AppointmentsPage({
                         <span className={`ax-chip ${statusTone(a.status)}`}>
                           {m[a.status]}
                         </span>
+                        {a.onTheWayEta && (
+                          <span className="ax-chip is-ok ax-chip-gap">
+                            {bm.onTheWay.replace(
+                              "{time}",
+                              f.time(a.onTheWayEta),
+                            )}
+                          </span>
+                        )}
                       </td>
                       {payment && (
                         <td>

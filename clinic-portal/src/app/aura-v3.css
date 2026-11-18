@@ -527,6 +527,7 @@ body {
   white-space: nowrap;
 }
 .ax-chip.is-ok { background: var(--ax-ok-bg); color: var(--ax-ok); }
+.ax-chip-gap { margin-inline-start: 6px; }
 .ax-chip.is-warn { background: var(--ax-warn-bg); color: var(--ax-warn); }
 .ax-chip.is-bad { background: var(--ax-bad-bg); color: var(--ax-bad); }
 .ax-chip.is-muted { background: var(--ax-surface-2); color: var(--ax-muted); }

@@ -669,5 +669,13 @@
   "leaveAlertChannel": "وقت الانطلاق",
   "leaveAlertTitle": "حان وقت الاستعداد لموعدك",
   "leaveAlertBody": "انطلق قبل {leave} لموعدك عند {doctor} الساعة {time} · {minutes} د بالسيارة",
-  "minutesShortDrive": "{minutes} د بالسيارة"
+  "minutesShortDrive": "{minutes} د بالسيارة",
+  "leaveOnMyWay": "أنا في الطريق",
+  "leaveOnMyWayNote": "يُعلم العيادة بموعد وصولك. لا تتم مشاركة موقعك.",
+  "leaveOnMyWayFailed": "تعذّر إبلاغ العيادة. حاول مجددًا.",
+  "leaveOnTheWayTitle": "أنت في الطريق",
+  "leaveExpectedAt": "تتوقع العيادة وصولك نحو الساعة {time}",
+  "leaveReceptionSees": "يرى الاستقبال أنك قادم.",
+  "leaveExpectedShort": "في الطريق · متوقع {time}",
+  "leaveLearned": "مع الازدحام المعتاد في هذه الساعة"
 }

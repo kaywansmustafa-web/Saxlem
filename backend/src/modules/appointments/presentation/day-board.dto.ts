@@ -18,6 +18,13 @@ export class DayBoardAppointmentDto {
   })
   status!: 'scheduled' | 'confirmed' | 'cancelled' | 'completed' | 'noShow';
   @ApiProperty() patientName!: string;
+  @ApiProperty({
+    format: 'date-time',
+    nullable: true,
+    type: String,
+    description: 'On their way: when they should reach reception.',
+  })
+  onTheWayEta!: string | null;
 }
 export class DayBoardSlotDto {
   @ApiProperty({ format: 'date-time' }) startsAt!: string;

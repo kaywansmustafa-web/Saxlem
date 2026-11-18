@@ -1670,4 +1670,33 @@ class AppLocalizationsAr extends AppLocalizations {
   String minutesShortDrive(int minutes) {
     return '$minutes د بالسيارة';
   }
+
+  @override
+  String get leaveOnMyWay => 'أنا في الطريق';
+
+  @override
+  String get leaveOnMyWayNote =>
+      'يُعلم العيادة بموعد وصولك. لا تتم مشاركة موقعك.';
+
+  @override
+  String get leaveOnMyWayFailed => 'تعذّر إبلاغ العيادة. حاول مجددًا.';
+
+  @override
+  String get leaveOnTheWayTitle => 'أنت في الطريق';
+
+  @override
+  String leaveExpectedAt(String time) {
+    return 'تتوقع العيادة وصولك نحو الساعة $time';
+  }
+
+  @override
+  String get leaveReceptionSees => 'يرى الاستقبال أنك قادم.';
+
+  @override
+  String leaveExpectedShort(String time) {
+    return 'في الطريق · متوقع $time';
+  }
+
+  @override
+  String get leaveLearned => 'مع الازدحام المعتاد في هذه الساعة';
 }

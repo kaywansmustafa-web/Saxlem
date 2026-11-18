@@ -26,12 +26,7 @@ class DeparturePlanDto {
     final travel = _whole(json['travelSeconds'], 6 * 3600);
     final distance = _whole(json['distanceMeters'], 1000000);
     final park = _whole(json['parkAndWalkMinutes'], 60);
-    final source = switch (json['source']) {
-      'traffic' => DepartureSource.traffic,
-      'roads' => DepartureSource.roads,
-      'estimate' => DepartureSource.estimate,
-      _ => throw const FormatException(),
-    };
+    final source = _source(json['source']);
     if (!arriveBy
         .subtract(Duration(seconds: travel, minutes: park))
         .isAtSameMomentAs(leaveAt)) {
@@ -47,6 +42,38 @@ class DeparturePlanDto {
       computedAt: _instantValue(json['computedAt']),
     );
   }
+
+  static OnTheWay parseOnTheWay(Map<String, dynamic> json) {
+    const keys = {
+      'onTheWayAt',
+      'arrivalEta',
+      'travelSeconds',
+      'distanceMeters',
+      'source',
+    };
+    final present = json.keys.toSet();
+    if (present.length != keys.length || present.difference(keys).isNotEmpty) {
+      throw const FormatException();
+    }
+    final at = _instantValue(json['onTheWayAt']);
+    final eta = _instantValue(json['arrivalEta']);
+    if (!eta.isAfter(at)) throw const FormatException();
+    return OnTheWay(
+      onTheWayAt: at,
+      arrivalEta: eta,
+      travel: Duration(seconds: _whole(json['travelSeconds'], 6 * 3600)),
+      distanceMeters: _whole(json['distanceMeters'], 1000000),
+      source: _source(json['source']),
+    );
+  }
+
+  static DepartureSource _source(Object? value) => switch (value) {
+    'traffic' => DepartureSource.traffic,
+    'roads' => DepartureSource.roads,
+    'estimate' => DepartureSource.estimate,
+    'learned' => DepartureSource.learned,
+    _ => throw const FormatException(),
+  };
 
   static DateTime _instantValue(Object? value) {
     if (value is! String || !_instant.hasMatch(value)) {

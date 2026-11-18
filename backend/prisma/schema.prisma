@@ -206,6 +206,7 @@ model Clinic {
   doctorSchedules          DoctorSchedule[]
   appointments             Appointment[]
   appointmentArrivals      AppointmentArrival[]
+  driveTimeLearning        DriveTimeLearning[]
   arrivalAudits            ArrivalAudit[]
   queueSessions            QueueSession[]
   queueActivities          QueueActivity[]
@@ -664,6 +665,7 @@ model Appointment {
   patientRegistration OrganizationPatientProfile @relation(fields: [organizationId, patientProfileId], references: [organizationId, patientProfileId], onDelete: Restrict)
   events              AppointmentEvent[]
   arrival             AppointmentArrival?
+  trip                AppointmentTrip?
   queueEntries        QueueEntry[]
   commissionEntries   CommissionLedgerEntry[]
   statementLines      BillingStatementLine[]
@@ -1399,4 +1401,44 @@ model DoctorPayoutProfile {
 
   @@unique([organizationId, doctorId])
   @@map("doctor_payout_profiles")
+}
+
+/// A patient said "I'm on my way". Holds the expected arrival for reception
+/// and the routed drive time (never the patient's position) until they check
+/// in; then it is folded into DriveTimeLearning and deleted.
+model AppointmentTrip {
+  appointmentId  String      @id @map("appointment_id") @db.Uuid
+  organizationId String      @map("organization_id") @db.Uuid
+  clinicId       String      @map("clinic_id") @db.Uuid
+  startedAt      DateTime    @map("started_at") @db.Timestamptz(3)
+  arrivalEta     DateTime    @map("arrival_eta") @db.Timestamptz(3)
+  routeSeconds   Int         @map("route_seconds")
+  /// 0: under 5 km, 1: 5–20 km, 2: over 20 km.
+  distanceBand   Int         @map("distance_band") @db.SmallInt
+  /// What routeSeconds came from. 0: roads, 1: distance estimate, 2: traffic.
+  basis          Int         @db.SmallInt
+  appointment    Appointment @relation(fields: [organizationId, clinicId, appointmentId], references: [organizationId, clinicId, id], onDelete: Restrict)
+
+  @@unique([organizationId, clinicId, appointmentId])
+  @@index([startedAt])
+  @@map("appointment_trips")
+}
+
+/// How real drives compared with the routed time, per clinic, distance band,
+/// workday/weekend and hour. Anonymous running totals only.
+model DriveTimeLearning {
+  organizationId String   @map("organization_id") @db.Uuid
+  clinicId       String   @map("clinic_id") @db.Uuid
+  basis          Int      @db.SmallInt
+  distanceBand   Int      @map("distance_band") @db.SmallInt
+  /// 0: Sunday–Thursday, 1: Friday–Saturday.
+  dayKind        Int      @map("day_kind") @db.SmallInt
+  hour           Int      @db.SmallInt
+  trips          Int      @default(0)
+  sumLogRatio    Float    @default(0) @map("sum_log_ratio")
+  updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamptz(3)
+  clinic         Clinic   @relation(fields: [organizationId, clinicId], references: [organizationId, id], onDelete: Restrict)
+
+  @@id([clinicId, basis, distanceBand, dayKind, hour])
+  @@map("drive_time_learning")
 }

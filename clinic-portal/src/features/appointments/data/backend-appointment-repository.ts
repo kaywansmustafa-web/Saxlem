@@ -33,6 +33,8 @@ export const backendAppointmentSchema = z
     status: appointmentStatusSchema,
     cancellationReason: z.string().nullable().optional(),
     version: z.number().int().min(1),
+    // The patient said "I'm on my way": when they should reach reception.
+    onTheWayEta: z.string().datetime({ offset: true }).nullable().optional(),
   })
   .strict();
 const pageSchema = z
@@ -103,6 +105,11 @@ const boardSchema = z
                     origin: originSchema,
                     status: appointmentStatusSchema,
                     patientName: z.string(),
+                    onTheWayEta: z
+                      .string()
+                      .datetime({ offset: true })
+                      .nullable()
+                      .optional(),
                   })
                   .strict()
                   .nullable(),

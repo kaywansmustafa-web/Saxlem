@@ -25,11 +25,24 @@ export class DepartureResponseDto {
   @ApiProperty({ type: 'integer', minimum: 0 }) travelSeconds!: number;
   @ApiProperty({ type: 'integer', minimum: 0 }) distanceMeters!: number;
   @ApiProperty({
-    enum: ['traffic', 'roads', 'estimate'],
+    enum: ['traffic', 'roads', 'estimate', 'learned'],
     description:
-      'traffic: live/predicted traffic; roads: road network only; estimate: distance only.',
+      'traffic: live/predicted traffic; roads: road network only; estimate: distance only; learned: roads or estimate corrected by how long real Saxlem trips took at that hour.',
   })
-  source!: 'traffic' | 'roads' | 'estimate';
+  source!: 'traffic' | 'roads' | 'estimate' | 'learned';
   @ApiProperty({ type: 'integer', minimum: 0 }) parkAndWalkMinutes!: number;
   @ApiProperty({ format: 'date-time' }) computedAt!: string;
+}
+
+export class OnTheWayResponseDto {
+  @ApiProperty({ format: 'date-time' }) onTheWayAt!: string;
+  @ApiProperty({
+    format: 'date-time',
+    description: 'When the patient should reach reception.',
+  })
+  arrivalEta!: string;
+  @ApiProperty({ type: 'integer', minimum: 0 }) travelSeconds!: number;
+  @ApiProperty({ type: 'integer', minimum: 0 }) distanceMeters!: number;
+  @ApiProperty({ enum: ['traffic', 'roads', 'estimate', 'learned'] })
+  source!: 'traffic' | 'roads' | 'estimate' | 'learned';
 }

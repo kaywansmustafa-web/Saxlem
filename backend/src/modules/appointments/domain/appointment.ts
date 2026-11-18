@@ -23,6 +23,8 @@ export interface AppointmentProjection {
   readonly status: AppointmentStatus;
   readonly cancellationReason: string | null;
   readonly version: number;
+  /** When an on-the-way patient should reach reception; null otherwise. */
+  readonly onTheWayEta?: string | null;
 }
 export interface AppointmentAccess {
   readonly actorId: string;
@@ -82,6 +84,7 @@ export interface DayBoardAppointment {
   readonly origin: AppointmentOrigin;
   readonly status: AppointmentStatus;
   readonly patientName: string;
+  readonly onTheWayEta: string | null;
 }
 export interface DayBoardSlot {
   readonly startsAt: string;

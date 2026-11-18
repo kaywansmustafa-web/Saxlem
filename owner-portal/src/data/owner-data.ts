@@ -135,6 +135,8 @@ export const appointmentSchema = z
     ]),
     cancellationReason: z.string().nullable(),
     version: z.number().int(),
+    // The patient said "I'm on my way": when they should reach reception.
+    onTheWayEta: dateTime.nullable().optional(),
   })
   .strict();
 export const appointmentPageSchema = z

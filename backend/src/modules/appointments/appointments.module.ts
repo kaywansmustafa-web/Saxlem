@@ -19,12 +19,14 @@ import {
   OsrmRouteTime,
   TomTomRouteTime,
 } from './infrastructure/route-time';
+import { TripLearningService } from './application/trip-learning.service';
 @Module({
   imports: [IdentityModule, DoctorsModule],
   controllers: [AppointmentsController, BookingOptionsController],
   providers: [
     AppointmentService,
     DepartureService,
+    TripLearningService,
     {
       provide: ROUTE_TIME,
       inject: [BACKEND_CONFIGURATION],

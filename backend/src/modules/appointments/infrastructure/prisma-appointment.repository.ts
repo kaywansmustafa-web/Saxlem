@@ -26,7 +26,11 @@ const include = {
   patientRegistration: {
     select: { patientProfile: { select: { firstName: true, lastName: true } } },
   },
+  arrival: { select: { status: true } },
+  trip: { select: { arrivalEta: true, startedAt: true } },
 } as const;
+/** An "on my way" stops showing once the patient checks in or after 3 hours. */
+const ON_THE_WAY_SHOWN_MS = 3 * 3_600_000;
 type Row = Prisma.AppointmentGetPayload<{ include: typeof include }>;
 
 @Injectable()
@@ -518,6 +522,13 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       status: row.status,
       cancellationReason: row.cancellationReason,
       version: row.version,
+      onTheWayEta:
+        row.trip &&
+        (row.status === 'scheduled' || row.status === 'confirmed') &&
+        (!row.arrival || row.arrival.status === 'expected') &&
+        Date.now() - row.trip.startedAt.getTime() < ON_THE_WAY_SHOWN_MS
+          ? row.trip.arrivalEta.toISOString()
+          : null,
     });
   }
   private conflict(error: unknown): void {
