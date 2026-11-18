@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../design_system/design_system.dart';
+
 class InformationalPage extends StatelessWidget {
   const InformationalPage({
     required this.title,
@@ -26,8 +28,20 @@ class InformationalPage extends StatelessWidget {
         padding: const EdgeInsetsDirectional.all(32),
         child: Column(
           children: [
-            Icon(icon, size: 64, color: Theme.of(context).colorScheme.primary),
-            const SizedBox(height: 20),
+            Container(
+              width: 76,
+              height: 76,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                gradient: context.saxlemColors.deepAura,
+                borderRadius: BorderRadius.circular(26),
+                boxShadow: SaxlemElevation.glow(
+                  context.saxlemColors.brandPrimary,
+                ),
+              ),
+              child: Icon(icon, size: 34, color: context.saxlemColors.onFill),
+            ),
+            const SizedBox(height: 24),
             Text(
               title,
               textAlign: TextAlign.center,
@@ -36,10 +50,26 @@ class InformationalPage extends StatelessWidget {
               ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 10),
-            Text(message, textAlign: TextAlign.center),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 340),
+              child: Text(
+                message,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: context.saxlemColors.textSecondary,
+                ),
+              ),
+            ),
             if (actionLabel != null && onAction != null) ...[
-              const SizedBox(height: 24),
-              FilledButton(onPressed: onAction, child: Text(actionLabel!)),
+              const SizedBox(height: 28),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 340),
+                child: SaxlemButton(
+                  label: actionLabel!,
+                  onPressed: onAction,
+                  expand: true,
+                ),
+              ),
             ],
           ],
         ),

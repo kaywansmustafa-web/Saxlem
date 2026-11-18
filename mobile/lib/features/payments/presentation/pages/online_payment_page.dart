@@ -116,30 +116,33 @@ class _OnlinePaymentPageState extends State<OnlinePaymentPage>
           onPressed: () => Navigator.of(context).pop(controller.payment),
         ),
       ),
-      body: SafeArea(
-        top: false,
-        child: ListenableBuilder(
-          listenable: controller,
-          builder: (context, _) => AnimatedSwitcher(
-            duration: SaxlemMotion.page,
-            switchInCurve: SaxlemMotion.enter,
-            switchOutCurve: SaxlemMotion.exit,
-            transitionBuilder: (child, animation) => FadeTransition(
-              opacity: animation,
-              child: SlideTransition(
-                position: Tween(
-                  begin: const Offset(0, .03),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: child,
+      body: SaxlemAuraBackdrop(
+        strength: .7,
+        child: SafeArea(
+          top: false,
+          child: ListenableBuilder(
+            listenable: controller,
+            builder: (context, _) => AnimatedSwitcher(
+              duration: SaxlemMotion.page,
+              switchInCurve: SaxlemMotion.enter,
+              switchOutCurve: SaxlemMotion.exit,
+              transitionBuilder: (child, animation) => FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween(
+                    begin: const Offset(0, .03),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: child,
+                ),
               ),
+              layoutBuilder: (current, previous) => Stack(
+                alignment: AlignmentDirectional.topStart,
+                fit: StackFit.expand,
+                children: [...previous, ?current],
+              ),
+              child: _body(context),
             ),
-            layoutBuilder: (current, previous) => Stack(
-              alignment: AlignmentDirectional.topStart,
-              fit: StackFit.expand,
-              children: [...previous, ?current],
-            ),
-            child: _body(context),
           ),
         ),
       ),
