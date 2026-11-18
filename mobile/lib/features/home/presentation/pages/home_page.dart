@@ -179,6 +179,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     onOpenAppointments: () =>
                         setState(() => _selectedIndex = 2),
                     profilesController: widget.profilesController,
+                    appointmentsRepository: widget.guestMode
+                        ? null
+                        : widget.appointmentsRepository,
                   ),
                   DiscoverFeature(
                     repository: widget.doctorDiscoveryRepository,

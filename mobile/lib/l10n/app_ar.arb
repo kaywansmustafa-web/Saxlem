@@ -543,5 +543,14 @@
   "deleteAccountUpcoming": "ألغِ مواعيدك القادمة أولاً ثم حاول مرة أخرى.",
   "deleteAccountFailed": "تعذر حذف حسابك. تحقق من الاتصال وحاول مرة أخرى.",
   "cancelAction": "إلغاء",
-  "languageSaved": "تم تغيير اللغة"
+  "languageSaved": "تم تغيير اللغة",
+  "specialtyDentist": "طب الأسنان",
+  "specialtyCardiology": "القلب",
+  "specialtyPediatrics": "الأطفال",
+  "specialtyEye": "العيون",
+  "specialtyNeurology": "الأعصاب",
+  "browseSpecialty": "تصفح أطباء {specialty}",
+  "nextVisitTitle": "زيارتك القادمة",
+  "todayChip": "اليوم",
+  "tomorrowChip": "غداً"
 }

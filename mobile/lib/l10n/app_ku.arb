@@ -543,5 +543,14 @@
   "deleteAccountUpcoming": "پێشی ژڤانێن خۆ یێن بێن هەلوەشینە، پاشان دووبارە هەول بدە.",
   "deleteAccountFailed": "مە نەشیا هەژمارا تە ژێ ببەین. پەیوەندیێ بپشکنە و دووبارە هەول بدە.",
   "cancelAction": "هەلوەشاندن",
-  "languageSaved": "زمان هاتە گوهۆڕین"
+  "languageSaved": "زمان هاتە گوهۆڕین",
+  "specialtyDentist": "ددان",
+  "specialtyCardiology": "دل",
+  "specialtyPediatrics": "زارۆک",
+  "specialtyEye": "چاڤ",
+  "specialtyNeurology": "دەمار",
+  "browseSpecialty": "نوژدارێن {specialty} ببینە",
+  "nextVisitTitle": "سەرەدانا تە یا بێت",
+  "todayChip": "ئەڤرۆ",
+  "tomorrowChip": "سوبەهی"
 }

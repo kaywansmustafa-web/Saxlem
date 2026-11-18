@@ -1265,4 +1265,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageSaved => 'Language changed';
+
+  @override
+  String get specialtyDentist => 'Dentist';
+
+  @override
+  String get specialtyCardiology => 'Cardiology';
+
+  @override
+  String get specialtyPediatrics => 'Pediatrics';
+
+  @override
+  String get specialtyEye => 'Eye';
+
+  @override
+  String get specialtyNeurology => 'Neurology';
+
+  @override
+  String browseSpecialty(String specialty) {
+    return 'Browse $specialty doctors';
+  }
+
+  @override
+  String get nextVisitTitle => 'Your next visit';
+
+  @override
+  String get todayChip => 'Today';
+
+  @override
+  String get tomorrowChip => 'Tomorrow';
 }

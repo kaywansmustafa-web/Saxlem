@@ -1237,4 +1237,33 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get languageSaved => 'زمان هاتە گوهۆڕین';
+
+  @override
+  String get specialtyDentist => 'ددان';
+
+  @override
+  String get specialtyCardiology => 'دل';
+
+  @override
+  String get specialtyPediatrics => 'زارۆک';
+
+  @override
+  String get specialtyEye => 'چاڤ';
+
+  @override
+  String get specialtyNeurology => 'دەمار';
+
+  @override
+  String browseSpecialty(String specialty) {
+    return 'نوژدارێن $specialty ببینە';
+  }
+
+  @override
+  String get nextVisitTitle => 'سەرەدانا تە یا بێت';
+
+  @override
+  String get todayChip => 'ئەڤرۆ';
+
+  @override
+  String get tomorrowChip => 'سوبەهی';
 }

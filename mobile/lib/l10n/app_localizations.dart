@@ -2295,6 +2295,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Language changed'**
   String get languageSaved;
+
+  /// No description provided for @specialtyDentist.
+  ///
+  /// In en, this message translates to:
+  /// **'Dentist'**
+  String get specialtyDentist;
+
+  /// No description provided for @specialtyCardiology.
+  ///
+  /// In en, this message translates to:
+  /// **'Cardiology'**
+  String get specialtyCardiology;
+
+  /// No description provided for @specialtyPediatrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Pediatrics'**
+  String get specialtyPediatrics;
+
+  /// No description provided for @specialtyEye.
+  ///
+  /// In en, this message translates to:
+  /// **'Eye'**
+  String get specialtyEye;
+
+  /// No description provided for @specialtyNeurology.
+  ///
+  /// In en, this message translates to:
+  /// **'Neurology'**
+  String get specialtyNeurology;
+
+  /// No description provided for @browseSpecialty.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse {specialty} doctors'**
+  String browseSpecialty(String specialty);
+
+  /// No description provided for @nextVisitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your next visit'**
+  String get nextVisitTitle;
+
+  /// No description provided for @todayChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get todayChip;
+
+  /// No description provided for @tomorrowChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get tomorrowChip;
 }
 
 class _AppLocalizationsDelegate

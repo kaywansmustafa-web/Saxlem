@@ -1,3 +1,6 @@
+import '../../../appointments/domain/repositories/patient_appointments_repository.dart';
+import 'next_visit_card.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/localization_extensions.dart';
@@ -21,6 +24,7 @@ class DashboardView extends StatelessWidget {
     required this.onOpenAlerts,
     required this.onOpenAppointments,
     this.profilesController,
+    this.appointmentsRepository,
     super.key,
   });
   final void Function({
@@ -33,12 +37,31 @@ class DashboardView extends StatelessWidget {
   final VoidCallback onOpenAppointments;
   final PatientProfilesController? profilesController;
 
-  static const _specialties = [
-    Specialty(id: 'dentist', name: 'Dentist', iconKey: 'dentist'),
-    Specialty(id: 'cardiology', name: 'Cardiology', iconKey: 'cardiology'),
-    Specialty(id: 'pediatrics', name: 'Pediatrics', iconKey: 'pediatrics'),
-    Specialty(id: 'eye', name: 'Eye', iconKey: 'eye'),
-    Specialty(id: 'neurology', name: 'Neurology', iconKey: 'neurology'),
+  /// When set (signed-in patients), Home shows the next booked visit.
+  final PatientAppointmentsRepository? appointmentsRepository;
+
+  static List<Specialty> _specialties(AppLocalizations strings) => [
+    Specialty(
+      id: 'dentist',
+      name: strings.specialtyDentist,
+      iconKey: 'dentist',
+    ),
+    Specialty(
+      id: 'cardiology',
+      name: strings.specialtyCardiology,
+      iconKey: 'cardiology',
+    ),
+    Specialty(
+      id: 'pediatrics',
+      name: strings.specialtyPediatrics,
+      iconKey: 'pediatrics',
+    ),
+    Specialty(id: 'eye', name: strings.specialtyEye, iconKey: 'eye'),
+    Specialty(
+      id: 'neurology',
+      name: strings.specialtyNeurology,
+      iconKey: 'neurology',
+    ),
   ];
 
   @override
@@ -63,6 +86,15 @@ class DashboardView extends StatelessWidget {
               controller: profiles,
               label: strings.currentPatient,
             ),
+            if (appointmentsRepository != null)
+              ListenableBuilder(
+                listenable: profiles,
+                builder: (context, _) => NextVisitCard(
+                  repository: appointmentsRepository!,
+                  profileId: profiles.activeProfileId,
+                  onOpen: onOpenAppointments,
+                ),
+              ),
           ],
           const SizedBox(height: 20),
           _SearchHero(
@@ -87,8 +119,8 @@ class DashboardView extends StatelessWidget {
           const SizedBox(height: 28),
           PopularSpecialtiesSection(
             title: strings.popularSpecialties,
-            specialties: _specialties,
-            semanticLabelBuilder: (item) => 'Browse ${item.name} doctors',
+            specialties: _specialties(strings),
+            semanticLabelBuilder: (item) => strings.browseSpecialty(item.name),
             onSpecialtySelected: (item) => onOpenDiscover(
               criteria: DoctorSearchCriteria(
                 specialtyCode: item.id == 'eye' ? 'ophthalmology' : item.id,

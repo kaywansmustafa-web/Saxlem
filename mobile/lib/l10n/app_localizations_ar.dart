@@ -1222,4 +1222,33 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get languageSaved => 'تم تغيير اللغة';
+
+  @override
+  String get specialtyDentist => 'طب الأسنان';
+
+  @override
+  String get specialtyCardiology => 'القلب';
+
+  @override
+  String get specialtyPediatrics => 'الأطفال';
+
+  @override
+  String get specialtyEye => 'العيون';
+
+  @override
+  String get specialtyNeurology => 'الأعصاب';
+
+  @override
+  String browseSpecialty(String specialty) {
+    return 'تصفح أطباء $specialty';
+  }
+
+  @override
+  String get nextVisitTitle => 'زيارتك القادمة';
+
+  @override
+  String get todayChip => 'اليوم';
+
+  @override
+  String get tomorrowChip => 'غداً';
 }

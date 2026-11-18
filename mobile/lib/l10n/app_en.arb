@@ -607,5 +607,21 @@
   "deleteAccountUpcoming": "Cancel your upcoming appointments first, then try again.",
   "deleteAccountFailed": "We couldn't delete your account. Check your connection and try again.",
   "cancelAction": "Cancel",
-  "languageSaved": "Language changed"
+  "languageSaved": "Language changed",
+  "specialtyDentist": "Dentist",
+  "specialtyCardiology": "Cardiology",
+  "specialtyPediatrics": "Pediatrics",
+  "specialtyEye": "Eye",
+  "specialtyNeurology": "Neurology",
+  "browseSpecialty": "Browse {specialty} doctors",
+  "nextVisitTitle": "Your next visit",
+  "todayChip": "Today",
+  "tomorrowChip": "Tomorrow",
+  "@browseSpecialty": {
+    "placeholders": {
+      "specialty": {
+        "type": "String"
+      }
+    }
+  }
 }
