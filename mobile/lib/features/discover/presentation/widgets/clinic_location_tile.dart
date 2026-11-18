@@ -119,7 +119,6 @@ class _ClinicLocationTileState extends State<ClinicLocationTile> {
             children: [
               if (location.canNavigate)
                 Expanded(
-                  flex: 3,
                   child: SaxlemButton(
                     label: strings.directions,
                     leadingIcon: Icons.directions_rounded,
@@ -129,17 +128,25 @@ class _ClinicLocationTileState extends State<ClinicLocationTile> {
                 ),
               if (location.canNavigate && location.call != null)
                 const SizedBox(width: 10),
+              // Call takes the width its word needs (it's longer in Badini);
+              // Directions takes the rest.
               if (location.call case final call?)
-                Expanded(
-                  flex: 2,
-                  child: SaxlemButton(
-                    label: strings.callClinic,
-                    leadingIcon: Icons.call_rounded,
-                    hierarchy: SaxlemButtonHierarchy.secondary,
-                    onPressed: () => _open(call),
-                    expand: true,
-                  ),
-                ),
+                location.canNavigate
+                    ? SaxlemButton(
+                        label: strings.callClinic,
+                        leadingIcon: Icons.call_rounded,
+                        hierarchy: SaxlemButtonHierarchy.secondary,
+                        onPressed: () => _open(call),
+                      )
+                    : Expanded(
+                        child: SaxlemButton(
+                          label: strings.callClinic,
+                          leadingIcon: Icons.call_rounded,
+                          hierarchy: SaxlemButtonHierarchy.secondary,
+                          onPressed: () => _open(call),
+                          expand: true,
+                        ),
+                      ),
             ],
           ),
         ],

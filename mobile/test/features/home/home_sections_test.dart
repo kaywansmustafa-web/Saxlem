@@ -139,7 +139,8 @@ void main() {
   testWidgets(
     'on the day, the next visit follows the live queue and opens it',
     (tester) async {
-      final now = DateTime.now().toUtc();
+      // 10:00 in Duhok, so the visit is the same day wherever the test runs.
+      final now = DateTime.utc(2026, 11, 18, 7);
       final starts = now.add(const Duration(minutes: 40));
       var found = false;
       (String, bool)? opened;

@@ -6,7 +6,10 @@ import '../../../../core/formatting/clinic_format.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../../core/models/patient_profile.dart';
 import '../../../../design_system/design_system.dart';
+import '../../../appointments/domain/entities/departure_plan.dart';
 import '../../../appointments/domain/entities/patient_appointment.dart';
+import '../../../appointments/presentation/leave_by/leave_by_panel.dart';
+import '../../../appointments/presentation/leave_by/leave_by_services.dart';
 import '../../../appointments/domain/repositories/patient_appointments_repository.dart';
 import '../../../live_queue/domain/entities/patient_queue_status.dart';
 import '../../../live_queue/domain/repositories/live_queue_repository.dart';
@@ -21,9 +24,13 @@ class NextVisitCard extends StatefulWidget {
     this.liveQueue,
     this.onOpenVisit,
     this.onFound,
+    this.leaveByServices,
     this.now = DateTime.now,
     super.key,
   });
+
+  /// The phone's location and alerts, for "Leave by". Tests pass fakes.
+  final LeaveByServices? leaveByServices;
 
   /// Called once this finds something to show (the patient has booked before).
   final VoidCallback? onFound;
@@ -48,6 +55,11 @@ class _NextVisitCardState extends State<NextVisitCard> {
   PatientAppointment? _next;
   PatientQueueStatus? _live;
   Timer? _poll;
+
+  DeparturePlanner? get _planner => switch (widget.repository) {
+    final DeparturePlanner planner => planner,
+    _ => null,
+  };
 
   @override
   void dispose() {
@@ -122,6 +134,16 @@ class _NextVisitCardState extends State<NextVisitCard> {
         final next = upcoming.isEmpty ? null : upcoming.first;
         setState(() => _next = next);
         _follow(next);
+        if (_planner != null) {
+          // A "time to leave" alert for a visit that's no longer coming up
+          // (cancelled by the clinic, say) must not fire.
+          unawaited(
+            (widget.leaveByServices ?? LeaveByServices.device).alerts.keepOnly(
+              widget.profileId.value,
+              {for (final item in upcoming) item.id},
+            ),
+          );
+        }
         if (next != null) widget.onFound?.call();
       }
     } catch (_) {
@@ -236,6 +258,15 @@ class _NextVisitCardState extends State<NextVisitCard> {
                       ),
                     ],
                   ),
+                  if (!_inQueue)
+                    LeaveByPanel(
+                      key: ValueKey('leave-${next.id}'),
+                      appointment: next,
+                      planner: _planner,
+                      services: widget.leaveByServices,
+                      look: LeaveByLook.onAura,
+                      now: widget.now,
+                    ),
                   if (_liveLine(context) case final line?) ...[
                     const SizedBox(height: 14),
                     Semantics(

@@ -1616,4 +1616,104 @@ class AppLocalizationsEn extends AppLocalizations {
   String liveWait(int min, int max) {
     return 'about $min–$max min';
   }
+
+  @override
+  String leaveByTime(String time) {
+    return 'Leave by $time';
+  }
+
+  @override
+  String get leaveNow => 'Leave now';
+
+  @override
+  String leaveInMinutes(int minutes) {
+    return 'Leave in $minutes min';
+  }
+
+  @override
+  String get leaveLate => 'You may be late. Leave now';
+
+  @override
+  String leaveDrive(int minutes, String distance) {
+    return '$minutes min drive · $distance';
+  }
+
+  @override
+  String leaveKm(String km) {
+    return '$km km';
+  }
+
+  @override
+  String leaveMeters(String meters) {
+    return '$meters m';
+  }
+
+  @override
+  String get leaveWithTraffic => 'with traffic';
+
+  @override
+  String get leaveNoTraffic => 'traffic not included';
+
+  @override
+  String get leaveEstimate => 'estimate from distance';
+
+  @override
+  String get leaveApproximate => 'approximate location';
+
+  @override
+  String leaveArriveBy(String time) {
+    return 'Be at reception by $time to check in';
+  }
+
+  @override
+  String get leaveAskTitle => 'When should I leave?';
+
+  @override
+  String get leaveAskBody =>
+      'Saxlem can use your location to work out the drive to the clinic, with traffic, and tell you when to leave.';
+
+  @override
+  String get leaveAskPrivacy =>
+      'Your location is used only for this and is never saved.';
+
+  @override
+  String get leaveAskButton => 'Use my location';
+
+  @override
+  String get leaveWorking => 'Working out your drive…';
+
+  @override
+  String get leaveServiceOff => 'Turn on location to see when to leave.';
+
+  @override
+  String get leaveDeniedForever =>
+      'Allow location for Saxlem in Settings to see when to leave.';
+
+  @override
+  String get leaveTurnOn => 'Turn on location';
+
+  @override
+  String get leaveOpenSettings => 'Open Settings';
+
+  @override
+  String get leaveFailed => 'Couldn\'t work out the drive right now.';
+
+  @override
+  String get leaveStop => 'Stop using my location';
+
+  @override
+  String get leaveAlertChannel => 'Time to leave';
+
+  @override
+  String get leaveAlertTitle => 'Time to get ready for your visit';
+
+  @override
+  String leaveAlertBody(String leave, String doctor, String time, int minutes) {
+    return 'Leave by $leave to see $doctor at $time · $minutes min drive';
+  }
+
+  @override
+  String minutesShortDrive(int minutes) {
+    return '$minutes min drive';
+  }
 }

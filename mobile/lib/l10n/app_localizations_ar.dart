@@ -1571,4 +1571,103 @@ class AppLocalizationsAr extends AppLocalizations {
   String liveWait(int min, int max) {
     return 'حوالي $min–$max دقيقة';
   }
+
+  @override
+  String leaveByTime(String time) {
+    return 'انطلق قبل $time';
+  }
+
+  @override
+  String get leaveNow => 'انطلق الآن';
+
+  @override
+  String leaveInMinutes(int minutes) {
+    return 'انطلق خلال $minutes د';
+  }
+
+  @override
+  String get leaveLate => 'قد تتأخر. انطلق الآن';
+
+  @override
+  String leaveDrive(int minutes, String distance) {
+    return '$minutes د بالسيارة · $distance';
+  }
+
+  @override
+  String leaveKm(String km) {
+    return '$km كم';
+  }
+
+  @override
+  String leaveMeters(String meters) {
+    return '$meters م';
+  }
+
+  @override
+  String get leaveWithTraffic => 'مع حركة المرور';
+
+  @override
+  String get leaveNoTraffic => 'دون حساب الازدحام';
+
+  @override
+  String get leaveEstimate => 'تقدير حسب المسافة';
+
+  @override
+  String get leaveApproximate => 'موقع تقريبي';
+
+  @override
+  String leaveArriveBy(String time) {
+    return 'كن عند الاستقبال قبل $time لتسجيل الوصول';
+  }
+
+  @override
+  String get leaveAskTitle => 'متى أنطلق؟';
+
+  @override
+  String get leaveAskBody =>
+      'يمكن لساخلم استخدام موقعك لحساب مدة القيادة إلى العيادة مع حركة المرور، وإخبارك متى تنطلق.';
+
+  @override
+  String get leaveAskPrivacy => 'يُستخدم موقعك لهذا فقط ولا يُحفظ أبدًا.';
+
+  @override
+  String get leaveAskButton => 'استخدم موقعي';
+
+  @override
+  String get leaveWorking => 'جارٍ حساب الطريق…';
+
+  @override
+  String get leaveServiceOff => 'شغّل الموقع لمعرفة وقت الانطلاق.';
+
+  @override
+  String get leaveDeniedForever =>
+      'اسمح لساخلم باستخدام الموقع من الإعدادات لمعرفة وقت الانطلاق.';
+
+  @override
+  String get leaveTurnOn => 'تشغيل الموقع';
+
+  @override
+  String get leaveOpenSettings => 'فتح الإعدادات';
+
+  @override
+  String get leaveFailed => 'تعذّر حساب الطريق الآن.';
+
+  @override
+  String get leaveStop => 'أوقف استخدام موقعي';
+
+  @override
+  String get leaveAlertChannel => 'وقت الانطلاق';
+
+  @override
+  String get leaveAlertTitle => 'حان وقت الاستعداد لموعدك';
+
+  @override
+  String leaveAlertBody(String leave, String doctor, String time, int minutes) {
+    return 'انطلق قبل $leave لموعدك عند $doctor الساعة $time · $minutes د بالسيارة';
+  }
+
+  @override
+  String minutesShortDrive(int minutes) {
+    return '$minutes د بالسيارة';
+  }
 }

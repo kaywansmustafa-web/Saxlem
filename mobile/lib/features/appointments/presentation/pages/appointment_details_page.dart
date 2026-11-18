@@ -15,7 +15,9 @@ import '../../../../core/models/patient_profile.dart';
 import '../../../booking/domain/repositories/booking_repository.dart';
 import '../../../booking/domain/services/booking_operation_id.dart';
 import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
+import '../../domain/entities/departure_plan.dart';
 import '../../domain/entities/patient_appointment.dart';
+import '../leave_by/leave_by_panel.dart';
 import '../../domain/repositories/patient_appointments_repository.dart';
 import '../controllers/appointment_detail_controller.dart';
 import '../state/appointment_detail_state.dart';
@@ -184,6 +186,13 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
               statusLabel: _status(item.status),
             ),
             const SizedBox(height: 16),
+            LeaveByPanel(
+              appointment: item,
+              planner: switch (widget.repository) {
+                final DeparturePlanner planner => planner,
+                _ => null,
+              },
+            ),
             _DetailsCard(
               children: [
                 _DetailRow(context.l10n.patient, item.patientName),

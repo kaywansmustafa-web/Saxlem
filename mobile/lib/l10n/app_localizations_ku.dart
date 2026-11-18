@@ -1585,4 +1585,104 @@ class AppLocalizationsKu extends AppLocalizations {
   String liveWait(int min, int max) {
     return 'نێزیکی $min–$max خولەک';
   }
+
+  @override
+  String leaveByTime(String time) {
+    return 'بەری $time دەرکەڤە';
+  }
+
+  @override
+  String get leaveNow => 'نوکە دەرکەڤە';
+
+  @override
+  String leaveInMinutes(int minutes) {
+    return 'پشتی $minutes خولەکان دەرکەڤە';
+  }
+
+  @override
+  String get leaveLate => 'دبیت درەنگ بگەهی. نوکە دەرکەڤە';
+
+  @override
+  String leaveDrive(int minutes, String distance) {
+    return '$minutes خولەک ب ترومبێلێ · $distance';
+  }
+
+  @override
+  String leaveKm(String km) {
+    return '$km کم';
+  }
+
+  @override
+  String leaveMeters(String meters) {
+    return '$meters م';
+  }
+
+  @override
+  String get leaveWithTraffic => 'دگەل قەرەبالغیا ڕێکێ';
+
+  @override
+  String get leaveNoTraffic => 'بێ قەرەبالغیا ڕێکێ';
+
+  @override
+  String get leaveEstimate => 'مەزەندە ل دویڤ دویراتیێ';
+
+  @override
+  String get leaveApproximate => 'جهێ نێزیکی';
+
+  @override
+  String leaveArriveBy(String time) {
+    return 'بەری $time ل پێشوازیێ بە دا خۆ تومار بکەی';
+  }
+
+  @override
+  String get leaveAskTitle => 'کەنگی دەرکەڤم؟';
+
+  @override
+  String get leaveAskBody =>
+      'ساخلەم دشێت جهێ تە بکاربینیت دا دەمێ ڕێکا کلینیکێ دگەل قەرەبالغیێ حساب بکەت و بێژیتە تە کەنگی دەرکەڤی.';
+
+  @override
+  String get leaveAskPrivacy =>
+      'جهێ تە بتنێ بۆ ڤێ چەندێ دهێتە بکارئینان و چو جاران ناهێتە پاشەکەفتکرن.';
+
+  @override
+  String get leaveAskButton => 'جهێ من بکاربینە';
+
+  @override
+  String get leaveWorking => 'دەمێ ڕێکێ دهێتە حسابکرن…';
+
+  @override
+  String get leaveServiceOff => 'لۆکەیشنێ ڤەکە دا بزانی کەنگی دەرکەڤی.';
+
+  @override
+  String get leaveDeniedForever =>
+      'د ڕێکخستنان دا ڕێکێ بدە ساخلەمی لۆکەیشنێ بکاربینیت دا بزانی کەنگی دەرکەڤی.';
+
+  @override
+  String get leaveTurnOn => 'لۆکەیشنێ ڤەکە';
+
+  @override
+  String get leaveOpenSettings => 'ڕێکخستنان ڤەکە';
+
+  @override
+  String get leaveFailed => 'نوکە نەشیاین دەمێ ڕێکێ حساب بکەین.';
+
+  @override
+  String get leaveStop => 'جهێ من بکارنەئینە';
+
+  @override
+  String get leaveAlertChannel => 'دەمێ دەرکەفتنێ';
+
+  @override
+  String get leaveAlertTitle => 'دەمێ خۆ ئامادەکرنێ یە بۆ ژڤانا تە';
+
+  @override
+  String leaveAlertBody(String leave, String doctor, String time, int minutes) {
+    return 'بەری $leave دەرکەڤە بۆ ژڤانا $doctor دەمژمێر $time · $minutes خولەک ب ترومبێلێ';
+  }
+
+  @override
+  String minutesShortDrive(int minutes) {
+    return '$minutes خولەک ب ترومبێلێ';
+  }
 }

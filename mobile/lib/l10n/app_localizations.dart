@@ -2889,6 +2889,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'about {min}–{max} min'**
   String liveWait(int min, int max);
+
+  /// No description provided for @leaveByTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave by {time}'**
+  String leaveByTime(String time);
+
+  /// No description provided for @leaveNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave now'**
+  String get leaveNow;
+
+  /// No description provided for @leaveInMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave in {minutes} min'**
+  String leaveInMinutes(int minutes);
+
+  /// No description provided for @leaveLate.
+  ///
+  /// In en, this message translates to:
+  /// **'You may be late. Leave now'**
+  String get leaveLate;
+
+  /// No description provided for @leaveDrive.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min drive · {distance}'**
+  String leaveDrive(int minutes, String distance);
+
+  /// No description provided for @leaveKm.
+  ///
+  /// In en, this message translates to:
+  /// **'{km} km'**
+  String leaveKm(String km);
+
+  /// No description provided for @leaveMeters.
+  ///
+  /// In en, this message translates to:
+  /// **'{meters} m'**
+  String leaveMeters(String meters);
+
+  /// No description provided for @leaveWithTraffic.
+  ///
+  /// In en, this message translates to:
+  /// **'with traffic'**
+  String get leaveWithTraffic;
+
+  /// No description provided for @leaveNoTraffic.
+  ///
+  /// In en, this message translates to:
+  /// **'traffic not included'**
+  String get leaveNoTraffic;
+
+  /// No description provided for @leaveEstimate.
+  ///
+  /// In en, this message translates to:
+  /// **'estimate from distance'**
+  String get leaveEstimate;
+
+  /// No description provided for @leaveApproximate.
+  ///
+  /// In en, this message translates to:
+  /// **'approximate location'**
+  String get leaveApproximate;
+
+  /// No description provided for @leaveArriveBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Be at reception by {time} to check in'**
+  String leaveArriveBy(String time);
+
+  /// No description provided for @leaveAskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When should I leave?'**
+  String get leaveAskTitle;
+
+  /// No description provided for @leaveAskBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Saxlem can use your location to work out the drive to the clinic, with traffic, and tell you when to leave.'**
+  String get leaveAskBody;
+
+  /// No description provided for @leaveAskPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Your location is used only for this and is never saved.'**
+  String get leaveAskPrivacy;
+
+  /// No description provided for @leaveAskButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my location'**
+  String get leaveAskButton;
+
+  /// No description provided for @leaveWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Working out your drive…'**
+  String get leaveWorking;
+
+  /// No description provided for @leaveServiceOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on location to see when to leave.'**
+  String get leaveServiceOff;
+
+  /// No description provided for @leaveDeniedForever.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow location for Saxlem in Settings to see when to leave.'**
+  String get leaveDeniedForever;
+
+  /// No description provided for @leaveTurnOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on location'**
+  String get leaveTurnOn;
+
+  /// No description provided for @leaveOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get leaveOpenSettings;
+
+  /// No description provided for @leaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t work out the drive right now.'**
+  String get leaveFailed;
+
+  /// No description provided for @leaveStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop using my location'**
+  String get leaveStop;
+
+  /// No description provided for @leaveAlertChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to leave'**
+  String get leaveAlertChannel;
+
+  /// No description provided for @leaveAlertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to get ready for your visit'**
+  String get leaveAlertTitle;
+
+  /// No description provided for @leaveAlertBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave by {leave} to see {doctor} at {time} · {minutes} min drive'**
+  String leaveAlertBody(String leave, String doctor, String time, int minutes);
+
+  /// No description provided for @minutesShortDrive.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min drive'**
+  String minutesShortDrive(int minutes);
 }
 
 class _AppLocalizationsDelegate

@@ -4,10 +4,13 @@ import '../../../../core/network/authenticated_api_client.dart';
 import '../../domain/entities/appointments_snapshot.dart';
 import '../../domain/entities/patient_appointment.dart';
 import '../../domain/repositories/patient_appointments_repository.dart';
+import '../../../../core/location/geo_point.dart';
+import '../../domain/entities/departure_plan.dart';
+import '../dto/departure_plan_dto.dart';
 import '../dto/patient_appointment_dto.dart';
 
 class BackendPatientAppointmentsRepository
-    implements PatientAppointmentsRepository {
+    implements PatientAppointmentsRepository, DeparturePlanner {
   BackendPatientAppointmentsRepository(this._api);
   final AuthenticatedApiClient _api;
   static final _uuid = RegExp(
@@ -71,6 +74,36 @@ class BackendPatientAppointmentsRepository
       return item;
     } on FormatException {
       throw const AppointmentFailure(AppointmentProblem.malformed);
+    } on ApiFailure catch (failure) {
+      throw AppointmentFailure(_problem(failure, mutation: false));
+    }
+  }
+
+  /// The patient's position goes to the server for this one calculation;
+  /// the server does not keep it.
+  @override
+  Future<DeparturePlan> departure(String appointmentId, GeoPoint from) async {
+    _uuidValue(appointmentId);
+    if (from.latitude.abs() > 90 ||
+        from.longitude.abs() > 180 ||
+        from.latitude.isNaN ||
+        from.longitude.isNaN) {
+      throw const AppointmentFailure(AppointmentProblem.validation);
+    }
+    try {
+      final response = await _api.postJson(
+        '/appointments/$appointmentId/departure',
+        body: {
+          // About 1 m is plenty for driving directions.
+          'latitude': double.parse(from.latitude.toStringAsFixed(5)),
+          'longitude': double.parse(from.longitude.toStringAsFixed(5)),
+        },
+      );
+      return DeparturePlanDto.parse(response.body);
+    } on FormatException {
+      throw const AppointmentFailure(AppointmentProblem.malformed);
+    } on MutationNotSentFailure catch (failure) {
+      throw AppointmentFailure(_problem(failure.failure, mutation: false));
     } on ApiFailure catch (failure) {
       throw AppointmentFailure(_problem(failure, mutation: false));
     }
