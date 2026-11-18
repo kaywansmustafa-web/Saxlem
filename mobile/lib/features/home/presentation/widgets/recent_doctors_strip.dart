@@ -15,9 +15,13 @@ class RecentDoctorsStrip extends StatefulWidget {
     required this.repository,
     required this.profileId,
     required this.onBook,
+    this.onFound,
     this.now = DateTime.now,
     super.key,
   });
+
+  /// Called once this finds something to show (the patient has booked before).
+  final VoidCallback? onFound;
   final PatientAppointmentsRepository repository;
   final PatientProfileId profileId;
   final ValueChanged<DoctorReference> onBook;
@@ -62,6 +66,7 @@ class _RecentDoctorsStripState extends State<RecentDoctorsStrip> {
           if (seen.add(item.doctor.id)) item.doctor,
       ].take(6).toList();
       if (mounted) setState(() => _doctors = doctors);
+      if (doctors.isNotEmpty) widget.onFound?.call();
     } catch (_) {
       if (mounted) setState(() => _doctors = const []);
     }

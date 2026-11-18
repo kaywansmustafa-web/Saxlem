@@ -826,5 +826,59 @@
         "type": "String"
       }
     }
+  },
+  "whatsBothering": "What's bothering you?",
+  "@whatsBothering": {},
+  "symptomFever": "Fever or cold",
+  "@symptomFever": {},
+  "symptomChild": "My child is sick",
+  "@symptomChild": {},
+  "symptomTooth": "Tooth pain",
+  "@symptomTooth": {},
+  "symptomSkin": "Skin",
+  "@symptomSkin": {},
+  "symptomHeart": "Heart and blood pressure",
+  "@symptomHeart": {},
+  "symptomEyes": "Eyes",
+  "@symptomEyes": {},
+  "symptomPregnancy": "Pregnancy and women's health",
+  "@symptomPregnancy": {},
+  "symptomBones": "Bones and joints",
+  "@symptomBones": {},
+  "symptomEar": "Ear, nose, throat",
+  "@symptomEar": {},
+  "symptomHead": "Headache and nerves",
+  "@symptomHead": {},
+  "symptomStomach": "Stomach",
+  "@symptomStomach": {},
+  "@seeAll": {},
+  "specialtiesTitle": "Specialties",
+  "@specialtiesTitle": {},
+  "emergencyTitle": "Emergency",
+  "@emergencyTitle": {},
+  "emergencySubtitle": "Ambulance: 122",
+  "@emergencySubtitle": {},
+  "emergencyConfirmTitle": "Call 122 now?",
+  "@emergencyConfirmTitle": {},
+  "emergencyConfirmBody": "Saxlem is for booking visits, not emergencies. If someone needs urgent help, call the ambulance.",
+  "@emergencyConfirmBody": {},
+  "emergencyCall": "Call 122",
+  "@emergencyCall": {},
+  "liveNotOpen": "The queue hasn't opened yet",
+  "@liveNotOpen": {},
+  "liveCheckIn": "Queue open · check in at reception",
+  "@liveCheckIn": {},
+  "liveWithDoctor": "With the doctor now",
+  "@liveWithDoctor": {},
+  "liveWait": "about {min}–{max} min",
+  "@liveWait": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
   }
 }

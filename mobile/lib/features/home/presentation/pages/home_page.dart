@@ -6,6 +6,8 @@ import '../../../../config/theme/app_colors.dart';
 import '../../../../shared/widgets/navigation/saxlem_bottom_navigation.dart';
 import '../widgets/dashboard_view.dart';
 import '../../../discover/discover_feature.dart';
+import '../../../discover/presentation/controllers/discover_controller.dart';
+import '../../../discover/presentation/pages/doctor_details_page.dart';
 import '../../../discover/domain/entities/doctor_search_criteria.dart';
 import '../../../appointments/appointments_feature.dart';
 import '../../../../core/localization/localization_extensions.dart';
@@ -68,6 +70,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool _openDiscoverFilters = false;
   late final NotificationsController _notifications;
 
+  /// Set once Home finds a booking, so first-timer help steps aside.
+  final _returning = ValueNotifier(false);
+
   @override
   void initState() {
     super.initState();
@@ -94,6 +99,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     _notifications.removeListener(_onNotificationsChanged);
     widget.profilesController?.removeListener(_onProfileChanged);
     _notifications.dispose();
+    _returning.dispose();
     super.dispose();
   }
 
@@ -133,6 +139,28 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       case NotificationDestination.none:
         break;
     }
+  }
+
+  /// One doctor's page, straight from Home (free today, book again).
+  Future<void> _openDoctor(String doctorId) {
+    final controller = DiscoverController(
+      widget.doctorDiscoveryRepository,
+      guest: widget.guestMode,
+    );
+    return Navigator.of(context)
+        .push(
+          MaterialPageRoute<void>(
+            builder: (_) => DoctorDetailsPage(
+              controller: controller,
+              doctorId: doctorId,
+              onAuthenticationRequired: _logout,
+              bookingRepository: widget.bookingRepository,
+              guestMode: widget.guestMode,
+              profilesController: widget.profilesController,
+            ),
+          ),
+        )
+        .whenComplete(controller.dispose);
   }
 
   /// Notifications live behind the bell at the top of Home.
@@ -203,6 +231,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     onOpenDiscover: _openDiscover,
                     onOpenAlerts: _openNotifications,
                     onOpenFamily: () => setState(() => _selectedIndex = 3),
+                    discoveryRepository: widget.doctorDiscoveryRepository,
+                    liveQueueRepository: widget.guestMode
+                        ? null
+                        : widget.liveQueueRepository,
+                    onOpenDoctor: _openDoctor,
+                    returning: _returning,
                     unreadNotifications: _notifications.unreadCount,
                     onOpenAppointments: () =>
                         setState(() => _selectedIndex = 2),

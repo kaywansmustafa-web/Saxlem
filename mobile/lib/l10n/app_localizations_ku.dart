@@ -117,7 +117,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get recommendedDoctors => 'نوژدارێن پێشنیارکری';
 
   @override
-  String get seeAll => 'هەمیان ببینە';
+  String get seeAll => 'هەمی ببینە';
 
   @override
   String get book => 'ژڤانی بگرە';
@@ -1515,5 +1515,74 @@ class AppLocalizationsKu extends AppLocalizations {
   @override
   String appVersion(String version) {
     return 'وەشان $version';
+  }
+
+  @override
+  String get whatsBothering => 'تە چ ئێش هەیە؟';
+
+  @override
+  String get symptomFever => 'تا یان سەرمابوون';
+
+  @override
+  String get symptomChild => 'زارۆکێ من نەخۆشە';
+
+  @override
+  String get symptomTooth => 'ئێشانا ددانان';
+
+  @override
+  String get symptomSkin => 'پێست';
+
+  @override
+  String get symptomHeart => 'دل و پەستانا خوینێ';
+
+  @override
+  String get symptomEyes => 'چاڤ';
+
+  @override
+  String get symptomPregnancy => 'دووگیانی و ساخلەمیا ئافرەتان';
+
+  @override
+  String get symptomBones => 'هەستی و جومگە';
+
+  @override
+  String get symptomEar => 'گوه، دفن، قورگ';
+
+  @override
+  String get symptomHead => 'سەرئێشان و دەمار';
+
+  @override
+  String get symptomStomach => 'گەدە';
+
+  @override
+  String get specialtiesTitle => 'پسپۆری';
+
+  @override
+  String get emergencyTitle => 'فریاکەفتن';
+
+  @override
+  String get emergencySubtitle => 'ئەمبولانس: 122';
+
+  @override
+  String get emergencyConfirmTitle => 'نوکە 122 تەلەفۆن بکەی؟';
+
+  @override
+  String get emergencyConfirmBody =>
+      'ساخلەم بۆ گرتنا ژڤانانە نە بۆ رەوشێن فریاکەفتنێ. ئەگەر کەسەک پێدڤی ب هاریکاریا لەز هەبیت، تەلەفۆنی ئەمبولانسێ بکە.';
+
+  @override
+  String get emergencyCall => '122 تەلەفۆن بکە';
+
+  @override
+  String get liveNotOpen => 'رێزبەندی هێشتا ڤەنەبوویە';
+
+  @override
+  String get liveCheckIn => 'رێزبەندی ڤەکریە · خۆ ل پێشوازیێ تومار بکە';
+
+  @override
+  String get liveWithDoctor => 'نوکە ل دەڤ نوژداری یی';
+
+  @override
+  String liveWait(int min, int max) {
+    return 'نێزیکی $min–$max خولەک';
   }
 }

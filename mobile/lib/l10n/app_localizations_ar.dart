@@ -1502,4 +1502,73 @@ class AppLocalizationsAr extends AppLocalizations {
   String appVersion(String version) {
     return 'الإصدار $version';
   }
+
+  @override
+  String get whatsBothering => 'مما تشكو؟';
+
+  @override
+  String get symptomFever => 'حمى أو زكام';
+
+  @override
+  String get symptomChild => 'طفلي مريض';
+
+  @override
+  String get symptomTooth => 'ألم الأسنان';
+
+  @override
+  String get symptomSkin => 'الجلد';
+
+  @override
+  String get symptomHeart => 'القلب والضغط';
+
+  @override
+  String get symptomEyes => 'العيون';
+
+  @override
+  String get symptomPregnancy => 'الحمل وصحة المرأة';
+
+  @override
+  String get symptomBones => 'العظام والمفاصل';
+
+  @override
+  String get symptomEar => 'الأذن والأنف والحنجرة';
+
+  @override
+  String get symptomHead => 'الصداع والأعصاب';
+
+  @override
+  String get symptomStomach => 'المعدة';
+
+  @override
+  String get specialtiesTitle => 'التخصصات';
+
+  @override
+  String get emergencyTitle => 'طوارئ';
+
+  @override
+  String get emergencySubtitle => 'الإسعاف: 122';
+
+  @override
+  String get emergencyConfirmTitle => 'الاتصال بـ 122 الآن؟';
+
+  @override
+  String get emergencyConfirmBody =>
+      'ساخلم لحجز المواعيد وليس للطوارئ. إذا احتاج أحد مساعدة عاجلة، اتصل بالإسعاف.';
+
+  @override
+  String get emergencyCall => 'اتصل بـ 122';
+
+  @override
+  String get liveNotOpen => 'لم يبدأ الطابور بعد';
+
+  @override
+  String get liveCheckIn => 'الطابور مفتوح · سجّل وصولك عند الاستقبال';
+
+  @override
+  String get liveWithDoctor => 'أنت عند الطبيب الآن';
+
+  @override
+  String liveWait(int min, int max) {
+    return 'حوالي $min–$max دقيقة';
+  }
 }

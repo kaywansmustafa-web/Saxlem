@@ -1547,4 +1547,73 @@ class AppLocalizationsEn extends AppLocalizations {
   String appVersion(String version) {
     return 'Version $version';
   }
+
+  @override
+  String get whatsBothering => 'What\'s bothering you?';
+
+  @override
+  String get symptomFever => 'Fever or cold';
+
+  @override
+  String get symptomChild => 'My child is sick';
+
+  @override
+  String get symptomTooth => 'Tooth pain';
+
+  @override
+  String get symptomSkin => 'Skin';
+
+  @override
+  String get symptomHeart => 'Heart and blood pressure';
+
+  @override
+  String get symptomEyes => 'Eyes';
+
+  @override
+  String get symptomPregnancy => 'Pregnancy and women\'s health';
+
+  @override
+  String get symptomBones => 'Bones and joints';
+
+  @override
+  String get symptomEar => 'Ear, nose, throat';
+
+  @override
+  String get symptomHead => 'Headache and nerves';
+
+  @override
+  String get symptomStomach => 'Stomach';
+
+  @override
+  String get specialtiesTitle => 'Specialties';
+
+  @override
+  String get emergencyTitle => 'Emergency';
+
+  @override
+  String get emergencySubtitle => 'Ambulance: 122';
+
+  @override
+  String get emergencyConfirmTitle => 'Call 122 now?';
+
+  @override
+  String get emergencyConfirmBody =>
+      'Saxlem is for booking visits, not emergencies. If someone needs urgent help, call the ambulance.';
+
+  @override
+  String get emergencyCall => 'Call 122';
+
+  @override
+  String get liveNotOpen => 'The queue hasn\'t opened yet';
+
+  @override
+  String get liveCheckIn => 'Queue open · check in at reception';
+
+  @override
+  String get liveWithDoctor => 'With the doctor now';
+
+  @override
+  String liveWait(int min, int max) {
+    return 'about $min–$max min';
+  }
 }

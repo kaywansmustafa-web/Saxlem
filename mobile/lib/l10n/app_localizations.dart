@@ -2757,6 +2757,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Version {version}'**
   String appVersion(String version);
+
+  /// No description provided for @whatsBothering.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s bothering you?'**
+  String get whatsBothering;
+
+  /// No description provided for @symptomFever.
+  ///
+  /// In en, this message translates to:
+  /// **'Fever or cold'**
+  String get symptomFever;
+
+  /// No description provided for @symptomChild.
+  ///
+  /// In en, this message translates to:
+  /// **'My child is sick'**
+  String get symptomChild;
+
+  /// No description provided for @symptomTooth.
+  ///
+  /// In en, this message translates to:
+  /// **'Tooth pain'**
+  String get symptomTooth;
+
+  /// No description provided for @symptomSkin.
+  ///
+  /// In en, this message translates to:
+  /// **'Skin'**
+  String get symptomSkin;
+
+  /// No description provided for @symptomHeart.
+  ///
+  /// In en, this message translates to:
+  /// **'Heart and blood pressure'**
+  String get symptomHeart;
+
+  /// No description provided for @symptomEyes.
+  ///
+  /// In en, this message translates to:
+  /// **'Eyes'**
+  String get symptomEyes;
+
+  /// No description provided for @symptomPregnancy.
+  ///
+  /// In en, this message translates to:
+  /// **'Pregnancy and women\'s health'**
+  String get symptomPregnancy;
+
+  /// No description provided for @symptomBones.
+  ///
+  /// In en, this message translates to:
+  /// **'Bones and joints'**
+  String get symptomBones;
+
+  /// No description provided for @symptomEar.
+  ///
+  /// In en, this message translates to:
+  /// **'Ear, nose, throat'**
+  String get symptomEar;
+
+  /// No description provided for @symptomHead.
+  ///
+  /// In en, this message translates to:
+  /// **'Headache and nerves'**
+  String get symptomHead;
+
+  /// No description provided for @symptomStomach.
+  ///
+  /// In en, this message translates to:
+  /// **'Stomach'**
+  String get symptomStomach;
+
+  /// No description provided for @specialtiesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialties'**
+  String get specialtiesTitle;
+
+  /// No description provided for @emergencyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency'**
+  String get emergencyTitle;
+
+  /// No description provided for @emergencySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ambulance: 122'**
+  String get emergencySubtitle;
+
+  /// No description provided for @emergencyConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Call 122 now?'**
+  String get emergencyConfirmTitle;
+
+  /// No description provided for @emergencyConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Saxlem is for booking visits, not emergencies. If someone needs urgent help, call the ambulance.'**
+  String get emergencyConfirmBody;
+
+  /// No description provided for @emergencyCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Call 122'**
+  String get emergencyCall;
+
+  /// No description provided for @liveNotOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue hasn\'t opened yet'**
+  String get liveNotOpen;
+
+  /// No description provided for @liveCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue open · check in at reception'**
+  String get liveCheckIn;
+
+  /// No description provided for @liveWithDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'With the doctor now'**
+  String get liveWithDoctor;
+
+  /// No description provided for @liveWait.
+  ///
+  /// In en, this message translates to:
+  /// **'about {min}–{max} min'**
+  String liveWait(int min, int max);
 }
 
 class _AppLocalizationsDelegate

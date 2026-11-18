@@ -15,9 +15,13 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(buildSubject());
+    await tester.pumpAndSettle();
 
     expect(find.text('Live queue'), findsNothing);
+    // Without a doctor directory, Home still offers the specialty shortcuts.
     expect(find.text('Popular specialties'), findsOneWidget);
+    // Emergency is always one (confirmed) tap away.
+    expect(find.text('Emergency'), findsOneWidget);
     expect(find.text('Find and book trusted doctors'), findsOneWidget);
     expect(find.text('Patients ahead'), findsNothing);
     // No placeholder people, ratings or prices: home shows only real data.

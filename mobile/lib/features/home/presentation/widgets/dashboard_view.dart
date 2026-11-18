@@ -1,6 +1,10 @@
 import '../../../appointments/domain/repositories/patient_appointments_repository.dart';
 import 'next_visit_card.dart';
 import 'recent_doctors_strip.dart';
+import 'home_discovery_sections.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../../discover/domain/repositories/doctor_discovery_repository.dart';
+import '../../../live_queue/domain/repositories/live_queue_repository.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
@@ -25,8 +29,25 @@ class DashboardView extends StatelessWidget {
     this.profilesController,
     this.appointmentsRepository,
     this.unreadNotifications = 0,
+    this.discoveryRepository,
+    this.liveQueueRepository,
+    this.onOpenDoctor,
+    this.returning,
     super.key,
   });
+
+  /// The doctor directory: symptoms, doctors free today, real specialties.
+  final DoctorDiscoveryRepository? discoveryRepository;
+
+  /// Lets the next-visit card follow today's live queue.
+  final LiveQueueRepository? liveQueueRepository;
+
+  /// Opens one doctor's page.
+  final ValueChanged<String>? onOpenDoctor;
+
+  /// True once the patient has booked before; "How Saxlem works" is for
+  /// first-timers only.
+  final ValueNotifier<bool>? returning;
   final void Function({
     DoctorSearchCriteria? criteria,
     bool focus,
@@ -81,6 +102,25 @@ class DashboardView extends StatelessWidget {
       focus: false,
       openFilters: false,
     );
+    final specialtyFallback = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 26),
+        Semantics(
+          header: true,
+          child: Text(
+            strings.popularSpecialties,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ),
+        const SizedBox(height: 12),
+        _SpecialtyStrip(
+          specialties: _specialties(strings),
+          semanticLabelBuilder: strings.browseSpecialty,
+          onSelected: openSpecialty,
+        ),
+      ],
+    );
     return SaxlemAuraBackdrop(
       child: SingleChildScrollView(
         padding: const EdgeInsetsDirectional.fromSTEB(20, 18, 20, 120),
@@ -107,6 +147,8 @@ class DashboardView extends StatelessWidget {
                     repository: appointmentsRepository!,
                     profileId: profiles.activeProfileId,
                     onOpen: onOpenAppointments,
+                    liveQueue: liveQueueRepository,
+                    onFound: () => returning?.value = true,
                   ),
                 ),
             ],
@@ -123,29 +165,33 @@ class DashboardView extends StatelessWidget {
                     onOpenDiscover(focus: false, openFilters: true),
               ),
             ),
-            const SizedBox(height: 26),
-            Semantics(
-              header: true,
-              child: Text(
-                strings.popularSpecialties,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
-            const SizedBox(height: 12),
-            _SpecialtyStrip(
-              specialties: _specialties(strings),
-              semanticLabelBuilder: strings.browseSpecialty,
-              onSelected: openSpecialty,
-            ),
+            if (discoveryRepository != null && onOpenDoctor != null)
+              HomeDiscoverySections(
+                repository: discoveryRepository!,
+                onOpenDiscover: ({criteria}) => onOpenDiscover(
+                  criteria: criteria,
+                  focus: false,
+                  openFilters: false,
+                ),
+                onOpenDoctor: onOpenDoctor!,
+                fallback: specialtyFallback,
+              )
+            else
+              specialtyFallback,
             if (profiles != null && appointmentsRepository != null)
               ListenableBuilder(
                 listenable: profiles,
                 builder: (context, _) => RecentDoctorsStrip(
                   repository: appointmentsRepository!,
                   profileId: profiles.activeProfileId,
-                  onBook: (doctor) => onOpenDiscover(
-                    criteria: DoctorSearchCriteria(query: doctor.displayName),
-                  ),
+                  onFound: () => returning?.value = true,
+                  onBook: (doctor) => onOpenDoctor != null
+                      ? onOpenDoctor!(doctor.id)
+                      : onOpenDiscover(
+                          criteria: DoctorSearchCriteria(
+                            query: doctor.displayName,
+                          ),
+                        ),
                 ),
               ),
             const SizedBox(height: 22),
@@ -153,39 +199,77 @@ class DashboardView extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(
-                    child: _QuickTile(
-                      icon: Icons.calendar_month_rounded,
-                      title: strings.appointments,
-                      subtitle: strings.welcomeAppointments,
-                      onTap: onOpenAppointments,
+                  if (profiles != null) ...[
+                    Expanded(
+                      child: _QuickTile(
+                        icon: Icons.family_restroom_rounded,
+                        title: strings.familyTileTitle,
+                        subtitle: strings.familyTileSubtitle,
+                        onTap: onOpenFamily ?? onOpenAppointments,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
+                    const SizedBox(width: 12),
+                  ],
                   Expanded(
                     child: _QuickTile(
-                      icon: Icons.family_restroom_rounded,
-                      title: strings.familyTileTitle,
-                      subtitle: strings.familyTileSubtitle,
-                      onTap: onOpenFamily ?? onOpenAlerts,
+                      icon: Icons.emergency_outlined,
+                      title: strings.emergencyTitle,
+                      subtitle: strings.emergencySubtitle,
+                      danger: true,
+                      onTap: () => _confirmEmergency(context),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 22),
-            _HowItWorks(
-              title: strings.howItWorks,
-              steps: [
-                (Icons.event_available_rounded, strings.stepBook),
-                (Icons.how_to_reg_rounded, strings.stepCheckIn),
-                (Icons.notifications_active_rounded, strings.stepCalled),
-              ],
+            ValueListenableBuilder<bool>(
+              valueListenable: returning ?? ValueNotifier(false),
+              builder: (context, isReturning, _) => isReturning
+                  ? const SizedBox.shrink()
+                  : Padding(
+                      padding: const EdgeInsetsDirectional.only(top: 22),
+                      child: _HowItWorks(
+                        title: strings.howItWorks,
+                        steps: [
+                          (Icons.event_available_rounded, strings.stepBook),
+                          (Icons.how_to_reg_rounded, strings.stepCheckIn),
+                          (
+                            Icons.notifications_active_rounded,
+                            strings.stepCalled,
+                          ),
+                        ],
+                      ),
+                    ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  /// Never dials by accident: the patient confirms first.
+  static Future<void> _confirmEmergency(BuildContext context) async {
+    final strings = context.l10n;
+    final call = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        icon: const Icon(Icons.emergency_outlined),
+        title: Text(strings.emergencyConfirmTitle),
+        content: Text(strings.emergencyConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(strings.cancelAction),
+          ),
+          FilledButton.icon(
+            onPressed: () => Navigator.pop(context, true),
+            icon: const Icon(Icons.call_rounded),
+            label: Text(strings.emergencyCall),
+          ),
+        ],
+      ),
+    );
+    if (call == true) await launchUrl(Uri(scheme: 'tel', path: '122'));
   }
 
   Widget _header(BuildContext context, String? name) {
@@ -354,10 +438,14 @@ class _QuickTile extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.onTap,
+    this.danger = false,
   });
   final IconData icon;
   final String title, subtitle;
   final VoidCallback onTap;
+
+  /// Emergency: red, so it is never mistaken for an ordinary shortcut.
+  final bool danger;
 
   @override
   Widget build(BuildContext context) {
@@ -388,10 +476,18 @@ class _QuickTile extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: colors.brandTint,
+                        color: danger
+                            ? colors.criticalSurface
+                            : colors.brandTint,
                         borderRadius: BorderRadius.circular(13),
                       ),
-                      child: Icon(icon, color: colors.brandPrimary, size: 22),
+                      child: Icon(
+                        icon,
+                        color: danger
+                            ? colors.criticalContent
+                            : colors.brandPrimary,
+                        size: 22,
+                      ),
                     ),
                     const SizedBox(height: 14),
                     Text(
