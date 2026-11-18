@@ -1133,3 +1133,167 @@ tbody tr:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* Sign in */
+.ax-login {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(360px, 0.95fr) minmax(0, 1.05fr);
+  background: var(--ax-canvas);
+}
+.ax-login-aura {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  margin: 12px;
+  padding: clamp(28px, 4vw, 52px);
+  overflow: hidden;
+  border-radius: 28px;
+  color: #fff;
+  background:
+    radial-gradient(60% 50% at 85% 10%, rgb(20 201 196 / 0.55), transparent 70%),
+    radial-gradient(70% 60% at 0% 100%, rgb(59 107 255 / 0.65), transparent 70%),
+    linear-gradient(160deg, #0b1533 0%, #13235a 55%, #0b1533 100%);
+}
+.ax-login-aura::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgb(255 255 255 / 0.09) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: linear-gradient(180deg, transparent, #000 40%, transparent);
+  pointer-events: none;
+}
+.ax-login-brand {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ax-login-brand .ax-wordmark {
+  font-size: 1.5rem;
+}
+.ax-login-mark {
+  width: 44px;
+  height: 44px;
+}
+.ax-login-pitch {
+  position: relative;
+  z-index: 1;
+  max-width: 14ch;
+  margin: 0 0 24px;
+  font-family: var(--font-display), var(--font-saxlem), sans-serif;
+  font-size: clamp(2rem, 3.4vw, 3rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+.locale-root:is([lang="ar"], [lang="ku"]) .ax-login-pitch {
+  font-family: inherit;
+  letter-spacing: 0;
+  line-height: 1.35;
+}
+.ax-login-points {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: rgb(255 255 255 / 0.82);
+}
+.ax-login-points li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ax-login-points li::before {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ax-aqua);
+  box-shadow: 0 0 0 5px rgb(20 201 196 / 0.18);
+}
+.ax-login-foot {
+  position: relative;
+  z-index: 1;
+  color: rgb(255 255 255 / 0.55);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.ax-login-panel {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 72px clamp(20px, 5vw, 64px) 40px;
+}
+.ax-login-panel > .ax-locales {
+  position: absolute;
+  top: 20px;
+  inset-inline-end: 24px;
+}
+.ax-login-card {
+  width: min(100%, 420px);
+}
+.ax-login-mark-sm {
+  display: none;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 12px;
+}
+.ax-login-card .login-form {
+  margin-top: 28px;
+}
+.ax-login-card .login-form input {
+  min-height: 50px;
+  background: var(--ax-surface);
+}
+.ax-login-card .login-form .primary {
+  min-height: 52px;
+  width: 100%;
+  font-weight: 650;
+}
+@media (max-width: 900px) {
+  .ax-login {
+    grid-template-columns: 1fr;
+  }
+  .ax-login-aura {
+    display: none;
+  }
+  .ax-login-mark-sm {
+    display: block;
+  }
+}
+.ax-login-card .password-field {
+  position: relative;
+  display: block;
+}
+.ax-login-card .password-field input {
+  padding-inline-end: 150px;
+}
+.ax-login-card .password-field button {
+  position: absolute;
+  inset-block: 7px;
+  inset-inline-end: 7px;
+  min-height: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--ax-surface-2);
+  color: var(--ax-ink-2);
+  font-size: 0.82rem;
+  font-weight: 620;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.ax-login-card .password-field button:hover {
+  background: var(--ax-brand-tint);
+  color: var(--ax-brand-ink);
+}

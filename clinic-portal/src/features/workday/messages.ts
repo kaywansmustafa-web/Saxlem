@@ -350,3 +350,18 @@ const ku: WorkdayMessages = {
 export function workdayMessages(locale: Locale): WorkdayMessages {
   return locale === "ar" ? ar : locale === "ku" ? ku : en;
 }
+
+/** Human label for an appointment status, never the raw enum. */
+export function appointmentStatusLabel(
+  locale: Locale,
+  status: "scheduled" | "confirmed" | "cancelled" | "completed" | "noShow",
+): string {
+  const m = workdayMessages(locale);
+  return {
+    scheduled: m.statusScheduled,
+    confirmed: m.statusConfirmed,
+    cancelled: m.statusCancelled,
+    completed: m.statusCompleted,
+    noShow: m.statusNoShow,
+  }[status];
+}

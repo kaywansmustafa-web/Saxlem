@@ -1,3 +1,4 @@
+import { formatter } from "@/lib/format";
 import type { Locale } from "@/i18n";
 import type { BackendPayment } from "../data/backend-payment-repository";
 import { paymentMessages, paymentTone } from "./messages";
@@ -62,11 +63,7 @@ export function PaymentSection({
           <div>
             <dt>{m.paidAt}</dt>
             <dd>
-              {new Intl.DateTimeFormat(locale, {
-                timeZone: "Asia/Baghdad",
-                dateStyle: "medium",
-                timeStyle: "short",
-              }).format(new Date(payment.paidAt))}
+              {formatter(locale).dayTime(payment.paidAt)}
             </dd>
           </div>
         )}

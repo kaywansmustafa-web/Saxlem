@@ -1,3 +1,4 @@
+import { formatter } from "@/lib/format";
 import Link from "next/link";
 import type { Locale } from "@/i18n";
 import type {
@@ -120,7 +121,7 @@ export function AppointmentsPage({
                 <tr key={a.id}>
                   <td>
                     <time dateTime={a.startsAt}>
-                      {new Date(a.startsAt).toLocaleString(locale)}
+                      {formatter(locale).dayTime(a.startsAt)}
                     </time>
                   </td>
                   <td>{a.patientName}</td>

@@ -1,4 +1,5 @@
 "use client";
+import { formatter } from "@/lib/format";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import type { Locale } from "@/i18n";
@@ -193,12 +194,12 @@ export function PatientDirectoryPageView({
                       <td>{p.active ? m.active : m.inactive}</td>
                       <td>
                         {p.lastAppointmentAt
-                          ? new Date(p.lastAppointmentAt).toLocaleString(locale)
+                          ? formatter(locale).dayTime(p.lastAppointmentAt)
                           : "—"}
                       </td>
                       <td>
                         {p.nextAppointmentAt
-                          ? new Date(p.nextAppointmentAt).toLocaleString(locale)
+                          ? formatter(locale).dayTime(p.nextAppointmentAt)
                           : "—"}
                       </td>
                       <td>

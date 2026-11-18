@@ -1,3 +1,5 @@
+import { formatter } from "@/lib/format";
+import { workdayMessages } from "@/features/workday/messages";
 import Link from "next/link";
 import type { Locale } from "@/i18n";
 import type { BackendAppointment } from "../data/backend-appointment-repository";
@@ -46,11 +48,7 @@ export function AppointmentWorkspace({
           {[
             [
               m.date,
-              new Intl.DateTimeFormat(locale, {
-                timeZone: "Asia/Baghdad",
-                dateStyle: "medium",
-                timeStyle: "short",
-              }).format(new Date(a.startsAt)),
+              formatter(locale).dayTime(a.startsAt),
             ],
             [m.doctor, a.doctorName],
             [m.clinic, a.clinicName],
@@ -60,7 +58,7 @@ export function AppointmentWorkspace({
               originLabel(a.origin, bookingMessages(locale)) ?? "-",
             ],
             [m.reason, a.reason],
-            [m.duration, `${a.durationMinutes}`],
+            [m.duration, workdayMessages(locale).minutes(a.durationMinutes)],
             [m.fee, new Intl.NumberFormat(locale).format(a.feeIqd) + " IQD"],
             [m.reference, a.reference],
           ].map(([label, value]) => (

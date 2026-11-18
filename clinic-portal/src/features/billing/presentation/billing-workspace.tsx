@@ -1,4 +1,5 @@
 "use client";
+import { formatter } from "@/lib/format";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { Locale } from "@/i18n";
@@ -383,10 +384,7 @@ function BillingContent({
   const money = (value: number) => <bdi>{formatIqd(value, locale)}</bdi>,
     date = (value: string) => (
       <bdi>
-        {new Intl.DateTimeFormat(locale, {
-          timeZone: "Asia/Baghdad",
-          dateStyle: "medium",
-        }).format(new Date(value))}
+        {formatter(locale).day(value)}
       </bdi>
     );
   if (mode === "commissions")

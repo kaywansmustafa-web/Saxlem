@@ -1,4 +1,5 @@
 "use client";
+import { formatter } from "@/lib/format";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Locale } from "@/i18n";
@@ -215,8 +216,6 @@ export function ProductionQueueWorkspace({
                 l={m.updated}
                 v={format(queue.updatedAt, locale, queue.effectiveTimezone)}
               />
-              <Metric l={m.operationalDate} v={queue.operationalDate} />
-              <Metric l={m.timezone} v={queue.effectiveTimezone} />
             </dl>
             <div className="row-actions">
               <button disabled={busy} onClick={() => router.refresh()}>
@@ -474,11 +473,7 @@ function Metric({ l, v }: { l: string; v: string }) {
   );
 }
 function format(v: string, l: Locale, timeZone: string) {
-  return new Intl.DateTimeFormat(l, {
-    timeZone,
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(v));
+  return formatter(l, timeZone).dayTime(v);
 }
 function label(s: StaffEntry["status"], m: ProductionQueueMessages) {
   return s === "waiting"

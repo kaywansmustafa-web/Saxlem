@@ -1,3 +1,4 @@
+import { formatter } from "@/lib/format";
 import type { Locale } from "@/i18n";
 
 const en = {
@@ -297,31 +298,12 @@ export const originLabel = (
  * appointment cards); Badini day names use Kurdish in Arabic script because
  * browsers have no Badini calendar data.
  */
-export const clockFormat = (locale: Locale, timeZone: string) =>
-  new Intl.DateTimeFormat(
-    locale === "en" ? "en" : locale === "ar" ? "ar-IQ" : "ckb-IQ",
-    {
-      hour: "numeric",
-      minute: "2-digit",
-      timeZone,
-      ...(locale === "en" ? {} : { hourCycle: "h23", numberingSystem: "latn" }),
-    },
-  );
-export const dayFormat = (locale: Locale, timeZone: string, withTime = false) =>
-  new Intl.DateTimeFormat(
-    locale === "en" ? "en" : locale === "ar" ? "ar-IQ" : "ckb-IQ",
-    {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      timeZone,
-      numberingSystem: "latn",
-      ...(withTime
-        ? {
-            hour: "numeric",
-            minute: "2-digit",
-            ...(locale === "en" ? {} : { hourCycle: "h23" as const }),
-          }
-        : {}),
-    },
-  );
+export const clockFormat = (locale: Locale, timeZone: string) => ({
+  format: (value: Date | string) => formatter(locale, timeZone).time(value),
+});
+export const dayFormat = (locale: Locale, timeZone: string, withTime = false) => ({
+  format: (value: Date | string) => {
+    const f = formatter(locale, timeZone);
+    return withTime ? `${f.weekdayDay(value)}${f.comma}${f.time(value)}` : f.weekdayDay(value);
+  },
+});

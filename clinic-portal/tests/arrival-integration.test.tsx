@@ -126,12 +126,12 @@ describe("arrival workspace", () => {
         m={arrivalMessages("en")}
       />,
     );
-    expect(screen.getByText("Aug 4, 2026, 12:30 AM")).toBeInTheDocument();
+    expect(screen.getByText("4 Aug 2026, 00:30")).toBeInTheDocument();
     expect(
       screen.getByText(arrivalMessages("en").queueSeparate),
     ).toBeInTheDocument();
     expect((await axe(view.container)).violations).toHaveLength(0);
-    expect(iraqDateTime("2026-08-03T21:30:00Z", "en")).toContain("Aug 4");
+    expect(iraqDateTime("2026-08-03T21:30:00Z", "en")).toBe("4 Aug 2026, 00:30");
   });
   it("blocks duplicate submissions, preserves attempt ID for retry, and returns focus", async () => {
     let resolve!: (value: Response) => void;

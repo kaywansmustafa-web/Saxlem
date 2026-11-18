@@ -1,4 +1,5 @@
 "use client";
+import { formatter } from "@/lib/format";
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -864,8 +865,5 @@ function messageFor(kind: Failure, m: AdministrationMessages) {
             : m.failure;
 }
 function formatDate(value: string, locale: Locale) {
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
+  return formatter(locale).dayTime(value);
 }
