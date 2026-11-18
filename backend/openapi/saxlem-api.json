@@ -4324,6 +4324,34 @@
         "tags": [
           "patients"
         ]
+      },
+      "delete": {
+        "description": "Ends every session, frees the phone number and archives the family profiles. Visit history stays with the clinics that hold it. Refused with 409 while appointments are still upcoming.",
+        "operationId": "PatientsController_closeAccount",
+        "parameters": [],
+        "responses": {
+          "400": {
+            "description": "Request validation failed."
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or expired."
+          },
+          "403": {
+            "description": "The authenticated identity lacks the required capability or tenant context."
+          },
+          "409": {
+            "description": "The patient still has upcoming appointments."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete the signed-in patient account",
+        "tags": [
+          "patients"
+        ]
       }
     },
     "/api/v1/patients/profiles": {

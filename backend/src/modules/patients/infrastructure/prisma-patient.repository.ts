@@ -194,6 +194,54 @@ export class PrismaPatientRepository implements PatientRepository {
     });
   }
 
+  async closeAccount(
+    accountId: string,
+    userId: string,
+    requestId: string,
+    now: Date,
+  ): Promise<{ closed: true } | { closed: false; upcoming: number }> {
+    return this.prisma.db.$transaction(async (tx) => {
+      const profileIds = (
+        await tx.patientProfile.findMany({
+          where: { patientAccountId: accountId },
+          select: { id: true },
+        })
+      ).map((profile) => profile.id);
+      const upcoming = await tx.appointment.count({
+        where: {
+          patientProfileId: { in: profileIds },
+          status: { in: ['scheduled', 'confirmed'] },
+          startsAt: { gt: now },
+        },
+      });
+      if (upcoming) return { closed: false as const, upcoming };
+      await tx.patientProfile.updateMany({
+        where: { patientAccountId: accountId, status: 'active' },
+        data: { status: 'inactive', version: { increment: 1 } },
+      });
+      await tx.patientAccount.update({
+        where: { id: accountId },
+        data: { normalizedPhoneNumber: `closed:${accountId}` },
+      });
+      await tx.user.update({
+        where: { id: userId },
+        data: { status: 'inactive' },
+      });
+      await tx.refreshSession.updateMany({
+        where: { userId, revokedAt: null },
+        data: { revokedAt: now },
+      });
+      await tx.sessionFamily.updateMany({
+        where: { userId, revokedAt: null },
+        data: { revokedAt: now },
+      });
+      await this.audit(tx, userId, 'patient.account.closed', null, requestId, {
+        patientAccountId: accountId,
+      });
+      return { closed: true as const };
+    });
+  }
+
   async activate(
     accountId: string,
     profileId: string,

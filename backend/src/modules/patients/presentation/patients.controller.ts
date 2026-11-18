@@ -139,6 +139,21 @@ export class PatientsController {
     return this.patients.me(this.userId(request));
   }
 
+  @Delete('me')
+  @RequireCapabilities('patient:self')
+  @HttpCode(204)
+  @ApiOperation({
+    summary: 'Delete the signed-in patient account',
+    description:
+      'Ends every session, frees the phone number and archives the family profiles. Visit history stays with the clinics that hold it. Refused with 409 while appointments are still upcoming.',
+  })
+  @ApiConflictResponse({
+    description: 'The patient still has upcoming appointments.',
+  })
+  closeAccount(@Req() request: AuthenticatedRequest) {
+    return this.patients.closeAccount(this.userId(request), request.requestId);
+  }
+
   @Get('profiles')
   @RequireCapabilities('patient:self')
   @ApiOperation({

@@ -57,6 +57,7 @@ function repository(
     update: jest.fn(),
     archive: jest.fn(),
     activate: jest.fn(),
+    closeAccount: jest.fn().mockResolvedValue({ closed: true }),
   };
 }
 
@@ -306,5 +307,27 @@ describe('PatientService', () => {
         'request-id',
       ),
     ).rejects.toBe(failure);
+  });
+  describe('closeAccount', () => {
+    it('closes the account when nothing is upcoming', async () => {
+      const repo = repository();
+      await service(repo).closeAccount('user-1', 'req-1');
+      expect(repo.closeAccount).toHaveBeenCalledWith(
+        account.id,
+        'user-1',
+        'req-1',
+        expect.any(Date),
+      );
+    });
+
+    it('refuses while visits are still booked', async () => {
+      const repo = repository();
+      repo.closeAccount.mockResolvedValue({ closed: false, upcoming: 2 });
+      await expect(
+        service(repo).closeAccount('user-1', 'req-1'),
+      ).rejects.toThrow(
+        'Cancel your upcoming appointments before deleting your account.',
+      );
+    });
   });
 });

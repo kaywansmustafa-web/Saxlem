@@ -157,6 +157,17 @@ export interface PatientRepository {
     requestId: string,
     actorId: string,
   ): Promise<void>;
+  /**
+   * Closes a patient's own account: ends every session, frees the phone
+   * number and archives the profiles. Clinic visit history stays with the
+   * clinics. Refused (returns the count) while visits are still upcoming.
+   */
+  closeAccount(
+    accountId: string,
+    userId: string,
+    requestId: string,
+    now: Date,
+  ): Promise<{ closed: true } | { closed: false; upcoming: number }>;
 }
 
 export const PATIENT_REPOSITORY = Symbol('PATIENT_REPOSITORY');

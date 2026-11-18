@@ -256,6 +256,21 @@ export class PatientService {
     return this.project(updated);
   }
 
+  /** The patient deletes their own Saxlem account (App Store 5.1.1(v)). */
+  async closeAccount(userId: string, requestId: string): Promise<void> {
+    const account = await this.account(userId);
+    const result = await this.repository.closeAccount(
+      account.id,
+      userId,
+      requestId,
+      new Date(),
+    );
+    if (!result.closed)
+      throw new ConflictException(
+        'Cancel your upcoming appointments before deleting your account.',
+      );
+  }
+
   async archive(
     userId: string,
     profileId: string,
