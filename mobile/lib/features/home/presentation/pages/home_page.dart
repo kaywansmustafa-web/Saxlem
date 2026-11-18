@@ -115,20 +115,45 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   void _openNotificationAction(NotificationAction action) {
+    if (action.destination == NotificationDestination.none) return;
+    // Close the notifications page (and any detail on top) first.
+    final home = ModalRoute.of(context);
+    if (home != null && !home.isCurrent) {
+      Navigator.of(context).popUntil((route) => route == home);
+    }
     switch (action.destination) {
       case NotificationDestination.appointment:
+      case NotificationDestination.liveQueue:
         setState(() => _selectedIndex = 2);
       case NotificationDestination.doctor:
       case NotificationDestination.booking:
         _openDiscover();
-      case NotificationDestination.liveQueue:
-        setState(() => _selectedIndex = 2);
       case NotificationDestination.settings:
-        setState(() => _selectedIndex = 4);
+        setState(() => _selectedIndex = 3);
       case NotificationDestination.none:
         break;
     }
   }
+
+  /// Notifications live behind the bell at the top of Home.
+  Future<void> _openNotifications() => Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (context) => Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+        ),
+        body: _quietAura(
+          NotificationsFeature(
+            controller: _notifications,
+            profilesController: widget.profilesController,
+          ),
+        ),
+      ),
+    ),
+  );
 
   void _openDiscover({
     DoctorSearchCriteria? criteria,
@@ -176,7 +201,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 children: [
                   DashboardView(
                     onOpenDiscover: _openDiscover,
-                    onOpenAlerts: () => setState(() => _selectedIndex = 3),
+                    onOpenAlerts: _openNotifications,
+                    unreadNotifications: _notifications.unreadCount,
                     onOpenAppointments: () =>
                         setState(() => _selectedIndex = 2),
                     profilesController: widget.profilesController,
@@ -223,12 +249,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           ),
                   ),
                   _quietAura(
-                    NotificationsFeature(
-                      controller: _notifications,
-                      profilesController: widget.profilesController,
-                    ),
-                  ),
-                  _quietAura(
                     widget.guestMode || widget.profilesController == null
                         ? InformationalPage(
                             title: strings.profileTitle,
@@ -259,13 +279,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           strings.home,
           strings.discover,
           strings.appointments,
-          strings.notifications,
           strings.profile,
         ],
-        notificationCount: _notifications.unreadCount,
-        notificationBadgeLabel: strings.unreadNotifications(
-          _notifications.unreadCount,
-        ),
       ),
     );
   }

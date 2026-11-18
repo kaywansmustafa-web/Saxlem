@@ -22,6 +22,7 @@ class DashboardView extends StatelessWidget {
     required this.onOpenAppointments,
     this.profilesController,
     this.appointmentsRepository,
+    this.unreadNotifications = 0,
     super.key,
   });
   final void Function({
@@ -36,6 +37,9 @@ class DashboardView extends StatelessWidget {
 
   /// When set (signed-in patients), Home shows the next booked visit.
   final PatientAppointmentsRepository? appointmentsRepository;
+
+  /// Unread notifications for the bell in the header.
+  final int unreadNotifications;
 
   static List<Specialty> _specialties(AppLocalizations strings) => [
     Specialty(
@@ -176,8 +180,12 @@ class DashboardView extends StatelessWidget {
       userName: hasName
           ? name.trim()
           : greeting.replaceAll(RegExp(r'[,،]\s*$'), ''),
-      notificationLabel: context.l10n.alerts,
+      notificationLabel: unreadNotifications > 0
+          ? '${context.l10n.notifications}. '
+                '${context.l10n.unreadNotifications(unreadNotifications)}'
+          : context.l10n.notifications,
       onNotificationPressed: onOpenAlerts,
+      unreadCount: unreadNotifications,
     );
   }
 

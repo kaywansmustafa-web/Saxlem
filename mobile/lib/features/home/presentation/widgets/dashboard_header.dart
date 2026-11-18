@@ -9,6 +9,7 @@ class DashboardHeader extends StatelessWidget {
     required this.greeting,
     required this.notificationLabel,
     this.onNotificationPressed,
+    this.unreadCount = 0,
     super.key,
   });
 
@@ -19,6 +20,9 @@ class DashboardHeader extends StatelessWidget {
   final String greeting;
   final String notificationLabel;
   final VoidCallback? onNotificationPressed;
+
+  /// Unread notifications, shown as a badge on the bell.
+  final int unreadCount;
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +76,51 @@ class DashboardHeader extends StatelessWidget {
                 child: SizedBox(
                   width: 52,
                   height: 52,
-                  child: Icon(
-                    Icons.notifications_none_rounded,
-                    color: colors.textPrimary,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.center,
+                    children: [
+                      Icon(
+                        unreadCount > 0
+                            ? Icons.notifications_rounded
+                            : Icons.notifications_none_rounded,
+                        color: colors.textPrimary,
+                      ),
+                      if (unreadCount > 0)
+                        PositionedDirectional(
+                          top: 9,
+                          end: 8,
+                          child: ExcludeSemantics(
+                            child: Container(
+                              constraints: const BoxConstraints(
+                                minWidth: 18,
+                                minHeight: 18,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5,
+                              ),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: colors.criticalContent,
+                                borderRadius: BorderRadius.circular(9),
+                                border: Border.all(
+                                  color: colors.surfaceRaised,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Text(
+                                unreadCount > 9 ? '9+' : '$unreadCount',
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                  color: colors.onFill,
+                                  fontSize: 10,
+                                  height: 1.1,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ),
