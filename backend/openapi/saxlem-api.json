@@ -7826,6 +7826,242 @@
         ]
       }
     },
+    "/api/v1/appointments/{id}/review": {
+      "get": {
+        "operationId": "AppointmentReviewController_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppointmentReviewResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Can I rate this visit, and my rating (patients)",
+        "tags": [
+          "reviews"
+        ]
+      },
+      "post": {
+        "description": "One review per completed visit, written or changed within 30 days. Comments: up to 500 characters, no links, emails or phone numbers.",
+        "operationId": "AppointmentReviewController_write",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WriteReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyReviewDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Rate a visit that took place (patients)",
+        "tags": [
+          "reviews"
+        ]
+      }
+    },
+    "/api/v1/doctors/{id}/reviews": {
+      "get": {
+        "operationId": "DoctorReviewsController_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "From nextCursor.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorReviewPageDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "A doctor's verified reviews, newest first",
+        "tags": [
+          "reviews"
+        ]
+      }
+    },
+    "/api/v1/platform/reviews": {
+      "get": {
+        "operationId": "PlatformReviewsController_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "From nextCursor.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "published",
+                "hidden"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformReviewPageDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "All reviews, for moderation",
+        "tags": [
+          "platform"
+        ]
+      }
+    },
+    "/api/v1/platform/reviews/{reviewId}/status": {
+      "put": {
+        "operationId": "PlatformReviewsController_setStatus",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetReviewStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Hide or show a review",
+        "tags": [
+          "platform"
+        ]
+      }
+    },
     "/api/v1/queue-sessions/{id}": {
       "get": {
         "operationId": "QueueController_get",
@@ -12522,6 +12758,24 @@
           "followUpIqd"
         ]
       },
+      "DoctorRatingResponseDto": {
+        "type": "object",
+        "properties": {
+          "average": {
+            "type": "number",
+            "example": 4.8,
+            "description": "One decimal; 0 with no reviews."
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "average",
+          "count"
+        ]
+      },
       "SpecialtyResponseDto": {
         "type": "object",
         "properties": {
@@ -12641,6 +12895,14 @@
               }
             ]
           },
+          "rating": {
+            "description": "Verified reviews from patients who had a visit.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DoctorRatingResponseDto"
+              }
+            ]
+          },
           "firstName": {
             "type": "string",
             "example": "Shilan"
@@ -12689,6 +12951,7 @@
           "clinics",
           "availability",
           "fees",
+          "rating",
           "firstName",
           "lastName",
           "licenseNumber",
@@ -12936,6 +13199,14 @@
                 "$ref": "#/components/schemas/DoctorFeesResponseDto"
               }
             ]
+          },
+          "rating": {
+            "description": "Verified reviews from patients who had a visit.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DoctorRatingResponseDto"
+              }
+            ]
           }
         },
         "required": [
@@ -12950,7 +13221,8 @@
           "profileImageUrl",
           "clinics",
           "availability",
-          "fees"
+          "fees",
+          "rating"
         ]
       },
       "DoctorPageResponseDto": {
@@ -13225,6 +13497,14 @@
               }
             ]
           },
+          "rating": {
+            "description": "Verified reviews from patients who had a visit.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DoctorRatingResponseDto"
+              }
+            ]
+          },
           "firstName": {
             "type": "string",
             "example": "Shilan"
@@ -13261,6 +13541,7 @@
           "clinics",
           "availability",
           "fees",
+          "rating",
           "firstName",
           "lastName",
           "licenseNumber",
@@ -16153,6 +16434,283 @@
         "required": [
           "method",
           "expectedNetPayableIqd"
+        ]
+      },
+      "MyReviewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rating": {
+            "type": "integer"
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "anonymous": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "published",
+              "hidden"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "rating",
+          "comment",
+          "anonymous",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "AppointmentReviewResponseDto": {
+        "type": "object",
+        "properties": {
+          "canReview": {
+            "type": "boolean",
+            "description": "The visit took place and the window is open."
+          },
+          "reviewableUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "review": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MyReviewDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "canReview",
+          "reviewableUntil",
+          "review"
+        ]
+      },
+      "WriteReviewDto": {
+        "type": "object",
+        "properties": {
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "comment": {
+            "type": "object",
+            "maxLength": 500,
+            "nullable": true
+          },
+          "anonymous": {
+            "type": "boolean",
+            "description": "Show \"Saxlem patient\" instead of the name."
+          }
+        },
+        "required": [
+          "rating",
+          "anonymous"
+        ]
+      },
+      "RatingSummaryDto": {
+        "type": "object",
+        "properties": {
+          "average": {
+            "type": "number",
+            "description": "One decimal; 0 when there are none."
+          },
+          "count": {
+            "type": "integer"
+          },
+          "distribution": {
+            "description": "How many 1, 2, 3, 4 and 5-star reviews.",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        "required": [
+          "average",
+          "count",
+          "distribution"
+        ]
+      },
+      "PublicReviewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "author": {
+            "type": "string",
+            "nullable": true,
+            "description": "\"Avin K.\", or null when the patient posted anonymously."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "rating",
+          "comment",
+          "author",
+          "createdAt"
+        ]
+      },
+      "DoctorReviewPageDto": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "$ref": "#/components/schemas/RatingSummaryDto"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicReviewDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "summary",
+          "items",
+          "nextCursor"
+        ]
+      },
+      "PlatformReviewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "author": {
+            "type": "string",
+            "nullable": true,
+            "description": "\"Avin K.\", or null when the patient posted anonymously."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "published",
+              "hidden"
+            ]
+          },
+          "authorName": {
+            "type": "string",
+            "description": "Shown even when posted anonymously."
+          },
+          "anonymous": {
+            "type": "boolean"
+          },
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorName": {
+            "type": "string"
+          },
+          "clinicName": {
+            "type": "string"
+          },
+          "appointmentReference": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "rating",
+          "comment",
+          "author",
+          "createdAt",
+          "status",
+          "authorName",
+          "anonymous",
+          "doctorId",
+          "doctorName",
+          "clinicName",
+          "appointmentReference"
+        ]
+      },
+      "PlatformReviewPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlatformReviewDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "SetReviewStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "published",
+              "hidden"
+            ]
+          }
+        },
+        "required": [
+          "status"
         ]
       },
       "StaffQueueEntryResponseDto": {

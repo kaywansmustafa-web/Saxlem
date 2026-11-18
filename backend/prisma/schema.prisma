@@ -431,6 +431,7 @@ model Doctor {
   appHiddenAt       DateTime?               @map("app_hidden_at") @db.Timestamptz(3)
   /// Saxlem gave more time: no hiding before this.
   billingGraceUntil DateTime?               @map("billing_grace_until") @db.Timestamptz(3)
+  reviewStats       DoctorReviewStats?
 
   @@unique([organizationId, id])
   @@unique([organizationId, licenseNumber])
@@ -666,6 +667,7 @@ model Appointment {
   events              AppointmentEvent[]
   arrival             AppointmentArrival?
   trip                AppointmentTrip?
+  review              DoctorReview?
   queueEntries        QueueEntry[]
   commissionEntries   CommissionLedgerEntry[]
   statementLines      BillingStatementLine[]
@@ -1441,4 +1443,45 @@ model DriveTimeLearning {
 
   @@id([clinicId, basis, distanceBand, dayKind, hour])
   @@map("drive_time_learning")
+}
+
+enum DoctorReviewStatus {
+  published
+  hidden
+}
+
+/// A patient's rating of a visit that took place (verified: one per
+/// completed appointment).
+model DoctorReview {
+  id               String             @id @default(uuid(7)) @db.Uuid
+  organizationId   String             @map("organization_id") @db.Uuid
+  clinicId         String             @map("clinic_id") @db.Uuid
+  doctorId         String             @map("doctor_id") @db.Uuid
+  appointmentId    String             @unique @map("appointment_id") @db.Uuid
+  patientProfileId String             @map("patient_profile_id") @db.Uuid
+  rating           Int                @db.SmallInt
+  comment          String?
+  anonymous        Boolean            @default(false)
+  /// "Avin K.", taken when the review is written.
+  authorName       String             @map("author_name")
+  status           DoctorReviewStatus @default(published)
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
+  appointment      Appointment        @relation(fields: [organizationId, clinicId, appointmentId, patientProfileId], references: [organizationId, clinicId, id, patientProfileId], onDelete: Restrict)
+
+  @@unique([organizationId, clinicId, appointmentId, patientProfileId])
+  @@index([doctorId, status, createdAt])
+  @@index([status, createdAt])
+  @@map("doctor_reviews")
+}
+
+/// Published-review totals per doctor, kept with every review change.
+model DoctorReviewStats {
+  doctorId    String   @id @map("doctor_id") @db.Uuid
+  reviewCount Int      @default(0) @map("review_count")
+  reviewSum   Int      @default(0) @map("review_sum")
+  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz(3)
+  doctor      Doctor   @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+
+  @@map("doctor_review_stats")
 }

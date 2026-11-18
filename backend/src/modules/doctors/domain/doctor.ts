@@ -65,6 +65,9 @@ export interface DoctorProjection {
   /** The doctor's own fees in IQD; null means the platform default. */
   readonly consultationFeeIqd: number | null;
   readonly followUpFeeIqd: number | null;
+  /** Published verified reviews: how many, and the sum of their stars. */
+  readonly reviewCount?: number;
+  readonly reviewSum?: number;
   readonly specialty: string;
   readonly specialties: readonly SpecialtyProjection[];
   readonly clinics: readonly DoctorClinicProjection[];

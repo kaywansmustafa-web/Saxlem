@@ -1,3 +1,5 @@
+import '../../../reviews/domain/review.dart';
+import '../../../reviews/presentation/visit_review_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/calendar/calendar_link.dart';
 import '../../../booking/booking_feature.dart';
@@ -186,6 +188,13 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
               statusLabel: _status(item.status),
             ),
             const SizedBox(height: 16),
+            if (item.status == PatientAppointmentStatus.completed)
+              if (widget.repository case final VisitReviewSource reviews)
+                VisitReviewCard(
+                  appointmentId: item.id,
+                  doctorName: item.doctor.displayName,
+                  source: reviews,
+                ),
             LeaveByPanel(
               appointment: item,
               planner: switch (widget.repository) {

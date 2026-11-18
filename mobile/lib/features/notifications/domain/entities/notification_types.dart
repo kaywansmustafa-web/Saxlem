@@ -12,6 +12,7 @@ enum PatientNotificationType {
   missedTurn,
   consultationStarted,
   visitCompleted,
+  reviewRequested,
   queuePaused,
   queueResumed,
   queueClosed,

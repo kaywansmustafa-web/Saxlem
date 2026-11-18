@@ -1715,4 +1715,95 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get leaveLearned => 'دگەل قەرەبالغیا ئاسایی د ڤێ دەمژمێرێ دا';
+
+  @override
+  String starsLabel(String rating) {
+    return '$rating ژ 5 ستێران';
+  }
+
+  @override
+  String reviewCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count هەلسەنگاندن',
+      one: '1 هەلسەنگاندن',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewsTitle => 'هەلسەنگاندن';
+
+  @override
+  String get reviewsNone =>
+      'هێشتا چ هەلسەنگاندن نینن. بتنێ ئەو نەخوشێن سەرەدان کرین دشێن هەلسەنگاندنێ بکەن.';
+
+  @override
+  String reviewsSeeAll(int count) {
+    return 'هەمی هەلسەنگاندنان ببینە ($count)';
+  }
+
+  @override
+  String get reviewsMore => 'پتر نیشان بدە';
+
+  @override
+  String reviewsOf(String doctor) {
+    return 'هەلسەنگاندنێن $doctor';
+  }
+
+  @override
+  String get reviewAnonymous => 'نەخوشەکێ ساخلەمی';
+
+  @override
+  String get reviewVerified => 'سەرەدانا پشتڕاستکری';
+
+  @override
+  String get rateTitle => 'سەرەدانا تە چاوا بوو؟';
+
+  @override
+  String rateWith(String doctor) {
+    return 'سەرەدانا خۆ ل دەڤ $doctor هەلسەنگینە';
+  }
+
+  @override
+  String get rateCommentHint => 'تشتەک هەیە نەخوشێن دی بزانن؟ (نە پێدڤییە)';
+
+  @override
+  String get rateCommentRule =>
+      'بۆ هەمییان دیار دبیت. بێ لینک، ئیمێل یان ژمارێن تەلەفۆنێ.';
+
+  @override
+  String get rateAnonymous => 'بێ ناڤێ من بەلاڤ بکە';
+
+  @override
+  String get ratePost => 'هەلسەنگاندنێ بەلاڤ بکە';
+
+  @override
+  String get rateUpdate => 'هەلسەنگاندنێ نوی بکە';
+
+  @override
+  String get rateEdit => 'گوهۆڕین';
+
+  @override
+  String get rateThanks => 'سوپاس. هەلسەنگاندنا تە هاریکاریا نەخوشێن دی دکەت.';
+
+  @override
+  String get rateRemoved => 'ساخلەمی ئەڤ هەلسەنگاندنە ڕاکر.';
+
+  @override
+  String get rateFailed =>
+      'نەشیاین هەلسەنگاندنا تە بەلاڤ بکەین. دیسان هەول بدە.';
+
+  @override
+  String rateEditUntil(String date) {
+    return 'تو دشێی هەتا $date بگوهۆڕی.';
+  }
+
+  @override
+  String get ntfReviewTitle => 'سەرەدانا تە چاوا بوو؟';
+
+  @override
+  String get ntfReviewNext =>
+      'د چەند چرکەیان دا هەلسەنگینە. هاریکاریا نەخوشێن دی دکەت.';
 }

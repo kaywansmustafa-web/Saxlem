@@ -1699,4 +1699,95 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get leaveLearned => 'مع الازدحام المعتاد في هذه الساعة';
+
+  @override
+  String starsLabel(String rating) {
+    return '$rating من 5 نجوم';
+  }
+
+  @override
+  String reviewCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count تقييمات',
+      one: 'تقييم واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewsTitle => 'التقييمات';
+
+  @override
+  String get reviewsNone =>
+      'لا توجد تقييمات بعد. يمكن فقط للمرضى الذين زاروا الطبيب التقييم.';
+
+  @override
+  String reviewsSeeAll(int count) {
+    return 'عرض كل التقييمات ($count)';
+  }
+
+  @override
+  String get reviewsMore => 'عرض المزيد';
+
+  @override
+  String reviewsOf(String doctor) {
+    return 'تقييمات $doctor';
+  }
+
+  @override
+  String get reviewAnonymous => 'مريض في ساخلم';
+
+  @override
+  String get reviewVerified => 'زيارة مؤكدة';
+
+  @override
+  String get rateTitle => 'كيف كانت زيارتك؟';
+
+  @override
+  String rateWith(String doctor) {
+    return 'قيّم زيارتك عند $doctor';
+  }
+
+  @override
+  String get rateCommentHint =>
+      'هل هناك ما يجب أن يعرفه المرضى الآخرون؟ (اختياري)';
+
+  @override
+  String get rateCommentRule =>
+      'يظهر للجميع. بدون روابط أو بريد إلكتروني أو أرقام هواتف.';
+
+  @override
+  String get rateAnonymous => 'انشر بدون اسمي';
+
+  @override
+  String get ratePost => 'نشر التقييم';
+
+  @override
+  String get rateUpdate => 'تحديث التقييم';
+
+  @override
+  String get rateEdit => 'تغيير';
+
+  @override
+  String get rateThanks => 'شكرًا. تقييمك يساعد المرضى الآخرين على الاختيار.';
+
+  @override
+  String get rateRemoved => 'أزال ساخلم هذا التقييم.';
+
+  @override
+  String get rateFailed => 'تعذّر نشر تقييمك. حاول مجددًا.';
+
+  @override
+  String rateEditUntil(String date) {
+    return 'يمكنك تغييره حتى $date.';
+  }
+
+  @override
+  String get ntfReviewTitle => 'كيف كانت زيارتك؟';
+
+  @override
+  String get ntfReviewNext =>
+      'قيّمها في ثوانٍ. هذا يساعد المرضى الآخرين على الاختيار.';
 }

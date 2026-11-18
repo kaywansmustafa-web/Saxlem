@@ -17,6 +17,8 @@ export const DAY_BEFORE = { from: 3 * HOUR, to: 24 * HOUR } as const;
 export const SOON = { from: 0, to: 2 * HOUR } as const;
 /** "Almost your turn" when this many patients or fewer are ahead. */
 export const ALMOST_AHEAD = 2;
+/** "How was your visit?" this long after it ends, if not rated yet. */
+export const REVIEW_ASK = { from: 1 * HOUR, to: 48 * HOUR } as const;
 
 /** Which reminder (if any) is due for a visit, at `now`. */
 export function dueReminder(
@@ -72,7 +74,11 @@ export class PatientReminderWorker
   }
 
   async processTick(now = new Date()): Promise<number> {
-    return (await this.reminders(now)) + (await this.almostYourTurn());
+    return (
+      (await this.reminders(now)) +
+      (await this.almostYourTurn()) +
+      (await this.reviewRequests(now))
+    );
   }
 
   private async reminders(now: Date): Promise<number> {
@@ -121,6 +127,58 @@ export class PatientReminderWorker
           aggregateType: 'appointment',
           aggregateId: appointment.id,
           priority: type === 'appointment.reminder.soon' ? 'high' : 'normal',
+          once: true,
+          context: {
+            appointmentId: appointment.id,
+            doctorName: appointment.doctorAssignment.doctor.displayName,
+            clinicName: appointment.clinic.name,
+            startsAt: appointment.startsAt.toISOString(),
+          },
+        }),
+      );
+      if (written) sent += 1;
+    }
+    return sent;
+  }
+
+  /** Asks once, after a visit that took place, how it went. */
+  private async reviewRequests(now: Date): Promise<number> {
+    const due = await this.prisma.db.appointment.findMany({
+      where: {
+        status: 'completed',
+        endsAt: {
+          gt: new Date(now.getTime() - REVIEW_ASK.to),
+          lte: new Date(now.getTime() - REVIEW_ASK.from),
+        },
+        review: null,
+        patientRegistration: {
+          patientProfile: { patientAccountId: { not: null } },
+        },
+      },
+      select: {
+        id: true,
+        organizationId: true,
+        clinicId: true,
+        patientProfileId: true,
+        startsAt: true,
+        clinic: { select: { name: true } },
+        doctorAssignment: {
+          select: { doctor: { select: { displayName: true } } },
+        },
+      },
+      take: 500,
+    });
+    let sent = 0;
+    for (const appointment of due) {
+      const written = await this.prisma.db.$transaction((tx) =>
+        notifyPatient(tx, {
+          organizationId: appointment.organizationId,
+          clinicId: appointment.clinicId,
+          patientProfileId: appointment.patientProfileId,
+          type: 'appointment.review.requested',
+          aggregateType: 'appointment',
+          aggregateId: appointment.id,
+          priority: 'information',
           once: true,
           context: {
             appointmentId: appointment.id,

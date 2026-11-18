@@ -194,6 +194,12 @@ export class DoctorFeesResponseDto {
   followUpIqd!: number;
 }
 
+export class DoctorRatingResponseDto {
+  @ApiProperty({ example: 4.8, description: 'One decimal; 0 with no reviews.' })
+  average!: number;
+  @ApiProperty({ type: 'integer', minimum: 0 }) count!: number;
+}
+
 export class DoctorListItemResponseDto {
   @ApiProperty({ format: 'uuid' }) id!: string;
   @ApiProperty({ example: 'Dr. Shilan Ahmed' }) displayName!: string;
@@ -228,6 +234,11 @@ export class DoctorListItemResponseDto {
     description: 'What the patient pays at this doctor, in IQD.',
   })
   fees!: DoctorFeesResponseDto;
+  @ApiProperty({
+    type: DoctorRatingResponseDto,
+    description: 'Verified reviews from patients who had a visit.',
+  })
+  rating!: DoctorRatingResponseDto;
 }
 
 export class DoctorDetailResponseDto extends DoctorListItemResponseDto {

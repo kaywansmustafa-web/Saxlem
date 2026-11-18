@@ -1,3 +1,4 @@
+import '../../../reviews/domain/review.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../../domain/entities/doctor_discovery_options.dart';
@@ -18,6 +19,12 @@ class DiscoverController extends ChangeNotifier {
   /// Where clinics are, when the repository can tell.
   ClinicLocationSource? get clinicLocations => switch (_repository) {
     final ClinicLocationSource source => source,
+    _ => null,
+  };
+
+  /// Verified reviews, when the repository can show them.
+  DoctorReviewsSource? get reviews => switch (_repository) {
+    final DoctorReviewsSource source => source,
     _ => null,
   };
   final bool guest;

@@ -35,6 +35,7 @@ function doctorInclude(visibility: DoctorClinicAssignmentVisibility) {
       ],
     },
     availability: true,
+    reviewStats: { select: { reviewCount: true, reviewSum: true } },
   } as const satisfies Prisma.DoctorInclude;
 }
 type PersistedDoctor = Prisma.DoctorGetPayload<{
@@ -404,6 +405,8 @@ export class PrismaDoctorRepository implements DoctorRepository {
       profilePhotoKey: doctor.profilePhotoKey,
       consultationFeeIqd: doctor.consultationFeeIqd,
       followUpFeeIqd: doctor.followUpFeeIqd,
+      reviewCount: doctor.reviewStats?.reviewCount ?? 0,
+      reviewSum: doctor.reviewStats?.reviewSum ?? 0,
       profileImageUrl: null,
       specialty: primary?.displayName ?? '',
       specialties: Object.freeze(specialties),

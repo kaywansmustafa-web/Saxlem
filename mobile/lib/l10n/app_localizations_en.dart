@@ -1745,4 +1745,95 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get leaveLearned => 'with usual traffic at this hour';
+
+  @override
+  String starsLabel(String rating) {
+    return '$rating out of 5 stars';
+  }
+
+  @override
+  String reviewCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reviews',
+      one: '1 review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewsTitle => 'Reviews';
+
+  @override
+  String get reviewsNone =>
+      'No reviews yet. Only patients who had a visit can review.';
+
+  @override
+  String reviewsSeeAll(int count) {
+    return 'See all $count reviews';
+  }
+
+  @override
+  String get reviewsMore => 'Show more';
+
+  @override
+  String reviewsOf(String doctor) {
+    return 'Reviews of $doctor';
+  }
+
+  @override
+  String get reviewAnonymous => 'Saxlem patient';
+
+  @override
+  String get reviewVerified => 'Verified visit';
+
+  @override
+  String get rateTitle => 'How was your visit?';
+
+  @override
+  String rateWith(String doctor) {
+    return 'Rate your visit with $doctor';
+  }
+
+  @override
+  String get rateCommentHint =>
+      'Anything other patients should know? (optional)';
+
+  @override
+  String get rateCommentRule =>
+      'Shown to everyone. No links, emails or phone numbers.';
+
+  @override
+  String get rateAnonymous => 'Post without my name';
+
+  @override
+  String get ratePost => 'Post review';
+
+  @override
+  String get rateUpdate => 'Update review';
+
+  @override
+  String get rateEdit => 'Change';
+
+  @override
+  String get rateThanks => 'Thanks. Your review helps other patients choose.';
+
+  @override
+  String get rateRemoved => 'This review was removed by Saxlem.';
+
+  @override
+  String get rateFailed => 'Couldn\'t post your review. Try again.';
+
+  @override
+  String rateEditUntil(String date) {
+    return 'You can change it until $date.';
+  }
+
+  @override
+  String get ntfReviewTitle => 'How was your visit?';
+
+  @override
+  String get ntfReviewNext =>
+      'Rate it in a few seconds. It helps other patients choose.';
 }

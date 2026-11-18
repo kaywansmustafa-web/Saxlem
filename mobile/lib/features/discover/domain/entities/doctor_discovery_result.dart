@@ -1,3 +1,5 @@
+import '../../../reviews/domain/review.dart';
+
 class DoctorClinicReference {
   const DoctorClinicReference({required this.id, required this.name});
   final String id;
@@ -61,7 +63,11 @@ class DoctorDiscoveryResult {
     this.biography,
     this.specialties = const [],
     this.fees,
+    this.rating,
   });
+
+  /// Verified reviews; null for fixtures and older backends.
+  final DoctorRating? rating;
 
   /// Null only for fixtures and older backends.
   final DoctorFees? fees;

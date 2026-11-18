@@ -1,3 +1,5 @@
+import '../../../reviews/data/review_dto.dart';
+import '../../../reviews/domain/review.dart';
 import '../../../../core/models/patient_profile.dart';
 import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/authenticated_api_client.dart';
@@ -10,7 +12,10 @@ import '../dto/departure_plan_dto.dart';
 import '../dto/patient_appointment_dto.dart';
 
 class BackendPatientAppointmentsRepository
-    implements PatientAppointmentsRepository, DeparturePlanner {
+    implements
+        PatientAppointmentsRepository,
+        DeparturePlanner,
+        VisitReviewSource {
   BackendPatientAppointmentsRepository(this._api);
   final AuthenticatedApiClient _api;
   static final _uuid = RegExp(
@@ -106,6 +111,56 @@ class BackendPatientAppointmentsRepository
       throw AppointmentFailure(_problem(failure.failure, mutation: false));
     } on ApiFailure catch (failure) {
       throw AppointmentFailure(_problem(failure, mutation: false));
+    }
+  }
+
+  @override
+  Future<VisitReviewStatus> visitReview(String appointmentId) async {
+    _uuidValue(appointmentId);
+    try {
+      final response = await _api.getJson(
+        '/appointments/$appointmentId/review',
+      );
+      return ReviewDto.status(response.body);
+    } on FormatException {
+      throw const ReviewFailure();
+    } on ApiFailure {
+      throw const ReviewFailure();
+    }
+  }
+
+  @override
+  Future<VisitReview> writeReview(
+    String appointmentId, {
+    required int rating,
+    required String? comment,
+    required bool anonymous,
+  }) async {
+    _uuidValue(appointmentId);
+    final text = comment?.trim();
+    if (rating < 1 ||
+        rating > 5 ||
+        (text != null && (text.length > 500 || !commentIsPublicSafe(text)))) {
+      throw const ReviewFailure(invalidComment: true);
+    }
+    try {
+      final response = await _api.postJson(
+        '/appointments/$appointmentId/review',
+        body: {
+          'rating': rating,
+          'comment': (text == null || text.isEmpty) ? null : text,
+          'anonymous': anonymous,
+        },
+      );
+      return ReviewDto.mine(response.body);
+    } on FormatException {
+      throw const ReviewFailure();
+    } on MutationNotSentFailure {
+      throw const ReviewFailure();
+    } on ApiFailure catch (failure) {
+      throw ReviewFailure(
+        invalidComment: failure.type == ApiFailureType.validation,
+      );
     }
   }
 

@@ -96,6 +96,9 @@ const paths: Record<string, React.ReactNode> = {
       <path d="m9 12 2 2 4-4" />
     </>
   ),
+  reviews: (
+    <path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" />
+  ),
   health: (
     <>
       <path d="M3 12h3l2-5 4 10 2-5h7" />

@@ -1,3 +1,4 @@
+import '../../../reviews/presentation/rating_stars.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/localization_extensions.dart';
@@ -27,6 +28,8 @@ class DoctorResultCard extends StatelessWidget {
         '${strings.clinicsLabel}: ${doctor.clinics.map((item) => item.name).join(', ')}',
       if (doctor.languages.isNotEmpty)
         '${strings.languagesLabel}: ${doctor.languages.map((item) => localizedDoctorLanguage(context, item)).join(', ')}',
+      if (doctor.rating case final rating? when rating.count > 0)
+        '${strings.starsLabel(rating.average.toStringAsFixed(1))}, ${strings.reviewCount(rating.count)}',
       if (doctor.fees case final fees?)
         '${strings.feeFirstVisit}: ${feeText(context, fees.firstVisitIqd)}',
       if (doctor.availability.nextAvailableAt case final next?)
@@ -78,6 +81,14 @@ class DoctorResultCard extends StatelessWidget {
                         doctor.primarySpecialtyDisplayName,
                         style: theme.textTheme.bodySmall,
                       ),
+                      if (doctor.rating case final rating?
+                          when rating.count > 0) ...[
+                        const SizedBox(height: 4),
+                        RatingLine(
+                          average: rating.average,
+                          count: rating.count,
+                        ),
+                      ],
                     ],
                   ),
                 ),

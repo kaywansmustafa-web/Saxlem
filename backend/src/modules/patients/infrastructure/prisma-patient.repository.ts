@@ -219,6 +219,11 @@ export class PrismaPatientRepository implements PatientRepository {
         where: { patientAccountId: accountId, status: 'active' },
         data: { status: 'inactive', version: { increment: 1 } },
       });
+      // Their reviews stay (they describe real visits) but lose the name.
+      await tx.doctorReview.updateMany({
+        where: { patientProfileId: { in: profileIds } },
+        data: { anonymous: true, authorName: 'Saxlem patient' },
+      });
       await tx.patientAccount.update({
         where: { id: accountId },
         data: { normalizedPhoneNumber: `closed:${accountId}` },

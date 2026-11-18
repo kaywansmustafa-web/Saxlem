@@ -7,6 +7,7 @@ export const PATIENT_APPOINTMENT_NOTIFICATIONS = [
   'appointment.rescheduled.by-clinic',
   'appointment.reminder.day-before',
   'appointment.reminder.soon',
+  'appointment.review.requested',
   'queue.patient.almost',
 ] as const;
 export type PatientAppointmentNotification =

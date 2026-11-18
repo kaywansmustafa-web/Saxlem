@@ -15,6 +15,7 @@ export const navigation = [
   ["Patients", "/patients"],
   ["Appointments", "/appointments"],
   ["Live Operations", "/live-operations"],
+  ["Reviews", "/reviews"],
   ["Billing", "/billing"],
   ["Commissions", "/commissions"],
   ["Statements", "/statements"],
@@ -36,6 +37,7 @@ const icons: Record<string, string> = {
   "/patients": "patients",
   "/appointments": "appointments",
   "/live-operations": "live",
+  "/reviews": "reviews",
   "/billing": "billing",
   "/commissions": "commissions",
   "/statements": "statements",
@@ -58,7 +60,7 @@ const groupOf = (href: string) =>
           "/patients",
         ].includes(href)
       ? "Network"
-      : ["/appointments", "/live-operations"].includes(href)
+      : ["/appointments", "/live-operations", "/reviews"].includes(href)
         ? "Operations"
         : [
               "/billing",

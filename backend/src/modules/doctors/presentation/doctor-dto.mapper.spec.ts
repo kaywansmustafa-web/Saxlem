@@ -99,4 +99,12 @@ describe('DoctorDtoMapper', () => {
       mapper.fees({ consultationFeeIqd: 30000, followUpFeeIqd: 15000 }),
     ).toEqual({ firstVisitIqd: 30000, followUpIqd: 15000 });
   });
+  it('shows verified reviews as an average and a count', () => {
+    const mapper = new DoctorDtoMapper();
+    expect(mapper.rating({ reviewCount: 3, reviewSum: 14 })).toEqual({
+      average: 4.7,
+      count: 3,
+    });
+    expect(mapper.rating({})).toEqual({ average: 0, count: 0 });
+  });
 });

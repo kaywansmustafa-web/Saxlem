@@ -38,6 +38,10 @@ class NotificationCopy {
         strings.ntfReminderSoonTitle,
         strings.ntfReminderNext,
       ),
+      PatientNotificationType.reviewRequested => visit(
+        strings.ntfReviewTitle,
+        strings.ntfReviewNext,
+      ),
       PatientNotificationType.appointmentCancelled => visit(
         strings.ntfCancelledTitle,
         strings.ntfCancelledNext,

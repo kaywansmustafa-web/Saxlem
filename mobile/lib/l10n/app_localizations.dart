@@ -3099,6 +3099,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'with usual traffic at this hour'**
   String get leaveLearned;
+
+  /// No description provided for @starsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{rating} out of 5 stars'**
+  String starsLabel(String rating);
+
+  /// No description provided for @reviewCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 review} other{{count} reviews}}'**
+  String reviewCount(int count);
+
+  /// No description provided for @reviewsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get reviewsTitle;
+
+  /// No description provided for @reviewsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet. Only patients who had a visit can review.'**
+  String get reviewsNone;
+
+  /// No description provided for @reviewsSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all {count} reviews'**
+  String reviewsSeeAll(int count);
+
+  /// No description provided for @reviewsMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get reviewsMore;
+
+  /// No description provided for @reviewsOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews of {doctor}'**
+  String reviewsOf(String doctor);
+
+  /// No description provided for @reviewAnonymous.
+  ///
+  /// In en, this message translates to:
+  /// **'Saxlem patient'**
+  String get reviewAnonymous;
+
+  /// No description provided for @reviewVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified visit'**
+  String get reviewVerified;
+
+  /// No description provided for @rateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How was your visit?'**
+  String get rateTitle;
+
+  /// No description provided for @rateWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate your visit with {doctor}'**
+  String rateWith(String doctor);
+
+  /// No description provided for @rateCommentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything other patients should know? (optional)'**
+  String get rateCommentHint;
+
+  /// No description provided for @rateCommentRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown to everyone. No links, emails or phone numbers.'**
+  String get rateCommentRule;
+
+  /// No description provided for @rateAnonymous.
+  ///
+  /// In en, this message translates to:
+  /// **'Post without my name'**
+  String get rateAnonymous;
+
+  /// No description provided for @ratePost.
+  ///
+  /// In en, this message translates to:
+  /// **'Post review'**
+  String get ratePost;
+
+  /// No description provided for @rateUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Update review'**
+  String get rateUpdate;
+
+  /// No description provided for @rateEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get rateEdit;
+
+  /// No description provided for @rateThanks.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks. Your review helps other patients choose.'**
+  String get rateThanks;
+
+  /// No description provided for @rateRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'This review was removed by Saxlem.'**
+  String get rateRemoved;
+
+  /// No description provided for @rateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t post your review. Try again.'**
+  String get rateFailed;
+
+  /// No description provided for @rateEditUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change it until {date}.'**
+  String rateEditUntil(String date);
+
+  /// No description provided for @ntfReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How was your visit?'**
+  String get ntfReviewTitle;
+
+  /// No description provided for @ntfReviewNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate it in a few seconds. It helps other patients choose.'**
+  String get ntfReviewNext;
 }
 
 class _AppLocalizationsDelegate

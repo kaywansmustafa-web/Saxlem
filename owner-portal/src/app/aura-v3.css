@@ -297,3 +297,17 @@ table tbody tr:hover {
 .fee-fieldset .muted {
   margin: 0;
 }
+
+/* Reviews moderation */
+.review-list { display: grid; gap: 12px; }
+.review-card { display: grid; gap: 10px; }
+.review-card header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.review-card footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.review-card .muted { color: var(--muted); font-size: 0.86rem; }
+.review-comment { margin: 0; font-size: 0.98rem; line-height: 1.5; }
+.stars { color: #f5a524; letter-spacing: 1px; font-size: 1.05rem; }
+.stars-empty { color: #d8dde8; }
+.review-actions { display: inline-flex; align-items: center; gap: 8px; }
+.review-hide { color: var(--danger); }
+.review-error { color: var(--danger); font-size: 0.86rem; }
+

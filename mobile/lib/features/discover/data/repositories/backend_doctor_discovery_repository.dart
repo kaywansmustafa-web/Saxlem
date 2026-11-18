@@ -1,3 +1,5 @@
+import '../../../reviews/data/review_dto.dart';
+import '../../../reviews/domain/review.dart';
 import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/authenticated_api_client.dart';
 import '../../domain/entities/clinic_location.dart';
@@ -9,7 +11,10 @@ import '../../domain/repositories/doctor_discovery_repository.dart';
 import '../dto/backend_doctor_discovery_dto.dart';
 
 class BackendDoctorDiscoveryRepository
-    implements DoctorDiscoveryRepository, ClinicLocationSource {
+    implements
+        DoctorDiscoveryRepository,
+        ClinicLocationSource,
+        DoctorReviewsSource {
   BackendDoctorDiscoveryRepository(
     this._api, {
     this._parser = const BackendDoctorDiscoveryParser(),
@@ -29,6 +34,24 @@ class BackendDoctorDiscoveryRepository
         (await _api.getJson('doctors/clinics/$clinicId/location')).body,
       ),
     );
+  }
+
+  @override
+  Future<ReviewPage> doctorReviews(String doctorId, {String? cursor}) async {
+    if (!_uuid.hasMatch(doctorId) || (cursor != null && cursor.length > 200)) {
+      throw const ReviewFailure();
+    }
+    try {
+      final response = await _api.getJson(
+        'doctors/$doctorId/reviews',
+        queryParameters: {'pageSize': '20', 'cursor': ?cursor},
+      );
+      return ReviewDto.page(response.body);
+    } on FormatException {
+      throw const ReviewFailure();
+    } on ApiFailure {
+      throw const ReviewFailure();
+    }
   }
 
   @override

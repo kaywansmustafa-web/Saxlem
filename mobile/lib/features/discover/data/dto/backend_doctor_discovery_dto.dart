@@ -1,3 +1,5 @@
+import '../../../reviews/data/review_dto.dart';
+import '../../../reviews/domain/review.dart';
 import '../../domain/entities/clinic_location.dart';
 import '../../domain/entities/doctor_discovery_options.dart';
 import '../../domain/entities/doctor_discovery_result.dart';
@@ -72,7 +74,11 @@ class BackendDoctorDiscoveryParser {
       'biography',
       'specialties',
     };
-    _keys(json, detail ? {...base, ...detailKeys} : base);
+    // `rating` is optional so older backends still parse.
+    _keys(
+      Map.of(json)..remove('rating'),
+      detail ? {...base, ...detailKeys} : base,
+    );
     final id = _id(json['id']);
     final displayName = _text(json['displayName'], 1, 160);
     final fullName = _text(json['fullName'], 1, 160);
@@ -117,6 +123,7 @@ class BackendDoctorDiscoveryParser {
       clinics: clinics,
       availability: availability(_map(json['availability'])),
       fees: fees(_map(json['fees'])),
+      rating: json['rating'] == null ? null : _ratingOf(json['rating']),
       photoUrl: image,
       firstName: detail ? _text(json['firstName'], 1, 120) : null,
       lastName: detail ? _text(json['lastName'], 1, 120) : null,
@@ -349,6 +356,14 @@ class BackendDoctorDiscoveryParser {
       firstVisitIqd: _integer(json['firstVisitIqd'], 0, 5000000),
       followUpIqd: _integer(json['followUpIqd'], 0, 5000000),
     );
+  }
+
+  static DoctorRating _ratingOf(Object? value) {
+    try {
+      return ReviewDto.rating(_map(value));
+    } on FormatException {
+      throw const DoctorContractException();
+    }
   }
 
   static void _keys(Map<String, dynamic> value, Set<String> expected) {

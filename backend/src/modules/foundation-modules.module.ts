@@ -10,6 +10,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { AdministrationModule } from './administration/administration.module';
 import { BillingModule } from './billing/billing.module';
 import { PlatformControlModule } from './platform-control/platform-control.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({})
 export class ClinicStaffModule {}
@@ -33,6 +34,7 @@ export class AuditModule {}
     AppointmentsModule,
     ArrivalsModule,
     PaymentsModule,
+    ReviewsModule,
     DoctorAvailabilityModule,
     QueueModule,
     NotificationsModule,

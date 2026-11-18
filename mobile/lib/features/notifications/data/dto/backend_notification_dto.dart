@@ -159,6 +159,7 @@ class BackendNotificationDto {
       PatientNotificationType.appointmentReminder24Hours,
     'appointment.reminder.soon' =>
       PatientNotificationType.appointmentReminder2Hours,
+    'appointment.review.requested' => PatientNotificationType.reviewRequested,
     'queue.patient.almost' => PatientNotificationType.almostYourTurn,
     'queue.session.opened' => PatientNotificationType.queueOpened,
     'queue.session.paused' => PatientNotificationType.queuePaused,

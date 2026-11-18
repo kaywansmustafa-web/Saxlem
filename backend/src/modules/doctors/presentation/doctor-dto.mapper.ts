@@ -1,4 +1,5 @@
 import { Inject, Injectable, Optional } from '@nestjs/common';
+import { averageOf } from '../../reviews/review-rules';
 import { BACKEND_CONFIGURATION } from '../../../config/configuration.module';
 import type { BackendConfiguration } from '../../../config/environment';
 import type {
@@ -9,6 +10,7 @@ import type {
 import type {
   DoctorAvailabilityResponseDto,
   DoctorDetailResponseDto,
+  DoctorRatingResponseDto,
   DoctorDiscoveryOptionsResponseDto,
   DoctorListItemResponseDto,
   DoctorPageResponseDto,
@@ -113,6 +115,16 @@ export class DoctorDtoMapper {
       clinics: source.clinics.map(({ id, name }) => ({ id, name })),
       availability: this.availability(source),
       fees: this.fees(source),
+      rating: this.rating(source),
+    };
+  }
+  rating(
+    source: Pick<DoctorProjection, 'reviewCount' | 'reviewSum'>,
+  ): DoctorRatingResponseDto {
+    const count = source.reviewCount ?? 0;
+    return {
+      average: averageOf(count, source.reviewSum ?? 0),
+      count,
     };
   }
 }

@@ -73,6 +73,14 @@ export const doctorSchema = z
         followUpIqd: z.number().int().nonnegative(),
       })
       .strict(),
+    // Verified reviews (average and count).
+    rating: z
+      .object({
+        average: z.number().min(0).max(5),
+        count: z.number().int().nonnegative(),
+      })
+      .strict()
+      .optional(),
   })
   .strict();
 export const doctorDetailSchema = doctorSchema
@@ -434,6 +442,40 @@ export const clinicDetail = (session: OwnerSession, id: string) =>
     path: `/api/v1/administration/clinics/${id}`,
     session,
     schema: clinicSchema,
+  });
+export const reviewSchema = z
+  .object({
+    id,
+    rating: z.number().int().min(1).max(5),
+    comment: z.string().nullable(),
+    author: z.string().nullable(),
+    authorName: z.string(),
+    anonymous: z.boolean(),
+    status: z.enum(["published", "hidden"]),
+    createdAt: dateTime,
+    doctorId: id,
+    doctorName: z.string(),
+    clinicName: z.string(),
+    appointmentReference: z.string(),
+  })
+  .strict();
+export type OwnerReview = z.infer<typeof reviewSchema>;
+const reviewPageSchema = z
+  .object({
+    items: z.array(reviewSchema).max(50),
+    nextCursor: z.string().nullable(),
+  })
+  .strict();
+/** Patients' reviews of their visits, newest first, for moderation. */
+export const listReviews = (
+  session: OwnerSession,
+  status?: "published" | "hidden",
+  cursor?: string,
+) =>
+  ownerApi().request({
+    path: `/api/v1/platform/reviews?${query({ pageSize: 50, ...(status ? { status } : {}), ...(cursor ? { cursor } : {}) })}`,
+    session,
+    schema: reviewPageSchema,
   });
 export const listDoctors = (session: OwnerSession, page = 1) =>
   ownerApi().request({

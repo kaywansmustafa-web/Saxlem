@@ -1,3 +1,5 @@
+import '../../../reviews/presentation/doctor_reviews.dart';
+import '../../../reviews/presentation/rating_stars.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/localization_extensions.dart';
@@ -219,6 +221,12 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
                                   ? SaxlemStatusTone.positive
                                   : SaxlemStatusTone.neutral,
                             ),
+                            if (doctor.rating case final rating?
+                                when rating.count > 0)
+                              RatingLine(
+                                average: rating.average,
+                                count: rating.count,
+                              ),
                             SaxlemStatusPill(
                               label: doctor.availability.acceptingNewPatients
                                   ? context.l10n.acceptingNewPatients
@@ -292,6 +300,17 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                  ],
+                  if (widget.controller.reviews case final reviews?) ...[
+                    const SizedBox(height: 14),
+                    _Section(
+                      title: context.l10n.reviewsTitle,
+                      child: DoctorReviewsSection(
+                        doctorId: doctor.doctorId,
+                        doctorName: doctor.doctorDisplayName,
+                        source: reviews,
                       ),
                     ),
                   ],
