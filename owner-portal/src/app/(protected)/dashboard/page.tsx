@@ -1,3 +1,4 @@
+import { time } from "@/domain/format";
 import Link from "next/link";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
 import {
@@ -8,16 +9,21 @@ import {
   listPlans,
   executiveAnalytics,
   listLiveOperations,
+  listCollections,
   safeWindow,
 } from "@/data/owner-data";
 import { requireOwnerSession } from "@/infrastructure/auth";
 
 export default async function DashboardPage() {
   const session = await requireOwnerSession();
-  const [analytics, liveOperations] = await Promise.all([
+  const [analytics, liveOperations, collections] = await Promise.all([
     executiveAnalytics(session),
     listLiveOperations(session),
+    listCollections(session).catch(() => null),
   ]);
+  const owing = (collections?.items ?? []).filter(
+    (item) => item.stage !== "clear" && item.owedIqd > 0,
+  );
   const window = safeWindow();
   const [organizations, clinics, doctors, appointments, plans] =
     await Promise.allSettled([
@@ -110,13 +116,19 @@ export default async function DashboardPage() {
             {analytics.totals.netCommissionIqd.toLocaleString("en-IQ")} IQD
           </strong>
         </article>
-        <article className="card metric">
-          <span>Statements</span>
+        <Link className="card metric" href="/statements">
+          <span>Doctors owe Saxlem</span>
           <strong>
-            {analytics.totals.draftStatements} draft ·{" "}
-            {analytics.totals.finalizedStatements} finalized
+            {owing
+              .reduce((sum, item) => sum + item.owedIqd, 0)
+              .toLocaleString("en-IQ")}{" "}
+            IQD
           </strong>
-        </article>
+          <small>
+            {owing.length === 1 ? "1 doctor" : `${owing.length} doctors`} ·
+            cash at the clinic
+          </small>
+        </Link>
       </section>
       <section className="section">
         <div className="section-title">
@@ -172,11 +184,7 @@ export default async function DashboardPage() {
                 {appointmentItems.slice(0, 8).map((item) => (
                   <tr key={item.id}>
                     <td>
-                      {new Date(item.startsAt).toLocaleTimeString("en-IQ", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        timeZone: "Asia/Baghdad",
-                      })}
+                      {time(item.startsAt)}
                     </td>
                     <td>{item.patientName}</td>
                     <td>{item.doctorName}</td>

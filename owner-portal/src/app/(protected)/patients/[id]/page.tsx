@@ -1,3 +1,4 @@
+import { when } from "@/domain/format";
 import { notFound } from "next/navigation";
 import { PageHeader, StatusBadge } from "@/components/app-shell";
 import { DataTable } from "@/components/data-table";
@@ -48,9 +49,7 @@ export default async function PatientDetailPage({
           item.publicReference,
           item.patientProfileId.slice(0, 8),
           item.clinicId.slice(0, 8),
-          new Date(item.startsAt).toLocaleString("en-IQ", {
-            timeZone: "Asia/Baghdad",
-          }),
+          when(item.startsAt),
           <StatusBadge key="status" status={item.status} />,
         ])}
       />

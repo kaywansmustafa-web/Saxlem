@@ -1,4 +1,5 @@
 "use client";
+import { LanguagePicker, checkedLanguages } from "./language-picker";
 import { useState } from "react";
 export function DoctorEditForm({
   doctor,
@@ -27,10 +28,7 @@ export function DoctorEditForm({
           displayName: raw.displayName,
           biography: raw.biography,
           yearsOfExperience: Number(raw.yearsOfExperience),
-          languages: String(raw.languages)
-            .split(",")
-            .map((x) => x.trim())
-            .filter(Boolean),
+          languages: checkedLanguages(event.currentTarget),
           status: raw.status,
           version: doctor.version,
         };
@@ -77,10 +75,7 @@ export function DoctorEditForm({
           defaultValue={doctor.yearsOfExperience}
         />
       </label>
-      <label className="field">
-        Languages
-        <input name="languages" defaultValue={doctor.languages.join(", ")} />
-      </label>
+      <LanguagePicker selected={doctor.languages} />
       <label className="field">
         Status
         <select name="status" defaultValue={doctor.status}>

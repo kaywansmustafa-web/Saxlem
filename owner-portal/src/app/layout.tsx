@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import "./aura.css";
+import "./aura-v3.css";
 
 const text = localFont({
   src: "./fonts/Inter-Variable.woff2",

@@ -1,3 +1,4 @@
+import { when } from "@/domain/format";
 import { humanize } from "@/domain/labels";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
 import { DataTable } from "@/components/data-table";
@@ -15,9 +16,7 @@ export default async function AuditPage() {
         <DataTable
           headers={["Time", "Action", "Record", "Result", "Request ID"]}
           rows={data.items.map((item) => [
-            new Date(item.occurredAt).toLocaleString("en-IQ", {
-              timeZone: "Asia/Baghdad",
-            }),
+            when(item.occurredAt),
             humanize(item.action),
             humanize(item.targetType),
             <StatusBadge key="status" status={item.outcome} />,

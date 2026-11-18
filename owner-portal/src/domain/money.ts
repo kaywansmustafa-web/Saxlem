@@ -1,14 +1,10 @@
+import { when } from "./format";
+
 export const iqd = (value: number) =>
   `${(value === 0 ? 0 : value).toLocaleString("en-IQ")} IQD`;
 
 export const baghdadDateTime = (value: string | null) =>
-  value
-    ? new Intl.DateTimeFormat("en-IQ", {
-        timeZone: "Asia/Baghdad",
-        dateStyle: "medium",
-        timeStyle: "short",
-      }).format(new Date(value))
-    : "—";
+  value ? when(value) : "—";
 
 /** Current Baghdad month as YYYY-MM. */
 export function currentMonth(now = new Date()) {

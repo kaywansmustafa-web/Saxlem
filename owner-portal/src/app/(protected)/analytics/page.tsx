@@ -1,3 +1,4 @@
+import { day } from "@/domain/format";
 import { PageHeader } from "@/components/app-shell";
 import { executiveAnalytics } from "@/data/owner-data";
 import { requireOwnerSession } from "@/infrastructure/auth";
@@ -30,12 +31,7 @@ const label = (key: string) =>
   key.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase());
 const formatMetric = (key: string, value: number) =>
   `${value.toLocaleString("en-IQ")}${key.endsWith("Iqd") ? " IQD" : ""}`;
-const formatDay = (day: unknown) =>
-  new Date(`${String(day)}T00:00:00Z`).toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-  });
+const formatDay = (value: unknown) => day(`${String(value)}T12:00:00Z`);
 export default async function AnalyticsPage() {
   const data = await executiveAnalytics(await requireOwnerSession());
   return (
@@ -45,7 +41,10 @@ export default async function AnalyticsPage() {
         description="Growth, bookings and revenue across the platform."
       />
       <section className="grid metrics" aria-label="Executive metrics">
-        {Object.entries(data.totals).map(([key, value]) => (
+        {Object.entries(data.totals)
+          // Monthly organization statements were replaced by 30-day doctor statements.
+          .filter(([key]) => key !== "draftStatements" && key !== "finalizedStatements")
+          .map(([key, value]) => (
           <article className="card metric" key={key}>
             <span>{label(key)}</span>
             <strong>{formatMetric(key, value)}</strong>

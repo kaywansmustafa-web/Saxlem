@@ -1,4 +1,4 @@
-import { humanize } from "@/domain/labels";
+import { languageName } from "@/components/language-picker";
 import Link from "next/link";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
 import { listDoctors } from "@/data/owner-data";
@@ -33,7 +33,7 @@ export default async function DoctorsPage() {
                       </Link>
                     </strong>
                     <br />
-                    <small>{item.languages.map(humanize).join(" · ")}</small>
+                    <small>{item.languages.map(languageName).join(" · ")}</small>
                   </td>
                   <td>{item.specialty}</td>
                   <td>

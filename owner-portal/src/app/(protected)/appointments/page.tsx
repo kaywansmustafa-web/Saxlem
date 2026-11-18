@@ -1,3 +1,4 @@
+import { when } from "@/domain/format";
 import { humanize } from "@/domain/labels";
 import Link from "next/link";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
@@ -47,9 +48,7 @@ export default async function AppointmentsPage({
                 <tr key={item.id}>
                   <td>{item.reference}</td>
                   <td>
-                    {new Date(item.startsAt).toLocaleString("en-IQ", {
-                      timeZone: "Asia/Baghdad",
-                    })}
+                    {when(item.startsAt)}
                   </td>
                   <td>{item.patientName}</td>
                   <td>{item.doctorName}</td>

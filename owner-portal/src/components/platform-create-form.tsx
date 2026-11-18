@@ -1,4 +1,5 @@
 "use client";
+import { LanguagePicker, checkedLanguages } from "./language-picker";
 import { useState } from "react";
 import {
   ReceptionDoctorPicker,
@@ -52,10 +53,7 @@ export function PlatformCreateForm({
             : {
                 ...raw,
                 yearsOfExperience: Number(raw.yearsOfExperience),
-                languages: String(raw.languages)
-                  .split(",")
-                  .map((x) => x.trim())
-                  .filter(Boolean),
+                languages: checkedLanguages(event.currentTarget),
               };
         try {
           const response = await fetch(`/api/platform/${kind}`, {
@@ -103,7 +101,7 @@ export function PlatformCreateForm({
             name="yearsOfExperience"
             type="number"
           />
-          <Field label="Languages (comma separated)" name="languages" />
+          <LanguagePicker />
           <Field label="Biography" name="biography" />
         </>
       )}

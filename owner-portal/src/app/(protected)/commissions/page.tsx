@@ -1,3 +1,4 @@
+import { day } from "@/domain/format";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
 import { CreditButton } from "@/components/billing-forms";
 import { OrganizationFilter } from "@/components/organization-filter";
@@ -54,9 +55,7 @@ export default async function CommissionsPage({
                       {item.reason && <small>Credit: {item.reason}</small>}
                     </td>
                     <td>
-                      {new Date(item.completedAt).toLocaleDateString("en-GB", {
-                        timeZone: "Asia/Baghdad",
-                      })}
+                      {day(item.completedAt)}
                     </td>
                     <td className="numeric">
                       {item.status === "reversed" ? "−" : ""}

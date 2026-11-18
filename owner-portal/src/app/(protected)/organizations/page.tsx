@@ -1,3 +1,4 @@
+import { day } from "@/domain/format";
 import Link from "next/link";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
 import { listOrganizations } from "@/data/owner-data";
@@ -50,10 +51,10 @@ export default async function OrganizationsPage({
                     <StatusBadge status={item.status} />
                   </td>
                   <td>
-                    {new Date(item.createdAt).toLocaleDateString("en-IQ")}
+                    {day(item.createdAt)}
                   </td>
                   <td>
-                    {new Date(item.updatedAt).toLocaleDateString("en-IQ")}
+                    {day(item.updatedAt)}
                   </td>
                 </tr>
               ))}

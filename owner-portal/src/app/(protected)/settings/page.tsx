@@ -1,3 +1,4 @@
+import { when } from "@/domain/format";
 import { humanize } from "@/domain/labels";
 import { PageHeader } from "@/components/app-shell";
 import { ownerSettings } from "@/data/owner-data";
@@ -21,7 +22,7 @@ export default async function SettingsPage() {
             <dt>Created</dt>
             <dd>
               {data.identity
-                ? new Date(data.identity.createdAt).toLocaleString("en-IQ")
+                ? when(data.identity.createdAt)
                 : "Unavailable"}
             </dd>
           </dl>
