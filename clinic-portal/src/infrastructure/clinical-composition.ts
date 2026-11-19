@@ -11,6 +11,7 @@ import { BackendDoctorDirectory } from "@/features/live-queue/data/backend-docto
 import { BackendQueueRepository } from "@/features/live-queue/data/backend-queue-repository";
 import { BackendPaymentRepository } from "@/features/payments/data/backend-payment-repository";
 import { BackendReceptionDoctors } from "@/features/reception/data/backend-reception-doctors";
+import { BackendDoctorSettings } from "@/features/doctor-settings/data/backend-doctor-settings";
 import { scheduleRecord } from "./doctor-composition";
 
 export async function clinicalComposition(locale?: Locale) {
@@ -26,6 +27,7 @@ export async function clinicalComposition(locale?: Locale) {
     queues: new BackendQueueRepository(api, session),
     payments: new BackendPaymentRepository(api, session),
     reception: new BackendReceptionDoctors(api, session),
+    doctorSettings: new BackendDoctorSettings(api, session),
     schedule: (doctorId: string) =>
       api
         .request({

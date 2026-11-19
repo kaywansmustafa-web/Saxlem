@@ -19,6 +19,21 @@ describe('schedule capabilities', () => {
   );
 });
 
+describe('doctor settings capabilities', () => {
+  it.each([
+    ['patient', false],
+    // Reception controls everything about their doctors (2026-11-19).
+    ['receptionist', true],
+    ['doctor', false],
+    ['clinicManager', true],
+    ['platformAdministrator', false],
+  ] as const)('lets %s manage doctor settings: %s', (role, manage) => {
+    const granted = capabilitiesFor(role);
+    expect(granted.has('doctor:settings:manage')).toBe(manage);
+    expect(granted.has('clinic:hours:manage')).toBe(manage);
+  });
+});
+
 describe('appointment capabilities', () => {
   it.each([
     ['patient', true],

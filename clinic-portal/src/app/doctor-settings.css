@@ -1,0 +1,333 @@
+/* Clinic Portal → Doctors → a doctor (hours, time off, booking, fees, profile). Aura v3 vocabulary. */
+.ds-back {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ax-brand);
+  font-weight: 650;
+}
+.ds-back::before {
+  content: "←";
+}
+[dir="rtl"] .ds-back::before {
+  content: "→";
+}
+.ds-saxlem {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: var(--ax-r-sm);
+  background: var(--ax-surface-2);
+  color: var(--ax-ink-2);
+  font-size: 0.9rem;
+}
+.ds-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 1fr);
+  align-items: start;
+  gap: 16px;
+}
+.ds-column {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.ds-card form,
+.ds-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+.ds-card form > .ax-btn,
+.ds-form > .ax-btn {
+  justify-self: start;
+}
+.ds-open {
+  margin: 10px 0 0;
+  font-size: 0.88rem;
+  color: var(--ax-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.ds-week {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.ds-week legend,
+.ds-fee legend {
+  margin-bottom: 6px;
+  padding: 0;
+  font-weight: 650;
+  font-size: 0.92rem;
+}
+.ds-week-day {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 6px 0;
+  border-top: 1px solid var(--ax-line);
+}
+.ds-week-name {
+  font-weight: 620;
+}
+.ds-week-ranges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.ds-week-empty {
+  color: var(--ax-muted);
+  font-size: 0.88rem;
+}
+.ds-range {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: var(--ax-r-sm);
+  background: var(--ax-surface-2);
+}
+.ds-range input[type="time"] {
+  min-height: 38px;
+  padding: 0 8px;
+  border: 1px solid var(--ax-line-2);
+  background: var(--ax-surface);
+  color: var(--ax-ink);
+  font: inherit;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+}
+.ds-week-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-inline-start: auto;
+}
+.ds-small {
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 0.85rem;
+}
+.ds-link {
+  min-height: 36px;
+  padding: 0 6px;
+  border: 0;
+  background: transparent;
+  color: var(--ax-bad);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 620;
+  cursor: pointer;
+}
+.ds-link:hover {
+  text-decoration: underline;
+}
+.ds-link:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.ds-note {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: var(--ax-r-sm);
+  background: var(--ax-ok-bg);
+  color: var(--ax-ok);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.ds-note.is-error {
+  background: var(--ax-warn-bg);
+  color: var(--ax-warn);
+}
+.ds-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  padding-top: 10px;
+  cursor: pointer;
+}
+.ds-check input {
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  flex: none;
+  accent-color: var(--ax-brand);
+}
+.ds-check span {
+  display: grid;
+  gap: 2px;
+  font-weight: 600;
+}
+.ds-check small {
+  color: var(--ax-muted);
+  font-weight: 500;
+  font-size: 0.84rem;
+}
+.ds-check:has(input:disabled) {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.ds-hint {
+  font-size: 0.86rem;
+}
+.ds-field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.ds-field > span:first-child {
+  color: var(--ax-muted);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+.ds-field small {
+  color: var(--ax-muted);
+  font-size: 0.82rem;
+}
+.ds-field :is(input, textarea),
+.ds-input-unit input {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--ax-line-2);
+  background: var(--ax-surface);
+  color: var(--ax-ink);
+  font: inherit;
+  font-size: 0.95rem;
+}
+.ds-field textarea {
+  padding: 10px 12px;
+  resize: vertical;
+  line-height: 1.5;
+}
+.ds-narrow {
+  max-width: 200px;
+}
+.ds-input-unit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ax-muted);
+  font-weight: 600;
+}
+.ds-input-unit input {
+  width: 150px;
+  font-variant-numeric: tabular-nums;
+}
+.ds-leave {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.ds-leave li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--ax-r-sm);
+  background: var(--ax-brand-tint);
+  color: var(--ax-brand-ink);
+  font-weight: 620;
+  font-variant-numeric: tabular-nums;
+}
+.ds-empty {
+  margin: 12px 0 0;
+  color: var(--ax-muted);
+  font-size: 0.9rem;
+}
+.ds-segment {
+  display: inline-flex;
+  justify-self: start;
+  padding: 3px;
+  border: 1px solid var(--ax-line-2);
+  border-radius: 999px;
+  background: var(--ax-surface-2);
+}
+.ds-segment label,
+.ds-chips label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  color: var(--ax-ink-2);
+  font-weight: 620;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+.ds-segment input,
+.ds-chips input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.ds-segment label.is-on {
+  background: var(--ax-surface);
+  color: var(--ax-brand-ink);
+  box-shadow: 0 1px 4px rgb(11 21 51 / 0.12);
+}
+.ds-segment label:has(input:focus-visible),
+.ds-chips label:has(input:focus-visible) {
+  outline: 3px solid var(--ax-brand);
+  outline-offset: 2px;
+}
+.ds-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+.ds-fee {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: 2px;
+}
+.ds-fee .ds-input-unit {
+  margin: 6px 0 0 30px;
+}
+[dir="rtl"] .ds-fee .ds-input-unit {
+  margin: 6px 30px 0 0;
+}
+.ds-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ds-chips label {
+  position: relative;
+  border: 1px solid var(--ax-line-2);
+  background: var(--ax-surface);
+}
+.ds-chips label.is-on {
+  border-color: var(--ax-brand);
+  background: var(--ax-brand-tint);
+  color: var(--ax-brand-ink);
+}
+.ds-chips label.is-on::before {
+  content: "✓";
+  margin-inline-end: 6px;
+}
+@media (max-width: 1100px) {
+  .ds-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 640px) {
+  .ds-week-day {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .ds-week-actions {
+    margin-inline-start: 0;
+  }
+}

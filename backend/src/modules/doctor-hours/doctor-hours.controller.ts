@@ -21,14 +21,19 @@ import {
 import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
+  ArrayMinSize,
   IsArray,
   IsBoolean,
   IsDateString,
+  IsIn,
   IsInt,
   IsOptional,
+  IsString,
   IsUUID,
+  MaxLength,
   Max,
   Min,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import {
@@ -36,7 +41,12 @@ import {
   type AuthenticatedRequest,
 } from '../identity/presentation/jwt-auth.guard';
 import { RequireCapabilities } from '../identity/presentation/require-capabilities.decorator';
-import { DoctorHoursService } from './doctor-hours.service';
+import {
+  DoctorHoursService,
+  type ClinicScope,
+  type HoursActor,
+} from './doctor-hours.service';
+import { doctorLanguages } from '../doctors/domain/doctor';
 import { PERIODS_MAX } from './hours-rules';
 
 class PeriodDto {
@@ -107,6 +117,65 @@ class ClinicHoursDto {
   periods!: PeriodDto[];
 }
 
+class ClinicLeaveDto {
+  @ApiProperty() @IsDateString({ strict: true }) startsAt!: string;
+  @ApiProperty() @IsDateString({ strict: true }) endsAt!: string;
+}
+
+class DoctorDetailsDto {
+  @ApiPropertyOptional({ maxLength: 4000 })
+  @IsOptional()
+  @IsString()
+  @MaxLength(4100)
+  biography?: string;
+  @ApiPropertyOptional({ type: 'integer', minimum: 0, maximum: 80 })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(80)
+  yearsOfExperience?: number;
+  @ApiPropertyOptional({
+    enum: doctorLanguages,
+    isArray: true,
+    minItems: 1,
+  })
+  @IsOptional()
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(doctorLanguages.length)
+  @IsIn(doctorLanguages, { each: true })
+  languages?: string[];
+  @ApiPropertyOptional({
+    type: 'integer',
+    nullable: true,
+    description: 'First-visit fee in IQD; null: the default fee setting.',
+  })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsInt()
+  @Min(0)
+  @Max(5_000_000)
+  consultationFeeIqd?: number | null;
+  @ApiPropertyOptional({
+    type: 'integer',
+    nullable: true,
+    description: 'Follow-up fee in IQD; null: the first-visit fee.',
+  })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsInt()
+  @Min(0)
+  @Max(5_000_000)
+  followUpFeeIqd?: number | null;
+}
+
+class ClinicDoctorParams {
+  @ApiProperty({ format: 'uuid' }) @IsUUID() doctorId!: string;
+}
+class ClinicDoctorLeaveParams extends ClinicDoctorParams {
+  @ApiProperty({ format: 'uuid' }) @IsUUID() leaveId!: string;
+}
+
 class ClinicParams {
   @ApiProperty({ format: 'uuid' }) @IsUUID() clinicId!: string;
 }
@@ -121,7 +190,9 @@ class DoctorLeaveParams extends DoctorParams {
   @ApiProperty({ format: 'uuid' }) @IsUUID() leaveId!: string;
 }
 
-function owner(req: AuthenticatedRequest): string {
+const requestId = (req: AuthenticatedRequest) => req.requestId ?? 'unavailable';
+
+function owner(req: AuthenticatedRequest): HoursActor {
   if (
     !req.principal ||
     req.principal.kind !== 'platformAdministrator' ||
@@ -131,9 +202,22 @@ function owner(req: AuthenticatedRequest): string {
     throw new ForbiddenException(
       'A global platform administrator session is required.',
     );
-  return req.principal.id;
+  return { id: req.principal.id, via: 'platform', requestId: requestId(req) };
 }
-const requestId = (req: AuthenticatedRequest) => req.requestId ?? 'unavailable';
+
+/** A receptionist (their doctors only) or clinic manager at their clinic. */
+function clinicScope(req: AuthenticatedRequest): ClinicScope {
+  if (!req.principal || req.principal.kind !== 'staff')
+    throw new ForbiddenException('A clinic staff session is required.');
+  return {
+    actorId: req.principal.id,
+    organizationId: req.tenant?.organizationId,
+    clinicId: req.tenant?.clinicId,
+    doctorIds: req.tenant?.doctorIds,
+    receptionist: req.principal.capabilities.has('reception:doctors:manage'),
+    requestId: requestId(req),
+  };
+}
 
 @ApiTags('platform')
 @ApiBearerAuth()
@@ -159,13 +243,7 @@ export class DoctorHoursController {
     @Param() params: DoctorClinicParams,
     @Body() body: WeekDto,
   ) {
-    await this.hours.setWeek(
-      owner(req),
-      params.id,
-      params.clinicId,
-      body,
-      requestId(req),
-    );
+    await this.hours.setWeek(owner(req), params.id, params.clinicId, body);
   }
 
   @Post('leave')
@@ -174,16 +252,11 @@ export class DoctorHoursController {
     @Param() params: DoctorParams,
     @Body() body: LeaveDto,
   ) {
-    return this.hours.addLeave(
-      owner(req),
-      params.id,
-      {
-        clinicId: body.clinicId ?? null,
-        startsAt: new Date(body.startsAt),
-        endsAt: new Date(body.endsAt),
-      },
-      requestId(req),
-    );
+    return this.hours.addLeave(owner(req), params.id, {
+      clinicId: body.clinicId ?? null,
+      startsAt: new Date(body.startsAt),
+      endsAt: new Date(body.endsAt),
+    });
   }
 
   @Delete('leave/:leaveId')
@@ -192,12 +265,7 @@ export class DoctorHoursController {
     @Req() req: AuthenticatedRequest,
     @Param() params: DoctorLeaveParams,
   ) {
-    await this.hours.removeLeave(
-      owner(req),
-      params.id,
-      params.leaveId,
-      requestId(req),
-    );
+    await this.hours.removeLeave(owner(req), params.id, params.leaveId);
   }
 
   @Put('booking')
@@ -207,16 +275,11 @@ export class DoctorHoursController {
     @Param() params: DoctorParams,
     @Body() body: BookingDto,
   ) {
-    await this.hours.setBooking(
-      owner(req),
-      params.id,
-      {
-        visitMinutes: body.visitMinutes ?? null,
-        bookable: body.bookable,
-        acceptingNewPatients: body.acceptingNewPatients,
-      },
-      requestId(req),
-    );
+    await this.hours.setBooking(owner(req), params.id, {
+      visitMinutes: body.visitMinutes ?? null,
+      bookable: body.bookable,
+      acceptingNewPatients: body.acceptingNewPatients,
+    });
   }
 }
 
@@ -242,11 +305,135 @@ export class ClinicHoursController {
     @Param() params: ClinicParams,
     @Body() body: ClinicHoursDto,
   ) {
-    await this.hours.setClinicHours(
-      owner(req),
-      params.clinicId,
-      body.periods,
-      requestId(req),
+    await this.hours.setClinicHours(owner(req), params.clinicId, body.periods);
+  }
+}
+
+/**
+ * Clinic Portal → Doctors → a doctor. Reception controls everything about
+ * the doctors they work for (founder decision 2026-11-19): hours, breaks,
+ * time off at this clinic, visit length, app booking, fees and profile.
+ * The doctor's name, specialties and active status stay with Saxlem.
+ */
+@ApiTags('clinic doctors')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
+@RequireCapabilities('doctor:settings:manage')
+@Controller('clinic/doctors/:doctorId')
+export class ClinicDoctorSettingsController {
+  constructor(private readonly hours: DoctorHoursService) {}
+
+  @Get('settings')
+  @ApiOperation({
+    summary: "A doctor's hours, time off, booking, fees and profile here",
+  })
+  get(@Req() req: AuthenticatedRequest, @Param() params: ClinicDoctorParams) {
+    return this.hours.clinicView(clinicScope(req), params.doctorId);
+  }
+
+  @Put('hours')
+  @HttpCode(204)
+  @ApiOperation({ summary: "Replace the doctor's week at this clinic" })
+  async week(
+    @Req() req: AuthenticatedRequest,
+    @Param() params: ClinicDoctorParams,
+    @Body() body: WeekDto,
+  ) {
+    const actor = await this.hours.clinicDoctor(
+      clinicScope(req),
+      params.doctorId,
     );
+    await this.hours.setWeek(actor, params.doctorId, actor.clinicId, body);
+  }
+
+  @Post('leave')
+  @ApiOperation({ summary: 'Add time off at this clinic' })
+  async addLeave(
+    @Req() req: AuthenticatedRequest,
+    @Param() params: ClinicDoctorParams,
+    @Body() body: ClinicLeaveDto,
+  ) {
+    const actor = await this.hours.clinicDoctor(
+      clinicScope(req),
+      params.doctorId,
+    );
+    return this.hours.addLeave(actor, params.doctorId, {
+      startsAt: new Date(body.startsAt),
+      endsAt: new Date(body.endsAt),
+    });
+  }
+
+  @Delete('leave/:leaveId')
+  @HttpCode(204)
+  @ApiOperation({ summary: 'Remove time off at this clinic' })
+  async removeLeave(
+    @Req() req: AuthenticatedRequest,
+    @Param() params: ClinicDoctorLeaveParams,
+  ) {
+    const actor = await this.hours.clinicDoctor(
+      clinicScope(req),
+      params.doctorId,
+    );
+    await this.hours.removeLeave(actor, params.doctorId, params.leaveId);
+  }
+
+  @Put('booking')
+  @HttpCode(204)
+  @ApiOperation({ summary: 'Visit length and app booking switches' })
+  async booking(
+    @Req() req: AuthenticatedRequest,
+    @Param() params: ClinicDoctorParams,
+    @Body() body: BookingDto,
+  ) {
+    const actor = await this.hours.clinicDoctor(
+      clinicScope(req),
+      params.doctorId,
+    );
+    await this.hours.setBooking(actor, params.doctorId, {
+      visitMinutes: body.visitMinutes ?? null,
+      bookable: body.bookable,
+      acceptingNewPatients: body.acceptingNewPatients,
+    });
+  }
+
+  @Put('details')
+  @HttpCode(204)
+  @ApiOperation({ summary: 'Fees, biography, languages, experience' })
+  async details(
+    @Req() req: AuthenticatedRequest,
+    @Param() params: ClinicDoctorParams,
+    @Body() body: DoctorDetailsDto,
+  ) {
+    const actor = await this.hours.clinicDoctor(
+      clinicScope(req),
+      params.doctorId,
+    );
+    await this.hours.setDetails(actor, params.doctorId, body);
+  }
+}
+
+/** Clinic Portal: the signed-in clinic's opening hours. */
+@ApiTags('clinic doctors')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
+@RequireCapabilities('clinic:hours:manage')
+@Controller('clinic/opening-hours')
+export class ClinicOpeningHoursController {
+  constructor(private readonly hours: DoctorHoursService) {}
+
+  @Get()
+  @ApiOperation({ summary: "This clinic's opening hours and doctors' hours" })
+  get(@Req() req: AuthenticatedRequest) {
+    return this.hours.clinicHours(
+      this.hours.clinicActor(clinicScope(req)).clinicId,
+    );
+  }
+
+  @Put()
+  @HttpCode(204)
+  @ApiOperation({ summary: "Replace this clinic's opening hours" })
+  async set(@Req() req: AuthenticatedRequest, @Body() body: ClinicHoursDto) {
+    const actor = this.hours.clinicActor(clinicScope(req));
+    await this.hours.setClinicHours(actor, actor.clinicId, body.periods);
   }
 }

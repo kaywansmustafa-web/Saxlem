@@ -305,4 +305,214 @@ describe('doctor hours from the Owner Portal', () => {
         .body.clinics[0].openingHours,
     ).toHaveLength(7);
   });
+
+  it('lets reception run their own doctors from the Clinic Portal', async () => {
+    const seeded = await createSeededQueue(0);
+    const { clinicId, organizationId } = seeded.tenant;
+    const doctorId = seeded.doctor.doctorId!;
+    const other = await createRolePrincipal('doctor', seeded.tenant);
+    const reception = await createRolePrincipal('receptionist', seeded.tenant);
+    const unassigned = await createRolePrincipal('receptionist', seeded.tenant);
+    await apiPrisma.receptionistDoctorAssignment.create({
+      data: { organizationId, clinicId, userId: reception.userId, doctorId },
+    });
+    const server = app.getHttpServer();
+    const as = (token: string) => ({ authorization: `Bearer ${token}` });
+    const base = `/api/v1/clinic/doctors/${doctorId}`;
+    const otherBase = `/api/v1/clinic/doctors/${other.doctorId}`;
+
+    // Only staff who may manage doctors, and receptionists only for theirs.
+    for (const token of [
+      seeded.doctor.token,
+      seeded.patient.token,
+      unassigned.token,
+    ])
+      await request(server).get(`${base}/settings`).set(as(token)).expect(403);
+    await request(server)
+      .get(`${otherBase}/settings`)
+      .set(as(reception.token))
+      .expect(403);
+    await request(server)
+      .get(`/api/v1/clinic/doctors/${randomUUID()}/settings`)
+      .set(as(seeded.manager.token))
+      .expect(404);
+
+    const before = await request(server)
+      .get(`${base}/settings`)
+      .set(as(reception.token))
+      .expect(200);
+    expect(before.body).toMatchObject({
+      doctorId,
+      clinicId,
+      weekly: [],
+      breaks: [],
+      elsewhere: [],
+      leave: [],
+      visitMinutes: null,
+      bookable: true,
+      acceptingNewPatients: true,
+      consultationFeeIqd: null,
+      followUpFeeIqd: null,
+      defaultFeeIqd: 25000,
+      yearsOfExperience: 5,
+    });
+
+    // Clinic opening hours first, then the doctor's week inside them.
+    await request(server)
+      .put(`${base}/hours`)
+      .set(as(reception.token))
+      .send({ weekly: everyDay(540, 720), breaks: [] })
+      .expect(400);
+    await request(server)
+      .put('/api/v1/clinic/opening-hours')
+      .set(as(seeded.doctor.token))
+      .send({ periods: everyDay(480, 1260) })
+      .expect(403);
+    await request(server)
+      .put('/api/v1/clinic/opening-hours')
+      .set(as(reception.token))
+      .send({ periods: everyDay(480, 1260) })
+      .expect(204);
+    await request(server)
+      .put(`${base}/hours`)
+      .set(as(reception.token))
+      .send({
+        weekly: everyDay(540, 720),
+        breaks: [{ weekday: 1, startsMinute: 600, endsMinute: 615 }],
+      })
+      .expect(204);
+    await request(server)
+      .put(`${otherBase}/hours`)
+      .set(as(reception.token))
+      .send({ weekly: everyDay(540, 720), breaks: [] })
+      .expect(403);
+    // A clinic manager runs every doctor at the clinic.
+    await request(server)
+      .put(`${otherBase}/hours`)
+      .set(as(seeded.manager.token))
+      .send({ weekly: everyDay(780, 900), breaks: [] })
+      .expect(204);
+    // Narrowing the clinic past a doctor's hours is refused.
+    await request(server)
+      .put('/api/v1/clinic/opening-hours')
+      .set(as(reception.token))
+      .send({ periods: everyDay(540, 720) })
+      .expect(409);
+    const opening = await request(server)
+      .get('/api/v1/clinic/opening-hours')
+      .set(as(reception.token))
+      .expect(200);
+    expect(opening.body.periods).toHaveLength(7);
+    expect(opening.body.doctorPeriods).toHaveLength(14);
+
+    // Time off at this clinic, then removed.
+    const startsAt = new Date(Date.now() + 2 * 86_400_000);
+    await request(server)
+      .post(`${base}/leave`)
+      .set(as(reception.token))
+      .send({
+        startsAt: startsAt.toISOString(),
+        endsAt: startsAt.toISOString(),
+      })
+      .expect(400);
+    const leave = await request(server)
+      .post(`${base}/leave`)
+      .set(as(reception.token))
+      .send({
+        startsAt: startsAt.toISOString(),
+        endsAt: new Date(startsAt.getTime() + 86_400_000).toISOString(),
+      })
+      .expect(201);
+    expect(leave.body).toMatchObject({ bookedVisits: 0 });
+    await request(server)
+      .delete(`${otherBase}/leave/${leave.body.ids[0]}`)
+      .set(as(seeded.manager.token))
+      .expect(404);
+    await request(server)
+      .delete(`${base}/leave/${leave.body.ids[0]}`)
+      .set(as(reception.token))
+      .expect(204);
+
+    // Booking switches, visit length, fees and profile.
+    await request(server)
+      .put(`${base}/booking`)
+      .set(as(reception.token))
+      .send({ visitMinutes: 22, bookable: true, acceptingNewPatients: true })
+      .expect(400);
+    await request(server)
+      .put(`${base}/booking`)
+      .set(as(reception.token))
+      .send({ visitMinutes: 20, bookable: true, acceptingNewPatients: false })
+      .expect(204);
+    for (const bad of [
+      { consultationFeeIqd: -1 },
+      { consultationFeeIqd: 5_000_001 },
+      { yearsOfExperience: 81 },
+      { languages: [] },
+      { languages: ['klingon'] },
+      // The name and status stay with Saxlem.
+      { displayName: 'Dr. Someone Else' },
+      { status: 'inactive' },
+    ])
+      await request(server)
+        .put(`${base}/details`)
+        .set(as(reception.token))
+        .send(bad)
+        .expect(400);
+    await request(server)
+      .put(`${base}/details`)
+      .set(as(reception.token))
+      .send({
+        consultationFeeIqd: 30000,
+        followUpFeeIqd: 15000,
+        biography: '  Children and families.  ',
+        languages: ['badiniKurdish', 'arabic', 'badiniKurdish'],
+        yearsOfExperience: 9,
+      })
+      .expect(204);
+    const after = await request(server)
+      .get(`${base}/settings`)
+      .set(as(reception.token))
+      .expect(200);
+    expect(after.body).toMatchObject({
+      weekly: everyDay(540, 720),
+      breaks: [{ weekday: 1, startsMinute: 600, endsMinute: 615 }],
+      openingHours: everyDay(480, 1260),
+      leave: [],
+      visitMinutes: 20,
+      acceptingNewPatients: false,
+      consultationFeeIqd: 30000,
+      followUpFeeIqd: 15000,
+      biography: 'Children and families.',
+      languages: ['badiniKurdish', 'arabic'],
+      yearsOfExperience: 9,
+    });
+    await request(server)
+      .put(`${base}/details`)
+      .set(as(reception.token))
+      .send({ consultationFeeIqd: null, followUpFeeIqd: null })
+      .expect(204);
+    expect(
+      await apiPrisma.doctor.findUniqueOrThrow({
+        where: { id: doctorId },
+        select: { consultationFeeIqd: true, displayName: true },
+      }),
+    ).toEqual({ consultationFeeIqd: null, displayName: 'Dr. API Doctor' });
+
+    const audits = await apiPrisma.auditEvent.findMany({
+      where: { actorUserId: reception.userId },
+      select: { action: true, clinicId: true },
+    });
+    expect(audits.every((a) => a.clinicId === clinicId)).toBe(true);
+    expect(audits.map((a) => a.action)).toEqual(
+      expect.arrayContaining([
+        'clinic.clinic.hours.updated',
+        'clinic.doctor.hours.updated',
+        'clinic.doctor.leave.added',
+        'clinic.doctor.leave.removed',
+        'clinic.doctor.booking.updated',
+        'clinic.doctor.details.updated',
+      ]),
+    );
+  });
 });

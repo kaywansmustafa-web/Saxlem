@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isLocale } from "@/i18n";
 import { ReceptionBar, ReceptionSetup, ownDoctorIds } from "@/features/reception/presentation/reception-setup";
@@ -5,6 +6,7 @@ import { currentQueue } from "@/features/workday/load";
 import { workdayMessages } from "@/features/workday/messages";
 import { WeeklyHours } from "@/features/workday/schedule-parts";
 import { WorkdayError } from "@/features/workday/workday-error";
+import { doctorSettingsMessages } from "@/features/doctor-settings/presentation/messages";
 import { clinicalComposition } from "@/infrastructure/clinical-composition";
 import { clinicDay } from "@/lib/format";
 
@@ -14,6 +16,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const m = workdayMessages(locale);
+  const settings = doctorSettingsMessages(locale);
   const result = await (async () => {
     try {
       const composition = await clinicalComposition(locale),
@@ -67,6 +70,11 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
               </div>
               <h3 className="ax-subtitle">{m.weeklyHours}</h3>
               {clinic && <WeeklyHours m={m} clinic={clinic} todayWeekday={todayWeekday} />}
+              <div className="ax-actions">
+                <Link className="ax-btn" href={`/${locale}/doctors/${doctor.id}`} aria-label={`${settings.link}: ${doctor.displayName}`}>
+                  {settings.link}
+                </Link>
+              </div>
             </section>
           );
         })}

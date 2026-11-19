@@ -28,6 +28,11 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
     'billing:read',
     'patient:directory:read',
     'reception:doctors:manage',
+    // Hours, breaks, time off, visit length, app booking, fees and profile
+    // of the doctors they work for, and the clinic's opening hours
+    // (founder decision 2026-11-19).
+    'doctor:settings:manage',
+    'clinic:hours:manage',
     'patient:register',
     'doctor:directory:read',
     'doctor:availability:read',
@@ -79,6 +84,8 @@ const capabilities: Record<IdentityRole, readonly string[]> = {
   ],
   clinicManager: [
     'clinic:management:read',
+    'doctor:settings:manage',
+    'clinic:hours:manage',
     'patient:directory:read',
     'patient:register',
     'doctor:directory:read',

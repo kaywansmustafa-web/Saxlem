@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   Logger,
   NotFoundException,
@@ -9,15 +10,55 @@ import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../../infrastructure/database/prisma.service';
 import { AppSettings } from '../app-config/app-settings.service';
 import { AppointmentService } from '../appointments/application/appointment.service';
+import { doctorLanguages } from '../doctors/domain/doctor';
 import { checkWeek, strayBreaks, type WeeklyPeriod } from './hours-rules';
 
 type Tx = Prisma.TransactionClient;
 const DAY_MS = 86_400_000;
 
+/** Who is changing a doctor's settings, and from where. */
+export interface HoursActor {
+  readonly id: string;
+  /** Owner Portal ('platform') or Clinic Portal ('clinic'). */
+  readonly via: 'platform' | 'clinic';
+  readonly requestId: string;
+  /** Clinic Portal: the signed-in clinic; changes stay inside it. */
+  readonly clinicId?: string;
+}
+
+/** A signed-in receptionist or clinic manager. */
+export interface ClinicScope {
+  readonly actorId: string;
+  readonly organizationId?: string | undefined;
+  readonly clinicId?: string | undefined;
+  /** The doctors a receptionist works for (undefined: not chosen yet). */
+  readonly doctorIds?: readonly string[] | undefined;
+  readonly receptionist: boolean;
+  readonly requestId: string;
+}
+
+type ClinicActor = HoursActor & {
+  readonly organizationId: string;
+  readonly clinicId: string;
+};
+
+export interface DoctorDetailsInput {
+  readonly biography?: string;
+  readonly yearsOfExperience?: number;
+  readonly languages?: readonly string[];
+  readonly consultationFeeIqd?: number | null;
+  readonly followUpFeeIqd?: number | null;
+}
+
+const FEE_MAX = 5_000_000;
+const BIOGRAPHY_MAX = 4000;
+
 /**
- * A doctor's working hours, breaks, days off, visit length and app booking
- * switches, set by the owner (Owner Portal → doctor → Hours). Booking, the
- * reception day board and the next free time all read these.
+ * A doctor's working hours, breaks, days off, visit length, app booking
+ * switches, fees and profile. The owner sets them in the Owner Portal;
+ * reception sets them for the doctors they work for in the Clinic Portal
+ * (founder decision 2026-11-19). Booking, the reception day board and the
+ * next free time all read these.
  */
 @Injectable()
 export class DoctorHoursService {
@@ -113,14 +154,252 @@ export class DoctorHoursService {
     };
   }
 
+  /**
+   * Clinic Portal: a receptionist may change only the doctors they work
+   * for, and only at the clinic they signed in to; a clinic manager, any
+   * doctor at that clinic.
+   */
+  async clinicDoctor(
+    scope: ClinicScope,
+    doctorId: string,
+  ): Promise<ClinicActor> {
+    const actor = this.clinicActor(scope);
+    if (scope.receptionist && !scope.doctorIds?.includes(doctorId))
+      throw new ForbiddenException('You do not work for this doctor.');
+    const row = await this.prisma.db.doctorClinicAssignment.findFirst({
+      where: {
+        organizationId: actor.organizationId,
+        clinicId: actor.clinicId,
+        doctorId,
+        status: 'active',
+        doctor: { status: 'active' },
+      },
+      select: { doctorId: true },
+    });
+    if (!row)
+      throw new NotFoundException('The doctor does not work at this clinic.');
+    return actor;
+  }
+
+  clinicActor(scope: ClinicScope): ClinicActor {
+    if (!scope.organizationId || !scope.clinicId)
+      throw new ForbiddenException('A clinic session is required.');
+    return {
+      id: scope.actorId,
+      via: 'clinic',
+      requestId: scope.requestId,
+      organizationId: scope.organizationId,
+      clinicId: scope.clinicId,
+    };
+  }
+
+  /** Clinic Portal → Doctors → a doctor: everything reception can change. */
+  async clinicView(scope: ClinicScope, doctorId: string, now = new Date()) {
+    const { clinicId } = await this.clinicDoctor(scope, doctorId);
+    const doctor = await this.prisma.db.doctor.findUniqueOrThrow({
+      where: { id: doctorId },
+      select: {
+        id: true,
+        displayName: true,
+        visitMinutes: true,
+        biography: true,
+        yearsOfExperience: true,
+        languages: true,
+        consultationFeeIqd: true,
+        followUpFeeIqd: true,
+        availability: true,
+        specialtyAssignments: {
+          orderBy: [{ isPrimary: 'desc' }, { createdAt: 'asc' }],
+          select: {
+            specialty: {
+              select: { displayName: true, nameAr: true, nameKu: true },
+            },
+          },
+        },
+        weeklySchedules: {
+          where: { status: 'active' },
+          orderBy: [{ weekday: 'asc' }, { startsMinute: 'asc' }],
+        },
+        breaks: {
+          where: { status: 'active', clinicId },
+          orderBy: [{ weekday: 'asc' }, { startsMinute: 'asc' }],
+        },
+        leaves: {
+          where: { status: 'active', clinicId, endsAt: { gt: now } },
+          orderBy: { startsAt: 'asc' },
+        },
+      },
+    });
+    const clinic = await this.prisma.db.clinic.findUniqueOrThrow({
+      where: { id: clinicId },
+      select: {
+        id: true,
+        name: true,
+        timezone: true,
+        workingHours: {
+          where: { status: 'active' },
+          orderBy: [{ weekday: 'asc' }, { opensMinute: 'asc' }],
+        },
+      },
+    });
+    const period = (row: WeeklyPeriod) => ({
+      weekday: row.weekday,
+      startsMinute: row.startsMinute,
+      endsMinute: row.endsMinute,
+    });
+    return {
+      doctorId: doctor.id,
+      displayName: doctor.displayName,
+      specialties: doctor.specialtyAssignments.map(({ specialty }) => ({
+        en: specialty.displayName,
+        ar: specialty.nameAr,
+        ku: specialty.nameKu,
+      })),
+      clinicId: clinic.id,
+      clinicName: clinic.name,
+      timezone: clinic.timezone,
+      openingHours: clinic.workingHours.map((row) => ({
+        weekday: row.weekday,
+        startsMinute: row.opensMinute,
+        endsMinute: row.closesMinute,
+      })),
+      weekly: doctor.weeklySchedules
+        .filter((row) => row.clinicId === clinicId)
+        .map(period),
+      breaks: doctor.breaks.map(period),
+      // Hours at the doctor's other clinics (so the week can't overlap).
+      elsewhere: doctor.weeklySchedules
+        .filter((row) => row.clinicId !== clinicId)
+        .map(period),
+      leave: doctor.leaves.map((row) => ({
+        id: row.id,
+        startsAt: row.startsAt.toISOString(),
+        endsAt: row.endsAt.toISOString(),
+      })),
+      visitMinutes: doctor.visitMinutes,
+      defaultVisitMinutes: this.settings.int('booking.defaultVisitMinutes'),
+      bookable: (doctor.availability?.status ?? 'available') === 'available',
+      acceptingNewPatients: doctor.availability?.acceptingNewPatients ?? true,
+      nextAvailableAt:
+        (
+          await this.appointments.nextFreeTime(doctor.id, now).catch(() => null)
+        )?.toISOString() ?? null,
+      biography: doctor.biography,
+      yearsOfExperience: doctor.yearsOfExperience,
+      languages: doctor.languages,
+      consultationFeeIqd: doctor.consultationFeeIqd,
+      followUpFeeIqd: doctor.followUpFeeIqd,
+      defaultFeeIqd: this.settings.int('booking.defaultFeeIqd'),
+    };
+  }
+
+  /** Fees and the profile patients read (name and specialties stay with Saxlem). */
+  async setDetails(
+    actor: HoursActor,
+    doctorId: string,
+    input: DoctorDetailsInput,
+  ) {
+    const fee = (value: number | null | undefined, label: string) => {
+      if (
+        value !== undefined &&
+        value !== null &&
+        (!Number.isInteger(value) || value < 0 || value > FEE_MAX)
+      )
+        throw new BadRequestException(
+          `${label} must be 0 to ${FEE_MAX.toLocaleString('en-US')} IQD.`,
+        );
+    };
+    fee(input.consultationFeeIqd, 'The first-visit fee');
+    fee(input.followUpFeeIqd, 'The follow-up fee');
+    const biography = input.biography?.trim();
+    if (biography !== undefined && biography.length > BIOGRAPHY_MAX)
+      throw new BadRequestException(
+        `Keep the biography under ${BIOGRAPHY_MAX} characters.`,
+      );
+    const years = input.yearsOfExperience;
+    if (
+      years !== undefined &&
+      (!Number.isInteger(years) || years < 0 || years > 80)
+    )
+      throw new BadRequestException('Years of experience must be 0 to 80.');
+    const languages = input.languages
+      ? [...new Set(input.languages)]
+      : undefined;
+    if (
+      languages &&
+      (!languages.length ||
+        languages.some(
+          (x) => !(doctorLanguages as readonly string[]).includes(x),
+        ))
+    )
+      throw new BadRequestException(
+        `Choose at least one language: ${doctorLanguages.join(', ')}.`,
+      );
+    await this.prisma.db.$transaction(async (tx) => {
+      const before = await tx.doctor.findUnique({
+        where: { id: doctorId },
+        select: {
+          organizationId: true,
+          consultationFeeIqd: true,
+          followUpFeeIqd: true,
+        },
+      });
+      if (!before) throw new NotFoundException('Doctor was not found.');
+      await tx.doctor.update({
+        where: { id: doctorId },
+        data: {
+          ...(biography !== undefined ? { biography } : {}),
+          ...(years !== undefined ? { yearsOfExperience: years } : {}),
+          ...(languages ? { languages } : {}),
+          ...(input.consultationFeeIqd !== undefined
+            ? { consultationFeeIqd: input.consultationFeeIqd }
+            : {}),
+          ...(input.followUpFeeIqd !== undefined
+            ? { followUpFeeIqd: input.followUpFeeIqd }
+            : {}),
+          version: { increment: 1 },
+        },
+      });
+      await this.audit(
+        tx,
+        actor,
+        before.organizationId,
+        doctorId,
+        'details.updated',
+        {
+          fields: Object.keys(input).filter(
+            (key) => input[key as keyof DoctorDetailsInput] !== undefined,
+          ),
+          ...(input.consultationFeeIqd !== undefined
+            ? {
+                consultationFeeIqd: {
+                  from: before.consultationFeeIqd,
+                  to: input.consultationFeeIqd,
+                },
+              }
+            : {}),
+          ...(input.followUpFeeIqd !== undefined
+            ? {
+                followUpFeeIqd: {
+                  from: before.followUpFeeIqd,
+                  to: input.followUpFeeIqd,
+                },
+              }
+            : {}),
+        },
+      );
+    });
+  }
+
   /** Replaces the doctor's week at one clinic. */
   async setWeek(
-    actorId: string,
+    actor: HoursActor,
     doctorId: string,
     clinicId: string,
     input: { weekly: WeeklyPeriod[]; breaks: WeeklyPeriod[] },
-    requestId: string,
   ) {
+    if (actor.clinicId && actor.clinicId !== clinicId)
+      throw new ForbiddenException('Hours can be changed only at this clinic.');
     const weekly = checkWeek(input.weekly, 'hours');
     if (!weekly.ok) throw new BadRequestException(weekly.error);
     const breaks = checkWeek(input.breaks, 'breaks');
@@ -192,32 +471,25 @@ export class DoctorHoursService {
         });
       if (breaks.periods.length)
         await tx.doctorBreak.createMany({ data: rows(breaks.periods) });
-      await this.audit(
-        tx,
-        actorId,
-        organizationId,
-        doctorId,
-        'platform.doctor.hours.updated',
-        requestId,
-        {
-          clinicId,
-          periods: weekly.periods.length,
-          breaks: breaks.periods.length,
-        },
-      );
+      await this.audit(tx, actor, organizationId, doctorId, 'hours.updated', {
+        clinicId,
+        periods: weekly.periods.length,
+        breaks: breaks.periods.length,
+      });
     });
     await this.refresh(doctorId);
   }
 
   /** Days off: at one clinic, or every clinic of the doctor. */
   async addLeave(
-    actorId: string,
+    actor: HoursActor,
     doctorId: string,
     input: { clinicId?: string | null; startsAt: Date; endsAt: Date },
-    requestId: string,
     now = new Date(),
   ) {
     const { startsAt, endsAt } = input;
+    // Reception adds time off at their own clinic only.
+    const clinicId = actor.clinicId ?? input.clinicId ?? null;
     if (
       !Number.isFinite(startsAt.getTime()) ||
       !Number.isFinite(endsAt.getTime()) ||
@@ -235,7 +507,7 @@ export class DoctorHoursService {
         where: {
           doctorId,
           status: 'active',
-          ...(input.clinicId ? { clinicId: input.clinicId } : {}),
+          ...(clinicId ? { clinicId } : {}),
         },
         select: { organizationId: true, clinicId: true },
       });
@@ -251,11 +523,10 @@ export class DoctorHoursService {
       }
       await this.audit(
         tx,
-        actorId,
+        actor,
         assignments[0]!.organizationId,
         doctorId,
-        'platform.doctor.leave.added',
-        requestId,
+        'leave.added',
         {
           clinics: assignments.length,
           startsAt: startsAt.toISOString(),
@@ -268,21 +539,21 @@ export class DoctorHoursService {
       doctorId,
       startsAt,
       endsAt,
-      input.clinicId ?? undefined,
+      clinicId ?? undefined,
     );
     await this.refresh(doctorId);
     return { ids: created, bookedVisits: affected };
   }
 
-  async removeLeave(
-    actorId: string,
-    doctorId: string,
-    leaveId: string,
-    requestId: string,
-  ) {
+  async removeLeave(actor: HoursActor, doctorId: string, leaveId: string) {
     await this.prisma.db.$transaction(async (tx) => {
       const row = await tx.doctorLeave.findFirst({
-        where: { id: leaveId, doctorId, status: 'active' },
+        where: {
+          id: leaveId,
+          doctorId,
+          status: 'active',
+          ...(actor.clinicId ? { clinicId: actor.clinicId } : {}),
+        },
       });
       if (!row) throw new NotFoundException('Time off was not found.');
       await tx.doctorLeave.update({
@@ -291,11 +562,10 @@ export class DoctorHoursService {
       });
       await this.audit(
         tx,
-        actorId,
+        actor,
         row.organizationId,
         doctorId,
-        'platform.doctor.leave.removed',
-        requestId,
+        'leave.removed',
         {
           clinicId: row.clinicId,
         },
@@ -306,14 +576,13 @@ export class DoctorHoursService {
 
   /** Visit length and whether patients can book (new patients) in the app. */
   async setBooking(
-    actorId: string,
+    actor: HoursActor,
     doctorId: string,
     input: {
       visitMinutes: number | null;
       bookable: boolean;
       acceptingNewPatients: boolean;
     },
-    requestId: string,
   ) {
     const minutes = input.visitMinutes;
     if (
@@ -350,11 +619,10 @@ export class DoctorHoursService {
       });
       await this.audit(
         tx,
-        actorId,
+        actor,
         doctor.organizationId,
         doctorId,
-        'platform.doctor.booking.updated',
-        requestId,
+        'booking.updated',
         {
           visitMinutes: { from: doctor.visitMinutes, to: minutes },
           bookable: input.bookable,
@@ -410,11 +678,12 @@ export class DoctorHoursService {
 
   /** Replaces a clinic's opening hours; doctors' hours must still fit. */
   async setClinicHours(
-    actorId: string,
+    actor: HoursActor,
     clinicId: string,
     periods: WeeklyPeriod[],
-    requestId: string,
   ) {
+    if (actor.clinicId && actor.clinicId !== clinicId)
+      throw new ForbiddenException('Only this clinic can be changed.');
     const week = checkWeek(periods, 'hours');
     if (!week.ok) throw new BadRequestException(week.error);
     const doctors = await this.prisma.db.$transaction(async (tx) => {
@@ -455,12 +724,12 @@ export class DoctorHoursService {
         data: {
           organizationId,
           clinicId,
-          actorUserId: actorId,
-          action: 'platform.clinic.hours.updated',
+          actorUserId: actor.id,
+          action: `${actor.via}.clinic.hours.updated`,
           targetType: 'Clinic',
           targetId: clinicId,
           outcome: 'succeeded',
-          requestId,
+          requestId: actor.requestId,
           metadata: { periods: week.periods.length },
           occurredAt: new Date(),
         },
@@ -510,24 +779,25 @@ export class DoctorHoursService {
     return row.organizationId;
   }
 
+  /** "platform.doctor.hours.updated" or "clinic.doctor.hours.updated". */
   private audit(
     tx: Tx,
-    actorId: string,
+    actor: HoursActor,
     organizationId: string,
     doctorId: string,
     action: string,
-    requestId: string,
     metadata: Prisma.InputJsonObject,
   ) {
     return tx.auditEvent.create({
       data: {
         organizationId,
-        actorUserId: actorId,
-        action,
+        ...(actor.clinicId ? { clinicId: actor.clinicId } : {}),
+        actorUserId: actor.id,
+        action: `${actor.via}.doctor.${action}`,
         targetType: 'Doctor',
         targetId: doctorId,
         outcome: 'succeeded',
-        requestId,
+        requestId: actor.requestId,
         metadata,
         occurredAt: new Date(),
       },

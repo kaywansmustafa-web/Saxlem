@@ -21,7 +21,8 @@ export function DoctorHoursCard({ hours }: { hours: DoctorHours }) {
     <section className="card detail-card hours-card" aria-labelledby="hours-title">
       <h2 id="hours-title">Hours and booking</h2>
       <p className="muted">
-        Patients can book only inside these hours. Next free time:{" "}
+        Patients can book only inside these hours. The doctor&apos;s receptionist can also change all of this in the
+        Clinic Portal. Next free time:{" "}
         <strong>
           {hours.nextAvailableAt ? clinicTime(hours.nextAvailableAt, firstZone) : "none in the booking window"}
         </strong>

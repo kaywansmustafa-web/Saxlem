@@ -103,7 +103,7 @@ const en = {
   securityBody: "Signed in on a computer you don't use any more? Sign out everywhere and sign in again here.",
   signOut: "Sign out",
   signOutEverywhere: "Sign out on every device",
-  profileChanges: "To change your profile, ask Saxlem support. Patients see these details in the app.",
+  profileChanges: "Your receptionist can change your hours, time off, fees and profile in the Clinic Portal. For your name or specialties, ask Saxlem support. Patients see these details in the app.",
   languageNames: {
     badiniKurdish: "Kurdish (Badini)",
     soraniKurdish: "Kurdish (Sorani)",
@@ -116,7 +116,7 @@ const en = {
   } as Record<string, string>,
   // Reception doctors page
   doctorsTitle: "Doctors",
-  doctorsLead: "The doctors you work for, their hours this week and today's queue.",
+  doctorsLead: "The doctors you work for: this week's hours and today's queue. Open Hours and settings to change a doctor's hours, time off, booking, fees or profile.",
   manageDoctors: "Add or remove doctors",
 };
 
@@ -221,7 +221,7 @@ const ar: WorkdayMessages = {
   securityBody: "هل سجلت الدخول على جهاز لم تعد تستخدمه؟ اخرج من كل الأجهزة ثم ادخل هنا من جديد.",
   signOut: "تسجيل الخروج",
   signOutEverywhere: "الخروج من كل الأجهزة",
-  profileChanges: "لتعديل ملفك تواصل مع دعم Saxlem. يرى المرضى هذه التفاصيل في التطبيق.",
+  profileChanges: "يمكن لموظف الاستقبال تغيير ساعاتك وإجازاتك وأسعارك وملفك في بوابة العيادة. لتغيير اسمك أو اختصاصاتك تواصل مع دعم Saxlem. يرى المرضى هذه التفاصيل في التطبيق.",
   languageNames: {
     badiniKurdish: "الكردية (البادينية)",
     soraniKurdish: "الكردية (السورانية)",
@@ -233,7 +233,7 @@ const ar: WorkdayMessages = {
     syriac: "السريانية",
   },
   doctorsTitle: "الأطباء",
-  doctorsLead: "الأطباء الذين تعمل معهم وساعاتهم هذا الأسبوع ودور اليوم.",
+  doctorsLead: "الأطباء الذين تعمل معهم: ساعات هذا الأسبوع ودور اليوم. افتح «الساعات والإعدادات» لتغيير ساعات الطبيب أو إجازاته أو الحجز أو الأسعار أو الملف.",
   manageDoctors: "إضافة أو إزالة أطباء",
 };
 
@@ -337,7 +337,7 @@ const ku: WorkdayMessages = {
   securityBody: "تە ل سەر کۆمپیوتەرەکێ چوونا ژوور کرییە کو ئیدی بکار نائینی؟ ژ هەمی ئامیران دەرکەڤە و ل ڤێرێ دیسان بچە ژوور.",
   signOut: "دەرکەفتن",
   signOutEverywhere: "ژ هەمی ئامیران دەرکەڤە",
-  profileChanges: "بۆ گوهۆڕینا پڕۆفایلێ پەیوەندیێ ب پشتەڤانیا ساخلەم بکە. نەخۆش ڤان زانیاریان د ئەپی دا دبینن.",
+  profileChanges: "کارمەندێ پێشوازیێ دشێت د پۆرتالێ کلینیکێ دا دەمێن تە، مۆلەت، بها و پڕۆفایلێ تە بگوهۆڕیت. بۆ ناڤ یان پسپۆڕیێن خو پەیوەندیێ ب پشتەڤانیا ساخلەم بکە. نەخۆش ڤان زانیاریان د ئەپی دا دبینن.",
   languageNames: {
     badiniKurdish: "کوردی (بادینی)",
     soraniKurdish: "کوردی (سۆرانی)",
@@ -349,7 +349,7 @@ const ku: WorkdayMessages = {
     syriac: "سریانی",
   },
   doctorsTitle: "نوژدار",
-  doctorsLead: "ئەو نوژدارێن تو بۆ کار دکەی، دەمێن وان ڤێ هەفتیێ و ڕێزبەندییا ئەڤرۆ.",
+  doctorsLead: "ئەو نوژدارێن تو بۆ کار دکەی: دەمێن ڤێ هەفتیێ و ڕێزبەندییا ئەڤرۆ. «دەم و ڕێکخستن» ڤەکە دا دەمێن نوژداری، مۆلەت، گرتنا ژڤانان، بها یان پڕۆفایلێ بگوهۆڕی.",
   manageDoctors: "نوژداران زێدە بکە یان لابە",
 };
 

@@ -828,6 +828,283 @@
         ]
       }
     },
+    "/api/v1/clinic/doctors/{doctorId}/settings": {
+      "get": {
+        "operationId": "ClinicDoctorSettingsController_get",
+        "parameters": [
+          {
+            "name": "doctorId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "A doctor's hours, time off, booking, fees and profile here",
+        "tags": [
+          "clinic doctors"
+        ]
+      }
+    },
+    "/api/v1/clinic/doctors/{doctorId}/hours": {
+      "put": {
+        "operationId": "ClinicDoctorSettingsController_week",
+        "parameters": [
+          {
+            "name": "doctorId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WeekDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Replace the doctor's week at this clinic",
+        "tags": [
+          "clinic doctors"
+        ]
+      }
+    },
+    "/api/v1/clinic/doctors/{doctorId}/leave": {
+      "post": {
+        "operationId": "ClinicDoctorSettingsController_addLeave",
+        "parameters": [
+          {
+            "name": "doctorId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClinicLeaveDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Add time off at this clinic",
+        "tags": [
+          "clinic doctors"
+        ]
+      }
+    },
+    "/api/v1/clinic/doctors/{doctorId}/leave/{leaveId}": {
+      "delete": {
+        "operationId": "ClinicDoctorSettingsController_removeLeave",
+        "parameters": [
+          {
+            "name": "doctorId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "leaveId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Remove time off at this clinic",
+        "tags": [
+          "clinic doctors"
+        ]
+      }
+    },
+    "/api/v1/clinic/doctors/{doctorId}/booking": {
+      "put": {
+        "operationId": "ClinicDoctorSettingsController_booking",
+        "parameters": [
+          {
+            "name": "doctorId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Visit length and app booking switches",
+        "tags": [
+          "clinic doctors"
+        ]
+      }
+    },
+    "/api/v1/clinic/doctors/{doctorId}/details": {
+      "put": {
+        "operationId": "ClinicDoctorSettingsController_details",
+        "parameters": [
+          {
+            "name": "doctorId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DoctorDetailsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Fees, biography, languages, experience",
+        "tags": [
+          "clinic doctors"
+        ]
+      }
+    },
+    "/api/v1/clinic/opening-hours": {
+      "get": {
+        "operationId": "ClinicOpeningHoursController_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "This clinic's opening hours and doctors' hours",
+        "tags": [
+          "clinic doctors"
+        ]
+      },
+      "put": {
+        "operationId": "ClinicOpeningHoursController_set",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClinicHoursDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Replace this clinic's opening hours",
+        "tags": [
+          "clinic doctors"
+        ]
+      }
+    },
     "/api/v1/appointments": {
       "get": {
         "operationId": "AppointmentsController_list",
@@ -12114,6 +12391,59 @@
         "required": [
           "periods"
         ]
+      },
+      "ClinicLeaveDto": {
+        "type": "object",
+        "properties": {
+          "startsAt": {
+            "type": "string"
+          },
+          "endsAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "startsAt",
+          "endsAt"
+        ]
+      },
+      "DoctorDetailsDto": {
+        "type": "object",
+        "properties": {
+          "biography": {
+            "type": "string",
+            "maxLength": 4000
+          },
+          "yearsOfExperience": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 80
+          },
+          "languages": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "enum": [
+                "badiniKurdish",
+                "soraniKurdish",
+                "arabic",
+                "english",
+                "turkish"
+              ]
+            }
+          },
+          "consultationFeeIqd": {
+            "type": "integer",
+            "nullable": true,
+            "description": "First-visit fee in IQD; null: the default fee setting."
+          },
+          "followUpFeeIqd": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Follow-up fee in IQD; null: the first-visit fee."
+          }
+        }
       },
       "ApiFieldErrorDto": {
         "type": "object",
