@@ -1,12 +1,16 @@
 /**
  * The Saxlem mark (v2 "Aura"): two rounded shapes, Saxlem Blue above and aqua below,
- * meet to form an "S" with a small plus where they touch.
+ * meet to form an "S" with a small plus where they touch. Brand rule: the plus
+ * is white on a dark background (`onDark`) and night ink on a bright one.
  */
 export function BrandMark({
   className,
   idPrefix = "sx-mark",
+  onDark = false,
 }: {
   className: string;
+  /** The background behind the mark is dark (e.g. the night sign-in panel). */
+  onDark?: boolean;
   /** Gradient ids must be unique per page: a hidden copy (e.g. the sidebar
    * when printing) would otherwise blank every other copy. */
   idPrefix?: string;
@@ -34,7 +38,7 @@ export function BrandMark({
         />
         <path
           d="M256 226 V286 M226 256 H286"
-          stroke="#FFFFFF"
+          stroke={onDark ? "#FFFFFF" : "#0B1533"}
           strokeWidth="19"
           strokeLinecap="round"
         />

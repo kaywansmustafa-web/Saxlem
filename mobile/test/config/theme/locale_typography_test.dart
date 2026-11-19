@@ -8,13 +8,28 @@ void main() {
     expect(AppTheme.fontFamilyFor(const Locale('ar', 'IQ')), 'Cairo');
     expect(AppTheme.fontFamilyFor(const Locale('ku', 'IQ')), 'Rudaw');
 
+    // Latin and digits are the same fonts in every language; the language
+    // decides which script font draws the shared Arabic-script letters.
+    for (final (code, script) in [
+      ('en', 'Rudaw'),
+      ('ar', 'Cairo'),
+      ('ku', 'Rudaw'),
+    ]) {
+      final theme = AppTheme.lightFor(Locale(code)).textTheme;
+      expect(theme.bodyMedium?.fontFamily, 'Inter');
+      expect(theme.headlineSmall?.fontFamily, 'Sora');
+      expect(theme.bodyMedium?.fontFamilyFallback?.first, script);
+      expect(
+        theme.bodyMedium?.fontFamilyFallback,
+        containsAll(['Rudaw', 'Cairo']),
+      );
+    }
+    // Tracking pulls joined Arabic-script letters apart.
     expect(
-      AppTheme.lightFor(const Locale('ar')).textTheme.bodyMedium?.fontFamily,
-      'Cairo',
-    );
-    expect(
-      AppTheme.lightFor(const Locale('ku')).textTheme.bodyMedium?.fontFamily,
-      'Rudaw',
+      AppTheme.lightFor(
+        const Locale('ku'),
+      ).textTheme.headlineSmall?.letterSpacing,
+      0,
     );
   });
 
@@ -41,8 +56,9 @@ void main() {
               body: Column(
                 children: [
                   Text(
-                    Theme.of(context).textTheme.bodyMedium?.fontFamily ??
-                        'default',
+                    Theme.of(
+                      context,
+                    ).textTheme.bodyMedium!.fontFamilyFallback!.first,
                     key: const Key('family'),
                   ),
                   TextButton(

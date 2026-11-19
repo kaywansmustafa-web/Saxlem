@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
 
-/// v2 "Aura" type: Sora for display (numbers, titles, names) and Inter for
-/// reading text in English; Cairo (Arabic) and Rudaw (Badini) replace both in
-/// their locales. All families are bundled, so no font is fetched at runtime.
+/// v2 "Aura" type. Every script has one font in every language:
+/// Latin letters and digits are Sora (display: numbers, titles, names) and
+/// Inter (reading text); Kurdish letters are Rudaw and Arabic letters Cairo.
+/// The app language only decides which of Rudaw and Cairo draws the letters
+/// the two scripts share (see [AppTheme.scriptFontsFor]). All families are
+/// bundled, so no font is fetched at runtime and nothing falls back to the
+/// phone's own fonts.
 abstract final class SaxlemTypography {
   static const display = 'Sora';
   static const text = 'Inter';
+
+  /// Letter spacing for small-caps labels: none in Kurdish and Arabic, where
+  /// spacing pulls joined letters apart.
+  static double tracking(BuildContext context, double value) =>
+      Directionality.of(context) == TextDirection.rtl ? 0 : value;
 
   static TextTheme textTheme(
     TextTheme base,
     Color primary,
     Color secondary, {
-    String? fontFamily,
+    List<String> fallback = const ['Rudaw', 'Cairo'],
+    bool arabicScript = false,
   }) {
     TextStyle style(
       double size,
@@ -22,16 +32,20 @@ abstract final class SaxlemTypography {
       bool numeric = false,
       bool isDisplay = false,
     }) => TextStyle(
-      fontFamily: fontFamily ?? (isDisplay ? display : text),
+      fontFamily: isDisplay ? display : text,
+      fontFamilyFallback: fallback,
       fontSize: size,
       height: line / size,
       fontWeight: weight,
-      // Tight tracking suits Sora and Inter, not Arabic-script fonts.
-      letterSpacing: fontFamily == null ? spacing : 0,
+      // Tight tracking suits Sora and Inter; it breaks Arabic-script joins.
+      letterSpacing: arabicScript ? 0 : spacing,
       color: color,
       fontFeatures: numeric ? const [FontFeature.tabularFigures()] : null,
     );
-    final localizedBase = base.apply(fontFamily: fontFamily ?? text);
+    final localizedBase = base.apply(
+      fontFamily: text,
+      fontFamilyFallback: fallback,
+    );
     return localizedBase.copyWith(
       displayLarge: style(
         40,

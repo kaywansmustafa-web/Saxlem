@@ -441,8 +441,9 @@ class _AssemblingMarkPainter extends CustomPainter {
     if (plus > 0) {
       final c = Offset(176 * s, 176 * s);
       final arm = 30 * s * plus;
+      // The splash is night blue, so the plus is white (brand rule).
       final cut = Paint()
-        ..blendMode = BlendMode.clear
+        ..color = const Color(0xFFFFFFFF)
         ..strokeWidth = 19 * s * plus.clamp(0, 1.2)
         ..strokeCap = StrokeCap.round;
       canvas

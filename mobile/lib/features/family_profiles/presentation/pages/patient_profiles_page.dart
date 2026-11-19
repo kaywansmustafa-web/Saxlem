@@ -69,7 +69,9 @@ class PatientProfilesPage extends StatelessWidget {
               header: true,
               child: Text(
                 context.l10n.familyMembersTitle.toUpperCase(),
-                style: theme.textTheme.labelSmall?.copyWith(letterSpacing: .8),
+                style: theme.textTheme.labelSmall?.copyWith(
+                  letterSpacing: SaxlemTypography.tracking(context, .8),
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -125,7 +127,9 @@ class PatientProfilesPage extends StatelessWidget {
               header: true,
               child: Text(
                 context.l10n.settingsTitle.toUpperCase(),
-                style: theme.textTheme.labelSmall?.copyWith(letterSpacing: .8),
+                style: theme.textTheme.labelSmall?.copyWith(
+                  letterSpacing: SaxlemTypography.tracking(context, .8),
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -187,7 +191,7 @@ class PatientProfilesPage extends StatelessWidget {
                 child: Text(
                   context.l10n.helpTitle.toUpperCase(),
                   style: theme.textTheme.labelSmall?.copyWith(
-                    letterSpacing: .8,
+                    letterSpacing: SaxlemTypography.tracking(context, .8),
                   ),
                 ),
               ),

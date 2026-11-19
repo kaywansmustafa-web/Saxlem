@@ -174,9 +174,9 @@ class _Ready extends StatelessWidget {
         header: true,
         child: Text(
           title.toUpperCase(),
-          style: Theme.of(
-            context,
-          ).textTheme.labelSmall?.copyWith(letterSpacing: .8),
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            letterSpacing: SaxlemTypography.tracking(context, .8),
+          ),
         ),
       ),
       const SizedBox(height: 10),

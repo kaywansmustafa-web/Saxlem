@@ -128,9 +128,9 @@ class _PaymentHistoryPageState extends State<PaymentHistoryPage> {
               header: true,
               child: Text(
                 label.toUpperCase(),
-                style: Theme.of(
-                  context,
-                ).textTheme.labelSmall?.copyWith(letterSpacing: .8),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  letterSpacing: SaxlemTypography.tracking(context, .8),
+                ),
               ),
             ),
           ),
@@ -235,7 +235,7 @@ class ReceiptRow extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     '${ClinicFormat.clinicDay(receipt.paidAt, language)} · ${receipt.patientName}',
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: colors.textSecondary,

@@ -51,7 +51,7 @@ export default async function LoginPage({
     <main className="ax-login" id="main">
       <aside className="ax-login-aura" aria-hidden="true">
         <div className="ax-login-brand">
-          <BrandMark className="ax-login-mark" idPrefix="sx-login" />
+          <BrandMark className="ax-login-mark" idPrefix="sx-login" onDark />
           <span className="ax-wordmark">saxlem</span>
         </div>
         <div>

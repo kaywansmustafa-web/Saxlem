@@ -42,6 +42,7 @@ class WelcomePage extends StatelessWidget {
                           children: [
                             SaxlemMark(
                               size: 34,
+                              onDark: true,
                               semanticLabel: strings.appName,
                             ),
                             const SizedBox(width: 10),
@@ -79,7 +80,11 @@ class WelcomePage extends StatelessWidget {
                               ],
                             ),
                             child: const Center(
-                              child: SaxlemMark(size: 64, semanticLabel: ''),
+                              child: SaxlemMark(
+                                size: 64,
+                                onDark: true,
+                                semanticLabel: '',
+                              ),
                             ),
                           ),
                         ),

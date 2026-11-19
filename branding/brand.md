@@ -31,7 +31,9 @@ All files are in `branding/logo/`. SVGs are outlined, so no fonts are needed to 
 Rules:
 
 - Wordmark: lowercase **saxlem** in Sora SemiBold; **ساخلەم** in Rudaw.
-- Top shape #3B6BFF → #2148F0, bottom shape #14C9C4 → #13B0EA, plus cut out. Wordmark ink #0B1533.
+- Top shape #3B6BFF → #2148F0, bottom shape #14C9C4 → #13B0EA. Wordmark ink #0B1533.
+- The plus follows what is behind the logo (founder, 2026-11-19): **white on a dark background, night ink #0B1533 on a bright one.** A one-colour mark (white or ink, e.g. the app icon) keeps the plus cut out, because a plus in the mark's own colour would disappear.
+- Files: saxlem-mark, saxlem-logo-horizontal, -ku and -bilingual are for bright backgrounds (ink plus); saxlem-logo-horizontal-night and saxlem-app-icon-night are for dark ones (white plus).
 - Clear space equals the height of the plus. Minimum: 16px app icon, 96px wide horizontal logo.
 - Never rotate, stretch, recolour one half, add effects, or place on busy photos.
 

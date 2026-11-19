@@ -12,6 +12,8 @@ import '../../design_system/theme/saxlem_colors.dart';
 abstract final class AppTheme {
   static ThemeData get light => lightFor();
 
+  /// The font that draws this language's letters: Cairo for Arabic, Rudaw
+  /// for Badini, none for English (Latin is always Sora / Inter).
   static String? fontFamilyFor(Locale? locale) =>
       switch (locale?.languageCode) {
         'ar' => 'Cairo',
@@ -19,11 +21,22 @@ abstract final class AppTheme {
         _ => null,
       };
 
+  /// Fonts for letters Sora and Inter don't have. Kurdish letters are always
+  /// Rudaw and Arabic letters always Cairo; the language picks which draws
+  /// the letters both scripts share. On English screens, names written in
+  /// Kurdish or Arabic use Rudaw first (Duhok names are mostly Kurdish).
+  static List<String> scriptFontsFor(Locale? locale) =>
+      switch (locale?.languageCode) {
+        'ar' => const ['Cairo', 'Rudaw'],
+        _ => const ['Rudaw', 'Cairo'],
+      };
+
   static ThemeData lightFor([Locale? locale]) {
     const c = SaxlemColors.light;
-    final fontFamily = fontFamilyFor(locale);
-    final textFamily = fontFamily ?? SaxlemTypography.text;
-    final displayFamily = fontFamily ?? SaxlemTypography.display;
+    final arabicScript = fontFamilyFor(locale) != null;
+    final fallback = scriptFontsFor(locale);
+    const textFamily = SaxlemTypography.text;
+    const displayFamily = SaxlemTypography.display;
     final scheme = ColorScheme.fromSeed(
       seedColor: c.brandPrimary,
       primary: c.brandPrimary,
@@ -53,20 +66,23 @@ abstract final class AppTheme {
       colorScheme: scheme,
       scaffoldBackgroundColor: c.canvas,
       fontFamily: textFamily,
+      fontFamilyFallback: fallback,
       splashFactory: InkSparkle.splashFactory,
     );
     final textTheme = SaxlemTypography.textTheme(
       baseTheme.textTheme,
       c.textPrimary,
       c.textSecondary,
-      fontFamily: fontFamily,
+      fallback: fallback,
+      arabicScript: arabicScript,
     );
     final buttonText = TextStyle(
       fontFamily: textFamily,
+      fontFamilyFallback: fallback,
       fontSize: 16,
       height: 1.25,
       fontWeight: FontWeight.w600,
-      letterSpacing: fontFamily == null ? -.1 : 0,
+      letterSpacing: arabicScript ? 0 : -.1,
     );
     final buttonShape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(SaxlemRadii.large),
@@ -91,10 +107,11 @@ abstract final class AppTheme {
         centerTitle: false,
         titleTextStyle: TextStyle(
           fontFamily: displayFamily,
+          fontFamilyFallback: fallback,
           fontSize: 20,
           height: 1.3,
           fontWeight: FontWeight.w600,
-          letterSpacing: fontFamily == null ? -.3 : 0,
+          letterSpacing: arabicScript ? 0 : -.3,
           color: c.textPrimary,
         ),
       ),
@@ -156,13 +173,22 @@ abstract final class AppTheme {
           horizontal: 16,
           vertical: 18,
         ),
-        labelStyle: TextStyle(color: c.textSecondary, fontFamily: textFamily),
+        labelStyle: TextStyle(
+          color: c.textSecondary,
+          fontFamily: textFamily,
+          fontFamilyFallback: fallback,
+        ),
         floatingLabelStyle: TextStyle(
           color: c.brandPrimary,
           fontWeight: FontWeight.w600,
           fontFamily: textFamily,
+          fontFamilyFallback: fallback,
         ),
-        hintStyle: TextStyle(color: c.textSecondary, fontFamily: textFamily),
+        hintStyle: TextStyle(
+          color: c.textSecondary,
+          fontFamily: textFamily,
+          fontFamilyFallback: fallback,
+        ),
         prefixIconColor: c.textSecondary,
         border: inputBorder(c.outlineStrong),
         enabledBorder: inputBorder(c.outlineStrong),
@@ -192,11 +218,13 @@ abstract final class AppTheme {
         ),
         labelStyle: TextStyle(
           fontFamily: textFamily,
+          fontFamilyFallback: fallback,
           fontWeight: FontWeight.w600,
           color: c.textPrimary,
         ),
         secondaryLabelStyle: TextStyle(
           fontFamily: textFamily,
+          fontFamilyFallback: fallback,
           fontWeight: FontWeight.w600,
           color: c.onFill,
         ),
@@ -228,6 +256,7 @@ abstract final class AppTheme {
         backgroundColor: c.night,
         contentTextStyle: TextStyle(
           fontFamily: textFamily,
+          fontFamilyFallback: fallback,
           color: c.onFill,
           fontSize: 15,
         ),

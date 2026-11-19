@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
 
 /// The Saxlem mark, drawn in code: two rounded shapes (blue above, aqua below)
-/// that meet to form an "S", with a small plus cut out where they touch.
-/// Pass [color] for a one-colour mark (for example white on a gradient).
+/// that meet to form an "S", with a small plus where they touch.
+///
+/// Brand rule (founder, 2026-11-19): the plus is white when the background
+/// behind the logo is dark ([onDark]) and night ink when it is bright.
+/// Pass [color] for a one-colour mark; its plus is then cut out, so it shows
+/// the background (a white plus on a white mark would disappear).
 class SaxlemMark extends StatelessWidget {
-  const SaxlemMark({this.size = 48, this.color, this.semanticLabel, super.key});
+  const SaxlemMark({
+    this.size = 48,
+    this.color,
+    this.onDark = false,
+    this.semanticLabel,
+    super.key,
+  });
   final double size;
   final Color? color;
+  final bool onDark;
   final String? semanticLabel;
+
+  /// The plus on a bright background.
+  static const ink = Color(0xFF0B1533);
+
+  /// The plus on a dark background.
+  static const light = Color(0xFFFFFFFF);
 
   @override
   Widget build(BuildContext context) => Semantics(
@@ -16,14 +33,15 @@ class SaxlemMark extends StatelessWidget {
     excludeSemantics: true,
     child: SizedBox.square(
       dimension: size,
-      child: CustomPaint(painter: _MarkPainter(color)),
+      child: CustomPaint(painter: _MarkPainter(color, onDark ? light : ink)),
     ),
   );
 }
 
 class _MarkPainter extends CustomPainter {
-  _MarkPainter(this.color);
+  _MarkPainter(this.color, this.cross);
   final Color? color;
+  final Color cross;
 
   // Geometry on the logo's 512 grid; the mark occupies 80..432.
   static const _top = [168.0, 80.0, 432.0, 256.0];
@@ -71,7 +89,8 @@ class _MarkPainter extends CustomPainter {
     );
     final c = Offset(176 * s, 176 * s);
     final plus = Paint()
-      ..blendMode = BlendMode.clear
+      ..color = cross
+      ..blendMode = color == null ? BlendMode.srcOver : BlendMode.clear
       ..strokeWidth = 19 * s
       ..strokeCap = StrokeCap.round;
     canvas
@@ -81,5 +100,6 @@ class _MarkPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_MarkPainter old) => old.color != color;
+  bool shouldRepaint(_MarkPainter old) =>
+      old.color != color || old.cross != cross;
 }
