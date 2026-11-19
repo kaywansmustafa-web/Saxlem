@@ -69,6 +69,9 @@ describe('JwtAuthGuard security enforcement', () => {
       clinicMembership: {
         findFirst: jest.fn().mockResolvedValue({ id: 'membership-id' }),
       },
+      receptionistDoctorAssignment: {
+        findMany: jest.fn().mockResolvedValue([]),
+      },
     },
   } as unknown as PrismaService;
 

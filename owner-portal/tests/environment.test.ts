@@ -3,7 +3,9 @@ import {
   invalidSecretExample,
   parseOwnerConfiguration,
 } from "@/infrastructure/config";
-const secret = Buffer.from(Array.from({ length: 32 }, (_, index) => index + 1)).toString("base64url");
+const secret = Buffer.from(
+  Array.from({ length: 32 }, (_, index) => index + 1),
+).toString("base64url");
 const base = {
   SAXLEM_OWNER_ENV: "development",
   SAXLEM_BACKEND_API_URL: "http://127.0.0.1:3001",

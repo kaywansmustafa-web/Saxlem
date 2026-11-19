@@ -337,7 +337,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String tabWithCount(String label, int count) {
-    return 'معلومات';
+    return '$label ($count)';
   }
 
   @override
@@ -346,7 +346,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String iqdAmount(int amount) {
+  String iqdAmount(String amount) {
     return '$amount د.ع';
   }
 
@@ -406,7 +406,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get phoneNumber => 'رقم الهاتف';
 
   @override
-  String get phoneHint => 'معلومات';
+  String get phoneHint => '750 123 4567';
 
   @override
   String get phoneInvalid => 'أدخل رقم هاتف عراقي صحيحًا.';
@@ -1021,4 +1021,915 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get queueClosedBody => 'للمساعدة بشأن موعدك، يرجى مراجعة الاستقبال.';
+
+  @override
+  String get itsYourTurn => 'حان دورك';
+
+  @override
+  String get aheadShort => 'قبلك';
+
+  @override
+  String get queueStepBooked => 'تم الحجز';
+
+  @override
+  String get queueStepArrived => 'وصلت';
+
+  @override
+  String get queueStepWaiting => 'الانتظار';
+
+  @override
+  String get queueStepYourTurn => 'دورك';
+
+  @override
+  String get withDoctorTitle => 'أنت مع الطبيب الآن';
+
+  @override
+  String get visitCompleteTitle => 'اكتملت الزيارة';
+
+  @override
+  String get calledNoResponseTitle => 'تم النداء على رقمك';
+
+  @override
+  String get notCheckedInTitle => 'موعدك اليوم';
+
+  @override
+  String get removedFromQueueTitle => 'لم تعد في قائمة الانتظار';
+
+  @override
+  String waitRange(int min, int max, String unit) {
+    return 'حوالي $min–$max $unit';
+  }
+
+  @override
+  String get doctorLabel => 'الطبيب';
+
+  @override
+  String get familyMembersTitle => 'أفراد العائلة';
+
+  @override
+  String get paymentHowToPay => 'كيف تريد الدفع؟';
+
+  @override
+  String get paymentAtCounterTitle => 'الدفع في العيادة';
+
+  @override
+  String get paymentAtCounterBody => 'ادفع لموظف الاستقبال عند وصولك.';
+
+  @override
+  String get paymentOnlineTitle => 'ادفع الآن عبر التطبيق';
+
+  @override
+  String get paymentOnlineBody =>
+      'ادفع بأمان من تطبيق FIB ولا تنتظر عند الاستقبال.';
+
+  @override
+  String get paymentOnlineUnavailable =>
+      'هذه العيادة تقبل الدفع في العيادة فقط حالياً.';
+
+  @override
+  String get paymentRecommended => 'الأسرع';
+
+  @override
+  String get paymentConfirmAndPay => 'تأكيد والدفع';
+
+  @override
+  String get paymentTitle => 'الدفع';
+
+  @override
+  String get paymentAmountDue => 'المبلغ المطلوب';
+
+  @override
+  String get paymentOpenFib => 'افتح FIB للدفع';
+
+  @override
+  String get paymentScanQr => 'تدفع من هاتف آخر؟ امسح هذا الرمز.';
+
+  @override
+  String get paymentWaiting => 'بانتظار دفعتك…';
+
+  @override
+  String get paymentWaitingBody =>
+      'وافق على الدفع في FIB ثم عد إلى هنا. تتحدث هذه الشاشة تلقائياً.';
+
+  @override
+  String get paymentPaidTitle => 'تم استلام الدفعة';
+
+  @override
+  String get paymentPaidBody => 'كل شيء جاهز. لا يوجد ما تدفعه في العيادة.';
+
+  @override
+  String get paymentExpiredTitle => 'لم تكتمل هذه الدفعة';
+
+  @override
+  String get paymentExpiredBody =>
+      'ابدأ دفعة جديدة أو ادفع في العيادة. موعدك ما زال محجوزاً.';
+
+  @override
+  String get paymentTryAgain => 'بدء دفعة جديدة';
+
+  @override
+  String get paymentSwitchToCounter => 'الدفع في العيادة بدلاً من ذلك';
+
+  @override
+  String get paymentLater => 'سأدفع لاحقاً';
+
+  @override
+  String get paymentStatusDueAtCounter => 'الدفع في العيادة';
+
+  @override
+  String get paymentStatusPending => 'الدفع قيد الانتظار';
+
+  @override
+  String get paymentStatusPaid => 'مدفوع';
+
+  @override
+  String get paymentStatusRefunded => 'تم الاسترداد';
+
+  @override
+  String get paymentStatusRefundPending => 'الاسترداد قيد التنفيذ';
+
+  @override
+  String get paymentStatusRefundFailed => 'ستعيد العيادة المبلغ إليك';
+
+  @override
+  String get paymentStatusExpired => 'لم يكتمل الدفع';
+
+  @override
+  String get paymentStatusVoid => 'لا يوجد ما تدفعه';
+
+  @override
+  String get paymentPayNow => 'ادفع الآن';
+
+  @override
+  String get paymentProblemOffline =>
+      'أنت غير متصل. تحقق من الاتصال وحاول مجدداً.';
+
+  @override
+  String get paymentProblemUnavailable =>
+      'الدفع عبر التطبيق غير متاح الآن. يمكنك الدفع في العيادة.';
+
+  @override
+  String get paymentProblemNotAccepted => 'لا يمكن تغيير هذه الدفعة الآن.';
+
+  @override
+  String get paymentProblemGeneric => 'حدث خطأ في الدفع. موعدك ما زال محجوزاً.';
+
+  @override
+  String get paymentBookedPayNext => 'تم الحجز! خطوة أخيرة: ادفع ثمن زيارتك.';
+
+  @override
+  String get paymentSecureNote =>
+      'تدفع داخل تطبيق FIB. لا يرى ساخلم بيانات بطاقتك أو حسابك المصرفي.';
+
+  @override
+  String paymentLinkValidUntil(String time) {
+    return 'الرابط صالح حتى $time';
+  }
+
+  @override
+  String get paymentFibNotOpened =>
+      'تعذّر فتح FIB. ثبّت تطبيق FIB أو حدّثه، أو امسح رمز QR من هاتف آخر.';
+
+  @override
+  String get settingsTitle => 'الإعدادات';
+
+  @override
+  String get appLanguage => 'لغة التطبيق';
+
+  @override
+  String get deleteAccount => 'حذف الحساب';
+
+  @override
+  String get deleteAccountTitle => 'حذف حسابك في ساخلم؟';
+
+  @override
+  String get deleteAccountBody =>
+      'سيتم تسجيل خروجك من كل الأجهزة وإزالة ملفات عائلتك من التطبيق. تحتفظ العيادات بسجل الزيارات السابقة.';
+
+  @override
+  String get deleteAccountConfirm => 'احذف حسابي';
+
+  @override
+  String get deleteAccountUpcoming =>
+      'ألغِ مواعيدك القادمة أولاً ثم حاول مرة أخرى.';
+
+  @override
+  String get deleteAccountFailed =>
+      'تعذر حذف حسابك. تحقق من الاتصال وحاول مرة أخرى.';
+
+  @override
+  String get cancelAction => 'إلغاء';
+
+  @override
+  String get languageSaved => 'تم تغيير اللغة';
+
+  @override
+  String get specialtyDentist => 'طب الأسنان';
+
+  @override
+  String get specialtyCardiology => 'القلب';
+
+  @override
+  String get specialtyPediatrics => 'الأطفال';
+
+  @override
+  String get specialtyEye => 'العيون';
+
+  @override
+  String get specialtyNeurology => 'الأعصاب';
+
+  @override
+  String browseSpecialty(String specialty) {
+    return 'تصفح أطباء $specialty';
+  }
+
+  @override
+  String get nextVisitTitle => 'زيارتك القادمة';
+
+  @override
+  String get todayChip => 'اليوم';
+
+  @override
+  String get tomorrowChip => 'غداً';
+
+  @override
+  String get howItWorks => 'كيف يعمل ساخلم';
+
+  @override
+  String get stepBook => 'احجز من التطبيق';
+
+  @override
+  String get stepCheckIn => 'سجّل حضورك عند الاستقبال';
+
+  @override
+  String get stepCalled => 'يصلك النداء على هاتفك';
+
+  @override
+  String get alertsSubtitle => 'نداءات الدور وتحديثات الحجز';
+
+  @override
+  String get slotMorning => 'صباحاً';
+
+  @override
+  String get slotAfternoon => 'ظهراً';
+
+  @override
+  String get slotEvening => 'مساءً';
+
+  @override
+  String get ntfBookedTitle => 'تم تأكيد الحجز';
+
+  @override
+  String get ntfBookedNext => 'سنذكّرك قبل الموعد بيوم وقبله بقليل.';
+
+  @override
+  String get ntfReminderDayTitle => 'موعدك غداً';
+
+  @override
+  String get ntfReminderSoonTitle => 'موعدك قريب';
+
+  @override
+  String get ntfReminderNext =>
+      'سجّل وصولك عند الاستقبال. إذا لم تستطع الحضور، ألغِ الموعد من المواعيد ليستفيد منه غيرك.';
+
+  @override
+  String get ntfCancelledTitle => 'ألغت العيادة موعدك';
+
+  @override
+  String get ntfCancelledNext => 'احجز وقتاً آخر مع الطبيب نفسه أو طبيب آخر.';
+
+  @override
+  String get ntfRescheduledTitle => 'تم تغيير موعدك';
+
+  @override
+  String get ntfRescheduledNext =>
+      'إذا لم يناسبك الوقت الجديد، غيّره أو ألغه من المواعيد.';
+
+  @override
+  String get ntfAlmostTitle => 'اقترب دورك';
+
+  @override
+  String get ntfNextTitle => 'أنت التالي';
+
+  @override
+  String get ntfAlmostNext => 'توجّه إلى صالة الانتظار وابقَ قريباً.';
+
+  @override
+  String get ntfQueueOpenedTitle => 'بدأ الطابور';
+
+  @override
+  String get ntfFollowQueue => 'تابع دورك في الطابور المباشر.';
+
+  @override
+  String get ntfPausedTitle => 'توقف الطابور مؤقتاً';
+
+  @override
+  String get ntfPausedNext => 'مكانك محفوظ. سنخبرك عندما يتحرك مجدداً.';
+
+  @override
+  String get ntfResumedTitle => 'عاد الطابور للحركة';
+
+  @override
+  String get ntfClosedTitle => 'أُغلق الطابور';
+
+  @override
+  String get ntfClosedNext => 'إذا لم يتم فحصك، اسأل استقبال العيادة.';
+
+  @override
+  String get ntfEnqueuedTitle => 'أنت في الطابور';
+
+  @override
+  String get ntfCalledTitle => 'حان دورك';
+
+  @override
+  String get ntfCalledNext => 'تفضّل بالدخول إلى الطبيب الآن.';
+
+  @override
+  String get ntfMissedTitle => 'فاتك دورك';
+
+  @override
+  String get ntfMissedNext => 'تحدّث مع الاستقبال، يمكنهم إعادتك إلى الطابور.';
+
+  @override
+  String get ntfStartedTitle => 'بدأت معاينتك';
+
+  @override
+  String get ntfCompletedTitle => 'انتهت زيارتك';
+
+  @override
+  String get ntfCompletedNext =>
+      'نتمنى لك الشفاء. تحتاج مراجعة؟ احجزها من صفحة الطبيب.';
+
+  @override
+  String get ntfWhyAppointment => 'بخصوص موعد حجزته في ساخلم.';
+
+  @override
+  String get ntfWhyQueue => 'من الطابور المباشر في العيادة.';
+
+  @override
+  String ntfAtClinic(String doctor, String clinic) {
+    return '$doctor في $clinic';
+  }
+
+  @override
+  String ntfTicket(int number) {
+    return 'رقم $number';
+  }
+
+  @override
+  String ntfAhead(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count شخص قبلك',
+      many: '$count شخصاً قبلك',
+      few: '$count أشخاص قبلك',
+      two: 'شخصان قبلك',
+      one: 'شخص واحد قبلك',
+      zero: 'لا أحد قبلك',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ntfDoctorStarted(String doctor) {
+    return 'بدأ $doctor باستقبال المرضى.';
+  }
+
+  @override
+  String ntfDoctorPaused(String doctor) {
+    return 'أوقف $doctor الطابور لفترة قصيرة.';
+  }
+
+  @override
+  String ntfDoctorResumed(String doctor) {
+    return 'عاد $doctor لاستقبال المرضى.';
+  }
+
+  @override
+  String ntfDoctorFinished(String doctor) {
+    return 'أنهى $doctor عمله لهذا اليوم.';
+  }
+
+  @override
+  String ntfCompletedHappened(String doctor) {
+    return 'اكتملت زيارتك عند $doctor.';
+  }
+
+  @override
+  String get feeFirstVisit => 'الزيارة الأولى';
+
+  @override
+  String get feeFollowUp => 'المراجعة';
+
+  @override
+  String get feesTitle => 'الأجور';
+
+  @override
+  String get feesNote => 'ادفع في العيادة، أو داخل التطبيق عبر FIB عند الحجز.';
+
+  @override
+  String get nextFreeLabel => 'أقرب وقت متاح';
+
+  @override
+  String yearsShort(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count سنة',
+      many: '$count سنة',
+      few: '$count سنوات',
+      two: 'سنتان',
+      one: 'سنة واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get directions => 'الاتجاهات';
+
+  @override
+  String get callClinic => 'اتصال';
+
+  @override
+  String get clinicLocationMissing => 'لم تُضف العيادة عنوانها بعد.';
+
+  @override
+  String get openMapsFailed => 'تعذّر فتح الخرائط على هذا الهاتف.';
+
+  @override
+  String get bookAgainTitle => 'احجز مجدداً';
+
+  @override
+  String bookAgainAction(String doctor) {
+    return 'احجز مجدداً عند $doctor';
+  }
+
+  @override
+  String get familyTileTitle => 'العائلة';
+
+  @override
+  String get familyTileSubtitle => 'احجز لأطفالك ووالديك';
+
+  @override
+  String get addToCalendar => 'أضف إلى التقويم';
+
+  @override
+  String visitWith(String doctor) {
+    return 'موعد عند $doctor';
+  }
+
+  @override
+  String get freeTodayFilter => 'متاح اليوم';
+
+  @override
+  String get noneFreeToday =>
+      'لا يوجد وقت متاح اليوم عند هؤلاء الأطباء. ألغِ \"متاح اليوم\" لرؤية أيام أخرى.';
+
+  @override
+  String get helpTitle => 'المساعدة والدعم';
+
+  @override
+  String get contactSaxlem => 'راسل ساخلم عبر واتساب';
+
+  @override
+  String get termsOfUse => 'شروط الاستخدام';
+
+  @override
+  String get privacyPolicy => 'سياسة الخصوصية';
+
+  @override
+  String appVersion(String version) {
+    return 'الإصدار $version';
+  }
+
+  @override
+  String get whatsBothering => 'مما تشكو؟';
+
+  @override
+  String get symptomFever => 'حمى أو زكام';
+
+  @override
+  String get symptomChild => 'طفلي مريض';
+
+  @override
+  String get symptomTooth => 'ألم الأسنان';
+
+  @override
+  String get symptomSkin => 'الجلد';
+
+  @override
+  String get symptomHeart => 'القلب والضغط';
+
+  @override
+  String get symptomEyes => 'العيون';
+
+  @override
+  String get symptomPregnancy => 'الحمل وصحة المرأة';
+
+  @override
+  String get symptomBones => 'العظام والمفاصل';
+
+  @override
+  String get symptomEar => 'الأذن والأنف والحنجرة';
+
+  @override
+  String get symptomHead => 'الصداع والأعصاب';
+
+  @override
+  String get symptomStomach => 'المعدة';
+
+  @override
+  String get specialtiesTitle => 'التخصصات';
+
+  @override
+  String get emergencyTitle => 'طوارئ';
+
+  @override
+  String get emergencySubtitle => 'الإسعاف: 122';
+
+  @override
+  String get emergencyConfirmTitle => 'الاتصال بـ 122 الآن؟';
+
+  @override
+  String get emergencyConfirmBody =>
+      'ساخلم لحجز المواعيد وليس للطوارئ. إذا احتاج أحد مساعدة عاجلة، اتصل بالإسعاف.';
+
+  @override
+  String get emergencyCall => 'اتصل بـ 122';
+
+  @override
+  String get liveNotOpen => 'لم يبدأ الطابور بعد';
+
+  @override
+  String get liveCheckIn => 'الطابور مفتوح · سجّل وصولك عند الاستقبال';
+
+  @override
+  String get liveWithDoctor => 'أنت عند الطبيب الآن';
+
+  @override
+  String liveWait(int min, int max) {
+    return 'حوالي $min–$max دقيقة';
+  }
+
+  @override
+  String leaveByTime(String time) {
+    return 'انطلق قبل $time';
+  }
+
+  @override
+  String get leaveNow => 'انطلق الآن';
+
+  @override
+  String leaveInMinutes(int minutes) {
+    return 'انطلق خلال $minutes د';
+  }
+
+  @override
+  String get leaveLate => 'قد تتأخر. انطلق الآن';
+
+  @override
+  String leaveDrive(int minutes, String distance) {
+    return '$minutes د بالسيارة · $distance';
+  }
+
+  @override
+  String leaveKm(String km) {
+    return '$km كم';
+  }
+
+  @override
+  String leaveMeters(String meters) {
+    return '$meters م';
+  }
+
+  @override
+  String get leaveWithTraffic => 'مع حركة المرور';
+
+  @override
+  String get leaveNoTraffic => 'دون حساب الازدحام';
+
+  @override
+  String get leaveEstimate => 'تقدير حسب المسافة';
+
+  @override
+  String get leaveApproximate => 'موقع تقريبي';
+
+  @override
+  String leaveArriveBy(String time) {
+    return 'كن عند الاستقبال قبل $time لتسجيل الوصول';
+  }
+
+  @override
+  String get leaveAskTitle => 'متى أنطلق؟';
+
+  @override
+  String get leaveAskBody =>
+      'يمكن لساخلم استخدام موقعك لحساب مدة القيادة إلى العيادة مع حركة المرور، وإخبارك متى تنطلق.';
+
+  @override
+  String get leaveAskPrivacy => 'يُستخدم موقعك لهذا فقط ولا يُحفظ أبدًا.';
+
+  @override
+  String get leaveAskButton => 'استخدم موقعي';
+
+  @override
+  String get leaveWorking => 'جارٍ حساب الطريق…';
+
+  @override
+  String get leaveServiceOff => 'شغّل الموقع لمعرفة وقت الانطلاق.';
+
+  @override
+  String get leaveDeniedForever =>
+      'اسمح لساخلم باستخدام الموقع من الإعدادات لمعرفة وقت الانطلاق.';
+
+  @override
+  String get leaveTurnOn => 'تشغيل الموقع';
+
+  @override
+  String get leaveOpenSettings => 'فتح الإعدادات';
+
+  @override
+  String get leaveFailed => 'تعذّر حساب الطريق الآن.';
+
+  @override
+  String get leaveStop => 'أوقف استخدام موقعي';
+
+  @override
+  String get leaveAlertChannel => 'وقت الانطلاق';
+
+  @override
+  String get leaveAlertTitle => 'حان وقت الاستعداد لموعدك';
+
+  @override
+  String leaveAlertBody(String leave, String doctor, String time, int minutes) {
+    return 'انطلق قبل $leave لموعدك عند $doctor الساعة $time · $minutes د بالسيارة';
+  }
+
+  @override
+  String minutesShortDrive(int minutes) {
+    return '$minutes د بالسيارة';
+  }
+
+  @override
+  String get leaveOnMyWay => 'أنا في الطريق';
+
+  @override
+  String get leaveOnMyWayNote =>
+      'يُعلم العيادة بموعد وصولك. لا تتم مشاركة موقعك.';
+
+  @override
+  String get leaveOnMyWayFailed => 'تعذّر إبلاغ العيادة. حاول مجددًا.';
+
+  @override
+  String get leaveOnTheWayTitle => 'أنت في الطريق';
+
+  @override
+  String leaveExpectedAt(String time) {
+    return 'تتوقع العيادة وصولك نحو الساعة $time';
+  }
+
+  @override
+  String get leaveReceptionSees => 'يرى الاستقبال أنك قادم.';
+
+  @override
+  String leaveExpectedShort(String time) {
+    return 'في الطريق · متوقع $time';
+  }
+
+  @override
+  String get leaveLearned => 'مع الازدحام المعتاد في هذه الساعة';
+
+  @override
+  String starsLabel(String rating) {
+    return '$rating من 5 نجوم';
+  }
+
+  @override
+  String reviewCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count تقييمات',
+      one: 'تقييم واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewsTitle => 'التقييمات';
+
+  @override
+  String get reviewsNone =>
+      'لا توجد تقييمات بعد. يمكن فقط للمرضى الذين زاروا الطبيب التقييم.';
+
+  @override
+  String reviewsSeeAll(int count) {
+    return 'عرض كل التقييمات ($count)';
+  }
+
+  @override
+  String get reviewsMore => 'عرض المزيد';
+
+  @override
+  String reviewsOf(String doctor) {
+    return 'تقييمات $doctor';
+  }
+
+  @override
+  String get reviewAnonymous => 'مريض في ساخلم';
+
+  @override
+  String get reviewVerified => 'زيارة مؤكدة';
+
+  @override
+  String get rateTitle => 'كيف كانت زيارتك؟';
+
+  @override
+  String rateWith(String doctor) {
+    return 'قيّم زيارتك عند $doctor';
+  }
+
+  @override
+  String get rateCommentHint =>
+      'هل هناك ما يجب أن يعرفه المرضى الآخرون؟ (اختياري)';
+
+  @override
+  String get rateCommentRule =>
+      'يظهر للجميع. بدون روابط أو بريد إلكتروني أو أرقام هواتف.';
+
+  @override
+  String get rateAnonymous => 'انشر بدون اسمي';
+
+  @override
+  String get ratePost => 'نشر التقييم';
+
+  @override
+  String get rateUpdate => 'تحديث التقييم';
+
+  @override
+  String get rateEdit => 'تغيير';
+
+  @override
+  String get rateThanks => 'شكرًا. تقييمك يساعد المرضى الآخرين على الاختيار.';
+
+  @override
+  String get rateRemoved => 'أزال ساخلم هذا التقييم.';
+
+  @override
+  String get rateFailed => 'تعذّر نشر تقييمك. حاول مجددًا.';
+
+  @override
+  String rateEditUntil(String date) {
+    return 'يمكنك تغييره حتى $date.';
+  }
+
+  @override
+  String get ntfReviewTitle => 'كيف كانت زيارتك؟';
+
+  @override
+  String get ntfReviewNext =>
+      'قيّمها في ثوانٍ. هذا يساعد المرضى الآخرين على الاختيار.';
+
+  @override
+  String get savedDoctorsTitle => 'الأطباء المحفوظون';
+
+  @override
+  String get savedDoctorsEmpty => 'اضغط على القلب في صفحة الطبيب لحفظه هنا.';
+
+  @override
+  String saveDoctor(String doctor) {
+    return 'حفظ $doctor';
+  }
+
+  @override
+  String unsaveDoctor(String doctor) {
+    return 'إزالة $doctor من المحفوظين';
+  }
+
+  @override
+  String get savedAdded => 'تم الحفظ';
+
+  @override
+  String get savedRemoved => 'أزيل من المحفوظين';
+
+  @override
+  String get savedFailed => 'تعذّر تحديث الأطباء المحفوظين. حاول مجددًا.';
+
+  @override
+  String get earlierWatch => 'أخبرني إذا توفر موعد أبكر';
+
+  @override
+  String earlierWatchHelp(String doctor) {
+    return 'إذا توفر لدى $doctor موعد أقرب سنخبرك. يبقى موعدك محجوزًا حتى تنقله.';
+  }
+
+  @override
+  String get earlierFound => 'يتوفر موعد أبكر';
+
+  @override
+  String get earlierMove => 'انقل موعدي إلى هذا الوقت';
+
+  @override
+  String get earlierFirstCome => 'من يؤكد أولًا يحصل عليه.';
+
+  @override
+  String get earlierFailed => 'تعذّر تغيير ذلك. حاول مجددًا.';
+
+  @override
+  String get ntfEarlierTitle => 'يتوفر موعد أبكر';
+
+  @override
+  String get ntfEarlierNext =>
+      'افتح موعدك لتنتقل إليه. من يؤكد أولًا يحصل عليه.';
+
+  @override
+  String get receiptsTitle => 'المدفوعات والإيصالات';
+
+  @override
+  String get receiptsFailed => 'تعذّر تحميل مدفوعاتك';
+
+  @override
+  String get receiptsMoreFailed => 'تعذّر تحميل المزيد من المدفوعات.';
+
+  @override
+  String get receiptsEmptyTitle => 'لا توجد مدفوعات بعد';
+
+  @override
+  String get receiptsEmptyBody =>
+      'عندما تدفع ثمن زيارة، في التطبيق أو في العيادة، يظهر إيصالها هنا.';
+
+  @override
+  String get receiptTitle => 'إيصال';
+
+  @override
+  String get receiptFailed => 'تعذّر تحميل هذا الإيصال';
+
+  @override
+  String get receiptCopy => 'نسخ الإيصال';
+
+  @override
+  String get receiptCopied => 'تم نسخ الإيصال';
+
+  @override
+  String get receiptView => 'عرض الإيصال';
+
+  @override
+  String get receiptAmount => 'المبلغ';
+
+  @override
+  String get receiptStatus => 'الحالة';
+
+  @override
+  String get receiptNumber => 'رقم الإيصال';
+
+  @override
+  String get receiptPaidOn => 'تاريخ الدفع';
+
+  @override
+  String get receiptRefundedOn => 'تاريخ الاسترداد';
+
+  @override
+  String get receiptPaidBy => 'طريقة الدفع';
+
+  @override
+  String get receiptMethodCounter => 'في استقبال العيادة';
+
+  @override
+  String get receiptMethodFib => 'FIB، عبر التطبيق';
+
+  @override
+  String get receiptMethodOnline => 'إلكترونيًا عبر التطبيق';
+
+  @override
+  String get receiptTransaction => 'رقم المعاملة';
+
+  @override
+  String get receiptPaidTo => 'المستلم';
+
+  @override
+  String receiptPaidToPlatform(String organization) {
+    return 'ساكسلم نيابةً عن $organization';
+  }
+
+  @override
+  String get receiptPatient => 'المريض';
+
+  @override
+  String get receiptClinic => 'العيادة';
+
+  @override
+  String get receiptAddress => 'العنوان';
+
+  @override
+  String get receiptPhone => 'الهاتف';
+
+  @override
+  String get receiptVisit => 'الزيارة';
+
+  @override
+  String get receiptTextHeading => 'إيصال ساكسلم';
+
+  @override
+  String get pushChannelName => 'تحديثات المواعيد والطابور';
 }

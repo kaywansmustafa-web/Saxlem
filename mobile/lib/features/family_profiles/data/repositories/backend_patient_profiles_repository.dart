@@ -53,7 +53,7 @@ class BackendPatientProfilesRepository implements PatientProfilesRepository {
         },
       );
       PatientProfileDto.fromJson(response.body);
-      return load();
+      return await load();
     } on ApiFailure catch (failure) {
       final mapped = _mapFailure(failure);
       if (mapped.isTerminalAuthentication) _snapshot = null;
@@ -93,6 +93,23 @@ class BackendPatientProfilesRepository implements PatientProfilesRepository {
       throw const PatientProfilesFailure(
         PatientProfilesFailureType.sessionExpired,
       );
+    }
+  }
+
+  @override
+  Future<DeleteAccountOutcome> deleteAccount() async {
+    try {
+      await _api.deleteJson('patients/me');
+      _snapshot = null;
+      return DeleteAccountOutcome.deleted;
+    } on ApiFailure catch (failure) {
+      return failure.statusCode == 409
+          ? DeleteAccountOutcome.upcomingAppointments
+          : DeleteAccountOutcome.failed;
+    } on MutationNotSentFailure {
+      return DeleteAccountOutcome.failed;
+    } on AuthFailure {
+      return DeleteAccountOutcome.failed;
     }
   }
 

@@ -117,7 +117,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get recommendedDoctors => 'نوژدارێن پێشنیارکری';
 
   @override
-  String get seeAll => 'هەمیان ببینە';
+  String get seeAll => 'هەمی ببینە';
 
   @override
   String get book => 'ژڤانی بگرە';
@@ -350,7 +350,7 @@ class AppLocalizationsKu extends AppLocalizations {
   }
 
   @override
-  String iqdAmount(int amount) {
+  String iqdAmount(String amount) {
     return '$amount د.ع';
   }
 
@@ -822,7 +822,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get discoveryErrorBody => 'دیسان هەول بدە.';
 
   @override
-  String get discoveryAuthTitle => 'بچۆ ژوور بۆ دیتنا نوژداران';
+  String get discoveryAuthTitle => 'چوونا ژوور بۆ دیتنا نوژداران';
 
   @override
   String get discoveryAuthBody =>
@@ -911,7 +911,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get loadMore => 'پتر بار بکە';
 
   @override
-  String get loadingMoreAppointments => 'ژڤانێن پتر دهێنە بارکرن…';
+  String get loadingMoreAppointments => 'ژڤانێن پتر دهێنە بارکرن...';
 
   @override
   String get appointmentTimeout =>
@@ -1034,4 +1034,920 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get queueClosedBody => 'بو هاریکاریا ژڤانا خۆ، بچۆ پێشوازیێ.';
+
+  @override
+  String get itsYourTurn => 'نوکە دۆرا تەیە';
+
+  @override
+  String get aheadShort => 'بەری تە';
+
+  @override
+  String get queueStepBooked => 'هاتە گرتن';
+
+  @override
+  String get queueStepArrived => 'گەهشتی';
+
+  @override
+  String get queueStepWaiting => 'چاڤەڕێ';
+
+  @override
+  String get queueStepYourTurn => 'دۆرا تە';
+
+  @override
+  String get withDoctorTitle => 'تو نوکە ل دەڤ نوژداری';
+
+  @override
+  String get visitCompleteTitle => 'سەرەدان ب دوماهی هات';
+
+  @override
+  String get calledNoResponseTitle => 'ژمارا تە هاتە گازیکرن';
+
+  @override
+  String get notCheckedInTitle => 'ژڤانێ تە ئەڤرۆیە';
+
+  @override
+  String get removedFromQueueTitle => 'تو ئێدی د ڤێ رێزێدا نینی';
+
+  @override
+  String waitRange(int min, int max, String unit) {
+    return 'نێزیکی $min–$max $unit';
+  }
+
+  @override
+  String get doctorLabel => 'نوژدار';
+
+  @override
+  String get familyMembersTitle => 'ئەندامێن خێزانێ';
+
+  @override
+  String get paymentHowToPay => 'دێ چاوا پارەی دەی؟';
+
+  @override
+  String get paymentAtCounterTitle => 'پارەدان ل کلینیکێ';
+
+  @override
+  String get paymentAtCounterBody => 'دەمێ دگەهیە کلینیکێ پارەی بدە پێشوازیێ.';
+
+  @override
+  String get paymentOnlineTitle => 'نوکە ب ئەپێ پارەی بدە';
+
+  @override
+  String get paymentOnlineBody =>
+      'ب ئەپێ FIB ب پارێزراوی پارەی بدە و ل بەر پێشوازیێ نەراوەستە.';
+
+  @override
+  String get paymentOnlineUnavailable =>
+      'ئەڤ کلینیکە نوکە تنێ پارەدانا ل کلینیکێ وەردگریت.';
+
+  @override
+  String get paymentRecommended => 'یێ هەری لەز';
+
+  @override
+  String get paymentConfirmAndPay => 'پشتراست بکە و پارەی بدە';
+
+  @override
+  String get paymentTitle => 'پارەدان';
+
+  @override
+  String get paymentAmountDue => 'بڕێ پارەی';
+
+  @override
+  String get paymentOpenFib => 'FIB ڤەکە بۆ پارەدانێ';
+
+  @override
+  String get paymentScanQr => 'ژ مۆبایلەکێ دی پارەی ددەی؟ ڤی کۆدی سکان بکە.';
+
+  @override
+  String get paymentWaiting => 'چاڤەڕێی پارەدانا تەینە...';
+
+  @override
+  String get paymentWaitingBody =>
+      'پارەدانێ د FIB دا قەبویل بکە و ڤەگەڕە. ئەڤ پەڕە ب خۆ نوی دبیت.';
+
+  @override
+  String get paymentPaidTitle => 'پارە گەهشت';
+
+  @override
+  String get paymentPaidBody => 'هەمی ب رێکە. چ پارە ل کلینیکێ نینن بدەی.';
+
+  @override
+  String get paymentExpiredTitle => 'ئەڤ پارەدانە ب دووماهی نەهات';
+
+  @override
+  String get paymentExpiredBody =>
+      'پارەدانەکا نوی دەستپێبکە یان ل کلینیکێ پارەی بدە. ژڤانا تە هێشتا یا گرتییە.';
+
+  @override
+  String get paymentTryAgain => 'پارەدانەکا نوی دەستپێبکە';
+
+  @override
+  String get paymentSwitchToCounter => 'ل شوینێ ل کلینیکێ پارەی بدە';
+
+  @override
+  String get paymentLater => 'پاشی دێ پارەی دەم';
+
+  @override
+  String get paymentStatusDueAtCounter => 'پارەدان ل کلینیکێ';
+
+  @override
+  String get paymentStatusPending => 'پارەدان ل چاڤەڕێیێ';
+
+  @override
+  String get paymentStatusPaid => 'پارە هاتیە دان';
+
+  @override
+  String get paymentStatusRefunded => 'پارە زڤڕی';
+
+  @override
+  String get paymentStatusRefundPending => 'زڤڕاندنا پارەی ل رێیێ';
+
+  @override
+  String get paymentStatusRefundFailed => 'کلینیک دێ پارەی بۆ تە زڤڕینیت';
+
+  @override
+  String get paymentStatusExpired => 'پارەدان ب دووماهی نەهات';
+
+  @override
+  String get paymentStatusVoid => 'چ پارە نینن';
+
+  @override
+  String get paymentPayNow => 'نوکە پارەی بدە';
+
+  @override
+  String get paymentProblemOffline =>
+      'تو نە د سەرهێلێ دای. پەیوەندیا خو بپشکنە و دیسان هەول بدە.';
+
+  @override
+  String get paymentProblemUnavailable =>
+      'پارەدان ب ئەپێ نوکە نینە. دشێی ل کلینیکێ پارەی بدەی.';
+
+  @override
+  String get paymentProblemNotAccepted => 'ئەڤ پارەدانە نوکە ناهێتە گوهۆڕین.';
+
+  @override
+  String get paymentProblemGeneric =>
+      'تشتەک د پارەدانێ دا خەلەت چوو. ژڤانا تە هێشتا یا گرتییە.';
+
+  @override
+  String get paymentBookedPayNext =>
+      'هاتە گرتن! پێنگاڤا دووماهیێ: پارەیێ سەرەدانا خو بدە.';
+
+  @override
+  String get paymentSecureNote =>
+      'تو د ئەپێ FIB دا پارەی ددەی. ساخلەم زانیاریێن کارتا تە یان هەژمارا بانکێ نابینیت.';
+
+  @override
+  String paymentLinkValidUntil(String time) {
+    return 'لینک تا $time دەربازە';
+  }
+
+  @override
+  String get paymentFibNotOpened =>
+      'مە نەشیا FIB ڤەکەین. ئەپێ FIB دابەزینە یان نوی بکە، یان کۆدێ QR ژ مۆبایلەکێ دی سکان بکە.';
+
+  @override
+  String get settingsTitle => 'رێکخستن';
+
+  @override
+  String get appLanguage => 'زمانێ ئەپێ';
+
+  @override
+  String get deleteAccount => 'ژێبرنا هەژمارێ';
+
+  @override
+  String get deleteAccountTitle => 'هەژمارا خۆ یا ساخلەم ژێ دبەی؟';
+
+  @override
+  String get deleteAccountBody =>
+      'تو ژ هەمی ئامیران دێ دەرکەڤی و پرۆفایلێن خێزانا تە ژ ئەپێ دێ هێنە لابرن. نۆرینگەه تۆمارا سەرەدانێن بۆری دپارێزن.';
+
+  @override
+  String get deleteAccountConfirm => 'هەژمارا من ژێ ببە';
+
+  @override
+  String get deleteAccountUpcoming =>
+      'پێشی ژڤانێن خۆ یێن بێن هەلوەشینە، پاشان دووبارە هەول بدە.';
+
+  @override
+  String get deleteAccountFailed =>
+      'مە نەشیا هەژمارا تە ژێ ببەین. پەیوەندیێ بپشکنە و دووبارە هەول بدە.';
+
+  @override
+  String get cancelAction => 'هەلوەشاندن';
+
+  @override
+  String get languageSaved => 'زمان هاتە گوهۆڕین';
+
+  @override
+  String get specialtyDentist => 'ددان';
+
+  @override
+  String get specialtyCardiology => 'دل';
+
+  @override
+  String get specialtyPediatrics => 'زارۆک';
+
+  @override
+  String get specialtyEye => 'چاڤ';
+
+  @override
+  String get specialtyNeurology => 'دەمار';
+
+  @override
+  String browseSpecialty(String specialty) {
+    return 'نوژدارێن $specialty ببینە';
+  }
+
+  @override
+  String get nextVisitTitle => 'سەرەدانا تە یا بێت';
+
+  @override
+  String get todayChip => 'ئەڤرۆ';
+
+  @override
+  String get tomorrowChip => 'سوبەهی';
+
+  @override
+  String get howItWorks => 'ساخلەم چاوا کار دکەت';
+
+  @override
+  String get stepBook => 'د ئەپێ دا ژڤانی بگرە';
+
+  @override
+  String get stepCheckIn => 'ل پێشوازیێ هاتنا خۆ تۆمار بکە';
+
+  @override
+  String get stepCalled => 'ل سەر مۆبایلا خۆ گازی تە دهێتە کرن';
+
+  @override
+  String get alertsSubtitle => 'گازیێن رێزێ و نووکرنێن ژڤانان';
+
+  @override
+  String get slotMorning => 'سپێدە';
+
+  @override
+  String get slotAfternoon => 'نیڤرۆ';
+
+  @override
+  String get slotEvening => 'ئێڤار';
+
+  @override
+  String get ntfBookedTitle => 'ژڤان هاتە پشتراستکرن';
+
+  @override
+  String get ntfBookedNext =>
+      'دێ بیرا تە ئینین رۆژەکێ بەری ژڤانی و هندەکێ بەری ژڤانی.';
+
+  @override
+  String get ntfReminderDayTitle => 'ژڤانێ تە سوبەهی یە';
+
+  @override
+  String get ntfReminderSoonTitle => 'ژڤانێ تە نێزیکە';
+
+  @override
+  String get ntfReminderNext =>
+      'دەمێ دگەهیە کلینیکێ خۆ ل پێشوازیێ تومار بکە. ئەگەر نەشێی بهێی، ژڤانی ژ بەشێ ژڤانان هەلوەشینە دا کەسەکێ دی ب کار بینیت.';
+
+  @override
+  String get ntfCancelledTitle => 'کلینیکێ ژڤانێ تە هەلوەشاند';
+
+  @override
+  String get ntfCancelledNext =>
+      'دەمەکێ دی ل دەڤ هەمان نوژداری یان نوژدارەکێ دی بگرە.';
+
+  @override
+  String get ntfRescheduledTitle => 'ژڤانێ تە دەمەکێ نوی هەیە';
+
+  @override
+  String get ntfRescheduledNext =>
+      'ئەگەر دەمێ نوی بۆ تە نەگونجیت، ژ بەشێ ژڤانان بگهۆڕە یان هەلوەشینە.';
+
+  @override
+  String get ntfAlmostTitle => 'نۆرا تە نێزیک بوو';
+
+  @override
+  String get ntfNextTitle => 'تو یێ دویڤدا یی';
+
+  @override
+  String get ntfAlmostNext => 'بچە جهێ چاڤەڕێبوونێ و نێزیک بمینە.';
+
+  @override
+  String get ntfQueueOpenedTitle => 'رێزبەندی ڤەبوو';
+
+  @override
+  String get ntfFollowQueue => 'جهێ خۆ د رێزبەندییا زندی دا ببینە.';
+
+  @override
+  String get ntfPausedTitle => 'رێزبەندی بۆ دەمەکێ کورت راوەستا';
+
+  @override
+  String get ntfPausedNext =>
+      'جهێ تە پاراستیە. دەمێ دیسان دەست پێ دکەت دێ بێژینە تە.';
+
+  @override
+  String get ntfResumedTitle => 'رێزبەندی دیسان دەست پێ کر';
+
+  @override
+  String get ntfClosedTitle => 'رێزبەندی هاتە گرتن';
+
+  @override
+  String get ntfClosedNext =>
+      'ئەگەر نەهاتیە دیتن، پسیارا پێشوازیا کلینیکێ بکە.';
+
+  @override
+  String get ntfEnqueuedTitle => 'تو د رێزبەندیێ دا یی';
+
+  @override
+  String get ntfCalledTitle => 'نۆرا تە یە';
+
+  @override
+  String get ntfCalledNext => 'هیڤیە نوکە بچە دەڤ نوژداری.';
+
+  @override
+  String get ntfMissedTitle => 'نۆرا تە بۆری';
+
+  @override
+  String get ntfMissedNext =>
+      'دگەل پێشوازیێ باخڤە، دشێن تە ڤەگەڕیننە رێزبەندیێ.';
+
+  @override
+  String get ntfStartedTitle => 'پشکنینا تە دەست پێ کر';
+
+  @override
+  String get ntfCompletedTitle => 'سەرەدانا تە ب دوماهی هات';
+
+  @override
+  String get ntfCompletedNext =>
+      'ب هیڤیا ساخلەمیێ. پێدڤی ب پێداچوونێ هەیە؟ ژ لاپەڕێ نوژداری بگرە.';
+
+  @override
+  String get ntfWhyAppointment => 'دەربارەی ژڤانەکێ تە ل ساخلەم گرتی.';
+
+  @override
+  String get ntfWhyQueue => 'ژ رێزبەندییا زندی یا کلینیکێ.';
+
+  @override
+  String ntfAtClinic(String doctor, String clinic) {
+    return '$doctor ل $clinic';
+  }
+
+  @override
+  String ntfTicket(int number) {
+    return 'ژمارە $number';
+  }
+
+  @override
+  String ntfAhead(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count کەس بەری تە',
+      one: 'ئێک کەس بەری تە',
+      zero: 'کەس بەری تە نینە',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ntfDoctorStarted(String doctor) {
+    return '$doctor دەست ب دیتنا نەخۆشان کر.';
+  }
+
+  @override
+  String ntfDoctorPaused(String doctor) {
+    return '$doctor رێزبەندی بۆ دەمەکێ کورت راگرت.';
+  }
+
+  @override
+  String ntfDoctorResumed(String doctor) {
+    return '$doctor دیسان نەخۆشان دبینیت.';
+  }
+
+  @override
+  String ntfDoctorFinished(String doctor) {
+    return '$doctor کارێ ئەڤرۆ ب دوماهی ئینا.';
+  }
+
+  @override
+  String ntfCompletedHappened(String doctor) {
+    return 'سەرەدانا تە ل دەڤ $doctor تەمام بوو.';
+  }
+
+  @override
+  String get feeFirstVisit => 'سەرەدانا ئێکێ';
+
+  @override
+  String get feeFollowUp => 'پێداچوون';
+
+  @override
+  String get feesTitle => 'کرێ';
+
+  @override
+  String get feesNote =>
+      'ل کلینیکێ بدە، یان دەمێ ژڤانی دگری د ئەپی دا ب FIB بدە.';
+
+  @override
+  String get nextFreeLabel => 'نێزیکترین دەمێ ڤالا';
+
+  @override
+  String yearsShort(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count سال',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get directions => 'رێنیشاندان';
+
+  @override
+  String get callClinic => 'تەلەفۆن';
+
+  @override
+  String get clinicLocationMissing => 'کلینیکێ هێشتا ناڤنیشانێ خۆ زێدە نەکریە.';
+
+  @override
+  String get openMapsFailed => 'نەشیا نەخشەیێ ل سەر ڤی مۆبایلی ڤەکەت.';
+
+  @override
+  String get bookAgainTitle => 'دیسان بگرە';
+
+  @override
+  String bookAgainAction(String doctor) {
+    return 'دیسان ل دەڤ $doctor بگرە';
+  }
+
+  @override
+  String get familyTileTitle => 'خێزان';
+
+  @override
+  String get familyTileSubtitle => 'بۆ زارۆک و دەیبابێن خۆ بگرە';
+
+  @override
+  String get addToCalendar => 'زێدە بکە بۆ سالنامێ';
+
+  @override
+  String visitWith(String doctor) {
+    return 'ژڤان ل دەڤ $doctor';
+  }
+
+  @override
+  String get freeTodayFilter => 'ئەڤرۆ ڤالایە';
+
+  @override
+  String get noneFreeToday =>
+      'ئەڤرۆ چ دەمێن ڤالا ل دەڤ ڤان نوژداران نەمانە. \"ئەڤرۆ ڤالایە\" ڤەمرینە دا رۆژێن دی ببینی.';
+
+  @override
+  String get helpTitle => 'هاریکاری و پشتگیری';
+
+  @override
+  String get contactSaxlem => 'ب واتسئەپ نامە بۆ ساخلەم بهنێرە';
+
+  @override
+  String get termsOfUse => 'مەرجێن ب کارئینانێ';
+
+  @override
+  String get privacyPolicy => 'سیاسەتا تایبەتمەندیێ';
+
+  @override
+  String appVersion(String version) {
+    return 'وەشان $version';
+  }
+
+  @override
+  String get whatsBothering => 'تە چ ئێش هەیە؟';
+
+  @override
+  String get symptomFever => 'تا یان سەرمابوون';
+
+  @override
+  String get symptomChild => 'زارۆکێ من نەخۆشە';
+
+  @override
+  String get symptomTooth => 'ئێشانا ددانان';
+
+  @override
+  String get symptomSkin => 'پێست';
+
+  @override
+  String get symptomHeart => 'دل و پەستانا خوینێ';
+
+  @override
+  String get symptomEyes => 'چاڤ';
+
+  @override
+  String get symptomPregnancy => 'دووگیانی و ساخلەمیا ئافرەتان';
+
+  @override
+  String get symptomBones => 'هەستی و جومگە';
+
+  @override
+  String get symptomEar => 'گوه، دفن، قورگ';
+
+  @override
+  String get symptomHead => 'سەرئێشان و دەمار';
+
+  @override
+  String get symptomStomach => 'گەدە';
+
+  @override
+  String get specialtiesTitle => 'پسپۆری';
+
+  @override
+  String get emergencyTitle => 'فریاکەفتن';
+
+  @override
+  String get emergencySubtitle => 'ئەمبولانس: 122';
+
+  @override
+  String get emergencyConfirmTitle => 'نوکە 122 تەلەفۆن بکەی؟';
+
+  @override
+  String get emergencyConfirmBody =>
+      'ساخلەم بۆ گرتنا ژڤانانە نە بۆ رەوشێن فریاکەفتنێ. ئەگەر کەسەک پێدڤی ب هاریکاریا لەز هەبیت، تەلەفۆنی ئەمبولانسێ بکە.';
+
+  @override
+  String get emergencyCall => '122 تەلەفۆن بکە';
+
+  @override
+  String get liveNotOpen => 'رێزبەندی هێشتا ڤەنەبوویە';
+
+  @override
+  String get liveCheckIn => 'رێزبەندی ڤەکریە · خۆ ل پێشوازیێ تومار بکە';
+
+  @override
+  String get liveWithDoctor => 'نوکە ل دەڤ نوژداری یی';
+
+  @override
+  String liveWait(int min, int max) {
+    return 'نێزیکی $min–$max خولەک';
+  }
+
+  @override
+  String leaveByTime(String time) {
+    return 'بەری $time دەرکەڤە';
+  }
+
+  @override
+  String get leaveNow => 'نوکە دەرکەڤە';
+
+  @override
+  String leaveInMinutes(int minutes) {
+    return 'پشتی $minutes خولەکان دەرکەڤە';
+  }
+
+  @override
+  String get leaveLate => 'دبیت درەنگ بگەهی. نوکە دەرکەڤە';
+
+  @override
+  String leaveDrive(int minutes, String distance) {
+    return '$minutes خولەک ب ترومبێلێ · $distance';
+  }
+
+  @override
+  String leaveKm(String km) {
+    return '$km کم';
+  }
+
+  @override
+  String leaveMeters(String meters) {
+    return '$meters م';
+  }
+
+  @override
+  String get leaveWithTraffic => 'دگەل قەرەبالغیا ڕێکێ';
+
+  @override
+  String get leaveNoTraffic => 'بێ قەرەبالغیا ڕێکێ';
+
+  @override
+  String get leaveEstimate => 'مەزەندە ل دویڤ دویراتیێ';
+
+  @override
+  String get leaveApproximate => 'جهێ نێزیکی';
+
+  @override
+  String leaveArriveBy(String time) {
+    return 'بەری $time ل پێشوازیێ بە دا خۆ تومار بکەی';
+  }
+
+  @override
+  String get leaveAskTitle => 'کەنگی دەرکەڤم؟';
+
+  @override
+  String get leaveAskBody =>
+      'ساخلەم دشێت جهێ تە بکاربینیت دا دەمێ ڕێکا کلینیکێ دگەل قەرەبالغیێ حساب بکەت و بێژیتە تە کەنگی دەرکەڤی.';
+
+  @override
+  String get leaveAskPrivacy =>
+      'جهێ تە بتنێ بۆ ڤێ چەندێ دهێتە بکارئینان و چو جاران ناهێتە پاشەکەفتکرن.';
+
+  @override
+  String get leaveAskButton => 'جهێ من بکاربینە';
+
+  @override
+  String get leaveWorking => 'دەمێ ڕێکێ دهێتە حسابکرن…';
+
+  @override
+  String get leaveServiceOff => 'لۆکەیشنێ ڤەکە دا بزانی کەنگی دەرکەڤی.';
+
+  @override
+  String get leaveDeniedForever =>
+      'د ڕێکخستنان دا ڕێکێ بدە ساخلەمی لۆکەیشنێ بکاربینیت دا بزانی کەنگی دەرکەڤی.';
+
+  @override
+  String get leaveTurnOn => 'لۆکەیشنێ ڤەکە';
+
+  @override
+  String get leaveOpenSettings => 'ڕێکخستنان ڤەکە';
+
+  @override
+  String get leaveFailed => 'نوکە نەشیاین دەمێ ڕێکێ حساب بکەین.';
+
+  @override
+  String get leaveStop => 'جهێ من بکارنەئینە';
+
+  @override
+  String get leaveAlertChannel => 'دەمێ دەرکەفتنێ';
+
+  @override
+  String get leaveAlertTitle => 'دەمێ خۆ ئامادەکرنێ یە بۆ ژڤانا تە';
+
+  @override
+  String leaveAlertBody(String leave, String doctor, String time, int minutes) {
+    return 'بەری $leave دەرکەڤە بۆ ژڤانا $doctor دەمژمێر $time · $minutes خولەک ب ترومبێلێ';
+  }
+
+  @override
+  String minutesShortDrive(int minutes) {
+    return '$minutes خولەک ب ترومبێلێ';
+  }
+
+  @override
+  String get leaveOnMyWay => 'ئەز ل ڕێکێ مە';
+
+  @override
+  String get leaveOnMyWayNote =>
+      'کلینیک دێ زانیت تو کەنگی دگەهی. جهێ تە ناهێتە پارڤەکرن.';
+
+  @override
+  String get leaveOnMyWayFailed =>
+      'نەشیاین کلینیکێ ئاگەهدار بکەین. دیسان هەول بدە.';
+
+  @override
+  String get leaveOnTheWayTitle => 'تو ل ڕێکێ یی';
+
+  @override
+  String leaveExpectedAt(String time) {
+    return 'کلینیک ل دۆر دەمژمێر $time چاڤەڕێی تە یە';
+  }
+
+  @override
+  String get leaveReceptionSees => 'پێشوازی دبینیت کو تو دهێی.';
+
+  @override
+  String leaveExpectedShort(String time) {
+    return 'ل ڕێکێ یی · دێ گەهی $time';
+  }
+
+  @override
+  String get leaveLearned => 'دگەل قەرەبالغیا ئاسایی د ڤێ دەمژمێرێ دا';
+
+  @override
+  String starsLabel(String rating) {
+    return '$rating ژ 5 ستێران';
+  }
+
+  @override
+  String reviewCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count هەلسەنگاندن',
+      one: '1 هەلسەنگاندن',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewsTitle => 'هەلسەنگاندن';
+
+  @override
+  String get reviewsNone =>
+      'هێشتا چ هەلسەنگاندن نینن. بتنێ ئەو نەخوشێن سەرەدان کرین دشێن هەلسەنگاندنێ بکەن.';
+
+  @override
+  String reviewsSeeAll(int count) {
+    return 'هەمی هەلسەنگاندنان ببینە ($count)';
+  }
+
+  @override
+  String get reviewsMore => 'پتر نیشان بدە';
+
+  @override
+  String reviewsOf(String doctor) {
+    return 'هەلسەنگاندنێن $doctor';
+  }
+
+  @override
+  String get reviewAnonymous => 'نەخوشەکێ ساخلەمی';
+
+  @override
+  String get reviewVerified => 'سەرەدانا پشتڕاستکری';
+
+  @override
+  String get rateTitle => 'سەرەدانا تە چاوا بوو؟';
+
+  @override
+  String rateWith(String doctor) {
+    return 'سەرەدانا خۆ ل دەڤ $doctor هەلسەنگینە';
+  }
+
+  @override
+  String get rateCommentHint => 'تشتەک هەیە نەخوشێن دی بزانن؟ (نە پێدڤییە)';
+
+  @override
+  String get rateCommentRule =>
+      'بۆ هەمییان دیار دبیت. بێ لینک، ئیمێل یان ژمارێن تەلەفۆنێ.';
+
+  @override
+  String get rateAnonymous => 'بێ ناڤێ من بەلاڤ بکە';
+
+  @override
+  String get ratePost => 'هەلسەنگاندنێ بەلاڤ بکە';
+
+  @override
+  String get rateUpdate => 'هەلسەنگاندنێ نوی بکە';
+
+  @override
+  String get rateEdit => 'گوهۆڕین';
+
+  @override
+  String get rateThanks => 'سوپاس. هەلسەنگاندنا تە هاریکاریا نەخوشێن دی دکەت.';
+
+  @override
+  String get rateRemoved => 'ساخلەمی ئەڤ هەلسەنگاندنە ڕاکر.';
+
+  @override
+  String get rateFailed =>
+      'نەشیاین هەلسەنگاندنا تە بەلاڤ بکەین. دیسان هەول بدە.';
+
+  @override
+  String rateEditUntil(String date) {
+    return 'تو دشێی هەتا $date بگوهۆڕی.';
+  }
+
+  @override
+  String get ntfReviewTitle => 'سەرەدانا تە چاوا بوو؟';
+
+  @override
+  String get ntfReviewNext =>
+      'د چەند چرکەیان دا هەلسەنگینە. هاریکاریا نەخوشێن دی دکەت.';
+
+  @override
+  String get savedDoctorsTitle => 'نوژدارێن پاشەکەفتکری';
+
+  @override
+  String get savedDoctorsEmpty =>
+      'ل سەر دلێ ل پەڕا نوژداری بدە دا ل ڤێرە بمینیت.';
+
+  @override
+  String saveDoctor(String doctor) {
+    return '$doctor پاشەکەفت بکە';
+  }
+
+  @override
+  String unsaveDoctor(String doctor) {
+    return '$doctor ژ پاشەکەفتکریان ڕاکە';
+  }
+
+  @override
+  String get savedAdded => 'هاتە پاشەکەفتکرن';
+
+  @override
+  String get savedRemoved => 'ژ پاشەکەفتکریان هاتە ڕاکرن';
+
+  @override
+  String get savedFailed =>
+      'نەشیاین نوژدارێن پاشەکەفتکری نوی بکەین. دیسان هەول بدە.';
+
+  @override
+  String get earlierWatch => 'ئاگەهدارم بکە ئەگەر دەمەکێ زووتر ڤەبوو';
+
+  @override
+  String earlierWatchHelp(String doctor) {
+    return 'ئەگەر $doctor دەمەکێ زووتر یێ ڤالا هەبیت، دێ ئاگەهدار کەین. ژڤانا تە دمینیت هەتا تو بگوهێزی.';
+  }
+
+  @override
+  String get earlierFound => 'دەمەکێ زووتر یێ ڤالایە';
+
+  @override
+  String get earlierMove => 'ژڤانا من بۆ ڤی دەمی بگوهێزە';
+
+  @override
+  String get earlierFirstCome => 'یێ ئێکەمین پشتڕاست بکەت دێ وەرگریت.';
+
+  @override
+  String get earlierFailed => 'نەشیاین ڤێ بگوهۆڕین. دیسان هەول بدە.';
+
+  @override
+  String get ntfEarlierTitle => 'دەمەکێ زووتر یێ ڤالایە';
+
+  @override
+  String get ntfEarlierNext =>
+      'ژڤانا خۆ ڤەکە دا بۆ وی بگوهێزی. یێ ئێکەمین پشتڕاست بکەت دێ وەرگریت.';
+
+  @override
+  String get receiptsTitle => 'پارەدان و وەسل';
+
+  @override
+  String get receiptsFailed => 'نەشیاین پارەدانێن تە ڤەکەین';
+
+  @override
+  String get receiptsMoreFailed => 'نەشیاین پارەدانێن پتر ڤەکەین.';
+
+  @override
+  String get receiptsEmptyTitle => 'هێشتا چ پارەدان نینن';
+
+  @override
+  String get receiptsEmptyBody =>
+      'دەمێ تو پارێ سەرەدانەکێ ددەی، ل ئەپی یان ل کلینیکێ، وەسلا وێ دێ ل ڤێرە دیار بیت.';
+
+  @override
+  String get receiptTitle => 'وەسل';
+
+  @override
+  String get receiptFailed => 'نەشیاین ڤی وەسلی ڤەکەین';
+
+  @override
+  String get receiptCopy => 'وەسلێ کۆپی بکە';
+
+  @override
+  String get receiptCopied => 'وەسل هاتە کۆپیکرن';
+
+  @override
+  String get receiptView => 'وەسلێ ببینە';
+
+  @override
+  String get receiptAmount => 'بڕ';
+
+  @override
+  String get receiptStatus => 'رەوش';
+
+  @override
+  String get receiptNumber => 'ژمارا وەسلێ';
+
+  @override
+  String get receiptPaidOn => 'دەمێ پارەدانێ';
+
+  @override
+  String get receiptRefundedOn => 'دەمێ ڤەگەڕاندنێ';
+
+  @override
+  String get receiptPaidBy => 'رێکا پارەدانێ';
+
+  @override
+  String get receiptMethodCounter => 'ل پێشوازیا کلینیکێ';
+
+  @override
+  String get receiptMethodFib => 'FIB، ب رێکا ئەپی';
+
+  @override
+  String get receiptMethodOnline => 'ئۆنلاین، ب رێکا ئەپی';
+
+  @override
+  String get receiptTransaction => 'ژمارا مامەلێ';
+
+  @override
+  String get receiptPaidTo => 'پارە بۆ';
+
+  @override
+  String receiptPaidToPlatform(String organization) {
+    return 'ساخله‌م، بۆ $organization';
+  }
+
+  @override
+  String get receiptPatient => 'نەخۆش';
+
+  @override
+  String get receiptClinic => 'کلینیک';
+
+  @override
+  String get receiptAddress => 'ناڤنیشان';
+
+  @override
+  String get receiptPhone => 'تەلەفۆن';
+
+  @override
+  String get receiptVisit => 'سەرەدان';
+
+  @override
+  String get receiptTextHeading => 'وەسلا ساخله‌م';
+
+  @override
+  String get pushChannelName => 'نووکرنێن ژڤان و رێزبەندیێ';
 }

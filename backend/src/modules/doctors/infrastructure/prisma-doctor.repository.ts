@@ -35,6 +35,7 @@ function doctorInclude(visibility: DoctorClinicAssignmentVisibility) {
       ],
     },
     availability: true,
+    reviewStats: { select: { reviewCount: true, reviewSum: true } },
   } as const satisfies Prisma.DoctorInclude;
 }
 type PersistedDoctor = Prisma.DoctorGetPayload<{
@@ -65,11 +66,37 @@ export class PrismaDoctorRepository implements DoctorRepository {
       total,
     };
   }
+  async clinicLocation(clinicId: string) {
+    const row = await this.prisma.db.clinic.findFirst({
+      where: {
+        id: clinicId,
+        status: 'active',
+        organization: { status: 'active' },
+        doctorAssignments: {
+          some: { status: 'active', doctor: { status: 'active' } },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        address: true,
+        area: true,
+        city: true,
+        latitude: true,
+        longitude: true,
+        phoneNumber: true,
+      },
+    });
+    return row ? Object.freeze({ ...row }) : null;
+  }
 
   async discoveryOptions(
     criteria: Pick<
       DoctorSearchCriteria,
-      'organizationId' | 'clinicId' | 'clinicAssignmentVisibility'
+      | 'organizationId'
+      | 'clinicId'
+      | 'clinicAssignmentVisibility'
+      | 'forPatients'
     >,
   ) {
     const visibleDoctor = this.visibilityWhere(criteria);
@@ -164,6 +191,7 @@ export class PrismaDoctorRepository implements DoctorRepository {
       clinicId?: string | undefined;
       visibility: 'active' | 'activeOrInactive';
       clinicAssignmentVisibility: DoctorClinicAssignmentVisibility;
+      forPatients?: boolean;
     },
   ) {
     const doctor = await this.prisma.db.doctor.findFirst({
@@ -196,6 +224,8 @@ export class PrismaDoctorRepository implements DoctorRepository {
             },
         organization: { status: 'active' },
         specialtyAssignments: { some: { specialty: { status: 'active' } } },
+        // Hidden from patients while a Saxlem balance is long overdue.
+        ...(criteria.forPatients ? { appHiddenAt: null } : {}),
       },
       include: doctorInclude(criteria.clinicAssignmentVisibility),
     });
@@ -237,6 +267,7 @@ export class PrismaDoctorRepository implements DoctorRepository {
         : {}),
       status: criteria.status,
       organization: { status: 'active' },
+      ...(criteria.forPatients ? { appHiddenAt: null } : {}),
       ...(criteria.gender ? { gender: criteria.gender } : {}),
       ...(criteria.minimumYearsOfExperience === undefined
         ? {}
@@ -298,7 +329,10 @@ export class PrismaDoctorRepository implements DoctorRepository {
   private visibilityWhere(
     criteria: Pick<
       DoctorSearchCriteria,
-      'organizationId' | 'clinicId' | 'clinicAssignmentVisibility'
+      | 'organizationId'
+      | 'clinicId'
+      | 'clinicAssignmentVisibility'
+      | 'forPatients'
     >,
   ): Prisma.DoctorWhereInput {
     return {
@@ -307,6 +341,7 @@ export class PrismaDoctorRepository implements DoctorRepository {
         : {}),
       status: 'active',
       organization: { status: 'active' },
+      ...(criteria.forPatients ? { appHiddenAt: null } : {}),
       clinicAssignments: criteria.clinicId
         ? {
             some: {
@@ -368,6 +403,10 @@ export class PrismaDoctorRepository implements DoctorRepository {
         ...doctor.languages,
       ]) as DoctorProjection['languages'],
       profilePhotoKey: doctor.profilePhotoKey,
+      consultationFeeIqd: doctor.consultationFeeIqd,
+      followUpFeeIqd: doctor.followUpFeeIqd,
+      reviewCount: doctor.reviewStats?.reviewCount ?? 0,
+      reviewSum: doctor.reviewStats?.reviewSum ?? 0,
       profileImageUrl: null,
       specialty: primary?.displayName ?? '',
       specialties: Object.freeze(specialties),

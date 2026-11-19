@@ -1,5 +1,7 @@
+import '../../../discover/domain/entities/clinic_location.dart';
 import 'package:flutter/material.dart';
 import '../controllers/appointments_controller.dart';
+import '../../../../design_system/design_system.dart';
 import '../state/appointments_state.dart';
 import '../widgets/appointment_card.dart';
 import '../widgets/appointments_empty_state.dart';
@@ -23,6 +25,7 @@ class AppointmentsPage extends StatelessWidget {
     required this.arrivalRepository,
     required this.liveQueueRepository,
     this.notificationSignals,
+    this.clinicLocations,
     this.profilesController,
     super.key,
   });
@@ -33,6 +36,9 @@ class AppointmentsPage extends StatelessWidget {
   final PatientArrivalRepository arrivalRepository;
   final LiveQueueRepository liveQueueRepository;
   final Stream<NotificationSignal>? notificationSignals;
+
+  /// Where clinics are, for Directions and Call on an appointment.
+  final ClinicLocationSource? clinicLocations;
   final Future<void> Function() onAppointmentsChanged;
   final PatientProfilesController? profilesController;
 
@@ -47,18 +53,14 @@ class AppointmentsPage extends StatelessWidget {
           child: const CircularProgressIndicator(),
         ),
       ),
-      AppointmentsFailure(:final problem) => Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(_problem(context, problem)),
-            const SizedBox(height: 16),
-            FilledButton(
-              onPressed: controller.load,
-              child: Text(context.l10n.tryAgain),
-            ),
-          ],
-        ),
+      AppointmentsFailure(:final problem) => SaxlemStateView(
+        kind: problem == AppointmentProblem.offline
+            ? SaxlemStateKind.offline
+            : SaxlemStateKind.error,
+        title: context.l10n.appointmentsUnavailable,
+        message: _problem(context, problem),
+        actionLabel: context.l10n.tryAgain,
+        onAction: controller.load,
       ),
       AppointmentsReady() => _ready(
         context,
@@ -71,45 +73,34 @@ class AppointmentsPage extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(24, 24, 24, 14),
-        child: Text(
-          context.l10n.myAppointments,
-          style: Theme.of(
-            context,
-          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 14),
+        child: Semantics(
+          header: true,
+          child: Text(
+            context.l10n.myAppointments,
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
         ),
       ),
       if (profilesController != null)
         Padding(
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: 24),
+          padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 14),
           child: PatientSelector(
             controller: profilesController!,
             label: context.l10n.currentPatient,
           ),
         ),
-      SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsetsDirectional.symmetric(horizontal: 18),
-        child: SegmentedButton<AppointmentsTab>(
-          showSelectedIcon: false,
-          segments: AppointmentsTab.values
-              .map(
-                (tab) => ButtonSegment(
-                  value: tab,
-                  label: Text(
-                    context.l10n.tabWithCount(
-                      _label(context, tab),
-                      state.count(tab),
-                    ),
-                  ),
-                ),
-              )
-              .toList(),
-          selected: {state.selectedTab},
-          onSelectionChanged: (selection) => controller.select(selection.first),
+      Padding(
+        padding: const EdgeInsetsDirectional.symmetric(horizontal: 20),
+        child: SaxlemSegmentedTabs<AppointmentsTab>(
+          values: AppointmentsTab.values,
+          selected: state.selectedTab,
+          labelOf: (tab) =>
+              context.l10n.tabWithCount(_label(context, tab), state.count(tab)),
+          onChanged: controller.select,
         ),
       ),
-      const SizedBox(height: 14),
+      const SizedBox(height: 8),
       Expanded(
         child: Column(
           children: [
@@ -121,13 +112,13 @@ class AppointmentsPage extends StatelessWidget {
                     )
                   : ListView.separated(
                       padding: const EdgeInsetsDirectional.fromSTEB(
-                        24,
+                        20,
                         8,
-                        24,
+                        20,
                         32,
                       ),
                       itemCount: state.visible.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 14),
+                      separatorBuilder: (_, _) => const SizedBox(height: 12),
                       itemBuilder: (context, index) {
                         final appointment = state.visible[index];
                         return AppointmentCard(
@@ -142,6 +133,7 @@ class AppointmentsPage extends StatelessWidget {
                                 arrivalRepository: arrivalRepository,
                                 liveQueueRepository: liveQueueRepository,
                                 notificationSignals: notificationSignals,
+                                clinicLocations: clinicLocations,
                                 onChanged: onAppointmentsChanged,
                                 profilesController: profilesController,
                               ),
@@ -158,14 +150,14 @@ class AppointmentsPage extends StatelessWidget {
               ),
             if (state.canLoadMore)
               Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 24),
-                child: OutlinedButton(
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 24),
+                child: SaxlemButton(
+                  label: state.loadingMore
+                      ? context.l10n.loadingMoreAppointments
+                      : context.l10n.loadMore,
+                  hierarchy: SaxlemButtonHierarchy.secondary,
+                  expand: true,
                   onPressed: state.loadingMore ? null : controller.loadMore,
-                  child: Text(
-                    state.loadingMore
-                        ? context.l10n.loadingMoreAppointments
-                        : context.l10n.loadMore,
-                  ),
                 ),
               ),
           ],

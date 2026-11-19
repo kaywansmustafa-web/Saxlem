@@ -1,13 +1,23 @@
+import '../../../booking/domain/entities/appointment_slot.dart';
+import '../../../reviews/data/review_dto.dart';
+import '../../../reviews/domain/review.dart';
 import '../../../../core/models/patient_profile.dart';
 import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/authenticated_api_client.dart';
 import '../../domain/entities/appointments_snapshot.dart';
 import '../../domain/entities/patient_appointment.dart';
 import '../../domain/repositories/patient_appointments_repository.dart';
+import '../../../../core/location/geo_point.dart';
+import '../../domain/entities/departure_plan.dart';
+import '../dto/departure_plan_dto.dart';
 import '../dto/patient_appointment_dto.dart';
 
 class BackendPatientAppointmentsRepository
-    implements PatientAppointmentsRepository {
+    implements
+        PatientAppointmentsRepository,
+        DeparturePlanner,
+        VisitReviewSource,
+        EarlierTimeSource {
   BackendPatientAppointmentsRepository(this._api);
   final AuthenticatedApiClient _api;
   static final _uuid = RegExp(
@@ -71,6 +81,191 @@ class BackendPatientAppointmentsRepository
       return item;
     } on FormatException {
       throw const AppointmentFailure(AppointmentProblem.malformed);
+    } on ApiFailure catch (failure) {
+      throw AppointmentFailure(_problem(failure, mutation: false));
+    }
+  }
+
+  /// The patient's position goes to the server for this one calculation;
+  /// the server does not keep it.
+  @override
+  Future<DeparturePlan> departure(String appointmentId, GeoPoint from) async {
+    _uuidValue(appointmentId);
+    if (from.latitude.abs() > 90 ||
+        from.longitude.abs() > 180 ||
+        from.latitude.isNaN ||
+        from.longitude.isNaN) {
+      throw const AppointmentFailure(AppointmentProblem.validation);
+    }
+    try {
+      final response = await _api.postJson(
+        '/appointments/$appointmentId/departure',
+        body: {
+          // About 1 m is plenty for driving directions.
+          'latitude': double.parse(from.latitude.toStringAsFixed(5)),
+          'longitude': double.parse(from.longitude.toStringAsFixed(5)),
+        },
+      );
+      return DeparturePlanDto.parse(response.body);
+    } on FormatException {
+      throw const AppointmentFailure(AppointmentProblem.malformed);
+    } on MutationNotSentFailure catch (failure) {
+      throw AppointmentFailure(_problem(failure.failure, mutation: false));
+    } on ApiFailure catch (failure) {
+      throw AppointmentFailure(_problem(failure, mutation: false));
+    }
+  }
+
+  @override
+  Future<EarlierTimeStatus> earlierTime(String appointmentId) async {
+    _uuidValue(appointmentId);
+    try {
+      return _earlier(
+        (await _api.getJson('/appointments/$appointmentId/earlier')).body,
+      );
+    } on FormatException {
+      throw const AppointmentFailure(AppointmentProblem.malformed);
+    } on ApiFailure catch (failure) {
+      throw AppointmentFailure(_problem(failure, mutation: false));
+    }
+  }
+
+  @override
+  Future<EarlierTimeStatus> watchEarlierTime(
+    String appointmentId, {
+    required bool watch,
+  }) async {
+    _uuidValue(appointmentId);
+    try {
+      if (!watch) {
+        await _api.deleteJson('/appointments/$appointmentId/earlier');
+        return const EarlierTimeStatus(watching: false);
+      }
+      return _earlier(
+        (await _api.postJson(
+          '/appointments/$appointmentId/earlier',
+          body: {},
+        )).body,
+      );
+    } on FormatException {
+      throw const AppointmentFailure(AppointmentProblem.malformed);
+    } on MutationNotSentFailure catch (failure) {
+      throw AppointmentFailure(_problem(failure.failure, mutation: false));
+    } on ApiFailure catch (failure) {
+      throw AppointmentFailure(_problem(failure, mutation: false));
+    }
+  }
+
+  static EarlierTimeStatus _earlier(Map<String, dynamic> json) {
+    if (json.keys.toSet().difference({'watching', 'offer'}).isNotEmpty ||
+        json['watching'] is! bool) {
+      throw const FormatException();
+    }
+    final raw = json['offer'];
+    if (raw == null) {
+      return EarlierTimeStatus(watching: json['watching'] as bool);
+    }
+    if (raw is! Map<String, dynamic> ||
+        raw.keys.toSet().difference({
+          'startsAt',
+          'endsAt',
+          'durationMinutes',
+        }).isNotEmpty) {
+      throw const FormatException();
+    }
+    if (raw['startsAt'] is! String || raw['endsAt'] is! String) {
+      throw const FormatException();
+    }
+    final startsAt = DateTime.parse(raw['startsAt'] as String).toUtc();
+    final endsAt = DateTime.parse(raw['endsAt'] as String).toUtc();
+    final duration = raw['durationMinutes'];
+    if (duration is! int ||
+        duration < 5 ||
+        endsAt.difference(startsAt).inMinutes != duration) {
+      throw const FormatException();
+    }
+    return EarlierTimeStatus(
+      watching: json['watching'] as bool,
+      offer: AppointmentSlot(
+        startsAt: startsAt,
+        endsAt: endsAt,
+        durationMinutes: duration,
+      ),
+    );
+  }
+
+  @override
+  Future<VisitReviewStatus> visitReview(String appointmentId) async {
+    _uuidValue(appointmentId);
+    try {
+      final response = await _api.getJson(
+        '/appointments/$appointmentId/review',
+      );
+      return ReviewDto.status(response.body);
+    } on FormatException {
+      throw const ReviewFailure();
+    } on ApiFailure {
+      throw const ReviewFailure();
+    }
+  }
+
+  @override
+  Future<VisitReview> writeReview(
+    String appointmentId, {
+    required int rating,
+    required String? comment,
+    required bool anonymous,
+  }) async {
+    _uuidValue(appointmentId);
+    final text = comment?.trim();
+    if (rating < 1 ||
+        rating > 5 ||
+        (text != null && (text.length > 500 || !commentIsPublicSafe(text)))) {
+      throw const ReviewFailure(invalidComment: true);
+    }
+    try {
+      final response = await _api.postJson(
+        '/appointments/$appointmentId/review',
+        body: {
+          'rating': rating,
+          'comment': (text == null || text.isEmpty) ? null : text,
+          'anonymous': anonymous,
+        },
+      );
+      return ReviewDto.mine(response.body);
+    } on FormatException {
+      throw const ReviewFailure();
+    } on MutationNotSentFailure {
+      throw const ReviewFailure();
+    } on ApiFailure catch (failure) {
+      throw ReviewFailure(
+        invalidComment: failure.type == ApiFailureType.validation,
+      );
+    }
+  }
+
+  @override
+  Future<OnTheWay> onTheWay(String appointmentId, GeoPoint from) async {
+    _uuidValue(appointmentId);
+    if (from.latitude.abs() > 90 ||
+        from.longitude.abs() > 180 ||
+        from.latitude.isNaN ||
+        from.longitude.isNaN) {
+      throw const AppointmentFailure(AppointmentProblem.validation);
+    }
+    try {
+      final response = await _api.postJson(
+        '/appointments/$appointmentId/on-the-way',
+        body: {
+          'latitude': double.parse(from.latitude.toStringAsFixed(5)),
+          'longitude': double.parse(from.longitude.toStringAsFixed(5)),
+        },
+      );
+      return DeparturePlanDto.parseOnTheWay(response.body);
+    } on FormatException {
+      throw const AppointmentFailure(AppointmentProblem.malformed);
+    } on MutationNotSentFailure catch (failure) {
+      throw AppointmentFailure(_problem(failure.failure, mutation: false));
     } on ApiFailure catch (failure) {
       throw AppointmentFailure(_problem(failure, mutation: false));
     }

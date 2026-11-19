@@ -2,23 +2,38 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/booking_quote.dart';
 import '../booking_copy.dart';
 import '../../../../core/localization/localization_extensions.dart';
-import '../../../../design_system/components/layout/saxlem_responsive_content.dart';
-import '../../../../design_system/foundations/saxlem_sizes.dart';
+import '../../../../design_system/design_system.dart';
+import '../../../payments/domain/appointment_payment.dart';
+import '../../../payments/presentation/widgets/payment_method_selector.dart';
 
 class BookingReviewPage extends StatelessWidget {
   const BookingReviewPage({
     required this.quote,
     required this.onConfirm,
     required this.confirming,
+    this.paymentMethod = PaymentMethod.counter,
+    this.onlinePaymentAvailable = false,
+    this.loadingPaymentOptions = false,
+    this.onPaymentMethodChanged,
     super.key,
   });
   final BookingQuote quote;
   final VoidCallback onConfirm;
   final bool confirming;
+  final PaymentMethod paymentMethod;
+  final bool onlinePaymentAvailable, loadingPaymentOptions;
+  final ValueChanged<PaymentMethod>? onPaymentMethodChanged;
+
   @override
   Widget build(BuildContext context) {
     const copy = BookingCopy();
+    final colors = context.saxlemColors;
+    final theme = Theme.of(context);
     final d = quote.draft;
+    final payOnline = paymentMethod == PaymentMethod.online;
+    final confirmLabel = payOnline
+        ? context.l10n.paymentConfirmAndPay
+        : context.l10n.confirmAppointment;
     return SingleChildScrollView(
       padding: const EdgeInsetsDirectional.only(top: 18, bottom: 36),
       child: SaxlemResponsiveContent(
@@ -28,37 +43,127 @@ class BookingReviewPage extends StatelessWidget {
           children: [
             Text(
               context.l10n.reviewAppointment,
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
             ),
-            const SizedBox(height: 20),
-            _Summary(
-              rows: [
-                (context.l10n.viewDoctor, d.options.doctorName),
-                (context.l10n.clinic, d.options.clinicName),
-                (
-                  context.l10n.date,
-                  copy.date(
-                    d.slot.startsAt,
-                    timezone: d.options.clinicTimezone,
+            const SizedBox(height: 16),
+            Container(
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: colors.surfaceRaised,
+                borderRadius: BorderRadius.circular(SaxlemRadii.hero),
+                border: Border.all(color: colors.border),
+                boxShadow: SaxlemElevation.level1(colors.night),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                      20,
+                      18,
+                      20,
+                      18,
+                    ),
+                    decoration: BoxDecoration(gradient: colors.deepAura),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                d.options.doctorName,
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  color: colors.onFill,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                d.options.clinicName,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: colors.onFill.withValues(alpha: .88),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              copy.time(
+                                d.slot.startsAt,
+                                timezone: d.options.clinicTimezone,
+                              ),
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                color: colors.onFill,
+                                fontWeight: FontWeight.w700,
+                                fontFeatures: const [
+                                  FontFeature.tabularFigures(),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              copy.date(
+                                d.slot.startsAt,
+                                timezone: d.options.clinicTimezone,
+                                languageCode: Localizations.localeOf(
+                                  context,
+                                ).languageCode,
+                              ),
+                              style: theme.textTheme.labelMedium?.copyWith(
+                                color: colors.onFill.withValues(alpha: .88),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                (
-                  context.l10n.time,
-                  copy.time(
-                    d.slot.startsAt,
-                    timezone: d.options.clinicTimezone,
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                      20,
+                      8,
+                      20,
+                      12,
+                    ),
+                    child: Column(
+                      children: [
+                        _Row(
+                          icon: Icons.schedule_rounded,
+                          label: context.l10n.duration,
+                          value: context.l10n.minutesLong(
+                            d.options.durationMinutes,
+                          ),
+                        ),
+                        _Row(
+                          icon: Icons.notes_rounded,
+                          label: context.l10n.appointmentReason,
+                          value: d.reason,
+                        ),
+                        _Row(
+                          icon: Icons.payments_outlined,
+                          label: context.l10n.fee,
+                          value: copy.fee(d.options.feeIqd),
+                          emphasize: true,
+                          last: true,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                (context.l10n.fee, copy.fee(d.options.feeIqd)),
-                (
-                  context.l10n.duration,
-                  context.l10n.minutesLong(d.options.durationMinutes),
-                ),
-                (context.l10n.timezone, d.options.clinicTimezone),
-                (context.l10n.appointmentReason, d.reason),
-              ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            PaymentMethodSelector(
+              selected: paymentMethod,
+              onlineAvailable: onlinePaymentAvailable,
+              loading: loadingPaymentOptions,
+              onChanged: confirming
+                  ? (_) {}
+                  : (onPaymentMethodChanged ?? (_) {}),
             ),
             const SizedBox(height: 24),
             Semantics(
@@ -66,16 +171,16 @@ class BookingReviewPage extends StatelessWidget {
               liveRegion: confirming,
               label: confirming
                   ? context.l10n.confirmingAppointment
-                  : context.l10n.confirmAppointment,
-              child: FilledButton(
-                onPressed: confirming ? null : onConfirm,
-                child: confirming
-                    ? const SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(context.l10n.confirmAppointment),
+                  : confirmLabel,
+              excludeSemantics: true,
+              child: SaxlemButton(
+                label: confirmLabel,
+                leadingIcon: payOnline
+                    ? Icons.bolt_rounded
+                    : Icons.check_rounded,
+                expand: true,
+                loading: confirming,
+                onPressed: loadingPaymentOptions ? null : onConfirm,
               ),
             ),
           ],
@@ -85,37 +190,57 @@ class BookingReviewPage extends StatelessWidget {
   }
 }
 
-class _Summary extends StatelessWidget {
-  const _Summary({required this.rows});
-  final List<(String, String)> rows;
+class _Row extends StatelessWidget {
+  const _Row({
+    required this.icon,
+    required this.label,
+    required this.value,
+    this.emphasize = false,
+    this.last = false,
+  });
+  final IconData icon;
+  final String label, value;
+  final bool emphasize, last;
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsetsDirectional.all(18),
-    decoration: BoxDecoration(
-      color: Theme.of(context).colorScheme.surface,
-      borderRadius: BorderRadius.circular(24),
-      border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-    ),
-    child: Column(
-      children: rows
-          .map(
-            (r) => Padding(
-              padding: const EdgeInsetsDirectional.symmetric(vertical: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: Text(r.$1)),
-                  Expanded(
-                    child: Text(
-                      r.$2,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ],
+  Widget build(BuildContext context) {
+    final colors = context.saxlemColors;
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsetsDirectional.symmetric(vertical: 12),
+      decoration: BoxDecoration(
+        border: last ? null : Border(bottom: BorderSide(color: colors.divider)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20, color: colors.textMuted),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colors.textSecondary,
               ),
             ),
-          )
-          .toList(),
-    ),
-  );
+          ),
+          const SizedBox(width: 12),
+          Flexible(
+            flex: 2,
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style:
+                  (emphasize
+                          ? theme.textTheme.titleMedium
+                          : theme.textTheme.bodyMedium)
+                      ?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

@@ -34,6 +34,11 @@ export interface PatientDirectoryAccess {
   readonly actorId: string;
   readonly organizationId: string;
   readonly clinicId: string;
+  /**
+   * A receptionist's doctors. When set, only patients booked with these
+   * doctors (or registered here and not yet booked with anyone) are visible.
+   */
+  readonly doctorIds?: readonly string[] | undefined;
 }
 
 export interface PatientDirectoryQuery {
@@ -90,7 +95,27 @@ export interface PatientDirectoryDetailProjection {
   };
 }
 
+export interface ClinicPatientInput {
+  readonly firstName: string;
+  readonly lastName: string;
+  /** Normalized +9647XXXXXXXXX. */
+  readonly phoneNumber: string;
+  readonly gender: PatientGender;
+}
+
+export interface ClinicPatientRegistration {
+  readonly patientProfileId: string;
+  readonly displayName: string;
+  /** False when the same name and phone were already registered here. */
+  readonly created: boolean;
+}
+
 export interface PatientRepository {
+  registerClinicPatient(
+    access: PatientDirectoryAccess,
+    input: ClinicPatientInput,
+    requestId: string,
+  ): Promise<ClinicPatientRegistration>;
   accountForUser(userId: string): Promise<AccountRecord | null>;
   profiles(accountId: string): Promise<readonly ProfileRecord[]>;
   profile(accountId: string, profileId: string): Promise<ProfileRecord | null>;
@@ -132,6 +157,17 @@ export interface PatientRepository {
     requestId: string,
     actorId: string,
   ): Promise<void>;
+  /**
+   * Closes a patient's own account: ends every session, frees the phone
+   * number and archives the profiles. Clinic visit history stays with the
+   * clinics. Refused (returns the count) while visits are still upcoming.
+   */
+  closeAccount(
+    accountId: string,
+    userId: string,
+    requestId: string,
+    now: Date,
+  ): Promise<{ closed: true } | { closed: false; upcoming: number }>;
 }
 
 export const PATIENT_REPOSITORY = Symbol('PATIENT_REPOSITORY');

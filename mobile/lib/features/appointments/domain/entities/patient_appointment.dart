@@ -29,6 +29,7 @@ class PatientAppointment {
     required this.durationMinutes,
     required this.version,
     this.cancellationReason,
+    this.onTheWayEta,
   });
 
   final String id, reference, patientName, reason;
@@ -43,6 +44,9 @@ class PatientAppointment {
   final int durationMinutes;
   final String? cancellationReason;
   final int version;
+
+  /// The patient said "I'm on my way": when they should reach reception.
+  final DateTime? onTheWayEta;
 
   bool get canMutate =>
       status == PatientAppointmentStatus.scheduled ||

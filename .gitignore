@@ -39,3 +39,4 @@ dist/
 coverage/
 backend/src/generated/prisma/
 backend/.backups/
+backend/.private/

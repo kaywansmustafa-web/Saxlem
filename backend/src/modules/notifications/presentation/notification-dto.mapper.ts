@@ -17,6 +17,7 @@ export function mapNotification(
     occurredAt: value.occurredAt.toISOString(),
     createdAt: value.createdAt.toISOString(),
     readAt: value.readAt?.toISOString() ?? null,
+    context: value.context ? { ...value.context } : null,
   };
 }
 

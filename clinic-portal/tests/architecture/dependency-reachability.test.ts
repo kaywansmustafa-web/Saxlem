@@ -33,7 +33,7 @@ describe("temporary dependency reachability controls", () => {
   });
 
   it("accepts no untrusted CSS, source map, glob, or filesystem-path API field", () => {
-    const routes = applicationFiles.filter((file) => /(?:^|\\)app\\api\\.*route\.ts$/u.test(file));
+    const routes = applicationFiles.filter((file) => /(?:^|[\\/])app[\\/]api[\\/].*route\.ts$/u.test(file));
     expect(routes.length).toBeGreaterThan(0);
     const prohibitedInputField = /\b(?:css|stylesheet|sourceMap|sourceMappingURL|glob|globPattern|filePath|filesystemPath|directoryPath)\s*:/u;
     for (const file of routes) {
@@ -56,6 +56,6 @@ describe("temporary dependency reachability controls", () => {
     expect(manifest.dependencies).not.toHaveProperty("minimatch");
     expect(manifest.dependencies).not.toHaveProperty("brace-expansion");
     expect(manifest.devDependencies.eslint).toBeDefined();
-    expect(manifest.devDependencies["eslint-config-next"]).toBe("16.2.12");
+    expect(manifest.devDependencies["eslint-config-next"]).toBe("16.4.6");
   });
 });

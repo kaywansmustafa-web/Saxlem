@@ -746,7 +746,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{amount} IQD'**
-  String iqdAmount(int amount);
+  String iqdAmount(String amount);
 
   /// No description provided for @appointmentIdValue.
   ///
@@ -1923,6 +1923,1584 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'For assistance with your appointment, please contact reception.'**
   String get queueClosedBody;
+
+  /// Shown on the live ticket when the clinic calls the patient's number.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s your turn'**
+  String get itsYourTurn;
+
+  /// Under the count of patients ahead, inside the progress ring.
+  ///
+  /// In en, this message translates to:
+  /// **'ahead'**
+  String get aheadShort;
+
+  /// Live ticket progress step 1.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked'**
+  String get queueStepBooked;
+
+  /// Live ticket progress step 2.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrived'**
+  String get queueStepArrived;
+
+  /// Live ticket progress step 3.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get queueStepWaiting;
+
+  /// Live ticket progress step 4.
+  ///
+  /// In en, this message translates to:
+  /// **'Your turn'**
+  String get queueStepYourTurn;
+
+  /// Live ticket title during the consultation.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re with the doctor'**
+  String get withDoctorTitle;
+
+  /// Live ticket title after the consultation.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit complete'**
+  String get visitCompleteTitle;
+
+  /// Live ticket title when the patient was called but did not respond.
+  ///
+  /// In en, this message translates to:
+  /// **'We called your number'**
+  String get calledNoResponseTitle;
+
+  /// Live ticket title before the patient has arrived at the clinic.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re booked for today'**
+  String get notCheckedInTitle;
+
+  /// Live ticket title when the clinic removed the entry.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re no longer in this queue'**
+  String get removedFromQueueTitle;
+
+  /// Estimated wait as a range.
+  ///
+  /// In en, this message translates to:
+  /// **'About {min}–{max} {unit}'**
+  String waitRange(int min, int max, String unit);
+
+  /// Row label for the doctor on the booking review.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor'**
+  String get doctorLabel;
+
+  /// Section title on the profile tab listing the patient profiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Family members'**
+  String get familyMembersTitle;
+
+  /// No description provided for @paymentHowToPay.
+  ///
+  /// In en, this message translates to:
+  /// **'How would you like to pay?'**
+  String get paymentHowToPay;
+
+  /// No description provided for @paymentAtCounterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay at the clinic'**
+  String get paymentAtCounterTitle;
+
+  /// No description provided for @paymentAtCounterBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay the receptionist when you arrive.'**
+  String get paymentAtCounterBody;
+
+  /// No description provided for @paymentOnlineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay now in the app'**
+  String get paymentOnlineTitle;
+
+  /// FIB is First Iraqi Bank's app; keep the name as is.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay securely with your FIB app and skip the counter.'**
+  String get paymentOnlineBody;
+
+  /// No description provided for @paymentOnlineUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This clinic takes payment at the clinic only for now.'**
+  String get paymentOnlineUnavailable;
+
+  /// No description provided for @paymentRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Fastest'**
+  String get paymentRecommended;
+
+  /// No description provided for @paymentConfirmAndPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm and pay'**
+  String get paymentConfirmAndPay;
+
+  /// No description provided for @paymentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get paymentTitle;
+
+  /// No description provided for @paymentAmountDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount to pay'**
+  String get paymentAmountDue;
+
+  /// No description provided for @paymentOpenFib.
+  ///
+  /// In en, this message translates to:
+  /// **'Open FIB to pay'**
+  String get paymentOpenFib;
+
+  /// No description provided for @paymentScanQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Paying from another phone? Scan this code.'**
+  String get paymentScanQr;
+
+  /// No description provided for @paymentWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for your payment…'**
+  String get paymentWaiting;
+
+  /// No description provided for @paymentWaitingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve the payment in FIB, then come back. This screen updates on its own.'**
+  String get paymentWaitingBody;
+
+  /// No description provided for @paymentPaidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment received'**
+  String get paymentPaidTitle;
+
+  /// No description provided for @paymentPaidBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all set. There\'s nothing to pay at the clinic.'**
+  String get paymentPaidBody;
+
+  /// No description provided for @paymentExpiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This payment wasn\'t completed'**
+  String get paymentExpiredTitle;
+
+  /// No description provided for @paymentExpiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a new payment, or pay at the clinic. Your appointment is still booked.'**
+  String get paymentExpiredBody;
+
+  /// No description provided for @paymentTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a new payment'**
+  String get paymentTryAgain;
+
+  /// No description provided for @paymentSwitchToCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay at the clinic instead'**
+  String get paymentSwitchToCounter;
+
+  /// No description provided for @paymentLater.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ll pay later'**
+  String get paymentLater;
+
+  /// No description provided for @paymentStatusDueAtCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay at clinic'**
+  String get paymentStatusDueAtCounter;
+
+  /// No description provided for @paymentStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment pending'**
+  String get paymentStatusPending;
+
+  /// No description provided for @paymentStatusPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get paymentStatusPaid;
+
+  /// No description provided for @paymentStatusRefunded.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded'**
+  String get paymentStatusRefunded;
+
+  /// No description provided for @paymentStatusRefundPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund in progress'**
+  String get paymentStatusRefundPending;
+
+  /// No description provided for @paymentStatusRefundFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic will refund you'**
+  String get paymentStatusRefundFailed;
+
+  /// No description provided for @paymentStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment not completed'**
+  String get paymentStatusExpired;
+
+  /// No description provided for @paymentStatusVoid.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to pay'**
+  String get paymentStatusVoid;
+
+  /// No description provided for @paymentPayNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay now'**
+  String get paymentPayNow;
+
+  /// No description provided for @paymentProblemOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline. Check your connection and try again.'**
+  String get paymentProblemOffline;
+
+  /// No description provided for @paymentProblemUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Online payment is unavailable right now. You can pay at the clinic.'**
+  String get paymentProblemUnavailable;
+
+  /// No description provided for @paymentProblemNotAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'This payment can\'t be changed now.'**
+  String get paymentProblemNotAccepted;
+
+  /// No description provided for @paymentProblemGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong with the payment. Your appointment is still booked.'**
+  String get paymentProblemGeneric;
+
+  /// No description provided for @paymentBookedPayNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked! One last step: pay for your visit.'**
+  String get paymentBookedPayNext;
+
+  /// No description provided for @paymentSecureNote.
+  ///
+  /// In en, this message translates to:
+  /// **'You pay inside the FIB app. Saxlem never sees your card or bank details.'**
+  String get paymentSecureNote;
+
+  /// Shown under the online payment code.
+  ///
+  /// In en, this message translates to:
+  /// **'Link valid until {time}'**
+  String paymentLinkValidUntil(String time);
+
+  /// No description provided for @paymentFibNotOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t open FIB. Install or update the FIB app, or scan the QR code from another phone.'**
+  String get paymentFibNotOpened;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @appLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'App language'**
+  String get appLanguage;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your Saxlem account?'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll be signed out on every device and your family profiles will be removed from the app. Clinics keep the record of visits you already had.'**
+  String get deleteAccountBody;
+
+  /// No description provided for @deleteAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get deleteAccountConfirm;
+
+  /// No description provided for @deleteAccountUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel your upcoming appointments first, then try again.'**
+  String get deleteAccountUpcoming;
+
+  /// No description provided for @deleteAccountFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t delete your account. Check your connection and try again.'**
+  String get deleteAccountFailed;
+
+  /// No description provided for @cancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelAction;
+
+  /// No description provided for @languageSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Language changed'**
+  String get languageSaved;
+
+  /// No description provided for @specialtyDentist.
+  ///
+  /// In en, this message translates to:
+  /// **'Dentist'**
+  String get specialtyDentist;
+
+  /// No description provided for @specialtyCardiology.
+  ///
+  /// In en, this message translates to:
+  /// **'Cardiology'**
+  String get specialtyCardiology;
+
+  /// No description provided for @specialtyPediatrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Pediatrics'**
+  String get specialtyPediatrics;
+
+  /// No description provided for @specialtyEye.
+  ///
+  /// In en, this message translates to:
+  /// **'Eye'**
+  String get specialtyEye;
+
+  /// No description provided for @specialtyNeurology.
+  ///
+  /// In en, this message translates to:
+  /// **'Neurology'**
+  String get specialtyNeurology;
+
+  /// No description provided for @browseSpecialty.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse {specialty} doctors'**
+  String browseSpecialty(String specialty);
+
+  /// No description provided for @nextVisitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your next visit'**
+  String get nextVisitTitle;
+
+  /// No description provided for @todayChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get todayChip;
+
+  /// No description provided for @tomorrowChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get tomorrowChip;
+
+  /// No description provided for @howItWorks.
+  ///
+  /// In en, this message translates to:
+  /// **'How Saxlem works'**
+  String get howItWorks;
+
+  /// No description provided for @stepBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Book in the app'**
+  String get stepBook;
+
+  /// No description provided for @stepCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in at reception'**
+  String get stepCheckIn;
+
+  /// No description provided for @stepCalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Get called on your phone'**
+  String get stepCalled;
+
+  /// No description provided for @alertsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue calls and booking updates'**
+  String get alertsSubtitle;
+
+  /// No description provided for @slotMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning'**
+  String get slotMorning;
+
+  /// No description provided for @slotAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Afternoon'**
+  String get slotAfternoon;
+
+  /// No description provided for @slotEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening'**
+  String get slotEvening;
+
+  /// No description provided for @ntfBookedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking confirmed'**
+  String get ntfBookedTitle;
+
+  /// No description provided for @ntfBookedNext.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll remind you the day before and shortly before your visit.'**
+  String get ntfBookedNext;
+
+  /// No description provided for @ntfReminderDayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your visit is tomorrow'**
+  String get ntfReminderDayTitle;
+
+  /// No description provided for @ntfReminderSoonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your visit is soon'**
+  String get ntfReminderSoonTitle;
+
+  /// No description provided for @ntfReminderNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in at reception when you arrive. Can\'t come? Cancel in Appointments so someone else can have the time.'**
+  String get ntfReminderNext;
+
+  /// No description provided for @ntfCancelledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The clinic cancelled your visit'**
+  String get ntfCancelledTitle;
+
+  /// No description provided for @ntfCancelledNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Book another time with the same doctor or another one.'**
+  String get ntfCancelledNext;
+
+  /// No description provided for @ntfRescheduledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your visit has a new time'**
+  String get ntfRescheduledTitle;
+
+  /// No description provided for @ntfRescheduledNext.
+  ///
+  /// In en, this message translates to:
+  /// **'If the new time doesn\'t suit you, change or cancel it in Appointments.'**
+  String get ntfRescheduledNext;
+
+  /// No description provided for @ntfAlmostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost your turn'**
+  String get ntfAlmostTitle;
+
+  /// No description provided for @ntfNextTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re next'**
+  String get ntfNextTitle;
+
+  /// No description provided for @ntfAlmostNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Make your way to the waiting area and stay close.'**
+  String get ntfAlmostNext;
+
+  /// No description provided for @ntfQueueOpenedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue is open'**
+  String get ntfQueueOpenedTitle;
+
+  /// No description provided for @ntfFollowQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow your place in the live queue.'**
+  String get ntfFollowQueue;
+
+  /// No description provided for @ntfPausedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue is paused'**
+  String get ntfPausedTitle;
+
+  /// No description provided for @ntfPausedNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Your place is kept. We\'ll tell you when it moves again.'**
+  String get ntfPausedNext;
+
+  /// No description provided for @ntfResumedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue is moving again'**
+  String get ntfResumedTitle;
+
+  /// No description provided for @ntfClosedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue is closed'**
+  String get ntfClosedTitle;
+
+  /// No description provided for @ntfClosedNext.
+  ///
+  /// In en, this message translates to:
+  /// **'If you weren\'t seen, ask the clinic\'s reception.'**
+  String get ntfClosedNext;
+
+  /// No description provided for @ntfEnqueuedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re in the queue'**
+  String get ntfEnqueuedTitle;
+
+  /// No description provided for @ntfCalledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s your turn'**
+  String get ntfCalledTitle;
+
+  /// No description provided for @ntfCalledNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Please go in to the doctor now.'**
+  String get ntfCalledNext;
+
+  /// No description provided for @ntfMissedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You missed your turn'**
+  String get ntfMissedTitle;
+
+  /// No description provided for @ntfMissedNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak to reception — they can put you back in the queue.'**
+  String get ntfMissedNext;
+
+  /// No description provided for @ntfStartedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your consultation has started'**
+  String get ntfStartedTitle;
+
+  /// No description provided for @ntfCompletedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit finished'**
+  String get ntfCompletedTitle;
+
+  /// No description provided for @ntfCompletedNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Get well soon. Need a follow-up? Book it from the doctor\'s page.'**
+  String get ntfCompletedNext;
+
+  /// No description provided for @ntfWhyAppointment.
+  ///
+  /// In en, this message translates to:
+  /// **'About a visit you booked in Saxlem.'**
+  String get ntfWhyAppointment;
+
+  /// No description provided for @ntfWhyQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'From the clinic\'s live queue.'**
+  String get ntfWhyQueue;
+
+  /// No description provided for @ntfAtClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'{doctor} at {clinic}'**
+  String ntfAtClinic(String doctor, String clinic);
+
+  /// No description provided for @ntfTicket.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket {number}'**
+  String ntfTicket(int number);
+
+  /// No description provided for @ntfAhead.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nobody ahead of you} =1{1 person ahead of you} other{{count} people ahead of you}}'**
+  String ntfAhead(int count);
+
+  /// No description provided for @ntfDoctorStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'{doctor} has started seeing patients.'**
+  String ntfDoctorStarted(String doctor);
+
+  /// No description provided for @ntfDoctorPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'{doctor} paused the queue for a short time.'**
+  String ntfDoctorPaused(String doctor);
+
+  /// No description provided for @ntfDoctorResumed.
+  ///
+  /// In en, this message translates to:
+  /// **'{doctor} is seeing patients again.'**
+  String ntfDoctorResumed(String doctor);
+
+  /// No description provided for @ntfDoctorFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'{doctor} has finished for today.'**
+  String ntfDoctorFinished(String doctor);
+
+  /// No description provided for @ntfCompletedHappened.
+  ///
+  /// In en, this message translates to:
+  /// **'Your visit with {doctor} is complete.'**
+  String ntfCompletedHappened(String doctor);
+
+  /// No description provided for @feeFirstVisit.
+  ///
+  /// In en, this message translates to:
+  /// **'First visit'**
+  String get feeFirstVisit;
+
+  /// No description provided for @feeFollowUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow-up'**
+  String get feeFollowUp;
+
+  /// No description provided for @feesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fees'**
+  String get feesTitle;
+
+  /// No description provided for @feesNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay at the clinic, or in the app with FIB when you book.'**
+  String get feesNote;
+
+  /// No description provided for @nextFreeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Next free'**
+  String get nextFreeLabel;
+
+  /// No description provided for @yearsShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 year} other{{count} years}}'**
+  String yearsShort(int count);
+
+  /// No description provided for @directions.
+  ///
+  /// In en, this message translates to:
+  /// **'Directions'**
+  String get directions;
+
+  /// No description provided for @callClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get callClinic;
+
+  /// No description provided for @clinicLocationMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'The clinic hasn\'t added its address yet.'**
+  String get clinicLocationMissing;
+
+  /// No description provided for @openMapsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open maps on this phone.'**
+  String get openMapsFailed;
+
+  /// No description provided for @bookAgainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book again'**
+  String get bookAgainTitle;
+
+  /// No description provided for @bookAgainAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Book again with {doctor}'**
+  String bookAgainAction(String doctor);
+
+  /// No description provided for @familyTileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get familyTileTitle;
+
+  /// No description provided for @familyTileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book for your children and parents'**
+  String get familyTileSubtitle;
+
+  /// No description provided for @addToCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to calendar'**
+  String get addToCalendar;
+
+  /// No description provided for @visitWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit with {doctor}'**
+  String visitWith(String doctor);
+
+  /// No description provided for @freeTodayFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Free today'**
+  String get freeTodayFilter;
+
+  /// No description provided for @noneFreeToday.
+  ///
+  /// In en, this message translates to:
+  /// **'None of these doctors has a free time left today. Turn off \"Free today\" to see other days.'**
+  String get noneFreeToday;
+
+  /// No description provided for @helpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help and support'**
+  String get helpTitle;
+
+  /// No description provided for @contactSaxlem.
+  ///
+  /// In en, this message translates to:
+  /// **'Message Saxlem on WhatsApp'**
+  String get contactSaxlem;
+
+  /// No description provided for @termsOfUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of use'**
+  String get termsOfUse;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String appVersion(String version);
+
+  /// No description provided for @whatsBothering.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s bothering you?'**
+  String get whatsBothering;
+
+  /// No description provided for @symptomFever.
+  ///
+  /// In en, this message translates to:
+  /// **'Fever or cold'**
+  String get symptomFever;
+
+  /// No description provided for @symptomChild.
+  ///
+  /// In en, this message translates to:
+  /// **'My child is sick'**
+  String get symptomChild;
+
+  /// No description provided for @symptomTooth.
+  ///
+  /// In en, this message translates to:
+  /// **'Tooth pain'**
+  String get symptomTooth;
+
+  /// No description provided for @symptomSkin.
+  ///
+  /// In en, this message translates to:
+  /// **'Skin'**
+  String get symptomSkin;
+
+  /// No description provided for @symptomHeart.
+  ///
+  /// In en, this message translates to:
+  /// **'Heart and blood pressure'**
+  String get symptomHeart;
+
+  /// No description provided for @symptomEyes.
+  ///
+  /// In en, this message translates to:
+  /// **'Eyes'**
+  String get symptomEyes;
+
+  /// No description provided for @symptomPregnancy.
+  ///
+  /// In en, this message translates to:
+  /// **'Pregnancy and women\'s health'**
+  String get symptomPregnancy;
+
+  /// No description provided for @symptomBones.
+  ///
+  /// In en, this message translates to:
+  /// **'Bones and joints'**
+  String get symptomBones;
+
+  /// No description provided for @symptomEar.
+  ///
+  /// In en, this message translates to:
+  /// **'Ear, nose, throat'**
+  String get symptomEar;
+
+  /// No description provided for @symptomHead.
+  ///
+  /// In en, this message translates to:
+  /// **'Headache and nerves'**
+  String get symptomHead;
+
+  /// No description provided for @symptomStomach.
+  ///
+  /// In en, this message translates to:
+  /// **'Stomach'**
+  String get symptomStomach;
+
+  /// No description provided for @specialtiesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialties'**
+  String get specialtiesTitle;
+
+  /// No description provided for @emergencyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency'**
+  String get emergencyTitle;
+
+  /// No description provided for @emergencySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ambulance: 122'**
+  String get emergencySubtitle;
+
+  /// No description provided for @emergencyConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Call 122 now?'**
+  String get emergencyConfirmTitle;
+
+  /// No description provided for @emergencyConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Saxlem is for booking visits, not emergencies. If someone needs urgent help, call the ambulance.'**
+  String get emergencyConfirmBody;
+
+  /// No description provided for @emergencyCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Call 122'**
+  String get emergencyCall;
+
+  /// No description provided for @liveNotOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue hasn\'t opened yet'**
+  String get liveNotOpen;
+
+  /// No description provided for @liveCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue open · check in at reception'**
+  String get liveCheckIn;
+
+  /// No description provided for @liveWithDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'With the doctor now'**
+  String get liveWithDoctor;
+
+  /// No description provided for @liveWait.
+  ///
+  /// In en, this message translates to:
+  /// **'about {min}–{max} min'**
+  String liveWait(int min, int max);
+
+  /// No description provided for @leaveByTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave by {time}'**
+  String leaveByTime(String time);
+
+  /// No description provided for @leaveNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave now'**
+  String get leaveNow;
+
+  /// No description provided for @leaveInMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave in {minutes} min'**
+  String leaveInMinutes(int minutes);
+
+  /// No description provided for @leaveLate.
+  ///
+  /// In en, this message translates to:
+  /// **'You may be late. Leave now'**
+  String get leaveLate;
+
+  /// No description provided for @leaveDrive.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min drive · {distance}'**
+  String leaveDrive(int minutes, String distance);
+
+  /// No description provided for @leaveKm.
+  ///
+  /// In en, this message translates to:
+  /// **'{km} km'**
+  String leaveKm(String km);
+
+  /// No description provided for @leaveMeters.
+  ///
+  /// In en, this message translates to:
+  /// **'{meters} m'**
+  String leaveMeters(String meters);
+
+  /// No description provided for @leaveWithTraffic.
+  ///
+  /// In en, this message translates to:
+  /// **'with traffic'**
+  String get leaveWithTraffic;
+
+  /// No description provided for @leaveNoTraffic.
+  ///
+  /// In en, this message translates to:
+  /// **'traffic not included'**
+  String get leaveNoTraffic;
+
+  /// No description provided for @leaveEstimate.
+  ///
+  /// In en, this message translates to:
+  /// **'estimate from distance'**
+  String get leaveEstimate;
+
+  /// No description provided for @leaveApproximate.
+  ///
+  /// In en, this message translates to:
+  /// **'approximate location'**
+  String get leaveApproximate;
+
+  /// No description provided for @leaveArriveBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Be at reception by {time} to check in'**
+  String leaveArriveBy(String time);
+
+  /// No description provided for @leaveAskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When should I leave?'**
+  String get leaveAskTitle;
+
+  /// No description provided for @leaveAskBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Saxlem can use your location to work out the drive to the clinic, with traffic, and tell you when to leave.'**
+  String get leaveAskBody;
+
+  /// No description provided for @leaveAskPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Your location is used only for this and is never saved.'**
+  String get leaveAskPrivacy;
+
+  /// No description provided for @leaveAskButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my location'**
+  String get leaveAskButton;
+
+  /// No description provided for @leaveWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Working out your drive…'**
+  String get leaveWorking;
+
+  /// No description provided for @leaveServiceOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on location to see when to leave.'**
+  String get leaveServiceOff;
+
+  /// No description provided for @leaveDeniedForever.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow location for Saxlem in Settings to see when to leave.'**
+  String get leaveDeniedForever;
+
+  /// No description provided for @leaveTurnOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on location'**
+  String get leaveTurnOn;
+
+  /// No description provided for @leaveOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get leaveOpenSettings;
+
+  /// No description provided for @leaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t work out the drive right now.'**
+  String get leaveFailed;
+
+  /// No description provided for @leaveStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop using my location'**
+  String get leaveStop;
+
+  /// No description provided for @leaveAlertChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to leave'**
+  String get leaveAlertChannel;
+
+  /// No description provided for @leaveAlertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to get ready for your visit'**
+  String get leaveAlertTitle;
+
+  /// No description provided for @leaveAlertBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave by {leave} to see {doctor} at {time} · {minutes} min drive'**
+  String leaveAlertBody(String leave, String doctor, String time, int minutes);
+
+  /// No description provided for @minutesShortDrive.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min drive'**
+  String minutesShortDrive(int minutes);
+
+  /// No description provided for @leaveOnMyWay.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m on my way'**
+  String get leaveOnMyWay;
+
+  /// No description provided for @leaveOnMyWayNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Lets the clinic know when to expect you. Your location isn\'t shared.'**
+  String get leaveOnMyWayNote;
+
+  /// No description provided for @leaveOnMyWayFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t tell the clinic. Try again.'**
+  String get leaveOnMyWayFailed;
+
+  /// No description provided for @leaveOnTheWayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'On your way'**
+  String get leaveOnTheWayTitle;
+
+  /// No description provided for @leaveExpectedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'The clinic expects you at about {time}'**
+  String leaveExpectedAt(String time);
+
+  /// No description provided for @leaveReceptionSees.
+  ///
+  /// In en, this message translates to:
+  /// **'Reception can see you\'re coming.'**
+  String get leaveReceptionSees;
+
+  /// No description provided for @leaveExpectedShort.
+  ///
+  /// In en, this message translates to:
+  /// **'On your way · expected {time}'**
+  String leaveExpectedShort(String time);
+
+  /// No description provided for @leaveLearned.
+  ///
+  /// In en, this message translates to:
+  /// **'with usual traffic at this hour'**
+  String get leaveLearned;
+
+  /// No description provided for @starsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{rating} out of 5 stars'**
+  String starsLabel(String rating);
+
+  /// No description provided for @reviewCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 review} other{{count} reviews}}'**
+  String reviewCount(int count);
+
+  /// No description provided for @reviewsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get reviewsTitle;
+
+  /// No description provided for @reviewsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet. Only patients who had a visit can review.'**
+  String get reviewsNone;
+
+  /// No description provided for @reviewsSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all {count} reviews'**
+  String reviewsSeeAll(int count);
+
+  /// No description provided for @reviewsMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get reviewsMore;
+
+  /// No description provided for @reviewsOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews of {doctor}'**
+  String reviewsOf(String doctor);
+
+  /// No description provided for @reviewAnonymous.
+  ///
+  /// In en, this message translates to:
+  /// **'Saxlem patient'**
+  String get reviewAnonymous;
+
+  /// No description provided for @reviewVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified visit'**
+  String get reviewVerified;
+
+  /// No description provided for @rateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How was your visit?'**
+  String get rateTitle;
+
+  /// No description provided for @rateWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate your visit with {doctor}'**
+  String rateWith(String doctor);
+
+  /// No description provided for @rateCommentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything other patients should know? (optional)'**
+  String get rateCommentHint;
+
+  /// No description provided for @rateCommentRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown to everyone. No links, emails or phone numbers.'**
+  String get rateCommentRule;
+
+  /// No description provided for @rateAnonymous.
+  ///
+  /// In en, this message translates to:
+  /// **'Post without my name'**
+  String get rateAnonymous;
+
+  /// No description provided for @ratePost.
+  ///
+  /// In en, this message translates to:
+  /// **'Post review'**
+  String get ratePost;
+
+  /// No description provided for @rateUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Update review'**
+  String get rateUpdate;
+
+  /// No description provided for @rateEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get rateEdit;
+
+  /// No description provided for @rateThanks.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks. Your review helps other patients choose.'**
+  String get rateThanks;
+
+  /// No description provided for @rateRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'This review was removed by Saxlem.'**
+  String get rateRemoved;
+
+  /// No description provided for @rateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t post your review. Try again.'**
+  String get rateFailed;
+
+  /// No description provided for @rateEditUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change it until {date}.'**
+  String rateEditUntil(String date);
+
+  /// No description provided for @ntfReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How was your visit?'**
+  String get ntfReviewTitle;
+
+  /// No description provided for @ntfReviewNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate it in a few seconds. It helps other patients choose.'**
+  String get ntfReviewNext;
+
+  /// No description provided for @savedDoctorsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved doctors'**
+  String get savedDoctorsTitle;
+
+  /// No description provided for @savedDoctorsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the heart on a doctor\'s profile to keep them here.'**
+  String get savedDoctorsEmpty;
+
+  /// No description provided for @saveDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Save {doctor}'**
+  String saveDoctor(String doctor);
+
+  /// No description provided for @unsaveDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {doctor} from saved'**
+  String unsaveDoctor(String doctor);
+
+  /// No description provided for @savedAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get savedAdded;
+
+  /// No description provided for @savedRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from saved'**
+  String get savedRemoved;
+
+  /// No description provided for @savedFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t update saved doctors. Try again.'**
+  String get savedFailed;
+
+  /// No description provided for @earlierWatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell me if an earlier time opens'**
+  String get earlierWatch;
+
+  /// No description provided for @earlierWatchHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'If {doctor} has a free time sooner, we\'ll let you know. Your visit stays booked until you move it.'**
+  String earlierWatchHelp(String doctor);
+
+  /// No description provided for @earlierFound.
+  ///
+  /// In en, this message translates to:
+  /// **'An earlier time is free'**
+  String get earlierFound;
+
+  /// No description provided for @earlierMove.
+  ///
+  /// In en, this message translates to:
+  /// **'Move my visit to this time'**
+  String get earlierMove;
+
+  /// No description provided for @earlierFirstCome.
+  ///
+  /// In en, this message translates to:
+  /// **'Whoever confirms first gets it.'**
+  String get earlierFirstCome;
+
+  /// No description provided for @earlierFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t change this. Try again.'**
+  String get earlierFailed;
+
+  /// No description provided for @ntfEarlierTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'An earlier time is free'**
+  String get ntfEarlierTitle;
+
+  /// No description provided for @ntfEarlierNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Open your visit to move to it. Whoever confirms first gets it.'**
+  String get ntfEarlierNext;
+
+  /// No description provided for @receiptsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments & receipts'**
+  String get receiptsTitle;
+
+  /// No description provided for @receiptsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your payments'**
+  String get receiptsFailed;
+
+  /// No description provided for @receiptsMoreFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'More payments couldn\'t be loaded.'**
+  String get receiptsMoreFailed;
+
+  /// No description provided for @receiptsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No payments yet'**
+  String get receiptsEmptyTitle;
+
+  /// No description provided for @receiptsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'When you pay for a visit, in the app or at the clinic, its receipt appears here.'**
+  String get receiptsEmptyBody;
+
+  /// No description provided for @receiptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt'**
+  String get receiptTitle;
+
+  /// No description provided for @receiptFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this receipt'**
+  String get receiptFailed;
+
+  /// No description provided for @receiptCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy receipt'**
+  String get receiptCopy;
+
+  /// No description provided for @receiptCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt copied'**
+  String get receiptCopied;
+
+  /// No description provided for @receiptView.
+  ///
+  /// In en, this message translates to:
+  /// **'View receipt'**
+  String get receiptView;
+
+  /// No description provided for @receiptAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get receiptAmount;
+
+  /// No description provided for @receiptStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get receiptStatus;
+
+  /// No description provided for @receiptNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt no.'**
+  String get receiptNumber;
+
+  /// No description provided for @receiptPaidOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid on'**
+  String get receiptPaidOn;
+
+  /// No description provided for @receiptRefundedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded on'**
+  String get receiptRefundedOn;
+
+  /// No description provided for @receiptPaidBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid by'**
+  String get receiptPaidBy;
+
+  /// No description provided for @receiptMethodCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'At the clinic desk'**
+  String get receiptMethodCounter;
+
+  /// No description provided for @receiptMethodFib.
+  ///
+  /// In en, this message translates to:
+  /// **'FIB, in the app'**
+  String get receiptMethodFib;
+
+  /// No description provided for @receiptMethodOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Online, in the app'**
+  String get receiptMethodOnline;
+
+  /// No description provided for @receiptTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction ID'**
+  String get receiptTransaction;
+
+  /// No description provided for @receiptPaidTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid to'**
+  String get receiptPaidTo;
+
+  /// No description provided for @receiptPaidToPlatform.
+  ///
+  /// In en, this message translates to:
+  /// **'Saxlem, for {organization}'**
+  String receiptPaidToPlatform(String organization);
+
+  /// No description provided for @receiptPatient.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get receiptPatient;
+
+  /// No description provided for @receiptClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic'**
+  String get receiptClinic;
+
+  /// No description provided for @receiptAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get receiptAddress;
+
+  /// No description provided for @receiptPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get receiptPhone;
+
+  /// No description provided for @receiptVisit.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit'**
+  String get receiptVisit;
+
+  /// No description provided for @receiptTextHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Saxlem receipt'**
+  String get receiptTextHeading;
+
+  /// No description provided for @pushChannelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit and queue updates'**
+  String get pushChannelName;
 }
 
 class _AppLocalizationsDelegate

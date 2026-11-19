@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsDateString,
   IsEnum,
   IsInt,
@@ -94,6 +95,13 @@ export class CreateAppointmentDto {
   @Min(5)
   @Max(480)
   durationMinutes!: number;
+  @ApiPropertyOptional({
+    description:
+      'Staff only: the patient is at the desk now without a booking. The slot must start within the next hour.',
+  })
+  @IsOptional()
+  @IsBoolean()
+  walkIn?: boolean;
 }
 export class UpdateAppointmentDto {
   @ApiProperty() @IsString() @Length(1, 500) reason!: string;
@@ -139,6 +147,12 @@ export class AppointmentResponseDto {
   @ApiProperty({ format: 'uuid' }) patientProfileId!: string;
   @ApiProperty() patientName!: string;
   @ApiProperty({ enum: ['initial', 'followUp'] }) type!: 'initial' | 'followUp';
+  @ApiProperty({
+    enum: ['patientBooked', 'clinicCreated', 'walkIn'],
+    description:
+      'patientBooked = Saxlem app, clinicCreated = phone or desk booking, walkIn = arrived without a booking.',
+  })
+  origin!: 'patientBooked' | 'clinicCreated' | 'walkIn';
   @ApiProperty() reason!: string;
   @ApiProperty({ format: 'date-time' }) startsAt!: string;
   @ApiProperty({ format: 'date-time' }) endsAt!: string;
@@ -157,6 +171,14 @@ export class AppointmentResponseDto {
     description: 'Required for optimistic-concurrency commands.',
   })
   version!: number;
+  @ApiProperty({
+    format: 'date-time',
+    nullable: true,
+    type: String,
+    description:
+      'The patient said they are on their way: when they should reach reception. Null otherwise, and once they check in.',
+  })
+  onTheWayEta!: string | null;
 }
 export class AppointmentPageResponseDto {
   @ApiProperty({ type: AppointmentResponseDto, isArray: true })

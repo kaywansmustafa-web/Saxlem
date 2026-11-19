@@ -10,6 +10,8 @@ import '../../domain/repositories/booking_repository.dart';
 import '../../domain/services/booking_operation_id.dart';
 import '../state/booking_state.dart';
 import '../../../../core/models/patient_profile.dart';
+import '../../../payments/domain/appointment_payment.dart';
+import '../../../payments/domain/payments_repository.dart';
 
 class BookingController extends ChangeNotifier {
   BookingController({
@@ -17,8 +19,16 @@ class BookingController extends ChangeNotifier {
     required this.repository,
     required this.operationIds,
     required this.profileId,
+    this.payments = const UnavailablePaymentsRepository(),
     DateTime Function()? now,
   }) : _now = now ?? DateTime.now;
+  final PaymentsRepository payments;
+
+  /// Payment choice made on the review step. Counter is always possible.
+  PaymentMethod paymentMethod = PaymentMethod.counter;
+  PaymentOptions? paymentOptions;
+  bool loadingPaymentOptions = false;
+  bool get onlinePaymentAvailable => paymentOptions?.onlineAvailable ?? false;
   final BookingDoctorReference doctor;
   final BookingRepository repository;
   final BookingOperationIdGenerator operationIds;
@@ -46,12 +56,21 @@ class BookingController extends ChangeNotifier {
   bool confirming = false;
   BookingAvailability? availability;
   void load() {
+    // One clinic means nothing to choose: pick it so the patient never sees
+    // a one-item list.
+    if (clinic == null && doctor.clinics.length == 1) {
+      clinic = doctor.clinics.single;
+      paymentOptions = null;
+      paymentMethod = PaymentMethod.counter;
+    }
     state = BookingSetup(doctor);
     notifyListeners();
   }
 
   void selectClinic(BookingClinicOption value) {
     clinic = value;
+    paymentOptions = null;
+    paymentMethod = PaymentMethod.counter;
     _invalidate();
   }
 
@@ -115,6 +134,30 @@ class BookingController extends ChangeNotifier {
     );
     state = BookingReviewing(_attemptQuote!);
     notifyListeners();
+    _loadPaymentOptions(availability!.clinicId);
+  }
+
+  void setPaymentMethod(PaymentMethod value) {
+    if (value == PaymentMethod.online && !onlinePaymentAvailable) return;
+    if (paymentMethod == value) return;
+    paymentMethod = value;
+    notifyListeners();
+  }
+
+  Future<void> _loadPaymentOptions(String clinicId) async {
+    if (paymentOptions != null) return;
+    loadingPaymentOptions = true;
+    notifyListeners();
+    try {
+      paymentOptions = await payments.options(clinicId);
+    } on Object {
+      // Without options we still offer paying at the clinic.
+      paymentOptions = PaymentOptions.counterOnly;
+    }
+    if (_disposed) return;
+    loadingPaymentOptions = false;
+    if (onlinePaymentAvailable) paymentMethod = PaymentMethod.online;
+    notifyListeners();
   }
 
   Future<void> confirm() async {
@@ -135,6 +178,15 @@ class BookingController extends ChangeNotifier {
         return;
       }
       state = BookingSuccess(confirmation);
+      if (paymentMethod == PaymentMethod.counter) {
+        // Record the choice; the default is already "pay at the clinic".
+        Future(
+          () => payments.choose(
+            confirmation.appointmentId,
+            PaymentMethod.counter,
+          ),
+        ).then((_) {}, onError: (Object _) {});
+      }
       _operationId = null;
       _attemptQuote = null;
       _lastProblem = null;

@@ -6,6 +6,7 @@ import {
 import { createHash } from 'node:crypto';
 import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/database/prisma.service';
+import { readNotificationContext } from '../../../common/notifications/patient-notifications';
 import type {
   NotificationAccess,
   NotificationProjection,
@@ -200,6 +201,9 @@ export class PrismaNotificationRepository implements NotificationRepository {
       occurredAt: row.occurredAt,
       createdAt: row.createdAt,
       readAt: row.readAt,
+      context: row.patientProfileId
+        ? readNotificationContext(row.payload)
+        : null,
     });
   }
 }

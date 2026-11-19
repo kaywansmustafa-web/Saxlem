@@ -14,6 +14,11 @@ export class PrismaService implements DatabaseHealth, OnModuleDestroy {
   ) {
     const adapter = new PrismaPg({
       connectionString: configuration.databaseUrl,
+      // The pg adapter drops the offset when reading timestamptz, so a
+      // database whose time zone is not UTC (e.g. Asia/Baghdad) would read
+      // database-written times (now(), defaults, triggers) hours off. Pin
+      // every session to UTC.
+      options: '-c TimeZone=UTC',
     });
     this.client = new PrismaClient({ adapter });
   }

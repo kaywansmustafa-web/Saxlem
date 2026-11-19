@@ -19,6 +19,12 @@ const clinic = Object.freeze({
   code: 'DUHOK_1',
   timezone: 'Asia/Baghdad',
   status: 'active' as const,
+  address: null,
+  area: null,
+  city: null,
+  latitude: null,
+  longitude: null,
+  phoneNumber: null,
   createdAt: now.toISOString(),
   updatedAt: now.toISOString(),
 });
@@ -31,6 +37,7 @@ describe('AdministrationService', () => {
     createClinic: jest.fn(),
     listClinics: jest.fn(),
     clinic: jest.fn(),
+    updateClinicLocation: jest.fn(),
   };
   const configuration = {
     auditHashSecret: 'administration-test-secret-with-sufficient-length',
@@ -145,5 +152,45 @@ describe('AdministrationService', () => {
     await expect(service.clinic(clinic.id)).rejects.toBeInstanceOf(
       NotFoundException,
     );
+  });
+
+  it('cleans a clinic location and refuses half a map pin', async () => {
+    repository.updateClinicLocation.mockResolvedValue(clinic);
+    await service.updateClinicLocation(
+      access,
+      clinic.id,
+      {
+        address: '  Kurdistan St,   near the Grand Bazaar ',
+        city: 'Duhok',
+        latitude: 36.8669,
+        longitude: 42.9886,
+        phoneNumber: '0750 123 4567',
+      },
+      'request',
+    );
+    expect(repository.updateClinicLocation.mock.calls[0]![2]).toEqual({
+      address: 'Kurdistan St, near the Grand Bazaar',
+      area: null,
+      city: 'Duhok',
+      latitude: 36.8669,
+      longitude: 42.9886,
+      phoneNumber: '07501234567',
+    });
+    await expect(
+      service.updateClinicLocation(
+        access,
+        clinic.id,
+        { latitude: 36.8 },
+        'request',
+      ),
+    ).rejects.toThrow('both');
+    await expect(
+      service.updateClinicLocation(
+        access,
+        clinic.id,
+        { phoneNumber: 'call me' },
+        'request',
+      ),
+    ).rejects.toThrow('phone');
   });
 });

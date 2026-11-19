@@ -92,6 +92,27 @@ class AuthenticatedApiClient {
     }
   }
 
+  /// A DELETE that is never retried on its own: if the session must be
+  /// refreshed first and that fails, nothing was sent.
+  Future<ApiResponse> deleteJson(String path) async {
+    var session = await _requiredSession();
+    if (!session.expiresAt.isAfter(DateTime.now().toUtc())) {
+      try {
+        session = await _refresh();
+      } on ApiFailure catch (failure) {
+        throw MutationNotSentFailure(failure);
+      }
+    }
+    try {
+      return await _api.deleteJson(path, bearerToken: session.accessToken);
+    } on ApiFailure catch (failure) {
+      if (failure.type == ApiFailureType.unauthenticated) {
+        await _storage.clear();
+      }
+      rethrow;
+    }
+  }
+
   Future<StoredSession> _requiredSession() async {
     final session = await _storage.read();
     if (session == null || !session.isBackendSession) {

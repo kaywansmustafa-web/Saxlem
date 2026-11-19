@@ -20,7 +20,15 @@ export async function billingComposition(requestedOrganizationId?: string) {
   const session = await auth.cookie.unseal(sealed);
   if (!session || accessTokenNeedsRefresh(session))
     throw error("unauthorized", 401);
-  if (!["clinicManager", "platformAdministrator"].includes(session.role))
+  if (
+    // Doctors read their own statements (the backend scopes them).
+    ![
+      "receptionist",
+      "clinicManager",
+      "platformAdministrator",
+      "doctor",
+    ].includes(session.role)
+  )
     throw error("forbidden", 403);
   const platform = session.role === "platformAdministrator";
   if (platform && session.context !== null) throw error("forbidden", 403);

@@ -42,6 +42,13 @@ export class DoctorService {
     @Inject(DOCTOR_REPOSITORY) private readonly repository: DoctorRepository,
   ) {}
 
+  /** Where a clinic is and its public phone, for patients and staff. */
+  async clinicLocation(clinicId: string) {
+    const value = await this.repository.clinicLocation(clinicId);
+    if (!value) throw new NotFoundException('Clinic was not found.');
+    return value;
+  }
+
   async search(
     access: DoctorAccessContext,
     input: DoctorSearchInput,
@@ -93,6 +100,7 @@ export class DoctorService {
       clinicAssignmentVisibility: access.patient
         ? 'active'
         : 'activeOrInactive',
+      forPatients: access.patient,
     });
     if (!doctor) throw new NotFoundException('Doctor was not found.');
     if (!access.patient)
@@ -125,6 +133,7 @@ export class DoctorService {
       organizationId: criteria.organizationId,
       clinicId: criteria.clinicId,
       clinicAssignmentVisibility: 'active',
+      forPatients: access.patient,
     });
   }
 
@@ -156,6 +165,7 @@ export class DoctorService {
       clinicAssignmentVisibility: access.patient
         ? 'active'
         : 'activeOrInactive',
+      forPatients: access.patient,
     };
   }
 

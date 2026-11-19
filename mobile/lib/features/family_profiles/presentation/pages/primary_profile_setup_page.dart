@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/localization_extensions.dart';
+import '../../../../core/formatting/clinic_format.dart';
 import '../../../../core/models/patient_profile.dart';
 import '../../../../design_system/design_system.dart';
 import '../controllers/patient_profiles_controller.dart';
@@ -73,29 +74,27 @@ class _PrimaryProfileSetupPageState extends State<PrimaryProfileSetupPage> {
                 },
               ),
               const SizedBox(height: SaxlemSpacing.two),
-              Semantics(
-                button: true,
+              SaxlemPickerField(
                 label: context.l10n.dateOfBirth,
-                child: SaxlemCard(
-                  onTap:
-                      widget.controller.status ==
-                          PatientProfilesStatus.submitting
-                      ? null
-                      : () async {
-                          final value = await showDatePicker(
-                            context: context,
-                            firstDate: DateTime(1900),
-                            lastDate: DateTime.now(),
-                            initialDate: dateOfBirth,
-                          );
-                          if (value != null) {
-                            setState(() => dateOfBirth = value);
-                          }
-                        },
-                  child: Text(
-                    '${context.l10n.dateOfBirth}: ${dateOfBirth.year}-${dateOfBirth.month}-${dateOfBirth.day}',
-                  ),
+                value: ClinicFormat.day(
+                  dateOfBirth,
+                  Localizations.localeOf(context).languageCode,
                 ),
+                icon: Icons.calendar_today_rounded,
+                onTap:
+                    widget.controller.status == PatientProfilesStatus.submitting
+                    ? null
+                    : () async {
+                        final value = await showDatePicker(
+                          context: context,
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                          initialDate: dateOfBirth,
+                        );
+                        if (value != null) {
+                          setState(() => dateOfBirth = value);
+                        }
+                      },
               ),
               if (widget.controller.failure != null) ...[
                 const SizedBox(height: SaxlemSpacing.two),

@@ -15,11 +15,24 @@ export class BillingReadServices {
   listStatements() {
     return this.repository.listStatements(this.organizationId);
   }
-  currentStatement() {
-    return this.repository.getCurrentStatement(this.organizationId);
+  currentStatements() {
+    return this.repository.getCurrentStatements(this.organizationId);
   }
   statement(id: string) {
     return this.repository.getStatement(id);
+  }
+  cycleStatements() {
+    return this.repository.listCycleStatements();
+  }
+  collections() {
+    return this.repository.listCollections();
+  }
+  cycleStatement(doctorId: string, cycleNumber: number) {
+    return this.repository.getCycleStatement(
+      this.organizationId,
+      doctorId,
+      cycleNumber,
+    );
   }
 }
 export class PlatformBillingServices extends BillingReadServices {

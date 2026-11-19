@@ -14,6 +14,7 @@ import { BACKEND_CONFIGURATION } from '../../../config/configuration.module';
 import type { BackendConfiguration } from '../../../config/environment';
 import { PrismaService } from '../../../infrastructure/database/prisma.service';
 import { DevelopmentOtpProvider } from '../infrastructure/development-otp.provider';
+import { OtpiqOtpProvider } from '../infrastructure/otpiq-otp.provider';
 import {
   hashOpaqueToken,
   hashOtp,
@@ -27,6 +28,7 @@ import {
 } from '../domain/security';
 import {
   RATE_LIMIT_BOUNDARY,
+  type OtpDeliveryProvider,
   type RateLimitAction,
   type RateLimitBoundary,
 } from '../domain/providers';
@@ -93,14 +95,7 @@ export class AuthenticationService {
     if (!/^\+9647\d{9}$/.test(phone))
       throw new UnauthorizedException('Phone number is invalid.');
     await this.limit('otpRequest', phone, ipAddress);
-    if (
-      this.config.environment !== 'development' &&
-      this.config.environment !== 'test'
-    )
-      throw new ServiceUnavailableException(
-        'OTP delivery provider is unavailable.',
-      );
-    const provider = DevelopmentOtpProvider.create(this.config.environment);
+    const provider = this.otpProvider();
     const otp = randomOtp(),
       now = new Date(),
       expiresAt = new Date(now.getTime() + 5 * 60_000);
@@ -137,7 +132,8 @@ export class AuthenticationService {
     return {
       challengeId: challenge.id,
       expiresAt: expiresAt.toISOString(),
-      ...(this.config.environment === 'development'
+      ...(this.config.environment === 'development' &&
+      provider instanceof DevelopmentOtpProvider
         ? { developmentOtp: otp }
         : {}),
     };
@@ -414,6 +410,10 @@ export class AuthenticationService {
         where: { id: session.id, revokedAt: null },
         data: { revokedAt: new Date() },
       });
+      // A signed-out phone stops getting this person's notifications.
+      await this.prisma.db.pushDevice.deleteMany({
+        where: { userId: session.userId, deviceId: session.deviceId },
+      });
       await this.event('logout', session.userId);
     }
   }
@@ -430,6 +430,9 @@ export class AuthenticationService {
     await this.prisma.db.refreshSession.updateMany({
       where: { userId: session.userId, revokedAt: null },
       data: { revokedAt: new Date() },
+    });
+    await this.prisma.db.pushDevice.deleteMany({
+      where: { userId: session.userId },
     });
     await this.event('logoutAll', session.userId);
   }
@@ -588,6 +591,22 @@ export class AuthenticationService {
     )
       throw new UnauthorizedException('Refresh device context does not match.');
   }
+
+  /** OTPIQ when configured; the silent development stub only outside production. */
+  private otpProvider(): OtpDeliveryProvider {
+    const delivery = this.config.otpDelivery;
+    if (delivery.provider === 'otpiq')
+      return (this.otpiq ??= new OtpiqOtpProvider(delivery));
+    if (
+      this.config.environment !== 'development' &&
+      this.config.environment !== 'test'
+    )
+      throw new ServiceUnavailableException(
+        'OTP delivery provider is unavailable.',
+      );
+    return DevelopmentOtpProvider.create(this.config.environment);
+  }
+  private otpiq?: OtpiqOtpProvider;
 
   private deviceHash(purpose: string, value: string): string {
     return keyedHash(purpose, value, this.config.auditHashSecret);

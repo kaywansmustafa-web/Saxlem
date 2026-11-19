@@ -13,6 +13,9 @@ import 'package:saxlem_app/features/booking/domain/entities/booking_types.dart';
 import 'package:saxlem_app/features/booking/domain/repositories/booking_repository.dart';
 import 'package:saxlem_app/features/family_profiles/data/repositories/in_memory_patient_profiles_repository.dart';
 import 'package:saxlem_app/features/family_profiles/presentation/controllers/patient_profiles_controller.dart';
+import 'package:saxlem_app/features/payments/domain/appointment_payment.dart';
+import 'package:saxlem_app/features/payments/domain/payments_repository.dart';
+import 'package:saxlem_app/features/payments/payments_scope.dart';
 import 'package:saxlem_app/l10n/app_localizations.dart';
 
 void main() {
@@ -25,10 +28,8 @@ void main() {
     await tester.pumpWidget(_app(repository, profiles));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(DropdownButtonFormField<BookingClinicOption>));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Saxlem Clinic').last);
-    await tester.pumpAndSettle();
+    // A doctor with one clinic: it is chosen for the patient.
+    expect(find.text('Saxlem Clinic'), findsWidgets);
     await tester.enterText(find.byType(TextFormField), 'Consultation');
     await tester.tap(find.text('Check availability'));
     await tester.pumpAndSettle();
@@ -39,6 +40,9 @@ void main() {
     expect(find.text('Review appointment'), findsOneWidget);
     expect(find.text('35,000 IQD'), findsOneWidget);
 
+    expect(find.text('Pay at the clinic'), findsOneWidget);
+    expect(find.text('Pay now in the app'), findsNothing);
+    await tester.ensureVisible(find.text('Confirm appointment'));
     await tester.tap(find.text('Confirm appointment'));
     await tester.pumpAndSettle();
     expect(repository.createCalls, 1);
@@ -47,6 +51,50 @@ void main() {
     expect(find.text('View Doctor'), findsOneWidget);
     expect(find.text('Return Home'), findsOneWidget);
     expect(find.text('Go to My Appointments'), findsNothing);
+  });
+
+  testWidgets('pays online in the app right after booking', (tester) async {
+    final repository = _BookingRepository();
+    final payments = _Payments();
+    final profiles = _profiles();
+    await profiles.load();
+    await tester.pumpWidget(_app(repository, profiles, payments: payments));
+    await tester.pumpAndSettle();
+    // A doctor with one clinic: it is chosen for the patient.
+    expect(find.text('Saxlem Clinic'), findsWidgets);
+    await tester.enterText(find.byType(TextFormField), 'Consultation');
+    await tester.tap(find.text('Check availability'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('09:00'));
+    await tester.pumpAndSettle();
+
+    // The clinic takes online payment, so it is offered first and preselected.
+    expect(find.text('Pay now in the app'), findsOneWidget);
+    expect(find.text('Pay at the clinic'), findsOneWidget);
+    await tester.ensureVisible(find.text('Confirm and pay'));
+    await tester.tap(find.text('Confirm and pay'));
+    // The waiting screen animates continuously, so pump fixed frames.
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    expect(repository.createCalls, 1);
+    expect(payments.chosen, [PaymentMethod.online]);
+    expect(find.text('Waiting for your payment…'), findsOneWidget);
+    expect(find.text('Open FIB to pay'), findsOneWidget);
+
+    payments.paid = true;
+    await tester.pump(const Duration(seconds: 4));
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    await tester.pumpAndSettle();
+    expect(find.text('Payment received'), findsOneWidget);
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+    expect(find.text('Appointment confirmed'), findsOneWidget);
+    expect(find.text('Paid'), findsOneWidget);
+    expect(find.text('Pay now'), findsNothing);
   });
 
   testWidgets('booking setup supports RTL at 200 percent text', (tester) async {
@@ -88,17 +136,69 @@ Widget _app(
   BookingRepository repository,
   PatientProfilesController profiles, {
   Locale locale = const Locale('en'),
-}) => MaterialApp(
-  theme: AppTheme.light,
-  locale: locale,
-  supportedLocales: AppLocalizations.supportedLocales,
-  localizationsDelegates: AppLocalizations.localizationsDelegates,
-  home: BookingFeature(
-    doctor: doctor,
-    repository: repository,
-    profilesController: profiles,
+  PaymentsRepository payments = const UnavailablePaymentsRepository(),
+}) => PaymentsScope(
+  repository: payments,
+  child: MaterialApp(
+    theme: AppTheme.light,
+    locale: locale,
+    supportedLocales: AppLocalizations.supportedLocales,
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    home: BookingFeature(
+      doctor: doctor,
+      repository: repository,
+      profilesController: profiles,
+    ),
   ),
 );
+
+class _Payments implements PaymentsRepository {
+  final chosen = <PaymentMethod>[];
+  bool paid = false;
+
+  AppointmentPayment _payment(PaymentMethod method) => AppointmentPayment(
+    appointmentId: confirmation.appointmentId,
+    method: method,
+    status: method == PaymentMethod.counter
+        ? PaymentStatus.dueAtCounter
+        : paid
+        ? PaymentStatus.paid
+        : PaymentStatus.pending,
+    amountIqd: 35000,
+    provider: 'fib',
+    onlineAvailable: true,
+    online: paid || method == PaymentMethod.counter
+        ? null
+        : OnlinePaymentDetails(
+            readableCode: 'AB12-CD34',
+            qrCode: null,
+            personalAppLink: Uri.parse('https://personal.fib.iq/pay'),
+            businessAppLink: null,
+            validUntil: DateTime.utc(2030, 8, 1),
+          ),
+    paidAt: paid ? DateTime.utc(2030, 7, 1) : null,
+    refundedAt: null,
+    version: 1,
+  );
+
+  @override
+  Future<PaymentOptions> options(String clinicId) async => const PaymentOptions(
+    methods: [PaymentMethod.counter, PaymentMethod.online],
+    onlineProvider: 'fib',
+  );
+  @override
+  Future<AppointmentPayment> choose(String id, PaymentMethod method) async {
+    chosen.add(method);
+    return _payment(method);
+  }
+
+  @override
+  Future<AppointmentPayment> get(String id) async =>
+      _payment(PaymentMethod.online);
+  @override
+  Future<AppointmentPayment> refresh(String id) async =>
+      _payment(PaymentMethod.online);
+}
 
 class _BookingRepository implements BookingRepository {
   int createCalls = 0;

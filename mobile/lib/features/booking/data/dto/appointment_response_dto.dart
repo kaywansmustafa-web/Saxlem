@@ -31,8 +31,12 @@ class AppointmentResponseDto {
       'cancellationReason',
       'version',
     };
-    if (json.keys.toSet().difference(keys).isNotEmpty ||
-        keys.difference(json.keys.toSet()).isNotEmpty ||
+    // `origin` (app, phone or walk-in) is optional so older and newer
+    // backends both parse.
+    final present = json.keys.toSet()..remove('origin');
+    if (present.difference(keys).isNotEmpty ||
+        keys.difference(present).isNotEmpty ||
+        !_validOrigin(json['origin']) ||
         !const ['initial', 'followUp'].contains(json['type']) ||
         !const [
           'scheduled',
@@ -102,4 +106,8 @@ class AppointmentResponseDto {
       version: integer('version', minimum: 1),
     );
   }
+
+  static bool _validOrigin(Object? value) =>
+      value == null ||
+      const ['patientBooked', 'clinicCreated', 'walkIn'].contains(value);
 }

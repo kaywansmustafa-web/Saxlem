@@ -1,3 +1,5 @@
+import { languageName } from "@/components/language-picker";
+import Link from "next/link";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
 import { listDoctors } from "@/data/owner-data";
 import { requireOwnerSession } from "@/infrastructure/auth";
@@ -7,7 +9,7 @@ export default async function DoctorsPage() {
     <>
       <PageHeader
         title="Doctors"
-        description="Global professional directory using authoritative doctor profiles and clinic assignments."
+        description="Every doctor on Saxlem, their specialty and where they work."
       />
       {data.items.length ? (
         <div className="card table-card">
@@ -25,9 +27,13 @@ export default async function DoctorsPage() {
               {data.items.map((item) => (
                 <tr key={item.id}>
                   <td>
-                    <strong>{item.displayName}</strong>
+                    <strong>
+                      <Link href={`/doctors/${item.id}`}>
+                        {item.displayName}
+                      </Link>
+                    </strong>
                     <br />
-                    <small>{item.languages.join(", ")}</small>
+                    <small>{item.languages.map(languageName).join(" · ")}</small>
                   </td>
                   <td>{item.specialty}</td>
                   <td>
@@ -45,7 +51,7 @@ export default async function DoctorsPage() {
       ) : (
         <StateView
           title="No doctors"
-          description="No doctor profiles match the current authoritative directory query."
+          description="Doctors appear here once they are onboarded with a specialty and a clinic."
         />
       )}
     </>

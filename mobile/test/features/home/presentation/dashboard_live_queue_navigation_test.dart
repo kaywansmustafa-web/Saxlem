@@ -10,6 +10,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(theme: AppTheme.light, home: const HomePage()),
     );
+    await tester.pumpAndSettle();
     expect(find.text('View live queue'), findsNothing);
     expect(find.text('Patients ahead'), findsNothing);
     expect(find.text('Popular specialties'), findsOneWidget);

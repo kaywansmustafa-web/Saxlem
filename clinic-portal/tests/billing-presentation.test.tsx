@@ -10,6 +10,8 @@ const organizationId = "11111111-1111-4111-8111-111111111111";
 const statement = {
   id: "22222222-2222-4222-8222-222222222222",
   organizationId,
+  doctorId: "33333333-3333-4333-8333-333333333333",
+  doctorName: "Dr. Shilan",
   periodStart: "2026-08-01T00:00:00+03:00",
   periodEnd: "2026-09-01T00:00:00+03:00",
   timezone: "Asia/Baghdad",
@@ -46,7 +48,7 @@ describe("billing presentation", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue(
-        new Response(JSON.stringify({ ok: true, statement }), {
+        new Response(JSON.stringify({ ok: true, current: [statement] }), {
           status: 200,
           headers: { "content-type": "application/json" },
         }),
@@ -61,6 +63,8 @@ describe("billing presentation", () => {
       />,
     );
     expect((await screen.findAllByText("2,500 IQD")).length).toBe(2);
+    // Each doctor is billed separately: the statement names its doctor.
+    expect(screen.getByText("Dr. Shilan")).toBeInTheDocument();
     expect(screen.getByText("Read-only billing")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /finalize/iu })).toBeNull();
     expect(

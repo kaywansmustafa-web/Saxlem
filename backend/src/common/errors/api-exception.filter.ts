@@ -17,7 +17,8 @@ export class ApiExceptionFilter implements ExceptionFilter {
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+        : (this.clientErrorStatus(exception) ??
+          HttpStatus.INTERNAL_SERVER_ERROR);
     const validationErrors = this.validationErrors(exception);
     const envelope: ApiErrorEnvelope = {
       error: {
@@ -31,6 +32,27 @@ export class ApiExceptionFilter implements ExceptionFilter {
       },
     };
     response.status(status).json(envelope);
+  }
+
+  /**
+   * Body-parser and similar middleware raise plain errors that carry an
+   * exposed 4xx status (413 for an oversized body, 400 for bad JSON). They
+   * are the client's fault, so they must not surface as a 500.
+   */
+  private clientErrorStatus(exception: unknown): number | undefined {
+    if (typeof exception !== 'object' || exception === null) return undefined;
+    const candidate = exception as {
+      status?: unknown;
+      statusCode?: unknown;
+      expose?: unknown;
+    };
+    const status = candidate.status ?? candidate.statusCode;
+    return candidate.expose === true &&
+      typeof status === 'number' &&
+      status >= 400 &&
+      status < 500
+      ? status
+      : undefined;
   }
 
   private validationErrors(exception: unknown): FieldError[] {
@@ -54,16 +76,24 @@ export class ApiExceptionFilter implements ExceptionFilter {
   private code(status: number): string {
     return status === 404
       ? 'RESOURCE_NOT_FOUND'
-      : status >= 500
-        ? 'INTERNAL_ERROR'
-        : 'REQUEST_REJECTED';
+      : status === 413
+        ? 'PAYLOAD_TOO_LARGE'
+        : status === 429
+          ? 'RATE_LIMITED'
+          : status >= 500
+            ? 'INTERNAL_ERROR'
+            : 'REQUEST_REJECTED';
   }
 
   private safeMessage(status: number): string {
     return status === 404
       ? 'The requested resource was not found.'
-      : status >= 500
-        ? 'The service could not complete the request.'
-        : 'The request could not be completed.';
+      : status === 413
+        ? 'The request is too large.'
+        : status === 429
+          ? 'Too many requests. Please wait a moment and try again.'
+          : status >= 500
+            ? 'The service could not complete the request.'
+            : 'The request could not be completed.';
   }
 }

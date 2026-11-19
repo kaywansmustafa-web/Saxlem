@@ -28,4 +28,8 @@ The portal decodes backend token structure but does not possess or reuse the bac
 
 ## Privacy
 
-The portal does not expose password hashes, refresh tokens, secrets, clinical notes, unrestricted patient profiles, or raw audit payloads. Missing global patient, staff, queue, and audit query contracts remain unavailable until privacy-minimized backend APIs are approved.
+Every `/api/v1/platform/*` route requires `platform:administration` and a global platform-administrator principal with no tenant clinic or organization context. Tenant-scoped principals are rejected even if a capability were accidentally assigned.
+
+Staff and doctor accounts are created inactive. A cryptographically random one-time activation credential is returned only in the protected creation response, stored only as a keyed hash, expires after 30 minutes, and is invalidated after use. Password setup uses Argon2 and never records the plaintext credential in logs or audit metadata. Production delivery-provider integration remains required.
+
+The portal does not expose password hashes, refresh tokens, secrets, clinical notes, diagnoses, consultation content, unrestricted patient details, raw audit metadata, or full patient identity in global live operations. Document paths are server-generated and never accepted from browsers.

@@ -14,13 +14,14 @@ describe('Sprint 13S administration OpenAPI contract', () => {
     };
   };
 
-  it('documents only the six minimum administration routes', () => {
+  it('documents only the minimum administration routes', () => {
     const routes = Object.keys(document.paths).filter((path) =>
       path.includes('/administration/'),
     );
     expect(routes.sort()).toEqual([
       '/api/v1/administration/clinics',
       '/api/v1/administration/clinics/{clinicId}',
+      '/api/v1/administration/clinics/{clinicId}/location',
       '/api/v1/administration/organizations',
       '/api/v1/administration/organizations/{organizationId}',
     ]);
@@ -43,11 +44,17 @@ describe('Sprint 13S administration OpenAPI contract', () => {
         document.components.schemas.ClinicResponseDto!.properties!,
       ).sort(),
     ).toEqual([
+      'address',
+      'area',
+      'city',
       'code',
       'createdAt',
       'id',
+      'latitude',
+      'longitude',
       'name',
       'organizationId',
+      'phoneNumber',
       'status',
       'timezone',
       'updatedAt',

@@ -1,3 +1,5 @@
+import { formatter } from "@/lib/format";
+import { workdayMessages } from "@/features/workday/messages";
 import Link from "next/link";
 import type { Locale } from "@/i18n";
 import type { BackendAppointment } from "../data/backend-appointment-repository";
@@ -5,6 +7,9 @@ import type { ClinicalMessages } from "@/features/clinical-presentation/messages
 import { AppointmentMutations } from "./appointment-mutations";
 import type { BackendArrival } from "@/features/arrivals/data/backend-arrival-repository";
 import type { ArrivalMessages } from "@/features/arrivals/presentation/messages";
+import type { BackendPayment } from "@/features/payments/data/backend-payment-repository";
+import { PaymentSection } from "@/features/payments/presentation/payment-section";
+import { bookingMessages, originLabel } from "./booking-messages";
 
 export function AppointmentWorkspace({
   appointment: a,
@@ -13,7 +18,11 @@ export function AppointmentWorkspace({
   arrival,
   arrivalError,
   arrivalMessages: am,
+  payment,
+  paymentError,
 }: {
+  payment?: BackendPayment;
+  paymentError?: boolean;
   appointment: BackendAppointment;
   locale: Locale;
   m: ClinicalMessages;
@@ -39,17 +48,25 @@ export function AppointmentWorkspace({
           {[
             [
               m.date,
-              new Intl.DateTimeFormat(locale, {
-                timeZone: "Asia/Baghdad",
-                dateStyle: "medium",
-                timeStyle: "short",
-              }).format(new Date(a.startsAt)),
+              formatter(locale).dayTime(a.startsAt),
             ],
             [m.doctor, a.doctorName],
             [m.clinic, a.clinicName],
             [m.status, m[a.status]],
+            ...(a.onTheWayEta
+              ? [
+                  [
+                    bookingMessages(locale).onTheWayLabel,
+                    formatter(locale).time(a.onTheWayEta),
+                  ],
+                ]
+              : []),
+            [
+              bookingMessages(locale).source,
+              originLabel(a.origin, bookingMessages(locale)) ?? "-",
+            ],
             [m.reason, a.reason],
-            [m.duration, `${a.durationMinutes}`],
+            [m.duration, workdayMessages(locale).minutes(a.durationMinutes)],
             [m.fee, new Intl.NumberFormat(locale).format(a.feeIqd) + " IQD"],
             [m.reference, a.reference],
           ].map(([label, value]) => (
@@ -66,6 +83,13 @@ export function AppointmentWorkspace({
           {m.patientDetails}
         </Link>
       </section>
+      <PaymentSection
+        payment={payment}
+        failed={paymentError}
+        locale={locale}
+        appointmentId={a.id}
+        appointmentStatus={a.status}
+      />
       {am && (
         <section className="section" aria-labelledby="arrival-state">
           <h2 id="arrival-state">{am.arrival}</h2>

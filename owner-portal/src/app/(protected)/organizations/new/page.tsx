@@ -5,7 +5,7 @@ export default function NewOrganizationPage() {
     <>
       <PageHeader
         title="Create Organization"
-        description="Create an active organization using the authoritative administration domain."
+        description="An organization is the company or group that owns one or more clinics."
       />
       <CreateForm kind="organization" />
     </>

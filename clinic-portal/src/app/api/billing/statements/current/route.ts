@@ -19,7 +19,8 @@ export async function GET(request: Request) {
     if (!composition.read) return invalidBillingRequest();
     return safeJson({
       ok: true,
-      statement: await composition.read.currentStatement(),
+      // One running statement per doctor.
+      current: await composition.read.currentStatements(),
     });
   } catch (error) {
     return safeRouteError(error);

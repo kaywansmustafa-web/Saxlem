@@ -225,3 +225,36 @@ export class PatientDirectoryProfileDetailResponseDto {
   @ApiProperty({ type: PatientDirectoryAppointmentsResponseDto })
   appointments!: PatientDirectoryAppointmentsResponseDto;
 }
+
+export class RegisterClinicPatientDto {
+  @ApiProperty({ example: 'Shilan' })
+  @IsString()
+  @MinLength(1)
+  @MaxLength(80)
+  @Matches(/^[\p{L}\p{M}][\p{L}\p{M}\p{Zs}'’.-]*$/u)
+  firstName!: string;
+  @ApiProperty({ example: 'Ahmed' })
+  @IsString()
+  @MinLength(1)
+  @MaxLength(80)
+  @Matches(/^[\p{L}\p{M}][\p{L}\p{M}\p{Zs}'’.-]*$/u)
+  lastName!: string;
+  @ApiProperty({ example: '0750 123 4567' })
+  @IsString()
+  @MinLength(7)
+  @MaxLength(20)
+  phoneNumber!: string;
+  @ApiPropertyOptional({ enum: ['female', 'male', 'unspecified'] })
+  @IsOptional()
+  @IsIn(['female', 'male', 'unspecified'])
+  gender?: 'female' | 'male' | 'unspecified';
+}
+
+export class ClinicPatientRegistrationResponseDto {
+  @ApiProperty({ format: 'uuid' }) patientProfileId!: string;
+  @ApiProperty() displayName!: string;
+  @ApiProperty({
+    description: 'False when this name and phone were already registered.',
+  })
+  created!: boolean;
+}

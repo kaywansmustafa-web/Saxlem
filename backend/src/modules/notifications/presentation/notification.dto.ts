@@ -46,6 +46,30 @@ export class NotificationQueryDto {
   unreadOnly = false;
 }
 
+export class NotificationContextDto {
+  @ApiPropertyOptional({ format: 'uuid' })
+  appointmentId?: string;
+
+  @ApiPropertyOptional()
+  doctorName?: string;
+
+  @ApiPropertyOptional()
+  clinicName?: string;
+
+  @ApiPropertyOptional({ format: 'date-time' })
+  startsAt?: string;
+
+  @ApiPropertyOptional({ type: 'integer', minimum: 0 })
+  ticketNumber?: number;
+
+  @ApiPropertyOptional({
+    type: 'integer',
+    minimum: 0,
+    description: 'Patients waiting ahead, for "almost your turn".',
+  })
+  ahead?: number;
+}
+
 export class NotificationItemDto {
   @ApiProperty({ format: 'uuid' })
   id!: string;
@@ -73,6 +97,9 @@ export class NotificationItemDto {
 
   @ApiProperty({ type: 'string', format: 'date-time', nullable: true })
   readAt!: string | null;
+
+  @ApiProperty({ type: () => NotificationContextDto, nullable: true })
+  context!: NotificationContextDto | null;
 }
 
 export class NotificationPageDto {

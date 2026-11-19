@@ -1,3 +1,4 @@
+import { time } from "@/domain/format";
 import Link from "next/link";
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
 import {
@@ -6,12 +7,23 @@ import {
   listDoctors,
   listOrganizations,
   listPlans,
+  executiveAnalytics,
+  listLiveOperations,
+  listCollections,
   safeWindow,
 } from "@/data/owner-data";
 import { requireOwnerSession } from "@/infrastructure/auth";
 
 export default async function DashboardPage() {
   const session = await requireOwnerSession();
+  const [analytics, liveOperations, collections] = await Promise.all([
+    executiveAnalytics(session),
+    listLiveOperations(session),
+    listCollections(session).catch(() => null),
+  ]);
+  const owing = (collections?.items ?? []).filter(
+    (item) => item.stage !== "clear" && item.owedIqd > 0,
+  );
   const window = safeWindow();
   const [organizations, clinics, doctors, appointments, plans] =
     await Promise.allSettled([
@@ -21,10 +33,7 @@ export default async function DashboardPage() {
       listAppointments(session, window.from, window.to),
       listPlans(session),
     ]);
-  const orgs =
-    organizations.status === "fulfilled" ? organizations.value.items : [];
   const clinicItems = clinics.status === "fulfilled" ? clinics.value.items : [];
-  const doctorResult = doctors.status === "fulfilled" ? doctors.value : null;
   const appointmentItems =
     appointments.status === "fulfilled" ? appointments.value.items : [];
   const planItems = plans.status === "fulfilled" ? plans.value : [];
@@ -39,7 +48,7 @@ export default async function DashboardPage() {
     <>
       <PageHeader
         title="Executive Dashboard"
-        description="Authoritative platform activity and administration at a glance."
+        description="Everything happening on Saxlem, at a glance."
         action={
           <Link className="button button-primary" href="/organizations/new">
             Create organization
@@ -54,25 +63,105 @@ export default async function DashboardPage() {
       )}
       <section className="grid metrics" aria-label="Platform metrics">
         <article className="card metric">
-          <span>Organizations loaded</span>
-          <strong>{orgs.length}</strong>
+          <span>Active organizations</span>
+          <strong>{analytics.totals.activeOrganizations}</strong>
         </article>
         <article className="card metric">
-          <span>Clinics loaded</span>
-          <strong>{clinicItems.length}</strong>
+          <span>Active clinics</span>
+          <strong>{analytics.totals.activeClinics}</strong>
         </article>
         <article className="card metric">
           <span>Active doctors</span>
-          <strong>{doctorResult?.total ?? "—"}</strong>
+          <strong>{analytics.totals.activeDoctors}</strong>
         </article>
         <article className="card metric">
+          <span>Total patients</span>
+          <strong>{analytics.totals.patients}</strong>
+        </article>
+      </section>
+      <section className="grid metrics" aria-label="Operations metrics">
+        <article className="card metric">
           <span>Appointments today</span>
+          <strong>{analytics.totals.appointmentsToday}</strong>
+        </article>
+        <article className="card metric">
+          <span>Live queues</span>
+          <strong>{analytics.totals.liveQueues}</strong>
+        </article>
+        <article className="card metric">
+          <span>Patients waiting</span>
+          <strong>{analytics.totals.waitingPatients}</strong>
+        </article>
+        <article className="card metric">
+          <span>Arrivals</span>
+          <strong>{analytics.totals.arrivals}</strong>
+        </article>
+      </section>
+      <section className="grid metrics" aria-label="Financial metrics">
+        <article className="card metric">
+          <span>Gross commission</span>
           <strong>
-            {appointments.status === "fulfilled"
-              ? appointmentItems.length
-              : "—"}
+            {analytics.totals.grossCommissionIqd.toLocaleString("en-IQ")} IQD
           </strong>
         </article>
+        <article className="card metric">
+          <span>Reversals</span>
+          <strong>
+            {analytics.totals.reversalsIqd.toLocaleString("en-IQ")} IQD
+          </strong>
+        </article>
+        <article className="card metric">
+          <span>Net commission</span>
+          <strong>
+            {analytics.totals.netCommissionIqd.toLocaleString("en-IQ")} IQD
+          </strong>
+        </article>
+        <Link className="card metric" href="/statements">
+          <span>Doctors owe Saxlem</span>
+          <strong>
+            {owing
+              .reduce((sum, item) => sum + item.owedIqd, 0)
+              .toLocaleString("en-IQ")}{" "}
+            IQD
+          </strong>
+          <small>
+            {owing.length === 1 ? "1 doctor" : `${owing.length} doctors`} ·
+            cash at the clinic
+          </small>
+        </Link>
+      </section>
+      <section className="section">
+        <div className="section-title">
+          <h2>Queues needing attention</h2>
+          <Link href="/live-operations">Open Live Operations</Link>
+        </div>
+        {liveOperations.filter(
+          (item) => item.health === "delayed" || item.health === "paused",
+        ).length ? (
+          <ul className="card list">
+            {liveOperations
+              .filter(
+                (item) => item.health === "delayed" || item.health === "paused",
+              )
+              .slice(0, 6)
+              .map((item) => (
+                <li key={item.queueSessionId}>
+                  <strong>
+                    {item.clinicName} · {item.doctorName}
+                  </strong>
+                  <br />
+                  <small>
+                    {item.health} · {item.waitingCount} waiting
+                  </small>
+                </li>
+              ))}
+          </ul>
+        ) : (
+          <StateView
+            title="Queues are stable"
+            description="No queue needs your attention right now."
+          />
+        )}
       </section>
       <section className="section">
         <div className="section-title">
@@ -95,11 +184,7 @@ export default async function DashboardPage() {
                 {appointmentItems.slice(0, 8).map((item) => (
                   <tr key={item.id}>
                     <td>
-                      {new Date(item.startsAt).toLocaleTimeString("en-IQ", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        timeZone: "Asia/Baghdad",
-                      })}
+                      {time(item.startsAt)}
                     </td>
                     <td>{item.patientName}</td>
                     <td>{item.doctorName}</td>

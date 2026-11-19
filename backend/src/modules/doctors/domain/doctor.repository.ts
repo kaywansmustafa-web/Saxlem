@@ -1,3 +1,4 @@
+import type { ClinicLocation } from '../../../common/clinics/clinic-location';
 import type {
   DoctorDiscoveryOptionsProjection,
   DoctorProjection,
@@ -17,9 +18,18 @@ export interface DoctorSearchCriteria {
   readonly page: number;
   readonly pageSize: number;
   readonly clinicAssignmentVisibility: DoctorClinicAssignmentVisibility;
+  /** Patients never see a doctor hidden for an overdue Saxlem balance. */
+  readonly forPatients?: boolean;
+}
+
+export interface PublicClinicLocation extends ClinicLocation {
+  readonly id: string;
+  readonly name: string;
 }
 
 export interface DoctorRepository {
+  /** An active clinic where at least one active doctor works, or null. */
+  clinicLocation(clinicId: string): Promise<PublicClinicLocation | null>;
   search(criteria: DoctorSearchCriteria): Promise<{
     readonly items: readonly DoctorProjection[];
     readonly total: number;
@@ -27,7 +37,10 @@ export interface DoctorRepository {
   discoveryOptions(
     criteria: Pick<
       DoctorSearchCriteria,
-      'organizationId' | 'clinicId' | 'clinicAssignmentVisibility'
+      | 'organizationId'
+      | 'clinicId'
+      | 'clinicAssignmentVisibility'
+      | 'forPatients'
     >,
   ): Promise<DoctorDiscoveryOptionsProjection>;
   find(
@@ -37,6 +50,7 @@ export interface DoctorRepository {
       readonly clinicId?: string | undefined;
       readonly visibility: 'active' | 'activeOrInactive';
       readonly clinicAssignmentVisibility: DoctorClinicAssignmentVisibility;
+      readonly forPatients?: boolean;
     },
   ): Promise<DoctorProjection | null>;
   recordView(input: {

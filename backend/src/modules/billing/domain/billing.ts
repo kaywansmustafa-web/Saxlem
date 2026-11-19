@@ -7,6 +7,8 @@ export interface BillingAccess {
   readonly platformAdministrator: boolean;
   readonly organizationId?: string;
   readonly clinicId?: string;
+  /** A receptionist's doctors: they see only these doctors' bills. */
+  readonly doctorIds?: readonly string[];
 }
 
 export interface BillingCursor {

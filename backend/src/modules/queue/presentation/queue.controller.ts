@@ -351,6 +351,7 @@ export class QueueController {
       platformAdministrator: req.principal.kind === 'platformAdministrator',
       organizationId: req.tenant?.organizationId,
       clinicId: req.tenant?.clinicId,
+      doctorIds: req.tenant?.doctorIds,
       capabilities: req.principal.capabilities,
     };
   }

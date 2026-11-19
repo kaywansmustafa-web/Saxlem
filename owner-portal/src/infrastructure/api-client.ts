@@ -9,6 +9,8 @@ export class OwnerApiError extends Error {
     readonly status: number,
     readonly code: string,
     readonly requestId?: string,
+    /** The backend's own explanation (shown only for 400/409 business rules). */
+    readonly detail?: string,
   ) {
     super(
       status === 401
@@ -25,9 +27,14 @@ export class OwnerApiError extends Error {
   }
 }
 
+// Health probes are served outside the /api/v1 prefix by the backend.
+const healthPaths = new Set(["/health/live", "/health/ready"]);
+export type OwnerApiPath =
+  `/api/v1/${string}` | "/health/live" | "/health/ready";
+
 export interface OwnerApiRequest<T> {
-  readonly path: `/api/v1/${string}`;
-  readonly method?: "GET" | "POST" | "PATCH" | "DELETE";
+  readonly path: OwnerApiPath;
+  readonly method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   readonly body?: unknown;
   readonly session?: OwnerSession;
   readonly schema?: ZodType<T>;
@@ -43,8 +50,9 @@ export class OwnerApiClient {
     private readonly transport: typeof fetch = fetch,
   ) {}
   async request<T = undefined>(input: OwnerApiRequest<T>): Promise<T> {
+    const isHealth = healthPaths.has(input.path);
     if (
-      !input.path.startsWith("/api/v1/") ||
+      (!isHealth && !input.path.startsWith("/api/v1/")) ||
       input.path.includes("..") ||
       input.path.includes("\\") ||
       input.path.includes("//") ||
@@ -54,7 +62,9 @@ export class OwnerApiClient {
     const url = new URL(input.path, `${this.configuration.backendUrl.origin}/`);
     if (
       url.origin !== this.configuration.backendUrl.origin ||
-      !url.pathname.startsWith("/api/v1/")
+      (isHealth
+        ? url.pathname !== input.path
+        : !url.pathname.startsWith("/api/v1/"))
     )
       throw new OwnerApiError(500, "OWNER_INVALID_PATH");
     const controller = new AbortController();
@@ -103,7 +113,15 @@ export class OwnerApiClient {
       if (!response.ok) {
         const envelope =
           raw && typeof raw === "object" && "error" in raw
-            ? (raw as { error?: { code?: unknown; requestId?: unknown } }).error
+            ? (
+                raw as {
+                  error?: {
+                    code?: unknown;
+                    requestId?: unknown;
+                    message?: unknown;
+                  };
+                }
+              ).error
             : undefined;
         throw new OwnerApiError(
           response.status,
@@ -112,6 +130,9 @@ export class OwnerApiClient {
             : `BACKEND_${response.status}`,
           typeof envelope?.requestId === "string"
             ? envelope.requestId
+            : undefined,
+          typeof envelope?.message === "string"
+            ? envelope.message.slice(0, 300)
             : undefined,
         );
       }
@@ -131,5 +152,109 @@ export class OwnerApiClient {
     } finally {
       clearTimeout(timeout);
     }
+  }
+
+  async upload<T>(
+    path: `/api/v1/${string}`,
+    form: FormData,
+    session: OwnerSession,
+    schema: ZodType<T>,
+  ): Promise<T> {
+    const url = this.safeUrl(path);
+    const controller = new AbortController();
+    const timeout = setTimeout(
+      () => controller.abort(),
+      this.configuration.timeoutMs,
+    );
+    try {
+      const response = await this.transport(url, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          authorization: `Bearer ${session.accessToken}`,
+        },
+        body: form,
+        cache: "no-store",
+        redirect: "error",
+        signal: controller.signal,
+      });
+      const raw = await response.json().catch(() => {
+        throw new OwnerApiError(502, "OWNER_INVALID_RESPONSE");
+      });
+      if (!response.ok)
+        throw new OwnerApiError(response.status, `BACKEND_${response.status}`);
+      const parsed = schema.safeParse(raw);
+      if (!parsed.success)
+        throw new OwnerApiError(502, "OWNER_INVALID_RESPONSE");
+      return parsed.data;
+    } catch (error) {
+      if (error instanceof OwnerApiError) throw error;
+      throw new OwnerApiError(
+        error instanceof DOMException && error.name === "AbortError"
+          ? 504
+          : 503,
+        "OWNER_BACKEND_UNAVAILABLE",
+      );
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  async download(
+    path: `/api/v1/${string}`,
+    session: OwnerSession,
+  ): Promise<{ body: ArrayBuffer; contentType: string; disposition: string }> {
+    const url = this.safeUrl(path);
+    const controller = new AbortController();
+    const timeout = setTimeout(
+      () => controller.abort(),
+      this.configuration.timeoutMs,
+    );
+    try {
+      const response = await this.transport(url, {
+        headers: {
+          accept: "application/octet-stream",
+          authorization: `Bearer ${session.accessToken}`,
+        },
+        cache: "no-store",
+        redirect: "error",
+        signal: controller.signal,
+      });
+      if (!response.ok)
+        throw new OwnerApiError(response.status, `BACKEND_${response.status}`);
+      const declared = Number(response.headers.get("content-length") ?? "0");
+      if (declared > 26_214_400)
+        throw new OwnerApiError(502, "OWNER_INVALID_RESPONSE");
+      const body = await response.arrayBuffer();
+      if (body.byteLength > 26_214_400)
+        throw new OwnerApiError(502, "OWNER_INVALID_RESPONSE");
+      return {
+        body,
+        contentType:
+          response.headers.get("content-type") ?? "application/octet-stream",
+        disposition:
+          response.headers.get("content-disposition") ?? "attachment",
+      };
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  private safeUrl(path: `/api/v1/${string}`) {
+    if (
+      !path.startsWith("/api/v1/") ||
+      path.includes("..") ||
+      path.includes("\\") ||
+      path.includes("//") ||
+      /[\u0000-\u001f\u007f]/u.test(path)
+    )
+      throw new OwnerApiError(500, "OWNER_INVALID_PATH");
+    const url = new URL(path, `${this.configuration.backendUrl.origin}/`);
+    if (
+      url.origin !== this.configuration.backendUrl.origin ||
+      !url.pathname.startsWith("/api/v1/")
+    )
+      throw new OwnerApiError(500, "OWNER_INVALID_PATH");
+    return url;
   }
 }

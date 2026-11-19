@@ -1,25 +1,26 @@
 import { PageHeader, StateView, StatusBadge } from "@/components/app-shell";
+import { CreatePlanForm, PlanStatusButton } from "@/components/billing-forms";
 import { listPlans } from "@/data/owner-data";
 import { requireOwnerSession } from "@/infrastructure/auth";
+
 export default async function PlansPage() {
   const data = await listPlans(await requireOwnerSession());
   return (
     <>
       <PageHeader
-        title="Billing Plans"
-        description="Effective billing rules and immutable commission policy versions."
+        title="Commission plans"
+        description="What Saxlem charges per completed first visit booked in the app. Give a clinic or a single doctor a plan under Billing."
       />
+      <CreatePlanForm />
       {data.length ? (
-        <div className="card table-card">
+        <div className="card table-card" style={{ marginTop: 18 }}>
           <table className="table">
             <thead>
               <tr>
                 <th>Plan</th>
-                <th>Code</th>
-                <th>Commission</th>
-                <th>Rule</th>
-                <th>Version</th>
+                <th>Charge per visit</th>
                 <th>Status</th>
+                <th />
               </tr>
             </thead>
             <tbody>
@@ -27,17 +28,18 @@ export default async function PlansPage() {
                 <tr key={item.id}>
                   <td>
                     <strong>{item.displayName}</strong>
+                    <small>{item.code}</small>
                   </td>
-                  <td>{item.code}</td>
-                  <td>
-                    {item.commissionAmountIqd.toLocaleString("en-IQ")} IQD
+                  <td className="numeric">
+                    {item.commissionAmountIqd === 0
+                      ? "Free"
+                      : `${item.commissionAmountIqd.toLocaleString("en-IQ")} IQD`}
                   </td>
-                  <td>
-                    {item.ruleCode} v{item.ruleVersion}
-                  </td>
-                  <td>{item.version}</td>
                   <td>
                     <StatusBadge status={item.status} />
+                  </td>
+                  <td>
+                    <PlanStatusButton planId={item.id} status={item.status} />
                   </td>
                 </tr>
               ))}
@@ -46,8 +48,8 @@ export default async function PlansPage() {
         </div>
       ) : (
         <StateView
-          title="No billing plans"
-          description="No authoritative billing plan records are available."
+          title="No plans"
+          description="Create the first plan above."
         />
       )}
     </>

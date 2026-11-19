@@ -7,10 +7,18 @@ import {
 } from "@/features/portal-foundation/domain/route-policy";
 
 const implementedRoutes = new Set([
+  "dashboard",
+  "patients",
+  "appointments",
+  "liveQueue",
+  "doctors",
+  "settings",
   "doctorWorkspace",
+  "doctorBilling",
   "doctorPatients",
   "doctorSchedule",
   "doctorNotifications",
+  "doctorSettings",
   "administration",
   "organizations",
   "clinics",
@@ -21,25 +29,23 @@ describe("central route policy", () => {
   it("keeps exact role navigation separate", () => {
     expect(navigationFor("receptionist").map((x) => x.id)).toEqual([
       "dashboard",
-      "patients",
       "appointments",
       "liveQueue",
+      "patients",
       "doctors",
-      "schedule",
-      "notifications",
+      // The receptionist runs the clinic, billing included.
+      "billing",
       "settings",
     ]);
 
     expect(navigationFor("doctor").map((x) => x.id)).toEqual([
       "doctorWorkspace",
-      "doctorPatients",
       "doctorSchedule",
-      "doctorNotifications",
+      "doctorBilling",
       "doctorSettings",
     ]);
 
     expect(navigationFor("platformAdministrator").map((x) => x.id)).toEqual([
-      "settings",
       "administration",
       "organizations",
       "clinics",

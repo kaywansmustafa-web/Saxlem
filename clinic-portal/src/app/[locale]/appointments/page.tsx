@@ -5,6 +5,10 @@ import { PortalApiError } from "@/infrastructure/api/api-error";
 import { appointmentStatusSchema } from "@/features/appointments/data/backend-appointment-repository";
 import { AppointmentsPage } from "@/features/appointments/presentation/appointments-page";
 import { ClinicalState } from "@/features/clinical-presentation/clinical-state";
+import {
+  ReceptionBar,
+  ReceptionSetup,
+} from "@/features/reception/presentation/reception-setup";
 import { clinicalMessages } from "@/features/clinical-presentation/messages";
 import {
   iraqDateRange,
@@ -38,24 +42,37 @@ export default async function Page({
     );
   const { from, to, fromInstant, toInstant } = range,
     { cursor, trail } = navigation;
-  let page;
+  let page, composition, reception;
   try {
-    const { appointments } = await clinicalComposition(locale);
-    page = await appointments.list({
-      from: fromInstant,
-      to: toInstant,
-      status,
-      cursor,
-    });
+    composition = await clinicalComposition(locale);
+    reception = await composition.reception.view();
+    if (reception && !reception.configured) page = null;
+    else
+      page = await composition.appointments.list({
+        from: fromInstant,
+        to: toInstant,
+        status,
+        cursor,
+      });
   } catch (error) {
     return <ClinicalState kind={kind(error)} m={m} />;
   }
+  if (!page)
+    return reception ? (
+      <ReceptionSetup view={reception} locale={locale} />
+    ) : null;
+  // Payment status is helpful but not essential: the list still shows without it.
+  const payments = await composition.payments
+    .list(page.items.map((item) => item.id))
+    .catch(() => undefined);
   return (
     <AppointmentsPage
       page={page}
+      payments={payments}
       locale={locale}
       m={m}
       filters={{ from, to, status, cursor, trail }}
+      toolbar={<ReceptionBar view={reception ?? null} locale={locale} />}
     />
   );
 }

@@ -5,6 +5,7 @@ import { Logger } from 'nestjs-pino';
 import { AppModule } from './app.module';
 import { PRODUCT_API_PREFIX } from './common/api/api.constants';
 import { ApiExceptionFilter } from './common/errors/api-exception.filter';
+import { applyHttpHardening } from './common/security/http-hardening';
 import { BackendConfiguration, loadConfiguration } from './config/environment';
 
 export async function createApplication(configuration = loadConfiguration()) {
@@ -12,6 +13,7 @@ export async function createApplication(configuration = loadConfiguration()) {
     bufferLogs: true,
   });
   app.useLogger(app.get(Logger));
+  applyHttpHardening(app, configuration);
   app.setGlobalPrefix(PRODUCT_API_PREFIX, {
     exclude: ['health/live', 'health/ready'],
   });

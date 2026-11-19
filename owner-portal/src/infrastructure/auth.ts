@@ -8,6 +8,7 @@ import {
   tokenResponseSchema,
   type OwnerSession,
 } from "@/domain/session";
+import { loginRequestBody, refreshRequestBody } from "@/domain/auth-requests";
 import { OwnerApiClient } from "./api-client";
 import { ownerConfiguration } from "./config";
 import {
@@ -35,16 +36,7 @@ export async function authenticateOwner(
   const tokens = await client.request({
     path: "/api/v1/auth/login",
     method: "POST",
-    body: {
-      email,
-      password,
-      device: {
-        id: deviceId,
-        name: "Saxlem Owner Portal",
-        platform: "web",
-        userAgent,
-      },
-    },
+    body: loginRequestBody({ email, password, deviceId, userAgent }),
     schema: tokenResponseSchema,
   });
   const session = ownerSessionFromTokens(tokens, deviceId, userAgent);
@@ -73,15 +65,7 @@ export async function restoreOwnerSession(): Promise<OwnerSession | null> {
     const tokens = await client.request({
       path: "/api/v1/auth/refresh",
       method: "POST",
-      body: {
-        refreshToken: session.refreshToken,
-        device: {
-          id: session.deviceId,
-          name: "Saxlem Owner Portal",
-          platform: "web",
-          userAgent: session.userAgent,
-        },
-      },
+      body: refreshRequestBody(session),
       schema: tokenResponseSchema,
     });
     const responseSession = ownerSessionFromTokens(

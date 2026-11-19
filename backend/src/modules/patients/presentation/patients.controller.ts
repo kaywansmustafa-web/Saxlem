@@ -34,6 +34,7 @@ import { RequireCapabilities } from '../../identity/presentation/require-capabil
 import {
   ActivatePatientProfileDto,
   ArchivePatientProfileDto,
+  ClinicPatientRegistrationResponseDto,
   CreatePatientProfileDto,
   PatientDirectoryPageResponseDto,
   PatientDirectoryProfileDetailResponseDto,
@@ -42,6 +43,7 @@ import {
   PatientAccountResponseDto,
   PatientProfileParamsDto,
   PatientProfileResponseDto,
+  RegisterClinicPatientDto,
   UpdatePatientProfileDto,
 } from './patient.dto';
 
@@ -82,6 +84,30 @@ export class PatientsController {
     );
   }
 
+  @Post('directory')
+  @HttpCode(200)
+  @RequireCapabilities('patient:register')
+  @ApiOperation({
+    summary:
+      'Register a patient who phoned or walked in without the Saxlem app',
+  })
+  @ApiOkResponse({ type: ClinicPatientRegistrationResponseDto })
+  registerClinicPatient(
+    @Req() request: AuthenticatedRequest,
+    @Body() body: RegisterClinicPatientDto,
+  ) {
+    return this.patients.registerClinicPatient(
+      this.directoryAccess(request),
+      {
+        firstName: body.firstName,
+        lastName: body.lastName,
+        phoneNumber: body.phoneNumber,
+        gender: body.gender ?? 'unspecified',
+      },
+      request.requestId,
+    );
+  }
+
   @Get('directory/:patientProfileId')
   @RequireCapabilities('patient:directory:read')
   @ApiOperation({ summary: 'Get one clinic-scoped patient profile view' })
@@ -111,6 +137,21 @@ export class PatientsController {
   @ApiOkResponse({ type: PatientAccountResponseDto })
   me(@Req() request: AuthenticatedRequest) {
     return this.patients.me(this.userId(request));
+  }
+
+  @Delete('me')
+  @RequireCapabilities('patient:self')
+  @HttpCode(204)
+  @ApiOperation({
+    summary: 'Delete the signed-in patient account',
+    description:
+      'Ends every session, frees the phone number and archives the family profiles. Visit history stays with the clinics that hold it. Refused with 409 while appointments are still upcoming.',
+  })
+  @ApiConflictResponse({
+    description: 'The patient still has upcoming appointments.',
+  })
+  closeAccount(@Req() request: AuthenticatedRequest) {
+    return this.patients.closeAccount(this.userId(request), request.requestId);
   }
 
   @Get('profiles')
@@ -227,6 +268,7 @@ export class PatientsController {
       actorId: request.principal.id,
       organizationId,
       clinicId,
+      doctorIds: request.tenant?.doctorIds,
     };
   }
 

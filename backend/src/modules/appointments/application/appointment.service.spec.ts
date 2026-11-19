@@ -155,6 +155,139 @@ describe('AppointmentService', () => {
     );
     expect(empty.days).toEqual([{ date: '2030-07-22', slots: [] }]);
   });
+  it('lets staff of the same clinic read slots but not staff of another clinic', async () => {
+    const { service, schedules } = fixture();
+    schedules.schedule.mockResolvedValue({
+      ...schedule(),
+      clinics: [{ ...schedule().clinics[0]!, weeklySchedule: [] }],
+    });
+    const staff = {
+      actorId: 'reception',
+      patient: false,
+      doctor: false,
+      platformAdministrator: false,
+      organizationId: 'org',
+      clinicId: 'clinic',
+    };
+    await expect(
+      service.bookingOptions(
+        staff,
+        'doctor',
+        'clinic',
+        'patient',
+        'initial',
+        '2030-07-22',
+        '2030-07-22',
+        'request',
+      ),
+    ).resolves.toMatchObject({ days: [{ date: '2030-07-22', slots: [] }] });
+    await expect(
+      service.bookingOptions(
+        { ...staff, clinicId: 'other-clinic' },
+        'doctor',
+        'clinic',
+        'patient',
+        'initial',
+        '2030-07-22',
+        '2030-07-22',
+        'request',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+  it('records walk-ins as walkIn and phone bookings as clinicCreated', async () => {
+    const { service, create } = fixture();
+    const staff = {
+      actorId: 'reception',
+      patient: false,
+      doctor: false,
+      platformAdministrator: false,
+      organizationId: 'org',
+      clinicId: 'clinic',
+    };
+    const soon = new Date(Date.now() + 10 * 60_000);
+    await service.create(
+      staff,
+      { ...input, startsAt: soon, walkIn: true },
+      'idem-key-walk-1',
+      'request',
+    );
+    expect(create.mock.calls[0]?.[1].origin).toBe('walkIn');
+    await service.create(staff, input, 'idem-key-phone-1', 'request');
+    expect(create.mock.calls[1]?.[1].origin).toBe('clinicCreated');
+    await expect(
+      service.create(
+        staff,
+        { ...input, walkIn: true },
+        'idem-key-walk-2',
+        'request',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    await expect(
+      service.create(
+        access,
+        { ...input, startsAt: soon, walkIn: true },
+        'idem-key-walk-3',
+        'request',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+  it('builds the day board: booked by origin, breaks unavailable, the rest free', async () => {
+    const { service, schedules, repository } = fixture();
+    schedules.schedule.mockResolvedValue(schedule());
+    repository.clinicDoctors.mockResolvedValue([
+      { id: 'doctor', displayName: 'Doctor' },
+    ]);
+    // 2030-07-22 is a Monday; the fixture works 08:00-12:00 Baghdad
+    // (05:00-09:00 UTC) with a 09:00-09:30 break.
+    repository.dayAppointments.mockResolvedValue([
+      {
+        id: 'phone',
+        reference: 'SX-1',
+        organizationId: 'org',
+        clinicId: 'clinic',
+        clinicName: 'Clinic',
+        doctorId: 'doctor',
+        doctorName: 'Doctor',
+        patientProfileId: 'p',
+        patientName: 'Phone Caller',
+        type: 'initial',
+        origin: 'clinicCreated',
+        reason: 'x',
+        startsAt: '2030-07-22T07:00:00.000Z',
+        endsAt: '2030-07-22T07:30:00.000Z',
+        durationMinutes: 30,
+        feeIqd: 25000,
+        status: 'scheduled',
+        cancellationReason: null,
+        version: 1,
+      },
+    ]);
+    const staff = {
+      actorId: 'reception',
+      patient: false,
+      doctor: false,
+      platformAdministrator: false,
+      organizationId: 'org',
+      clinicId: 'clinic',
+    };
+    const board = await service.dayBoard(staff, '2030-07-22', 'request');
+    const cells = board.doctors[0]!.slots.map((slot) => [
+      slot.startsAt.slice(11, 16),
+      slot.state,
+      slot.appointment?.origin ?? null,
+    ]);
+    expect(cells.slice(0, 5)).toEqual([
+      ['05:00', 'free', null],
+      ['05:30', 'free', null],
+      ['06:00', 'unavailable', null],
+      ['06:30', 'free', null],
+      ['07:00', 'booked', 'clinicCreated'],
+    ]);
+    expect(board.doctors[0]!.slots.every((slot) => !slot.walkIn)).toBe(true);
+    await expect(
+      service.dayBoard({ ...access }, '2030-07-22', 'request'),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
   it('applies leave and working-exception precedence without exposing causes', async () => {
     jest.useFakeTimers().setSystemTime(new Date('2030-07-21T12:00:00.000Z'));
     const { service, schedules } = fixture();
@@ -208,6 +341,12 @@ describe('AppointmentService', () => {
     );
     expect(create.mock.calls[0]![1].feeIqd).toBe(25000);
   });
+  it("charges the doctor's own fee when one is set", async () => {
+    const { service, create, repository } = fixture();
+    repository.doctorFee.mockResolvedValue(35000);
+    await service.create(access, input, 'idem-key-fee2', 'request');
+    expect(create.mock.calls[0]![1].feeIqd).toBe(35000);
+  });
   it('fails closed when a mandatory staff read audit fails', async () => {
     const { service, repository } = fixture();
     repository.auditView.mockRejectedValue(new Error('offline'));
@@ -253,6 +392,7 @@ function fixture() {
     patientProfileId: 'patient',
     patientName: 'Patient',
     type: 'initial' as const,
+    origin: 'patientBooked' as const,
     reason: 'Consultation',
     startsAt: new Date().toISOString(),
     endsAt: new Date().toISOString(),
@@ -281,6 +421,10 @@ function fixture() {
     cancel: jest.fn(),
     reschedule: jest.fn(),
     auditView: jest.fn(),
+    clinicDoctors: jest.fn().mockResolvedValue([]),
+    dayAppointments: jest.fn().mockResolvedValue([]),
+    doctorFee: jest.fn().mockResolvedValue(null),
+    hiddenFromApp: jest.fn().mockResolvedValue(false),
   };
   const schedules = {
     assertBookable,

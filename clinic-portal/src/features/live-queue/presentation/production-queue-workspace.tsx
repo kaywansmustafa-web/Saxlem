@@ -1,6 +1,9 @@
 "use client";
+import { formatter } from "@/lib/format";
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Ticket } from "@/features/workday/parts";
 import type { Locale } from "@/i18n";
 import type { QueueDoctor } from "../data/backend-doctor-directory";
 import type {
@@ -137,124 +140,143 @@ export function ProductionQueueWorkspace({
       setPageBusy(false);
     }
   }
-  const selected = doctors.find((x) => x.id === doctorId);
+  const selected = doctors.find((x) => x.id === doctorId),
+    f = formatter(locale, queue?.effectiveTimezone ?? "Asia/Baghdad"),
+    current = queue?.currentPatient ?? null,
+    rows = [...entries]
+      .filter((e) => e.entryId !== current?.entryId)
+      .sort((a, b) => rank(a.status) - rank(b.status)),
+    waitingRows = rows.filter((e) => rank(e.status) === 0).length,
+    destructive = confirmation?.body.operation === "close";
   return (
-    <div>
-      <header className="heading">
-        <h1>{m.title}</h1>
+    <div className="ax-page">
+      <header className="ax-hero">
+        <div>
+          <p className="ax-eyebrow">{m.title}</p>
+          <h1 className="ax-title">{selected?.displayName ?? m.title}</h1>
+          {queue && (
+            <p className="ax-lead">
+              {m.updated} {f.time(queue.updatedAt)}
+            </p>
+          )}
+        </div>
+        {queue && (
+          <div className="ax-hero-side">
+            <span
+              className={`ax-chip ${queue.status === "open" ? "is-ok" : queue.status === "paused" ? "is-warn" : "is-muted"}`}
+            >
+              {m[queue.status]}
+            </span>
+          </div>
+        )}
       </header>
-      <form className="clinical-filters">
-        <label>
-          {m.selectDoctor}
-          <select name="doctorId" defaultValue={doctorId ?? ""} required>
-            <option value="" disabled>
-              {m.selectDoctor}
-            </option>
-            {doctors.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.displayName}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button>{m.choose}</button>
-      </form>
+      {doctors.length > 1 && (
+        <nav className="ax-choice" aria-label={m.selectDoctor}>
+          {doctors.map((d) => (
+            <Link
+              key={d.id}
+              className="ax-choice-item"
+              href={`/${locale}/live-queue?doctorId=${d.id}`}
+              aria-current={d.id === doctorId ? "true" : undefined}
+            >
+              {d.displayName}
+            </Link>
+          ))}
+        </nav>
+      )}
+      {!doctorId && (
+        <section className="ax-card">
+          <div className="ax-empty ax-empty-lg">
+            <span className="ax-empty-icon" aria-hidden="true">
+              <QueueIcon />
+            </span>
+            <p>{m.chooseHint}</p>
+          </div>
+        </section>
+      )}
       {doctorId && !queue ? (
-        <section className="section">
-          <h2>{selected?.displayName}</h2>
-          <p>{m.noQueue}</p>
-          <button
-            disabled={busy}
-            onClick={(event) =>
-              ask(
-                { operation: "open", doctorId, version: 1 },
-                event.currentTarget,
-              )
-            }
-          >
-            {m.openQueue}
-          </button>
+        <section className="ax-card">
+          <div className="ax-empty ax-empty-lg">
+            <span className="ax-empty-icon" aria-hidden="true">
+              <QueueIcon />
+            </span>
+            <h2>{m.noQueue}</h2>
+            <button
+              className="ax-btn ax-btn-primary ax-btn-lg"
+              disabled={busy}
+              onClick={(event) =>
+                ask(
+                  { operation: "open", doctorId, version: 1 },
+                  event.currentTarget,
+                )
+              }
+            >
+              {m.openQueue}
+            </button>
+          </div>
         </section>
       ) : null}
       {queue ? (
         <>
-          <section className="section">
-            <h2>{selected?.displayName ?? m.title}</h2>
-            <dl className="clinical-detail-grid">
-              <Metric l={m.status} v={m[queue.status]} />
-              <Metric l={m.waiting} v={String(queue.waitingCount)} />
-              <Metric
-                l={m.current}
-                v={
-                  queue.currentPatient
-                    ? `${queue.currentPatient.patientDisplayName} · ${queue.currentPatient.ticketNumber}`
-                    : m.none
-                }
-              />
-              <Metric
-                l={m.updated}
-                v={format(queue.updatedAt, locale, queue.effectiveTimezone)}
-              />
-              <Metric l={m.operationalDate} v={queue.operationalDate} />
-              <Metric l={m.timezone} v={queue.effectiveTimezone} />
-            </dl>
-            <div className="row-actions">
-              <button disabled={busy} onClick={() => router.refresh()}>
-                {m.refresh}
-              </button>
+          <section
+            className="ax-card ax-queue-now"
+            aria-labelledby="queue-now-title"
+          >
+            <h2 id="queue-now-title" className="ax-card-title">
+              {m.current}
+            </h2>
+            {current ? (
+              <div className="ax-current">
+                <Ticket
+                  number={current.ticketNumber}
+                  label={m.ticket}
+                  pulse={current.status === "called"}
+                />
+                <div className="ax-current-body">
+                  <h3>{current.patientDisplayName}</h3>
+                  <p
+                    className={`ax-chip ${current.status === "inConsultation" ? "is-brand" : "is-warn"}`}
+                  >
+                    {label(current.status, m)}
+                  </p>
+                  {current.status === "called" && (
+                    <div className="ax-actions">
+                      <EntryActions
+                        entry={current}
+                        queue={queue}
+                        m={m}
+                        busy={busy}
+                        ask={ask}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <p className="ax-muted ax-pad">{m.nobodyWithDoctor}</p>
+            )}
+            <div className="ax-actions ax-queue-actions">
               {queue.status === "open" && (
-                <>
-                  <button
-                    disabled={busy}
-                    onClick={(event) =>
-                      ask(
-                        {
-                          operation: "pause",
-                          queueId: queue.id,
-                          version: queue.version,
-                        },
-                        event.currentTarget,
-                      )
-                    }
-                  >
-                    {m.pause}
-                  </button>
-                  <button
-                    disabled={
-                      busy || !queue.waitingCount || !!queue.currentPatient
-                    }
-                    onClick={(event) =>
-                      ask(
-                        {
-                          operation: "call-next",
-                          queueId: queue.id,
-                          version: queue.version,
-                        },
-                        event.currentTarget,
-                      )
-                    }
-                  >
-                    {m.callNext}
-                  </button>
-                  <button
-                    disabled={busy}
-                    onClick={(event) =>
-                      ask(
-                        {
-                          operation: "close",
-                          queueId: queue.id,
-                          version: queue.version,
-                        },
-                        event.currentTarget,
-                      )
-                    }
-                  >
-                    {m.close}
-                  </button>
-                </>
+                <button
+                  className="ax-btn ax-btn-primary ax-btn-lg"
+                  disabled={busy || !queue.waitingCount || !!current}
+                  onClick={(event) =>
+                    ask(
+                      {
+                        operation: "call-next",
+                        queueId: queue.id,
+                        version: queue.version,
+                      },
+                      event.currentTarget,
+                    )
+                  }
+                >
+                  {m.callNext}
+                </button>
               )}
               {queue.status === "paused" && (
                 <button
+                  className="ax-btn ax-btn-primary ax-btn-lg"
                   disabled={busy}
                   onClick={(event) =>
                     ask(
@@ -270,11 +292,55 @@ export function ProductionQueueWorkspace({
                   {m.resume}
                 </button>
               )}
+              {queue.status === "open" && (
+                <button
+                  className="ax-btn"
+                  disabled={busy}
+                  onClick={(event) =>
+                    ask(
+                      {
+                        operation: "pause",
+                        queueId: queue.id,
+                        version: queue.version,
+                      },
+                      event.currentTarget,
+                    )
+                  }
+                >
+                  {m.pause}
+                </button>
+              )}
+              <button
+                className="ax-btn ax-btn-ghost"
+                disabled={busy}
+                onClick={() => router.refresh()}
+              >
+                {m.refresh}
+              </button>
+              {queue.status === "open" && (
+                <button
+                  className="ax-btn ax-btn-danger ax-push-end"
+                  disabled={busy}
+                  onClick={(event) =>
+                    ask(
+                      {
+                        operation: "close",
+                        queueId: queue.id,
+                        version: queue.version,
+                      },
+                      event.currentTarget,
+                    )
+                  }
+                >
+                  {m.close}
+                </button>
+              )}
             </div>
             {appointmentId && (
-              <div>
+              <div className="ax-alert ax-gap-top">
                 <p>{m.queueSeparate}</p>
                 <button
+                  className="ax-btn ax-btn-primary"
                   disabled={busy || queue.status !== "open"}
                   onClick={(event) =>
                     ask(
@@ -292,28 +358,96 @@ export function ProductionQueueWorkspace({
                 </button>
               </div>
             )}
-            <p ref={statusRef} role="status" aria-live="polite" tabIndex={-1}>
+            <p
+              ref={statusRef}
+              className="ax-hint"
+              role="status"
+              aria-live="polite"
+              tabIndex={-1}
+            >
               {message}
             </p>
           </section>
-          <EntryTable
-            entries={entries}
-            queue={queue}
-            locale={locale}
-            m={m}
-            busy={busy}
-            ask={ask}
-          />
-          {nextCursor && (
-            <nav aria-label={m.next}>
-              <button disabled={pageBusy} onClick={loadMore}>
-                {m.next}
-              </button>
-            </nav>
-          )}
-          <p role="status" aria-live="polite">
-            {pageError}
-          </p>
+          <section className="ax-card" aria-labelledby="queue-waiting-title">
+            <div className="ax-card-head">
+              <h2 id="queue-waiting-title" className="ax-card-title">
+                {m.waiting}
+              </h2>
+              <span className="ax-count">{waitingRows}</span>
+            </div>
+            {rows.length === 0 ? (
+              <p className="ax-muted ax-pad">{m.nobodyWaiting}</p>
+            ) : (
+              <div className="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">{m.ticket}</th>
+                      <th scope="col">{m.patient}</th>
+                      <th scope="col">{m.entryStatus}</th>
+                      <th scope="col">{m.enqueuedAt}</th>
+                      <th scope="col">{m.appointmentReference}</th>
+                      <th scope="col">
+                        <span className="ax-sr">{m.status}</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((e) => (
+                      <tr
+                        key={e.entryId}
+                        className={rank(e.status) > 1 ? "is-done" : undefined}
+                      >
+                        <td>
+                          <span className="ax-ticket-sm">{e.ticketNumber}</span>
+                        </td>
+                        <td>
+                          <strong>{e.patientDisplayName}</strong>
+                        </td>
+                        <td>
+                          <span className={`ax-chip ${tone(e.status)}`}>
+                            {label(e.status, m)}
+                          </span>
+                        </td>
+                        <td>{f.time(e.enqueuedAt)}</td>
+                        <td className="ax-muted">{e.appointmentReference}</td>
+                        <td>
+                          {e.status === "called" ? (
+                            <span className="ax-row-actions">
+                              <EntryActions
+                                entry={e}
+                                queue={queue}
+                                m={m}
+                                busy={busy}
+                                ask={ask}
+                              />
+                            </span>
+                          ) : null}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {nextCursor && (
+              <nav
+                className="ax-actions ax-actions-center ax-gap-top"
+                aria-label={m.next}
+              >
+                <button
+                  className="ax-btn"
+                  disabled={pageBusy}
+                  onClick={loadMore}
+                >
+                  {m.next}
+                </button>
+              </nav>
+            )}
+            <p className="ax-hint" role="status" aria-live="polite">
+              {pageError}
+            </p>
+          </section>
           <dialog
             ref={dialogRef}
             aria-labelledby="queue-confirm-title"
@@ -333,17 +467,21 @@ export function ProductionQueueWorkspace({
             {confirmation ? (
               <>
                 <h2 id="queue-confirm-title">
-                  {m.confirm}: {operationLabel(confirmation.body.operation, m)}
+                  {operationLabel(confirmation.body.operation, m)}
                 </h2>
                 <p id="queue-confirm-description">
-                  {operationLabel(confirmation.body.operation, m)}.{" "}
-                  {m.confirmDescription}
+                  {destructive ? m.closeWarning : m.confirmDescription}
                 </p>
                 <div className="row-actions">
-                  <button disabled={busy} onClick={cancelConfirmation}>
+                  <button
+                    className="ax-btn ax-btn-ghost"
+                    disabled={busy}
+                    onClick={cancelConfirmation}
+                  >
                     {m.cancel}
                   </button>
                   <button
+                    className={`ax-btn ${destructive ? "ax-btn-danger" : "ax-btn-primary"}`}
                     disabled={busy}
                     autoFocus
                     onClick={() => operate(confirmation)}
@@ -359,106 +497,84 @@ export function ProductionQueueWorkspace({
     </div>
   );
 }
-function EntryTable({
-  entries,
+
+function EntryActions({
+  entry,
   queue,
-  locale,
   m,
   busy,
   ask,
 }: {
-  entries: readonly StaffEntry[];
+  entry: StaffEntry;
   queue: QueueSummary;
-  locale: Locale;
   m: ProductionQueueMessages;
   busy: boolean;
   ask: (body: Record<string, unknown>, trigger: HTMLButtonElement) => void;
 }) {
+  const ids = {
+    queueId: queue.id,
+    entryId: entry.entryId,
+    sessionVersion: queue.version,
+    entryVersion: entry.version,
+  };
   return (
-    <section className="section">
-      <h2>{m.waiting}</h2>
-      <div className="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>{m.ticket}</th>
-              <th>{m.patient}</th>
-              <th>{m.appointmentReference}</th>
-              <th>{m.entryStatus}</th>
-              <th>{m.enqueuedAt}</th>
-              <th>{m.status}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {entries.map((e) => (
-              <tr key={e.entryId}>
-                <td>{e.ticketNumber}</td>
-                <td>{e.patientDisplayName}</td>
-                <td>{e.appointmentReference}</td>
-                <td>{label(e.status, m)}</td>
-                <td>{format(e.enqueuedAt, locale, queue.effectiveTimezone)}</td>
-                <td>
-                  {e.status === "called" ? (
-                    <>
-                      <button
-                        disabled={busy}
-                        onClick={(event) =>
-                          ask(
-                            {
-                              operation: "recall",
-                              queueId: queue.id,
-                              entryId: e.entryId,
-                              sessionVersion: queue.version,
-                              entryVersion: e.version,
-                            },
-                            event.currentTarget,
-                          )
-                        }
-                      >
-                        {m.recall}
-                      </button>
-                      <button
-                        disabled={busy}
-                        onClick={(event) =>
-                          ask(
-                            {
-                              operation: "no-response",
-                              queueId: queue.id,
-                              entryId: e.entryId,
-                              sessionVersion: queue.version,
-                              entryVersion: e.version,
-                            },
-                            event.currentTarget,
-                          )
-                        }
-                      >
-                        {m.noResponse}
-                      </button>
-                    </>
-                  ) : null}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <>
+      <button
+        className="ax-btn ax-btn-sm"
+        disabled={busy}
+        onClick={(event) =>
+          ask({ operation: "recall", ...ids }, event.currentTarget)
+        }
+      >
+        {m.recall}
+      </button>
+      <button
+        className="ax-btn ax-btn-sm ax-btn-ghost"
+        disabled={busy}
+        onClick={(event) =>
+          ask({ operation: "no-response", ...ids }, event.currentTarget)
+        }
+      >
+        {m.noResponse}
+      </button>
+    </>
   );
 }
-function Metric({ l, v }: { l: string; v: string }) {
+
+function QueueIcon() {
   return (
-    <div>
-      <dt>{l}</dt>
-      <dd>{v}</dd>
-    </div>
+    <svg
+      viewBox="0 0 24 24"
+      width="28"
+      height="28"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 6h10M4 12h16M4 18h7" />
+      <circle cx="19" cy="6" r="2" />
+    </svg>
   );
 }
-function format(v: string, l: Locale, timeZone: string) {
-  return new Intl.DateTimeFormat(l, {
-    timeZone,
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(v));
+
+/** Waiting and called first, finished last. */
+function rank(s: StaffEntry["status"]) {
+  return s === "called" || s === "waiting" ? 0 : s === "inConsultation" ? 1 : 2;
+}
+function tone(s: StaffEntry["status"]) {
+  return s === "waiting"
+    ? "is-soft"
+    : s === "called"
+      ? "is-warn"
+      : s === "inConsultation"
+        ? "is-brand"
+        : s === "completed"
+          ? "is-ok"
+          : s === "noResponse"
+            ? "is-bad"
+            : "is-muted";
 }
 function label(s: StaffEntry["status"], m: ProductionQueueMessages) {
   return s === "waiting"

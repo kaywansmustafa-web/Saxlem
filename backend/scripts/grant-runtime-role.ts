@@ -38,6 +38,9 @@ async function grant(): Promise<void> {
     `REVOKE UPDATE, DELETE ON TABLE public.arrival_audits FROM ${quotedRole}`,
   );
   await client.query(
+    `REVOKE DELETE ON TABLE public.document_records, public.staff_activation_tokens FROM ${quotedRole}`,
+  );
+  await client.query(
     `REVOKE INSERT, UPDATE, DELETE ON TABLE
       public.queue_sessions, public.queue_entries,
       public.queue_activities, public.queue_audits FROM ${quotedRole}`,

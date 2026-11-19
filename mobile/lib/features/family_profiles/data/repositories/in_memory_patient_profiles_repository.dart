@@ -52,4 +52,8 @@ class InMemoryPatientProfilesRepository implements PatientProfilesRepository {
 
   @override
   Future<void> dispose() => _changes.close();
+
+  @override
+  Future<DeleteAccountOutcome> deleteAccount() async =>
+      DeleteAccountOutcome.deleted;
 }

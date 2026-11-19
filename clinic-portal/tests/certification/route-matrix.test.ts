@@ -18,10 +18,18 @@ const roles: readonly PortalStaffRole[] = [
 ];
 
 const implementedRoutes = new Set([
+  "dashboard",
+  "patients",
+  "appointments",
+  "liveQueue",
+  "doctors",
+  "settings",
   "doctorWorkspace",
+  "doctorBilling",
   "doctorPatients",
   "doctorSchedule",
   "doctorNotifications",
+  "doctorSettings",
   "administration",
   "organizations",
   "clinics",

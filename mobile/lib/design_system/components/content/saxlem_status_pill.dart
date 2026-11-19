@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../foundations/saxlem_radii.dart';
-import '../../foundations/saxlem_spacing.dart';
 import '../../theme/saxlem_colors.dart';
 
 enum SaxlemStatusTone { neutral, informative, positive, caution, critical }
@@ -39,8 +38,8 @@ class SaxlemStatusPill extends StatelessWidget {
       label: label,
       child: Container(
         padding: const EdgeInsetsDirectional.symmetric(
-          horizontal: SaxlemSpacing.oneAndHalf,
-          vertical: SaxlemSpacing.half,
+          horizontal: 12,
+          vertical: 5,
         ),
         decoration: BoxDecoration(
           color: surface,
@@ -49,10 +48,18 @@ class SaxlemStatusPill extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (icon != null) ...[
-              Icon(icon, size: 16, color: content),
-              const SizedBox(width: SaxlemSpacing.half),
-            ],
+            if (icon != null)
+              Icon(icon, size: 16, color: content)
+            else
+              Container(
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: content,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            const SizedBox(width: 6),
             Flexible(
               child: Text(
                 label,

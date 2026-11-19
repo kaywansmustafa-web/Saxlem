@@ -1,11 +1,12 @@
 import { LoginForm } from "@/components/login-form";
+import { BrandMark } from "@/components/brand-mark";
 
 export default async function LoginPage() {
   return (
     <main className="login-shell">
       <section className="login-visual">
         <div className="brand">
-          <span className="brand-mark">S</span>
+          <BrandMark className="brand-mark" />
           <span>
             <strong>Saxlem</strong>
             <small>Owner Portal</small>

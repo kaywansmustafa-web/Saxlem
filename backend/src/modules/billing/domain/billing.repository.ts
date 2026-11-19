@@ -29,6 +29,7 @@ export interface BillingRepository {
     organizationId: string,
     pageSize: number,
     cursor?: BillingCursor,
+    doctorId?: string,
   ): Promise<{
     readonly items: readonly BillingRecord[];
     readonly next: BillingCursor | null;
@@ -36,19 +37,54 @@ export interface BillingRepository {
   statements(
     access: BillingAccess,
     organizationId: string,
+    doctorId?: string,
   ): Promise<readonly BillingRecord[]>;
   statement(access: BillingAccess, id: string): Promise<BillingRecord | null>;
-  currentStatement(
+  /** This month's running statement for every doctor the caller may see. */
+  currentStatements(
     access: BillingAccess,
     organizationId: string,
     period: BillingPeriod,
-  ): Promise<BillingRecord>;
+    doctorId?: string,
+  ): Promise<readonly BillingRecord[]>;
   finalize(
     access: BillingAccess,
     id: string,
     version: number,
     requestId: string,
     command: BillingCommand,
+  ): Promise<BillingRecord>;
+  createPlan(
+    access: BillingAccess,
+    input: { displayName: string; commissionAmountIqd: number },
+    requestId: string,
+  ): Promise<BillingRecord>;
+  setPlanStatus(
+    access: BillingAccess,
+    id: string,
+    status: 'active' | 'inactive',
+    requestId: string,
+  ): Promise<BillingRecord>;
+  setup(organizationId: string, now: Date): Promise<BillingRecord | null>;
+  assignDoctorPlan(
+    access: BillingAccess,
+    organizationId: string,
+    doctorId: string,
+    planId: string | null,
+    effectiveFrom: Date,
+    requestId: string,
+  ): Promise<BillingRecord | null>;
+  setCycleStart(
+    access: BillingAccess,
+    organizationId: string,
+    day: string,
+    requestId: string,
+  ): Promise<void>;
+  creditCommission(
+    access: BillingAccess,
+    id: string,
+    reason: string,
+    requestId: string,
   ): Promise<BillingRecord>;
   materializeCompletion(
     tx: Prisma.TransactionClient,

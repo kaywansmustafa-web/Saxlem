@@ -16,6 +16,15 @@ const configurationSchema = z
       .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace'])
       .default('info'),
     CORS_ORIGINS: z.string().default(''),
+    /** Load balancers in front of the API; 0 means requests arrive directly. */
+    TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(0),
+    /** Requests one network address may make per minute; 0 turns it off. */
+    API_RATE_LIMIT_PER_MINUTE: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(100_000)
+      .default(600),
     OPENAPI_ENABLED: truthy.default(false),
     APPOINTMENT_PAST_TOLERANCE_MINUTES: z.coerce
       .number()
@@ -131,18 +140,146 @@ const configurationSchema = z
       .min(1)
       .max(10000)
       .default(1000),
+    PAYMENTS_ONLINE_ENABLED: truthy.default(false),
+    PAYMENT_CREDENTIALS_KEY: cryptographicSecret.optional(),
+    PAYMENT_COLLECTION_MODE: z.enum(['platform', 'clinic']).default('platform'),
+    PAYMENT_PLATFORM_PROVIDER: z.enum(['fib', 'simulated']).default('fib'),
+    PAYMENT_PLATFORM_FIB_ENVIRONMENT: z
+      .enum(['stage', 'prod'])
+      .default('stage'),
+    PAYMENT_PLATFORM_CLIENT_ID: z.string().trim().min(1).max(200).optional(),
+    PAYMENT_PLATFORM_CLIENT_SECRET: z.string().min(8).max(500).optional(),
+    PAYMENT_PROVIDER_FEE_BPS: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(1000)
+      .default(50),
+    PAYMENT_FEE_PASSED_TO_CLINIC: truthy.default(true),
+    PAYMENT_PUBLIC_CALLBACK_BASE_URL: z.string().url().optional(),
+    PAYMENT_LINK_MINUTES: z.coerce.number().int().min(6).max(2880).default(30),
+    PAYMENT_WORKER_ENABLED: truthy.default(false),
+    // Carries unpaid doctor balances and hides long-overdue doctors.
+    BILLING_COLLECTIONS_WORKER_ENABLED: truthy.default(false),
+    BILLING_COLLECTIONS_INTERVAL_MS: z.coerce
+      .number()
+      .int()
+      .min(60000)
+      .max(86400000)
+      .default(3600000),
+    PAYMENT_WORKER_POLL_INTERVAL_MS: z.coerce
+      .number()
+      .int()
+      .min(1000)
+      .max(3600000)
+      .default(15000),
     ACCESS_TOKEN_SECRET: cryptographicSecret,
     REFRESH_TOKEN_SECRET: cryptographicSecret,
     OTP_SECRET: cryptographicSecret,
     AUDIT_HASH_SECRET: cryptographicSecret,
+    /** Who delivers sign-in codes. "development" only works outside production. */
+    OTP_PROVIDER: z.enum(['development', 'otpiq']).default('development'),
+    OTPIQ_API_KEY: z.string().optional(),
+    /** auto lets OTPIQ choose WhatsApp, Telegram or SMS, falling back in order. */
+    OTPIQ_CHANNEL: z
+      .enum(['auto', 'sms', 'whatsapp', 'telegram'])
+      .default('auto'),
+    OTPIQ_BASE_URL: z.url().default('https://api.otpiq.com/api'),
+    /**
+     * Drive times for "leave by": google (traffic-aware, needs a key with
+     * billing), tomtom (free key, roads; traffic where TomTom has it), osrm
+     * (a road-network server, no traffic) or estimate (distance only).
+     */
+    ROUTES_PROVIDER: z
+      .enum(['estimate', 'osrm', 'google', 'tomtom'])
+      .default('estimate'),
+    GOOGLE_ROUTES_API_KEY: z.string().optional(),
+    TOMTOM_API_KEY: z.string().optional(),
+    /**
+     * Phone push: fcm (Firebase Cloud Messaging), log (writes what it would
+     * send, for development) or none. The in-app inbox works either way.
+     */
+    PUSH_PROVIDER: z.enum(['none', 'log', 'fcm']).default('none'),
+    /** The Firebase service-account JSON, as is or base64-encoded. */
+    FIREBASE_SERVICE_ACCOUNT: z.string().optional(),
+    // Empty in .env.example; an empty value means "not set".
+    OSRM_BASE_URL: z.preprocess(
+      (value) => (value === '' ? undefined : value),
+      z.url().optional(),
+    ),
   })
   .superRefine((input, context) => {
+    if (
+      input.ROUTES_PROVIDER === 'google' &&
+      (input.GOOGLE_ROUTES_API_KEY ?? '').length < 20
+    )
+      context.addIssue({
+        code: 'custom',
+        path: ['GOOGLE_ROUTES_API_KEY'],
+        message: 'ROUTES_PROVIDER=google needs GOOGLE_ROUTES_API_KEY.',
+      });
+    if (
+      input.ROUTES_PROVIDER === 'tomtom' &&
+      (input.TOMTOM_API_KEY ?? '').length < 20
+    )
+      context.addIssue({
+        code: 'custom',
+        path: ['TOMTOM_API_KEY'],
+        message: 'ROUTES_PROVIDER=tomtom needs TOMTOM_API_KEY.',
+      });
+    if (
+      input.PUSH_PROVIDER === 'fcm' &&
+      !readServiceAccount(input.FIREBASE_SERVICE_ACCOUNT)
+    )
+      context.addIssue({
+        code: 'custom',
+        path: ['FIREBASE_SERVICE_ACCOUNT'],
+        message:
+          'PUSH_PROVIDER=fcm needs FIREBASE_SERVICE_ACCOUNT (the service-account JSON).',
+      });
+    if (input.ROUTES_PROVIDER === 'osrm' && !input.OSRM_BASE_URL)
+      context.addIssue({
+        code: 'custom',
+        path: ['OSRM_BASE_URL'],
+        message: 'ROUTES_PROVIDER=osrm needs OSRM_BASE_URL.',
+      });
+    if (
+      input.OTP_PROVIDER === 'otpiq' &&
+      (input.OTPIQ_API_KEY ?? '').length < 16
+    )
+      context.addIssue({
+        code: 'custom',
+        message: 'OTP_PROVIDER=otpiq requires OTPIQ_API_KEY.',
+      });
     const secrets = [
       input.ACCESS_TOKEN_SECRET,
       input.REFRESH_TOKEN_SECRET,
       input.OTP_SECRET,
       input.AUDIT_HASH_SECRET,
     ];
+    if (input.PAYMENT_CREDENTIALS_KEY)
+      secrets.push(input.PAYMENT_CREDENTIALS_KEY);
+    if (
+      input.PAYMENTS_ONLINE_ENABLED &&
+      input.PAYMENT_COLLECTION_MODE === 'clinic' &&
+      !input.PAYMENT_CREDENTIALS_KEY
+    )
+      context.addIssue({
+        code: 'custom',
+        message:
+          'Clinic-collected online payments require PAYMENT_CREDENTIALS_KEY.',
+      });
+    if (
+      input.PAYMENTS_ONLINE_ENABLED &&
+      input.PAYMENT_COLLECTION_MODE === 'platform' &&
+      (!input.PAYMENT_PLATFORM_CLIENT_ID ||
+        !input.PAYMENT_PLATFORM_CLIENT_SECRET)
+    )
+      context.addIssue({
+        code: 'custom',
+        message:
+          'Saxlem-collected online payments require PAYMENT_PLATFORM_CLIENT_ID and PAYMENT_PLATFORM_CLIENT_SECRET.',
+      });
     if (new Set(secrets).size !== secrets.length)
       context.addIssue({
         code: 'custom',
@@ -189,6 +326,27 @@ const configurationSchema = z
         .map((origin) => origin.trim())
         .filter(Boolean),
       openApiEnabled: input.OPENAPI_ENABLED,
+      trustProxyHops: input.TRUST_PROXY_HOPS,
+      otpDelivery: {
+        provider: input.OTP_PROVIDER,
+        apiKey: input.OTPIQ_API_KEY ?? '',
+        channel: input.OTPIQ_CHANNEL,
+        baseUrl: input.OTPIQ_BASE_URL.replace(/\/+$/, ''),
+      },
+      routing: {
+        provider: input.ROUTES_PROVIDER,
+        googleApiKey: input.GOOGLE_ROUTES_API_KEY ?? '',
+        tomtomApiKey: input.TOMTOM_API_KEY ?? '',
+        osrmBaseUrl: (input.OSRM_BASE_URL ?? '').replace(/\/+$/, ''),
+      },
+      push: {
+        provider: input.PUSH_PROVIDER,
+        serviceAccount:
+          input.PUSH_PROVIDER === 'fcm'
+            ? readServiceAccount(input.FIREBASE_SERVICE_ACCOUNT)
+            : null,
+      },
+      apiRateLimitPerMinute: input.API_RATE_LIMIT_PER_MINUTE,
       appointmentPastToleranceMinutes: input.APPOINTMENT_PAST_TOLERANCE_MINUTES,
       appointmentFoundationFeeIqd: input.APPOINTMENT_FOUNDATION_FEE_IQD,
       appointmentFoundationDurationMinutes:
@@ -216,6 +374,29 @@ const configurationSchema = z
       notificationSsePageSize: input.NOTIFICATION_SSE_PAGE_SIZE,
       notificationSseMaxReconnectBacklog:
         input.NOTIFICATION_SSE_MAX_RECONNECT_BACKLOG,
+      paymentsOnlineEnabled: input.PAYMENTS_ONLINE_ENABLED,
+      paymentCredentialsKey: input.PAYMENT_CREDENTIALS_KEY,
+      paymentCollectionMode: input.PAYMENT_COLLECTION_MODE,
+      paymentPlatformAccount:
+        input.PAYMENT_PLATFORM_CLIENT_ID && input.PAYMENT_PLATFORM_CLIENT_SECRET
+          ? Object.freeze({
+              provider: input.PAYMENT_PLATFORM_PROVIDER,
+              environment:
+                input.PAYMENT_PLATFORM_PROVIDER === 'simulated'
+                  ? 'simulated'
+                  : input.PAYMENT_PLATFORM_FIB_ENVIRONMENT,
+              clientId: input.PAYMENT_PLATFORM_CLIENT_ID,
+              clientSecret: input.PAYMENT_PLATFORM_CLIENT_SECRET,
+            })
+          : undefined,
+      paymentProviderFeeBps: input.PAYMENT_PROVIDER_FEE_BPS,
+      paymentFeePassedToClinic: input.PAYMENT_FEE_PASSED_TO_CLINIC,
+      paymentPublicCallbackBaseUrl: input.PAYMENT_PUBLIC_CALLBACK_BASE_URL,
+      paymentLinkMinutes: input.PAYMENT_LINK_MINUTES,
+      paymentWorkerEnabled: input.PAYMENT_WORKER_ENABLED,
+      billingCollectionsWorkerEnabled: input.BILLING_COLLECTIONS_WORKER_ENABLED,
+      billingCollectionsIntervalMs: input.BILLING_COLLECTIONS_INTERVAL_MS,
+      paymentWorkerPollIntervalMs: input.PAYMENT_WORKER_POLL_INTERVAL_MS,
       accessTokenSecret: input.ACCESS_TOKEN_SECRET,
       refreshTokenSecret: input.REFRESH_TOKEN_SECRET,
       otpSecret: input.OTP_SECRET,
@@ -230,4 +411,37 @@ export function loadConfiguration(
   environment: NodeJS.ProcessEnv = process.env,
 ): BackendConfiguration {
   return configurationSchema.parse(environment);
+}
+
+export interface FirebaseServiceAccount {
+  readonly projectId: string;
+  readonly clientEmail: string;
+  readonly privateKey: string;
+}
+
+/** Accepts the downloaded JSON key as is, or base64-encoded. */
+export function readServiceAccount(
+  value: string | undefined,
+): FirebaseServiceAccount | null {
+  const raw = (value ?? '').trim();
+  if (!raw) return null;
+  const text = raw.startsWith('{')
+    ? raw
+    : Buffer.from(raw, 'base64').toString('utf8');
+  try {
+    const json = JSON.parse(text) as Record<string, unknown>;
+    const projectId = json.project_id,
+      clientEmail = json.client_email,
+      privateKey = json.private_key;
+    if (
+      typeof projectId !== 'string' ||
+      typeof clientEmail !== 'string' ||
+      typeof privateKey !== 'string' ||
+      !privateKey.includes('PRIVATE KEY')
+    )
+      return null;
+    return { projectId, clientEmail, privateKey };
+  } catch {
+    return null;
+  }
 }

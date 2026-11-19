@@ -1,3 +1,6 @@
+import '../../../reviews/data/review_dto.dart';
+import '../../../reviews/domain/review.dart';
+import '../../domain/entities/clinic_location.dart';
 import '../../domain/entities/doctor_discovery_options.dart';
 import '../../domain/entities/doctor_discovery_result.dart';
 import '../../domain/entities/doctor_search_page.dart';
@@ -62,6 +65,7 @@ class BackendDoctorDiscoveryParser {
       'profileImageUrl',
       'clinics',
       'availability',
+      'fees',
     };
     final detailKeys = {
       'firstName',
@@ -70,7 +74,11 @@ class BackendDoctorDiscoveryParser {
       'biography',
       'specialties',
     };
-    _keys(json, detail ? {...base, ...detailKeys} : base);
+    // `rating` is optional so older backends still parse.
+    _keys(
+      Map.of(json)..remove('rating'),
+      detail ? {...base, ...detailKeys} : base,
+    );
     final id = _id(json['id']);
     final displayName = _text(json['displayName'], 1, 160);
     final fullName = _text(json['fullName'], 1, 160);
@@ -114,6 +122,8 @@ class BackendDoctorDiscoveryParser {
       languages: languages,
       clinics: clinics,
       availability: availability(_map(json['availability'])),
+      fees: fees(_map(json['fees'])),
+      rating: json['rating'] == null ? null : _ratingOf(json['rating']),
       photoUrl: image,
       firstName: detail ? _text(json['firstName'], 1, 120) : null,
       lastName: detail ? _text(json['lastName'], 1, 120) : null,
@@ -300,6 +310,62 @@ class BackendDoctorDiscoveryParser {
       value is List<Object?> && value.length <= max
       ? value
       : throw const DoctorContractException();
+  ClinicLocation clinicLocation(Map<String, dynamic> json) {
+    _keys(json, {
+      'id',
+      'name',
+      'address',
+      'area',
+      'city',
+      'latitude',
+      'longitude',
+      'phoneNumber',
+    });
+    double? coordinate(Object? value, double limit) {
+      if (value == null) return null;
+      if (value is! num || value.abs() > limit) {
+        throw const DoctorContractException();
+      }
+      return value.toDouble();
+    }
+
+    final latitude = coordinate(json['latitude'], 90),
+        longitude = coordinate(json['longitude'], 180);
+    if ((latitude == null) != (longitude == null)) {
+      throw const DoctorContractException();
+    }
+    final phone = _nullableText(json['phoneNumber'], 24);
+    if (phone != null && !RegExp(r'^\+?[0-9]{7,15}$').hasMatch(phone)) {
+      throw const DoctorContractException();
+    }
+    return ClinicLocation(
+      id: _id(json['id']),
+      name: _text(json['name'], 1, 160),
+      address: _nullableText(json['address'], 300),
+      area: _nullableText(json['area'], 120),
+      city: _nullableText(json['city'], 80),
+      latitude: latitude,
+      longitude: longitude,
+      phoneNumber: phone,
+    );
+  }
+
+  static DoctorFees fees(Map<String, dynamic> json) {
+    _keys(json, {'firstVisitIqd', 'followUpIqd'});
+    return DoctorFees(
+      firstVisitIqd: _integer(json['firstVisitIqd'], 0, 5000000),
+      followUpIqd: _integer(json['followUpIqd'], 0, 5000000),
+    );
+  }
+
+  static DoctorRating _ratingOf(Object? value) {
+    try {
+      return ReviewDto.rating(_map(value));
+    } on FormatException {
+      throw const DoctorContractException();
+    }
+  }
+
   static void _keys(Map<String, dynamic> value, Set<String> expected) {
     if (value.keys.toSet().difference(expected).isNotEmpty ||
         expected.difference(value.keys.toSet()).isNotEmpty) {

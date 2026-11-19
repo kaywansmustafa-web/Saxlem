@@ -6,6 +6,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
+import {
+  baghdadDay,
+  baghdadMidnight,
+} from '../../../common/billing/billing-cycle';
 import { BACKEND_CONFIGURATION } from '../../../config/configuration.module';
 import type { BackendConfiguration } from '../../../config/environment';
 import {
@@ -79,23 +83,129 @@ export class BillingService {
     );
   }
 
+  createPlan(
+    access: BillingAccess,
+    input: { displayName: string; commissionAmountIqd: number },
+    requestId: string,
+  ) {
+    this.manage(access);
+    const displayName = input.displayName.trim();
+    if (!displayName || displayName.length > 80)
+      throw new BadRequestException('Give the plan a name (up to 80 letters).');
+    if (
+      !Number.isInteger(input.commissionAmountIqd) ||
+      input.commissionAmountIqd < 0 ||
+      input.commissionAmountIqd > 1_000_000
+    )
+      throw new BadRequestException(
+        'The charge must be a whole number from 0 to 1,000,000 IQD.',
+      );
+    return this.repository.createPlan(
+      access,
+      { displayName, commissionAmountIqd: input.commissionAmountIqd },
+      requestId,
+    );
+  }
+  setPlanStatus(
+    access: BillingAccess,
+    id: string,
+    status: 'active' | 'inactive',
+    requestId: string,
+  ) {
+    this.manage(access);
+    return this.repository.setPlanStatus(access, id, status, requestId);
+  }
+  async setup(access: BillingAccess, organizationId: string, now = new Date()) {
+    this.scope(access, organizationId);
+    const row = await this.repository.setup(organizationId, now);
+    if (!row) throw new NotFoundException('Organization was not found.');
+    return row;
+  }
+  /** Plans apply from the start of a Baghdad day, today or later. */
+  assignDoctorPlan(
+    access: BillingAccess,
+    organizationId: string,
+    doctorId: string,
+    planId: string | null,
+    day: string,
+    requestId: string,
+    now = new Date(),
+  ) {
+    this.manage(access);
+    return this.repository.assignDoctorPlan(
+      access,
+      organizationId,
+      doctorId,
+      planId,
+      this.fromDay(day, now),
+      requestId,
+    );
+  }
+  async setCycleStart(
+    access: BillingAccess,
+    organizationId: string,
+    day: string,
+    requestId: string,
+    now = new Date(),
+  ) {
+    this.manage(access);
+    let start: Date;
+    try {
+      start = baghdadMidnight(day);
+    } catch {
+      throw new BadRequestException('Use a date like 2026-11-17.');
+    }
+    if (start > now)
+      throw new BadRequestException('The start date cannot be in the future.');
+    await this.repository.setCycleStart(access, organizationId, day, requestId);
+    return this.setup(access, organizationId, now);
+  }
+  creditCommission(
+    access: BillingAccess,
+    id: string,
+    reason: string,
+    requestId: string,
+  ) {
+    this.manage(access);
+    const text = reason.trim();
+    if (!text || text.length > 500)
+      throw new BadRequestException('Write why this charge is credited.');
+    return this.repository.creditCommission(access, id, text, requestId);
+  }
+  /** Day-based plan changes for the Owner Portal: from that Baghdad day. */
+  fromDay(day: string, now = new Date()) {
+    let start: Date;
+    try {
+      start = baghdadMidnight(day);
+    } catch {
+      throw new BadRequestException('Use a date like 2026-11-17.');
+    }
+    if (start < baghdadMidnight(baghdadDay(now)))
+      throw new BadRequestException(
+        'Plan changes start today or later; past charges never change.',
+      );
+    return start;
+  }
+
   async commissions(
     access: BillingAccess,
     organizationId: string,
     pageSize: number,
     cursor?: string,
+    doctorId?: string,
   ) {
     this.scope(access, organizationId);
     if (!Number.isInteger(pageSize) || pageSize < 1 || pageSize > 100)
       throw new BadRequestException(
         'Billing page size must be between 1 and 100.',
       );
-    const binding = `${access.actorId}:${organizationId}:${access.clinicId ?? '*'}:${pageSize}`;
+    const binding = `${access.actorId}:${organizationId}:${access.clinicId ?? '*'}:${doctorId ?? '*'}:${pageSize}`;
     const page = await this.repository.commissions(
       access,
       organizationId,
       pageSize,
       cursor ? this.decode(cursor, binding) : undefined,
+      doctorId,
     );
     return Object.freeze({
       items: page.items,
@@ -103,9 +213,9 @@ export class BillingService {
     });
   }
 
-  statements(access: BillingAccess, organizationId: string) {
+  statements(access: BillingAccess, organizationId: string, doctorId?: string) {
     this.scope(access, organizationId);
-    return this.repository.statements(access, organizationId);
+    return this.repository.statements(access, organizationId, doctorId);
   }
   async statement(access: BillingAccess, id: string) {
     this.read(access);
@@ -113,16 +223,19 @@ export class BillingService {
     if (!row) throw new NotFoundException('Billing statement was not found.');
     return row;
   }
-  currentStatement(
+  /** One running statement per doctor: each doctor is billed separately. */
+  currentStatements(
     access: BillingAccess,
     organizationId: string,
+    doctorId?: string,
     now = new Date(),
   ) {
     this.scope(access, organizationId);
-    return this.repository.currentStatement(
+    return this.repository.currentStatements(
       access,
       organizationId,
       this.period(now),
+      doctorId,
     );
   }
   finalize(
@@ -145,6 +258,12 @@ export class BillingService {
     );
   }
 
+  private manage(access: BillingAccess) {
+    if (!access.platformAdministrator)
+      throw new ForbiddenException(
+        'Billing plan management requires platform administration.',
+      );
+  }
   private read(access: BillingAccess) {
     if (!access.platformAdministrator && !access.organizationId)
       throw new ForbiddenException('Billing access requires an organization.');

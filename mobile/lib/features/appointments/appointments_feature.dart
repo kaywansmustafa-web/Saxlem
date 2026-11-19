@@ -1,3 +1,4 @@
+import '../discover/domain/entities/clinic_location.dart';
 import 'package:flutter/material.dart';
 import '../discover/discover_feature.dart';
 import 'domain/repositories/patient_appointments_repository.dart';
@@ -71,6 +72,10 @@ class _AppointmentsFeatureState extends State<AppointmentsFeature> {
     arrivalRepository: widget.arrivalRepository,
     liveQueueRepository: widget.liveQueueRepository,
     notificationSignals: widget.notificationSignals,
+    clinicLocations: switch (widget.doctorDiscoveryRepository) {
+      final ClinicLocationSource source => source,
+      _ => null,
+    },
     onAppointmentsChanged: () => controller.load(
       widget.profilesController?.activeProfileId ?? PatientProfileId.me,
     ),

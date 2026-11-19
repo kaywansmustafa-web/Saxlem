@@ -162,6 +162,44 @@ export class ApiErrorEnvelopeDto {
   @ApiProperty({ type: ApiErrorBodyDto }) error!: ApiErrorBodyDto;
 }
 
+export class ClinicLocationParamsDto {
+  @ApiProperty({ format: 'uuid' }) @IsUUID() clinicId!: string;
+}
+
+export class ClinicLocationResponseDto {
+  @ApiProperty({ format: 'uuid' }) id!: string;
+  @ApiProperty() name!: string;
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    example: 'Kurdistan St, near the Grand Bazaar',
+  })
+  address!: string | null;
+  @ApiProperty({ type: String, nullable: true, example: 'Nakhoshkhana' })
+  area!: string | null;
+  @ApiProperty({ type: String, nullable: true, example: 'Duhok' })
+  city!: string | null;
+  @ApiProperty({ type: Number, nullable: true, example: 36.8669 })
+  latitude!: number | null;
+  @ApiProperty({ type: Number, nullable: true, example: 42.9886 })
+  longitude!: number | null;
+  @ApiProperty({ type: String, nullable: true, example: '+9647501234567' })
+  phoneNumber!: string | null;
+}
+
+export class DoctorFeesResponseDto {
+  @ApiProperty({ type: 'integer', minimum: 0, example: 25000 })
+  firstVisitIqd!: number;
+  @ApiProperty({ type: 'integer', minimum: 0, example: 15000 })
+  followUpIqd!: number;
+}
+
+export class DoctorRatingResponseDto {
+  @ApiProperty({ example: 4.8, description: 'One decimal; 0 with no reviews.' })
+  average!: number;
+  @ApiProperty({ type: 'integer', minimum: 0 }) count!: number;
+}
+
 export class DoctorListItemResponseDto {
   @ApiProperty({ format: 'uuid' }) id!: string;
   @ApiProperty({ example: 'Dr. Shilan Ahmed' }) displayName!: string;
@@ -191,6 +229,16 @@ export class DoctorListItemResponseDto {
   clinics!: DoctorClinicResponseDto[];
   @ApiProperty({ type: DoctorAvailabilityResponseDto })
   availability!: DoctorAvailabilityResponseDto;
+  @ApiProperty({
+    type: DoctorFeesResponseDto,
+    description: 'What the patient pays at this doctor, in IQD.',
+  })
+  fees!: DoctorFeesResponseDto;
+  @ApiProperty({
+    type: DoctorRatingResponseDto,
+    description: 'Verified reviews from patients who had a visit.',
+  })
+  rating!: DoctorRatingResponseDto;
 }
 
 export class DoctorDetailResponseDto extends DoctorListItemResponseDto {
@@ -219,6 +267,7 @@ export class DoctorProfessionalProfileResponseDto {
     string | null;
   @ApiProperty({ type: SpecialtyResponseDto, isArray: true })
   specialties!: SpecialtyResponseDto[];
+  @ApiProperty({ type: DoctorFeesResponseDto }) fees!: DoctorFeesResponseDto;
 }
 
 export class DoctorPageResponseDto {

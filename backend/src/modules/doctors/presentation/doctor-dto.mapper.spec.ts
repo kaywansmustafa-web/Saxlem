@@ -12,6 +12,8 @@ const doctor: DoctorProjection = {
   status: 'active',
   licenseNumber: 'KRI-123',
   yearsOfExperience: 10,
+  consultationFeeIqd: null,
+  followUpFeeIqd: null,
   biography: 'Professional biography',
   languages: ['badiniKurdish'],
   profilePhotoKey: 'private/storage/key',
@@ -84,5 +86,25 @@ describe('DoctorDtoMapper', () => {
       'createdAt',
     ])
       expect(JSON.stringify(value)).not.toContain(forbidden);
+  });
+  it("shows the doctor's own fees, else the platform default", () => {
+    const mapper = new DoctorDtoMapper({ appointmentFoundationFeeIqd: 20000 });
+    expect(
+      mapper.fees({ consultationFeeIqd: null, followUpFeeIqd: null }),
+    ).toEqual({ firstVisitIqd: 20000, followUpIqd: 20000 });
+    expect(
+      mapper.fees({ consultationFeeIqd: 30000, followUpFeeIqd: null }),
+    ).toEqual({ firstVisitIqd: 30000, followUpIqd: 30000 });
+    expect(
+      mapper.fees({ consultationFeeIqd: 30000, followUpFeeIqd: 15000 }),
+    ).toEqual({ firstVisitIqd: 30000, followUpIqd: 15000 });
+  });
+  it('shows verified reviews as an average and a count', () => {
+    const mapper = new DoctorDtoMapper();
+    expect(mapper.rating({ reviewCount: 3, reviewSum: 14 })).toEqual({
+      average: 4.7,
+      count: 3,
+    });
+    expect(mapper.rating({})).toEqual({ average: 0, count: 0 });
   });
 });

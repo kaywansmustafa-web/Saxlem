@@ -5,10 +5,13 @@ import 'package:saxlem_app/design_system/design_system.dart';
 
 void main() {
   test('foundation tokens preserve the approved contracts', () {
-    expect(SaxlemColors.light.brandPrimary, const Color(0xFF0B57D0));
-    expect(SaxlemColors.light.brandSecondary, const Color(0xFF087F8C));
+    expect(SaxlemColors.light.brandPrimary, const Color(0xFF2950F5));
+    expect(SaxlemColors.light.brandSecondary, const Color(0xFF0A7F7A));
     expect(SaxlemSpacing.one, 8);
-    expect(SaxlemRadii.card, 24);
+    expect(SaxlemRadii.card, 20);
+    expect(SaxlemRadii.hero, 28);
+    expect(SaxlemColors.light.auraStart, const Color(0xFF3B6BFF));
+    expect(SaxlemColors.light.auraEnd, const Color(0xFF14C9C4));
     expect(SaxlemSizes.minimumTouchTarget, 48);
     expect(SaxlemButtonHierarchy.values, hasLength(3));
   });

@@ -26,7 +26,7 @@ class AppController extends ChangeNotifier {
   AuthSession session = const AuthSession.initializing();
   bool guestMode = false;
 
-  static const minimumSplashDuration = Duration(milliseconds: 1200);
+  static const minimumSplashDuration = Duration(milliseconds: 2000);
 
   Future<void> load() async {
     final startedAt = DateTime.now();
@@ -109,6 +109,23 @@ class AppController extends ChangeNotifier {
     guestMode = true;
     status = AppBootstrapStatus.ready;
     notifyListeners();
+  }
+
+  /// Changes the app language from Settings without leaving the session.
+  Future<bool> changeLocale(SupportedAppLocale locale) async {
+    if (savingLocale || selectedLocale == locale) return false;
+    savingLocale = true;
+    notifyListeners();
+    try {
+      await _localeRepository.save(locale);
+      selectedLocale = locale;
+      return true;
+    } catch (_) {
+      return false;
+    } finally {
+      savingLocale = false;
+      notifyListeners();
+    }
   }
 
   Future<void> logout() async {

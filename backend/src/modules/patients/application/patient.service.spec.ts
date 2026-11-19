@@ -4,7 +4,7 @@ import {
   ForbiddenException,
   ServiceUnavailableException,
 } from '@nestjs/common';
-import { PatientService } from './patient.service';
+import { normalizeIraqiMobile, PatientService } from './patient.service';
 import type { BackendConfiguration } from '../../../config/environment';
 import { PatientAuditPersistenceError } from '../domain/patient.errors';
 import type {
@@ -43,6 +43,7 @@ function repository(
   profiles: ProfileRecord[] = [self],
 ): jest.Mocked<PatientRepository> {
   return {
+    registerClinicPatient: jest.fn(),
     accountForUser: jest.fn().mockResolvedValue(account),
     profiles: jest.fn().mockResolvedValue(profiles),
     profile: jest
@@ -56,10 +57,63 @@ function repository(
     update: jest.fn(),
     archive: jest.fn(),
     activate: jest.fn(),
+    closeAccount: jest.fn().mockResolvedValue({ closed: true }),
   };
 }
 
+describe('normalizeIraqiMobile', () => {
+  it('accepts local, national and international forms', () => {
+    expect(normalizeIraqiMobile('0750 123 4567')).toBe('+9647501234567');
+    expect(normalizeIraqiMobile('+964 750 123 4567')).toBe('+9647501234567');
+    expect(normalizeIraqiMobile('7501234567')).toBe('+9647501234567');
+    expect(normalizeIraqiMobile('0662 123 456')).toBeNull();
+    expect(normalizeIraqiMobile('12345')).toBeNull();
+  });
+});
+
 describe('PatientService', () => {
+  it('registers clinic patients with a cleaned name and normalized phone', async () => {
+    const register = jest.fn().mockResolvedValue({
+      patientProfileId: 'p1',
+      displayName: 'Shilan Ahmed',
+      created: true,
+    });
+    const repo = { ...repository(), registerClinicPatient: register };
+    const access = { actorId: 'r', organizationId: 'o', clinicId: 'c' };
+    await service(repo).registerClinicPatient(
+      access,
+      {
+        firstName: '  Shilan ',
+        lastName: 'Ahmed',
+        phoneNumber: '0750-123-4567',
+        gender: 'female',
+      },
+      'req',
+    );
+    expect(register).toHaveBeenCalledWith(
+      access,
+      {
+        firstName: 'Shilan',
+        lastName: 'Ahmed',
+        phoneNumber: '+9647501234567',
+        gender: 'female',
+      },
+      'req',
+    );
+    await expect(
+      service(repo).registerClinicPatient(
+        access,
+        {
+          firstName: 'A',
+          lastName: 'B',
+          phoneNumber: '123',
+          gender: 'male',
+        },
+        'req',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
   it('projects self as me for Flutter compatibility', async () => {
     await expect(service().list('user')).resolves.toEqual([
       expect.objectContaining({ relationship: 'me', firstName: 'ژیان' }),
@@ -253,5 +307,27 @@ describe('PatientService', () => {
         'request-id',
       ),
     ).rejects.toBe(failure);
+  });
+  describe('closeAccount', () => {
+    it('closes the account when nothing is upcoming', async () => {
+      const repo = repository();
+      await service(repo).closeAccount('user-1', 'req-1');
+      expect(jest.mocked(repo).closeAccount.mock.calls[0]).toEqual([
+        account.id,
+        'user-1',
+        'req-1',
+        expect.any(Date),
+      ]);
+    });
+
+    it('refuses while visits are still booked', async () => {
+      const repo = repository();
+      repo.closeAccount.mockResolvedValue({ closed: false, upcoming: 2 });
+      await expect(
+        service(repo).closeAccount('user-1', 'req-1'),
+      ).rejects.toThrow(
+        'Cancel your upcoming appointments before deleting your account.',
+      );
+    });
   });
 });

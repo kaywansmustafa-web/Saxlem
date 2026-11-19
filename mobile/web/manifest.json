@@ -1,11 +1,11 @@
 {
-    "name": "saxlem_app",
-    "short_name": "saxlem_app",
+    "name": "Saxlem",
+    "short_name": "Saxlem",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#F5F7FB",
+    "theme_color": "#2950F5",
+    "description": "Find a doctor, book a visit, and know when it is your turn.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

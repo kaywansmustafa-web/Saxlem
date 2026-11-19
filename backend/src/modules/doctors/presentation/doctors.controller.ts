@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -22,6 +30,8 @@ import {
 import { RequireCapabilities } from '../../identity/presentation/require-capabilities.decorator';
 import {
   ApiErrorEnvelopeDto,
+  ClinicLocationParamsDto,
+  ClinicLocationResponseDto,
   DoctorDetailResponseDto,
   DoctorDiscoveryOptionsResponseDto,
   DoctorDiscoveryOptionsQueryDto,
@@ -76,6 +86,23 @@ export class DoctorsController {
       .then((page) => this.mapper.page(page));
   }
 
+  @Get('clinics/:clinicId/location')
+  @ApiOperation({
+    summary: "A clinic's address, map location and public phone",
+    description:
+      'For Directions and Call on doctor profiles and appointments. Only active clinics where an active doctor works.',
+  })
+  @ApiOkResponse({ type: ClinicLocationResponseDto })
+  @ApiNotFoundResponse({
+    description: 'Clinic was not found.',
+    type: ApiErrorEnvelopeDto,
+  })
+  clinicLocation(
+    @Param() params: ClinicLocationParamsDto,
+  ): Promise<ClinicLocationResponseDto> {
+    return this.doctors.clinicLocation(params.clinicId);
+  }
+
   @Get('discovery-options')
   @ApiOperation({
     summary: 'Get authoritative doctor discovery filter options',
@@ -91,6 +118,27 @@ export class DoctorsController {
     return this.doctors
       .discoveryOptions(this.access(request))
       .then((options) => this.mapper.discoveryOptions(options));
+  }
+
+  @Get('me')
+  @RequireCapabilities('doctor:workspace:read')
+  @ApiOperation({
+    summary: "The signed-in doctor's own record",
+    description:
+      'Lets a doctor workspace find its own doctor id, clinic and profile without searching the directory.',
+  })
+  @ApiOkResponse({ type: DoctorDetailResponseDto })
+  @ApiNotFoundResponse({
+    description: 'The signed-in staff account is not linked to a doctor.',
+    type: ApiErrorEnvelopeDto,
+  })
+  me(@Req() request: AuthenticatedRequest) {
+    const own = request.tenant?.ownDoctorId;
+    if (!own)
+      throw new NotFoundException('No doctor is linked to this account.');
+    return this.doctors
+      .get(this.access(request), own, request.requestId, 'details')
+      .then((doctor) => this.mapper.detail(doctor));
   }
 
   @Get(':id')

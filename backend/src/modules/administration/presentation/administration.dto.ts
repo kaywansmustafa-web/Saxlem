@@ -2,6 +2,7 @@ import { Transform, Type, type TransformFnParams } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsInt,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -10,6 +11,7 @@ import {
   MaxLength,
   Min,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 
 export class CreateOrganizationDto {
@@ -99,6 +101,61 @@ export class OrganizationResponseDto {
   @ApiProperty({ format: 'date-time' }) updatedAt!: string;
 }
 
+export class UpdateClinicLocationDto {
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 300 })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @MaxLength(300)
+  address?: string | null;
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 120 })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @MaxLength(120)
+  area?: string | null;
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 80 })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @MaxLength(80)
+  city?: string | null;
+  @ApiPropertyOptional({
+    type: Number,
+    nullable: true,
+    minimum: -90,
+    maximum: 90,
+  })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsNumber()
+  @Min(-90)
+  @Max(90)
+  latitude?: number | null;
+  @ApiPropertyOptional({
+    type: Number,
+    nullable: true,
+    minimum: -180,
+    maximum: 180,
+  })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsNumber()
+  @Min(-180)
+  @Max(180)
+  longitude?: number | null;
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    example: '+9647501234567',
+  })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @MaxLength(24)
+  phoneNumber?: string | null;
+}
+
 export class ClinicResponseDto {
   @ApiProperty({ format: 'uuid' }) id!: string;
   @ApiProperty({ format: 'uuid' }) organizationId!: string;
@@ -106,6 +163,12 @@ export class ClinicResponseDto {
   @ApiProperty() code!: string;
   @ApiProperty() timezone!: string;
   @ApiProperty({ enum: ['active', 'inactive'] }) status!: string;
+  @ApiProperty({ type: String, nullable: true }) address!: string | null;
+  @ApiProperty({ type: String, nullable: true }) area!: string | null;
+  @ApiProperty({ type: String, nullable: true }) city!: string | null;
+  @ApiProperty({ type: Number, nullable: true }) latitude!: number | null;
+  @ApiProperty({ type: Number, nullable: true }) longitude!: number | null;
+  @ApiProperty({ type: String, nullable: true }) phoneNumber!: string | null;
   @ApiProperty({ format: 'date-time' }) createdAt!: string;
   @ApiProperty({ format: 'date-time' }) updatedAt!: string;
 }

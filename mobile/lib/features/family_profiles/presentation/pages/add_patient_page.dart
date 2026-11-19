@@ -1,3 +1,4 @@
+import '../../../../core/formatting/clinic_format.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../../core/models/patient_profile.dart';
@@ -15,109 +16,125 @@ class _AddPatientPageState extends State<AddPatientPage> {
   String first = '', last = '';
   PatientRelationship relationship = PatientRelationship.other;
   PatientGender gender = PatientGender.unspecified;
-  DateTime birth = DateTime(2000, 1, 1);
+
+  /// Never guessed: the family member's real date of birth, chosen on purpose.
+  DateTime? birth;
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text(context.l10n.addPatient)),
-    body: SaxlemResponsiveContent(
-      child: ListView(
-        padding: const EdgeInsetsDirectional.symmetric(
-          vertical: SaxlemSpacing.three,
-        ),
-        children: [
-          SaxlemTextField(
-            label: context.l10n.firstName,
-            onChanged: (v) => setState(() => first = v),
+    body: SaxlemAuraBackdrop(
+      strength: .55,
+      height: 300,
+      child: SaxlemResponsiveContent(
+        child: ListView(
+          padding: const EdgeInsetsDirectional.symmetric(
+            vertical: SaxlemSpacing.three,
           ),
-          const SizedBox(height: SaxlemSpacing.two),
-          SaxlemTextField(
-            label: context.l10n.lastName,
-            onChanged: (v) => setState(() => last = v),
-          ),
-          const SizedBox(height: SaxlemSpacing.two),
-          SaxlemCard(
-            onTap: () async {
-              final value = await Navigator.of(context)
-                  .push<PatientRelationship>(
-                    MaterialPageRoute(
-                      builder: (_) => _OptionPage(
-                        title: context.l10n.relationship,
-                        values: PatientRelationship.values
-                            .where((e) => e != PatientRelationship.me)
-                            .toList(),
-                        label: (e) => context.l10n.patientRelationship(e.name),
-                      ),
-                    ),
-                  );
-              if (value != null) setState(() => relationship = value);
-            },
-            child: Text(
-              '${context.l10n.relationship}: ${context.l10n.patientRelationship(relationship.name)}',
-            ),
-          ),
-          const SizedBox(height: SaxlemSpacing.two),
-          SaxlemCard(
-            onTap: () async {
-              final value = await Navigator.of(context).push<PatientGender>(
-                MaterialPageRoute(
-                  builder: (_) => _OptionPage(
-                    title: context.l10n.gender,
-                    values: PatientGender.values,
-                    label: (e) => context.l10n.patientGender(e.name),
-                  ),
-                ),
-              );
-              if (value != null) setState(() => gender = value);
-            },
-            child: Text(
-              '${context.l10n.gender}: ${context.l10n.patientGender(gender.name)}',
-            ),
-          ),
-          const SizedBox(height: SaxlemSpacing.two),
-          SaxlemCard(
-            onTap: () async {
-              final value = await showDatePicker(
-                context: context,
-                firstDate: DateTime(1900),
-                lastDate: DateTime.now(),
-                initialDate: birth,
-              );
-              if (value != null) setState(() => birth = value);
-            },
-            child: Text(
-              '${context.l10n.dateOfBirth}: ${birth.year}-${birth.month}-${birth.day}',
-            ),
-          ),
-          const SizedBox(height: SaxlemSpacing.three),
-          if (widget.controller.failure != null) ...[
-            Semantics(
-              liveRegion: true,
-              child: Text(context.l10n.profileCreationFailed),
+          children: [
+            SaxlemTextField(
+              label: context.l10n.firstName,
+              onChanged: (v) => setState(() => first = v),
             ),
             const SizedBox(height: SaxlemSpacing.two),
-          ],
-          SaxlemButton(
-            label: widget.controller.status == PatientProfilesStatus.submitting
-                ? context.l10n.creatingPatientProfile
-                : context.l10n.addPatient,
-            expand: true,
-            onPressed:
-                first.trim().isEmpty ||
-                    last.trim().isEmpty ||
-                    widget.controller.status == PatientProfilesStatus.submitting
-                ? null
-                : () async {
-                    final success = await widget.controller.add(
-                      relationship: relationship,
-                      firstName: first,
-                      lastName: last,
-                      gender: gender,
-                      dateOfBirth: birth,
+            SaxlemTextField(
+              label: context.l10n.lastName,
+              onChanged: (v) => setState(() => last = v),
+            ),
+            const SizedBox(height: SaxlemSpacing.two),
+            SaxlemPickerField(
+              label: context.l10n.relationship,
+              value: context.l10n.patientRelationship(relationship.name),
+              onTap: () async {
+                final value = await Navigator.of(context)
+                    .push<PatientRelationship>(
+                      MaterialPageRoute(
+                        builder: (_) => _OptionPage(
+                          title: context.l10n.relationship,
+                          values: PatientRelationship.values
+                              .where((e) => e != PatientRelationship.me)
+                              .toList(),
+                          label: (e) =>
+                              context.l10n.patientRelationship(e.name),
+                        ),
+                      ),
                     );
-                    if (context.mounted && success) Navigator.pop(context);
-                  },
-          ),
-        ],
+                if (value != null) setState(() => relationship = value);
+              },
+            ),
+            const SizedBox(height: SaxlemSpacing.two),
+            SaxlemPickerField(
+              label: context.l10n.gender,
+              value: context.l10n.patientGender(gender.name),
+              onTap: () async {
+                final value = await Navigator.of(context).push<PatientGender>(
+                  MaterialPageRoute(
+                    builder: (_) => _OptionPage(
+                      title: context.l10n.gender,
+                      values: PatientGender.values,
+                      label: (e) => context.l10n.patientGender(e.name),
+                    ),
+                  ),
+                );
+                if (value != null) setState(() => gender = value);
+              },
+            ),
+            const SizedBox(height: SaxlemSpacing.two),
+            SaxlemPickerField(
+              label: context.l10n.dateOfBirth,
+              value: birth == null
+                  ? context.l10n.chooseDate
+                  : ClinicFormat.day(
+                      birth!,
+                      Localizations.localeOf(context).languageCode,
+                    ),
+              icon: Icons.calendar_today_rounded,
+              onTap: () async {
+                final value = await showDatePicker(
+                  context: context,
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime.now(),
+                  initialDate: birth ?? DateTime(DateTime.now().year - 30),
+                  initialDatePickerMode: birth == null
+                      ? DatePickerMode.year
+                      : DatePickerMode.day,
+                );
+                if (value != null) setState(() => birth = value);
+              },
+            ),
+            const SizedBox(height: SaxlemSpacing.three),
+            if (widget.controller.failure != null) ...[
+              Semantics(
+                liveRegion: true,
+                child: Text(context.l10n.profileCreationFailed),
+              ),
+              const SizedBox(height: SaxlemSpacing.two),
+            ],
+            SaxlemButton(
+              label:
+                  widget.controller.status == PatientProfilesStatus.submitting
+                  ? context.l10n.creatingPatientProfile
+                  : context.l10n.addPatient,
+              expand: true,
+              onPressed:
+                  first.trim().isEmpty ||
+                      last.trim().isEmpty ||
+                      birth == null ||
+                      widget.controller.status ==
+                          PatientProfilesStatus.submitting
+                  ? null
+                  : () async {
+                      final success = await widget.controller.add(
+                        relationship: relationship,
+                        firstName: first,
+                        lastName: last,
+                        gender: gender,
+                        dateOfBirth: birth!,
+                      );
+                      if (context.mounted && success) Navigator.pop(context);
+                    },
+            ),
+          ],
+        ),
       ),
     ),
   );
@@ -135,24 +152,28 @@ class _OptionPage<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text(title)),
-    body: SaxlemResponsiveContent(
-      child: ListView(
-        padding: const EdgeInsetsDirectional.symmetric(
-          vertical: SaxlemSpacing.three,
+    body: SaxlemAuraBackdrop(
+      strength: .55,
+      height: 300,
+      child: SaxlemResponsiveContent(
+        child: ListView(
+          padding: const EdgeInsetsDirectional.symmetric(
+            vertical: SaxlemSpacing.three,
+          ),
+          children: values
+              .map(
+                (value) => Padding(
+                  padding: const EdgeInsetsDirectional.only(
+                    bottom: SaxlemSpacing.one,
+                  ),
+                  child: SaxlemCard(
+                    onTap: () => Navigator.pop(context, value),
+                    child: Text(label(value)),
+                  ),
+                ),
+              )
+              .toList(),
         ),
-        children: values
-            .map(
-              (value) => Padding(
-                padding: const EdgeInsetsDirectional.only(
-                  bottom: SaxlemSpacing.one,
-                ),
-                child: SaxlemCard(
-                  onTap: () => Navigator.pop(context, value),
-                  child: Text(label(value)),
-                ),
-              ),
-            )
-            .toList(),
       ),
     ),
   );

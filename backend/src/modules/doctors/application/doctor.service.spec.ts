@@ -19,6 +19,8 @@ const doctor: DoctorProjection = {
   status: 'active',
   licenseNumber: 'KRI-1234',
   yearsOfExperience: 12,
+  consultationFeeIqd: null,
+  followUpFeeIqd: null,
   biography: '',
   languages: ['badiniKurdish'],
   profilePhotoKey: null,
@@ -61,6 +63,7 @@ function repository(): jest.Mocked<DoctorRepository> {
     }),
     find: jest.fn().mockResolvedValue(doctor),
     recordView: jest.fn().mockResolvedValue(undefined),
+    clinicLocation: jest.fn().mockResolvedValue(null),
   };
 }
 
@@ -125,12 +128,15 @@ describe('DoctorService', () => {
       organizationId: undefined,
       clinicId: undefined,
       clinicAssignmentVisibility: 'active',
+      // Patients never see doctors hidden for an overdue balance.
+      forPatients: true,
     });
     await service.discoveryOptions(staff);
     expect(repo.discoveryOptions.mock.calls.at(-1)?.[0]).toEqual({
       organizationId: 'org',
       clinicId: 'clinic',
       clinicAssignmentVisibility: 'active',
+      forPatients: false,
     });
   });
 

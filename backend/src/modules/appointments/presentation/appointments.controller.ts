@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Headers,
+  HttpCode,
   Param,
   Patch,
   Post,
@@ -26,6 +27,10 @@ import {
 } from '@nestjs/swagger';
 import { ApiErrorEnvelopeDto } from '../../doctors/presentation/doctor.dto';
 import { AppointmentService } from '../application/appointment.service';
+import {
+  DepartureService,
+  PARK_AND_WALK_MINUTES,
+} from '../application/departure.service';
 import type { AppointmentAccess } from '../domain/appointment';
 import {
   JwtAuthGuard,
@@ -43,6 +48,12 @@ import {
   RescheduleAppointmentDto,
   UpdateAppointmentDto,
 } from './appointment.dto';
+import {
+  DepartureRequestDto,
+  DepartureResponseDto,
+  OnTheWayResponseDto,
+} from './departure.dto';
+import { DayBoardQueryDto, DayBoardResponseDto } from './day-board.dto';
 @ApiTags('appointments')
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ type: ApiErrorEnvelopeDto })
@@ -54,6 +65,7 @@ export class AppointmentsController {
   constructor(
     private readonly service: AppointmentService,
     private readonly mapper: AppointmentDtoMapper,
+    private readonly departures: DepartureService,
   ) {}
   @Get()
   @RequireCapabilities('appointment:read')
@@ -75,6 +87,21 @@ export class AppointmentsController {
       items: page.items.map((x) => this.mapper.map(x)),
       nextCursor: page.nextCursor,
     };
+  }
+  @Get('board')
+  @RequireCapabilities('appointment:slots:read')
+  @ApiOperation({
+    summary: "Reception's day board for the signed-in clinic",
+    description:
+      'Every active doctor at the clinic with each slot of the day marked free, booked (with origin: app, phone or walk-in), unavailable (break, leave, holiday) or past. Built from the same schedule and conflict rules as booking.',
+  })
+  @ApiOkResponse({ type: DayBoardResponseDto })
+  @ApiServiceUnavailableResponse({
+    type: ApiErrorEnvelopeDto,
+    description: 'Mandatory staff read audit is unavailable.',
+  })
+  board(@Req() req: AuthenticatedRequest, @Query() query: DayBoardQueryDto) {
+    return this.service.dayBoard(this.access(req), query.date, req.requestId);
   }
   @Get(':id')
   @RequireCapabilities('appointment:read')
@@ -247,6 +274,59 @@ export class AppointmentsController {
       ),
     );
   }
+  @Post(':id/departure')
+  @HttpCode(200)
+  @RequireCapabilities('appointment:read')
+  @ApiOperation({
+    summary: 'When should I leave? (patients)',
+    description:
+      "Drive time from the patient's position to the clinic, with traffic when available. The position is used only for this answer: never stored or logged.",
+  })
+  @ApiOkResponse({ type: DepartureResponseDto })
+  @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
+  async departure(
+    @Req() req: AuthenticatedRequest,
+    @Param() p: AppointmentParamsDto,
+    @Body() body: DepartureRequestDto,
+  ): Promise<DepartureResponseDto> {
+    const plan = await this.departures.plan(this.access(req), p.id, body);
+    return {
+      leaveAt: plan.leaveAt.toISOString(),
+      arriveBy: plan.arriveBy.toISOString(),
+      travelSeconds: plan.travelSeconds,
+      distanceMeters: plan.distanceMeters,
+      source: plan.source,
+      parkAndWalkMinutes: PARK_AND_WALK_MINUTES,
+      computedAt: plan.computedAt.toISOString(),
+    };
+  }
+
+  @Post(':id/on-the-way')
+  @HttpCode(200)
+  @RequireCapabilities('appointment:read')
+  @ApiOperation({
+    summary: "I'm on my way (patients)",
+    description:
+      'Tells reception when to expect the patient. The position is used only to work out the drive and is never stored; Saxlem keeps the routed drive time until the patient checks in, then only as anonymous drive-time totals. Accepted from 6 hours before the visit until it ends, before check-in.',
+  })
+  @ApiOkResponse({ type: OnTheWayResponseDto })
+  @ApiNotFoundResponse({ type: ApiErrorEnvelopeDto })
+  @ApiConflictResponse({ type: ApiErrorEnvelopeDto })
+  async onTheWay(
+    @Req() req: AuthenticatedRequest,
+    @Param() p: AppointmentParamsDto,
+    @Body() body: DepartureRequestDto,
+  ): Promise<OnTheWayResponseDto> {
+    const trip = await this.departures.onTheWay(this.access(req), p.id, body);
+    return {
+      onTheWayAt: trip.onTheWayAt.toISOString(),
+      arrivalEta: trip.arrivalEta.toISOString(),
+      travelSeconds: trip.travelSeconds,
+      distanceMeters: trip.distanceMeters,
+      source: trip.source,
+    };
+  }
+
   private access(req: AuthenticatedRequest): AppointmentAccess {
     if (!req.principal)
       throw new Error('Authentication guard invariant is broken.');
@@ -257,6 +337,7 @@ export class AppointmentsController {
       platformAdministrator: req.principal.kind === 'platformAdministrator',
       organizationId: req.tenant?.organizationId,
       clinicId: req.tenant?.clinicId,
+      doctorIds: req.tenant?.doctorIds,
     };
   }
 }

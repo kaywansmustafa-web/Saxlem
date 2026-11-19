@@ -1,19 +1,12 @@
+import '../../../core/formatting/clinic_format.dart';
+
 class BookingCopy {
   const BookingCopy();
-  String fee(int v) {
-    final s = v.toString();
-    final b = StringBuffer();
-    for (var i = 0; i < s.length; i++) {
-      if (i > 0 && (s.length - i) % 3 == 0) b.write(',');
-      b.write(s[i]);
-    }
-    return '$b IQD';
-  }
+  String fee(int v) => '${ClinicFormat.number(v)} IQD';
 
-  String date(DateTime d, {String? timezone}) {
-    final value = _clinicTime(d, timezone);
-    return '${value.day}/${value.month}/${value.year}';
-  }
+  /// "10 Aug 2030" in the reader's language (never the ambiguous 10/8/2030).
+  String date(DateTime d, {String? timezone, String languageCode = 'en'}) =>
+      ClinicFormat.day(_clinicTime(d, timezone), languageCode);
 
   String time(DateTime d, {String? timezone}) {
     final value = _clinicTime(d, timezone);

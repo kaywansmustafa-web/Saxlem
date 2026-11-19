@@ -353,7 +353,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String iqdAmount(int amount) {
+  String iqdAmount(String amount) {
     return '$amount IQD';
   }
 
@@ -1061,4 +1061,922 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get queueClosedBody =>
       'For assistance with your appointment, please contact reception.';
+
+  @override
+  String get itsYourTurn => 'It\'s your turn';
+
+  @override
+  String get aheadShort => 'ahead';
+
+  @override
+  String get queueStepBooked => 'Booked';
+
+  @override
+  String get queueStepArrived => 'Arrived';
+
+  @override
+  String get queueStepWaiting => 'Waiting';
+
+  @override
+  String get queueStepYourTurn => 'Your turn';
+
+  @override
+  String get withDoctorTitle => 'You\'re with the doctor';
+
+  @override
+  String get visitCompleteTitle => 'Visit complete';
+
+  @override
+  String get calledNoResponseTitle => 'We called your number';
+
+  @override
+  String get notCheckedInTitle => 'You\'re booked for today';
+
+  @override
+  String get removedFromQueueTitle => 'You\'re no longer in this queue';
+
+  @override
+  String waitRange(int min, int max, String unit) {
+    return 'About $min–$max $unit';
+  }
+
+  @override
+  String get doctorLabel => 'Doctor';
+
+  @override
+  String get familyMembersTitle => 'Family members';
+
+  @override
+  String get paymentHowToPay => 'How would you like to pay?';
+
+  @override
+  String get paymentAtCounterTitle => 'Pay at the clinic';
+
+  @override
+  String get paymentAtCounterBody => 'Pay the receptionist when you arrive.';
+
+  @override
+  String get paymentOnlineTitle => 'Pay now in the app';
+
+  @override
+  String get paymentOnlineBody =>
+      'Pay securely with your FIB app and skip the counter.';
+
+  @override
+  String get paymentOnlineUnavailable =>
+      'This clinic takes payment at the clinic only for now.';
+
+  @override
+  String get paymentRecommended => 'Fastest';
+
+  @override
+  String get paymentConfirmAndPay => 'Confirm and pay';
+
+  @override
+  String get paymentTitle => 'Payment';
+
+  @override
+  String get paymentAmountDue => 'Amount to pay';
+
+  @override
+  String get paymentOpenFib => 'Open FIB to pay';
+
+  @override
+  String get paymentScanQr => 'Paying from another phone? Scan this code.';
+
+  @override
+  String get paymentWaiting => 'Waiting for your payment…';
+
+  @override
+  String get paymentWaitingBody =>
+      'Approve the payment in FIB, then come back. This screen updates on its own.';
+
+  @override
+  String get paymentPaidTitle => 'Payment received';
+
+  @override
+  String get paymentPaidBody =>
+      'You\'re all set. There\'s nothing to pay at the clinic.';
+
+  @override
+  String get paymentExpiredTitle => 'This payment wasn\'t completed';
+
+  @override
+  String get paymentExpiredBody =>
+      'Start a new payment, or pay at the clinic. Your appointment is still booked.';
+
+  @override
+  String get paymentTryAgain => 'Start a new payment';
+
+  @override
+  String get paymentSwitchToCounter => 'Pay at the clinic instead';
+
+  @override
+  String get paymentLater => 'I\'ll pay later';
+
+  @override
+  String get paymentStatusDueAtCounter => 'Pay at clinic';
+
+  @override
+  String get paymentStatusPending => 'Payment pending';
+
+  @override
+  String get paymentStatusPaid => 'Paid';
+
+  @override
+  String get paymentStatusRefunded => 'Refunded';
+
+  @override
+  String get paymentStatusRefundPending => 'Refund in progress';
+
+  @override
+  String get paymentStatusRefundFailed => 'Clinic will refund you';
+
+  @override
+  String get paymentStatusExpired => 'Payment not completed';
+
+  @override
+  String get paymentStatusVoid => 'Nothing to pay';
+
+  @override
+  String get paymentPayNow => 'Pay now';
+
+  @override
+  String get paymentProblemOffline =>
+      'You\'re offline. Check your connection and try again.';
+
+  @override
+  String get paymentProblemUnavailable =>
+      'Online payment is unavailable right now. You can pay at the clinic.';
+
+  @override
+  String get paymentProblemNotAccepted => 'This payment can\'t be changed now.';
+
+  @override
+  String get paymentProblemGeneric =>
+      'Something went wrong with the payment. Your appointment is still booked.';
+
+  @override
+  String get paymentBookedPayNext =>
+      'Booked! One last step: pay for your visit.';
+
+  @override
+  String get paymentSecureNote =>
+      'You pay inside the FIB app. Saxlem never sees your card or bank details.';
+
+  @override
+  String paymentLinkValidUntil(String time) {
+    return 'Link valid until $time';
+  }
+
+  @override
+  String get paymentFibNotOpened =>
+      'We couldn\'t open FIB. Install or update the FIB app, or scan the QR code from another phone.';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get appLanguage => 'App language';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountTitle => 'Delete your Saxlem account?';
+
+  @override
+  String get deleteAccountBody =>
+      'You\'ll be signed out on every device and your family profiles will be removed from the app. Clinics keep the record of visits you already had.';
+
+  @override
+  String get deleteAccountConfirm => 'Delete my account';
+
+  @override
+  String get deleteAccountUpcoming =>
+      'Cancel your upcoming appointments first, then try again.';
+
+  @override
+  String get deleteAccountFailed =>
+      'We couldn\'t delete your account. Check your connection and try again.';
+
+  @override
+  String get cancelAction => 'Cancel';
+
+  @override
+  String get languageSaved => 'Language changed';
+
+  @override
+  String get specialtyDentist => 'Dentist';
+
+  @override
+  String get specialtyCardiology => 'Cardiology';
+
+  @override
+  String get specialtyPediatrics => 'Pediatrics';
+
+  @override
+  String get specialtyEye => 'Eye';
+
+  @override
+  String get specialtyNeurology => 'Neurology';
+
+  @override
+  String browseSpecialty(String specialty) {
+    return 'Browse $specialty doctors';
+  }
+
+  @override
+  String get nextVisitTitle => 'Your next visit';
+
+  @override
+  String get todayChip => 'Today';
+
+  @override
+  String get tomorrowChip => 'Tomorrow';
+
+  @override
+  String get howItWorks => 'How Saxlem works';
+
+  @override
+  String get stepBook => 'Book in the app';
+
+  @override
+  String get stepCheckIn => 'Check in at reception';
+
+  @override
+  String get stepCalled => 'Get called on your phone';
+
+  @override
+  String get alertsSubtitle => 'Queue calls and booking updates';
+
+  @override
+  String get slotMorning => 'Morning';
+
+  @override
+  String get slotAfternoon => 'Afternoon';
+
+  @override
+  String get slotEvening => 'Evening';
+
+  @override
+  String get ntfBookedTitle => 'Booking confirmed';
+
+  @override
+  String get ntfBookedNext =>
+      'We\'ll remind you the day before and shortly before your visit.';
+
+  @override
+  String get ntfReminderDayTitle => 'Your visit is tomorrow';
+
+  @override
+  String get ntfReminderSoonTitle => 'Your visit is soon';
+
+  @override
+  String get ntfReminderNext =>
+      'Check in at reception when you arrive. Can\'t come? Cancel in Appointments so someone else can have the time.';
+
+  @override
+  String get ntfCancelledTitle => 'The clinic cancelled your visit';
+
+  @override
+  String get ntfCancelledNext =>
+      'Book another time with the same doctor or another one.';
+
+  @override
+  String get ntfRescheduledTitle => 'Your visit has a new time';
+
+  @override
+  String get ntfRescheduledNext =>
+      'If the new time doesn\'t suit you, change or cancel it in Appointments.';
+
+  @override
+  String get ntfAlmostTitle => 'Almost your turn';
+
+  @override
+  String get ntfNextTitle => 'You\'re next';
+
+  @override
+  String get ntfAlmostNext =>
+      'Make your way to the waiting area and stay close.';
+
+  @override
+  String get ntfQueueOpenedTitle => 'The queue is open';
+
+  @override
+  String get ntfFollowQueue => 'Follow your place in the live queue.';
+
+  @override
+  String get ntfPausedTitle => 'The queue is paused';
+
+  @override
+  String get ntfPausedNext =>
+      'Your place is kept. We\'ll tell you when it moves again.';
+
+  @override
+  String get ntfResumedTitle => 'The queue is moving again';
+
+  @override
+  String get ntfClosedTitle => 'The queue is closed';
+
+  @override
+  String get ntfClosedNext =>
+      'If you weren\'t seen, ask the clinic\'s reception.';
+
+  @override
+  String get ntfEnqueuedTitle => 'You\'re in the queue';
+
+  @override
+  String get ntfCalledTitle => 'It\'s your turn';
+
+  @override
+  String get ntfCalledNext => 'Please go in to the doctor now.';
+
+  @override
+  String get ntfMissedTitle => 'You missed your turn';
+
+  @override
+  String get ntfMissedNext =>
+      'Speak to reception — they can put you back in the queue.';
+
+  @override
+  String get ntfStartedTitle => 'Your consultation has started';
+
+  @override
+  String get ntfCompletedTitle => 'Visit finished';
+
+  @override
+  String get ntfCompletedNext =>
+      'Get well soon. Need a follow-up? Book it from the doctor\'s page.';
+
+  @override
+  String get ntfWhyAppointment => 'About a visit you booked in Saxlem.';
+
+  @override
+  String get ntfWhyQueue => 'From the clinic\'s live queue.';
+
+  @override
+  String ntfAtClinic(String doctor, String clinic) {
+    return '$doctor at $clinic';
+  }
+
+  @override
+  String ntfTicket(int number) {
+    return 'Ticket $number';
+  }
+
+  @override
+  String ntfAhead(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people ahead of you',
+      one: '1 person ahead of you',
+      zero: 'Nobody ahead of you',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ntfDoctorStarted(String doctor) {
+    return '$doctor has started seeing patients.';
+  }
+
+  @override
+  String ntfDoctorPaused(String doctor) {
+    return '$doctor paused the queue for a short time.';
+  }
+
+  @override
+  String ntfDoctorResumed(String doctor) {
+    return '$doctor is seeing patients again.';
+  }
+
+  @override
+  String ntfDoctorFinished(String doctor) {
+    return '$doctor has finished for today.';
+  }
+
+  @override
+  String ntfCompletedHappened(String doctor) {
+    return 'Your visit with $doctor is complete.';
+  }
+
+  @override
+  String get feeFirstVisit => 'First visit';
+
+  @override
+  String get feeFollowUp => 'Follow-up';
+
+  @override
+  String get feesTitle => 'Fees';
+
+  @override
+  String get feesNote =>
+      'Pay at the clinic, or in the app with FIB when you book.';
+
+  @override
+  String get nextFreeLabel => 'Next free';
+
+  @override
+  String yearsShort(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count years',
+      one: '1 year',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get directions => 'Directions';
+
+  @override
+  String get callClinic => 'Call';
+
+  @override
+  String get clinicLocationMissing =>
+      'The clinic hasn\'t added its address yet.';
+
+  @override
+  String get openMapsFailed => 'Couldn\'t open maps on this phone.';
+
+  @override
+  String get bookAgainTitle => 'Book again';
+
+  @override
+  String bookAgainAction(String doctor) {
+    return 'Book again with $doctor';
+  }
+
+  @override
+  String get familyTileTitle => 'Family';
+
+  @override
+  String get familyTileSubtitle => 'Book for your children and parents';
+
+  @override
+  String get addToCalendar => 'Add to calendar';
+
+  @override
+  String visitWith(String doctor) {
+    return 'Visit with $doctor';
+  }
+
+  @override
+  String get freeTodayFilter => 'Free today';
+
+  @override
+  String get noneFreeToday =>
+      'None of these doctors has a free time left today. Turn off \"Free today\" to see other days.';
+
+  @override
+  String get helpTitle => 'Help and support';
+
+  @override
+  String get contactSaxlem => 'Message Saxlem on WhatsApp';
+
+  @override
+  String get termsOfUse => 'Terms of use';
+
+  @override
+  String get privacyPolicy => 'Privacy policy';
+
+  @override
+  String appVersion(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get whatsBothering => 'What\'s bothering you?';
+
+  @override
+  String get symptomFever => 'Fever or cold';
+
+  @override
+  String get symptomChild => 'My child is sick';
+
+  @override
+  String get symptomTooth => 'Tooth pain';
+
+  @override
+  String get symptomSkin => 'Skin';
+
+  @override
+  String get symptomHeart => 'Heart and blood pressure';
+
+  @override
+  String get symptomEyes => 'Eyes';
+
+  @override
+  String get symptomPregnancy => 'Pregnancy and women\'s health';
+
+  @override
+  String get symptomBones => 'Bones and joints';
+
+  @override
+  String get symptomEar => 'Ear, nose, throat';
+
+  @override
+  String get symptomHead => 'Headache and nerves';
+
+  @override
+  String get symptomStomach => 'Stomach';
+
+  @override
+  String get specialtiesTitle => 'Specialties';
+
+  @override
+  String get emergencyTitle => 'Emergency';
+
+  @override
+  String get emergencySubtitle => 'Ambulance: 122';
+
+  @override
+  String get emergencyConfirmTitle => 'Call 122 now?';
+
+  @override
+  String get emergencyConfirmBody =>
+      'Saxlem is for booking visits, not emergencies. If someone needs urgent help, call the ambulance.';
+
+  @override
+  String get emergencyCall => 'Call 122';
+
+  @override
+  String get liveNotOpen => 'The queue hasn\'t opened yet';
+
+  @override
+  String get liveCheckIn => 'Queue open · check in at reception';
+
+  @override
+  String get liveWithDoctor => 'With the doctor now';
+
+  @override
+  String liveWait(int min, int max) {
+    return 'about $min–$max min';
+  }
+
+  @override
+  String leaveByTime(String time) {
+    return 'Leave by $time';
+  }
+
+  @override
+  String get leaveNow => 'Leave now';
+
+  @override
+  String leaveInMinutes(int minutes) {
+    return 'Leave in $minutes min';
+  }
+
+  @override
+  String get leaveLate => 'You may be late. Leave now';
+
+  @override
+  String leaveDrive(int minutes, String distance) {
+    return '$minutes min drive · $distance';
+  }
+
+  @override
+  String leaveKm(String km) {
+    return '$km km';
+  }
+
+  @override
+  String leaveMeters(String meters) {
+    return '$meters m';
+  }
+
+  @override
+  String get leaveWithTraffic => 'with traffic';
+
+  @override
+  String get leaveNoTraffic => 'traffic not included';
+
+  @override
+  String get leaveEstimate => 'estimate from distance';
+
+  @override
+  String get leaveApproximate => 'approximate location';
+
+  @override
+  String leaveArriveBy(String time) {
+    return 'Be at reception by $time to check in';
+  }
+
+  @override
+  String get leaveAskTitle => 'When should I leave?';
+
+  @override
+  String get leaveAskBody =>
+      'Saxlem can use your location to work out the drive to the clinic, with traffic, and tell you when to leave.';
+
+  @override
+  String get leaveAskPrivacy =>
+      'Your location is used only for this and is never saved.';
+
+  @override
+  String get leaveAskButton => 'Use my location';
+
+  @override
+  String get leaveWorking => 'Working out your drive…';
+
+  @override
+  String get leaveServiceOff => 'Turn on location to see when to leave.';
+
+  @override
+  String get leaveDeniedForever =>
+      'Allow location for Saxlem in Settings to see when to leave.';
+
+  @override
+  String get leaveTurnOn => 'Turn on location';
+
+  @override
+  String get leaveOpenSettings => 'Open Settings';
+
+  @override
+  String get leaveFailed => 'Couldn\'t work out the drive right now.';
+
+  @override
+  String get leaveStop => 'Stop using my location';
+
+  @override
+  String get leaveAlertChannel => 'Time to leave';
+
+  @override
+  String get leaveAlertTitle => 'Time to get ready for your visit';
+
+  @override
+  String leaveAlertBody(String leave, String doctor, String time, int minutes) {
+    return 'Leave by $leave to see $doctor at $time · $minutes min drive';
+  }
+
+  @override
+  String minutesShortDrive(int minutes) {
+    return '$minutes min drive';
+  }
+
+  @override
+  String get leaveOnMyWay => 'I\'m on my way';
+
+  @override
+  String get leaveOnMyWayNote =>
+      'Lets the clinic know when to expect you. Your location isn\'t shared.';
+
+  @override
+  String get leaveOnMyWayFailed => 'Couldn\'t tell the clinic. Try again.';
+
+  @override
+  String get leaveOnTheWayTitle => 'On your way';
+
+  @override
+  String leaveExpectedAt(String time) {
+    return 'The clinic expects you at about $time';
+  }
+
+  @override
+  String get leaveReceptionSees => 'Reception can see you\'re coming.';
+
+  @override
+  String leaveExpectedShort(String time) {
+    return 'On your way · expected $time';
+  }
+
+  @override
+  String get leaveLearned => 'with usual traffic at this hour';
+
+  @override
+  String starsLabel(String rating) {
+    return '$rating out of 5 stars';
+  }
+
+  @override
+  String reviewCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reviews',
+      one: '1 review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewsTitle => 'Reviews';
+
+  @override
+  String get reviewsNone =>
+      'No reviews yet. Only patients who had a visit can review.';
+
+  @override
+  String reviewsSeeAll(int count) {
+    return 'See all $count reviews';
+  }
+
+  @override
+  String get reviewsMore => 'Show more';
+
+  @override
+  String reviewsOf(String doctor) {
+    return 'Reviews of $doctor';
+  }
+
+  @override
+  String get reviewAnonymous => 'Saxlem patient';
+
+  @override
+  String get reviewVerified => 'Verified visit';
+
+  @override
+  String get rateTitle => 'How was your visit?';
+
+  @override
+  String rateWith(String doctor) {
+    return 'Rate your visit with $doctor';
+  }
+
+  @override
+  String get rateCommentHint =>
+      'Anything other patients should know? (optional)';
+
+  @override
+  String get rateCommentRule =>
+      'Shown to everyone. No links, emails or phone numbers.';
+
+  @override
+  String get rateAnonymous => 'Post without my name';
+
+  @override
+  String get ratePost => 'Post review';
+
+  @override
+  String get rateUpdate => 'Update review';
+
+  @override
+  String get rateEdit => 'Change';
+
+  @override
+  String get rateThanks => 'Thanks. Your review helps other patients choose.';
+
+  @override
+  String get rateRemoved => 'This review was removed by Saxlem.';
+
+  @override
+  String get rateFailed => 'Couldn\'t post your review. Try again.';
+
+  @override
+  String rateEditUntil(String date) {
+    return 'You can change it until $date.';
+  }
+
+  @override
+  String get ntfReviewTitle => 'How was your visit?';
+
+  @override
+  String get ntfReviewNext =>
+      'Rate it in a few seconds. It helps other patients choose.';
+
+  @override
+  String get savedDoctorsTitle => 'Saved doctors';
+
+  @override
+  String get savedDoctorsEmpty =>
+      'Tap the heart on a doctor\'s profile to keep them here.';
+
+  @override
+  String saveDoctor(String doctor) {
+    return 'Save $doctor';
+  }
+
+  @override
+  String unsaveDoctor(String doctor) {
+    return 'Remove $doctor from saved';
+  }
+
+  @override
+  String get savedAdded => 'Saved';
+
+  @override
+  String get savedRemoved => 'Removed from saved';
+
+  @override
+  String get savedFailed => 'Couldn\'t update saved doctors. Try again.';
+
+  @override
+  String get earlierWatch => 'Tell me if an earlier time opens';
+
+  @override
+  String earlierWatchHelp(String doctor) {
+    return 'If $doctor has a free time sooner, we\'ll let you know. Your visit stays booked until you move it.';
+  }
+
+  @override
+  String get earlierFound => 'An earlier time is free';
+
+  @override
+  String get earlierMove => 'Move my visit to this time';
+
+  @override
+  String get earlierFirstCome => 'Whoever confirms first gets it.';
+
+  @override
+  String get earlierFailed => 'Couldn\'t change this. Try again.';
+
+  @override
+  String get ntfEarlierTitle => 'An earlier time is free';
+
+  @override
+  String get ntfEarlierNext =>
+      'Open your visit to move to it. Whoever confirms first gets it.';
+
+  @override
+  String get receiptsTitle => 'Payments & receipts';
+
+  @override
+  String get receiptsFailed => 'Couldn\'t load your payments';
+
+  @override
+  String get receiptsMoreFailed => 'More payments couldn\'t be loaded.';
+
+  @override
+  String get receiptsEmptyTitle => 'No payments yet';
+
+  @override
+  String get receiptsEmptyBody =>
+      'When you pay for a visit, in the app or at the clinic, its receipt appears here.';
+
+  @override
+  String get receiptTitle => 'Receipt';
+
+  @override
+  String get receiptFailed => 'Couldn\'t load this receipt';
+
+  @override
+  String get receiptCopy => 'Copy receipt';
+
+  @override
+  String get receiptCopied => 'Receipt copied';
+
+  @override
+  String get receiptView => 'View receipt';
+
+  @override
+  String get receiptAmount => 'Amount';
+
+  @override
+  String get receiptStatus => 'Status';
+
+  @override
+  String get receiptNumber => 'Receipt no.';
+
+  @override
+  String get receiptPaidOn => 'Paid on';
+
+  @override
+  String get receiptRefundedOn => 'Refunded on';
+
+  @override
+  String get receiptPaidBy => 'Paid by';
+
+  @override
+  String get receiptMethodCounter => 'At the clinic desk';
+
+  @override
+  String get receiptMethodFib => 'FIB, in the app';
+
+  @override
+  String get receiptMethodOnline => 'Online, in the app';
+
+  @override
+  String get receiptTransaction => 'Transaction ID';
+
+  @override
+  String get receiptPaidTo => 'Paid to';
+
+  @override
+  String receiptPaidToPlatform(String organization) {
+    return 'Saxlem, for $organization';
+  }
+
+  @override
+  String get receiptPatient => 'Patient';
+
+  @override
+  String get receiptClinic => 'Clinic';
+
+  @override
+  String get receiptAddress => 'Address';
+
+  @override
+  String get receiptPhone => 'Phone';
+
+  @override
+  String get receiptVisit => 'Visit';
+
+  @override
+  String get receiptTextHeading => 'Saxlem receipt';
+
+  @override
+  String get pushChannelName => 'Visit and queue updates';
 }

@@ -62,6 +62,7 @@ describe('notification inbox API', () => {
         'occurredAt',
         'createdAt',
         'readAt',
+        'context',
       ].sort(),
     );
     expect(patientList.body.items[0].readAt).toBeNull();

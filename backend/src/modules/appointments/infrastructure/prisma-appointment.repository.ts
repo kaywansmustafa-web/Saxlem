@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/database/prisma.service';
+import { notifyPatient } from '../../../common/notifications/patient-notifications';
 import type {
   AppointmentAccess,
   AppointmentProjection,
@@ -25,12 +26,35 @@ const include = {
   patientRegistration: {
     select: { patientProfile: { select: { firstName: true, lastName: true } } },
   },
+  arrival: { select: { status: true } },
+  trip: { select: { arrivalEta: true, startedAt: true } },
 } as const;
+/** An "on my way" stops showing once the patient checks in or after 3 hours. */
+const ON_THE_WAY_SHOWN_MS = 3 * 3_600_000;
 type Row = Prisma.AppointmentGetPayload<{ include: typeof include }>;
 
 @Injectable()
 export class PrismaAppointmentRepository implements AppointmentRepository {
   constructor(private readonly prisma: PrismaService) {}
+
+  async doctorFee(doctorId: string, type: 'initial' | 'followUp') {
+    const doctor = await this.prisma.db.doctor.findUnique({
+      where: { id: doctorId },
+      select: { consultationFeeIqd: true, followUpFeeIqd: true },
+    });
+    if (!doctor) return null;
+    return type === 'followUp'
+      ? (doctor.followUpFeeIqd ?? doctor.consultationFeeIqd)
+      : doctor.consultationFeeIqd;
+  }
+
+  async hiddenFromApp(doctorId: string) {
+    const doctor = await this.prisma.db.doctor.findUnique({
+      where: { id: doctorId },
+      select: { appHiddenAt: true },
+    });
+    return Boolean(doctor?.appHiddenAt);
+  }
 
   async replay(access: AppointmentAccess, command: AppointmentCommand) {
     const existing = await this.prisma.db.idempotencyRecord.findUnique({
@@ -60,6 +84,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
         : {}),
       startsAt: { gte: query.from, lt: query.to },
       ...(query.status ? { status: query.status } : {}),
+      ...(query.doctorIds ? { doctorId: { in: [...query.doctorIds] } } : {}),
     };
     if (query.cursor) {
       const cursor = await this.prisma.db.appointment.findFirst({
@@ -281,6 +306,45 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       validate,
     );
   }
+  async clinicDoctors(organizationId: string, clinicId: string) {
+    const rows = await this.prisma.db.doctorClinicAssignment.findMany({
+      where: {
+        organizationId,
+        clinicId,
+        status: 'active',
+        doctor: { status: 'active', organization: { status: 'active' } },
+      },
+      select: { doctor: { select: { id: true, displayName: true } } },
+      orderBy: { doctor: { displayName: 'asc' } },
+    });
+    return Object.freeze(
+      rows.map((row) =>
+        Object.freeze({
+          id: row.doctor.id,
+          displayName: row.doctor.displayName,
+        }),
+      ),
+    );
+  }
+  async dayAppointments(
+    organizationId: string,
+    clinicId: string,
+    from: Date,
+    to: Date,
+  ) {
+    const rows = await this.prisma.db.appointment.findMany({
+      where: {
+        organizationId,
+        clinicId,
+        status: { not: 'cancelled' },
+        startsAt: { lt: to },
+        endsAt: { gt: from },
+      },
+      include,
+      orderBy: [{ startsAt: 'asc' }, { id: 'asc' }],
+    });
+    return Object.freeze(rows.map((row) => this.map(row)));
+  }
   async auditView(
     access: AppointmentAccess,
     appointments: readonly AppointmentProjection[],
@@ -393,7 +457,14 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     if (access.platformAdministrator) return {};
     if (!access.organizationId || !access.clinicId)
       throw new ForbiddenException('Staff tenant context is required.');
-    return { organizationId: access.organizationId, clinicId: access.clinicId };
+    return {
+      organizationId: access.organizationId,
+      clinicId: access.clinicId,
+      // A receptionist only ever sees their own doctors' appointments.
+      ...(access.doctorIds?.length
+        ? { doctorId: { in: [...access.doctorIds] } }
+        : {}),
+    };
   }
   private async events(
     tx: Prisma.TransactionClient,
@@ -402,6 +473,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     action: string,
     requestId: string,
   ) {
+    await this.notifyPatientOf(tx, access, row, action);
     try {
       await tx.appointmentEvent.create({
         data: {
@@ -441,6 +513,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       patientProfileId: row.patientProfileId,
       patientName: `${row.patientRegistration.patientProfile.firstName} ${row.patientRegistration.patientProfile.lastName}`,
       type: row.type,
+      origin: row.origin ?? 'clinicCreated',
       reason: row.reason,
       startsAt: row.startsAt.toISOString(),
       endsAt: row.endsAt.toISOString(),
@@ -449,6 +522,13 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       status: row.status,
       cancellationReason: row.cancellationReason,
       version: row.version,
+      onTheWayEta:
+        row.trip &&
+        (row.status === 'scheduled' || row.status === 'confirmed') &&
+        (!row.arrival || row.arrival.status === 'expected') &&
+        Date.now() - row.trip.startedAt.getTime() < ON_THE_WAY_SHOWN_MS
+          ? row.trip.arrivalEta.toISOString()
+          : null,
     });
   }
   private conflict(error: unknown): void {
@@ -520,5 +600,40 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     if (error instanceof Error)
       return `${error.name} ${error.message} ${this.errorText((error as Error & { cause?: unknown }).cause)}`;
     return typeof error === 'string' ? error : '';
+  }
+
+  /** Tells the patient (in the app) about a booking or a change the clinic made. */
+  private async notifyPatientOf(
+    tx: Prisma.TransactionClient,
+    access: AppointmentAccess,
+    row: Row,
+    action: string,
+  ) {
+    const type =
+      action === 'appointment.created'
+        ? 'appointment.booked'
+        : access.patient
+          ? null
+          : action === 'appointment.cancelled'
+            ? 'appointment.cancelled.by-clinic'
+            : action === 'appointment.rescheduled'
+              ? 'appointment.rescheduled.by-clinic'
+              : null;
+    if (!type) return;
+    await notifyPatient(tx, {
+      organizationId: row.organizationId,
+      clinicId: row.clinicId,
+      patientProfileId: row.patientProfileId,
+      type,
+      aggregateType: 'appointment',
+      aggregateId: row.id,
+      priority: type === 'appointment.booked' ? 'information' : 'high',
+      context: {
+        appointmentId: row.id,
+        doctorName: row.doctorAssignment.doctor.displayName,
+        clinicName: row.clinic.name,
+        startsAt: row.startsAt.toISOString(),
+      },
+    });
   }
 }

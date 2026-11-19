@@ -232,6 +232,9 @@ export class PrismaArrivalRepository implements ArrivalRepository {
     return {
       organizationId: access.organizationId,
       clinicId: access.clinicId,
+      ...(access.doctorIds?.length
+        ? { appointment: { doctorId: { in: [...access.doctorIds] } } }
+        : {}),
     };
   }
 

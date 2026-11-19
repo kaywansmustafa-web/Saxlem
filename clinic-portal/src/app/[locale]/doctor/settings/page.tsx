@@ -1,1 +1,31 @@
-import{notFound}from"next/navigation";import{isLocale}from"@/i18n";import{doctorSettingsServices}from"@portal-composition";import{DoctorSettingsView}from"@/features/doctor-settings/presentation/doctor-settings-view";import{doctorSettingsMessages}from"@/features/doctor-settings/presentation/messages";export default async function Page({params}:{params:Promise<{locale:string}>}){const{locale}=await params;if(!isLocale(locale))notFound();const m=doctorSettingsMessages(locale),services=doctorSettingsServices();if(!services)return <div className="state"><div><h1>{m.unavailable}</h1><p>{m.unavailableBody}</p></div></div>;const data=await services.get.execute({sessionId:services.session.id,locale,environment:services.environment,buildMode:services.buildMode,mockSessionEnabled:services.mockSessionEnabled});if(!data)return <div className="state"><div><h1>{m.unavailable}</h1><p>{m.unavailableBody}</p></div></div>;return <DoctorSettingsView data={data} locale={locale} m={m}/>}
+import { notFound } from "next/navigation";
+import { isLocale } from "@/i18n";
+import { SettingsView } from "@/features/workday/settings-view";
+import { WorkdayError } from "@/features/workday/workday-error";
+import { doctorComposition } from "@/infrastructure/doctor-composition";
+
+export const dynamic = "force-dynamic";
+
+export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+  const desk = await doctorComposition(locale);
+  const data = await (async () => {
+    try {
+      const me = await desk.me();
+      return { ok: true as const, me, profile: await desk.profile(me.id) };
+    } catch (error) {
+      return { ok: false as const, error };
+    }
+  })();
+  if (!data.ok) return <WorkdayError locale={locale} error={data.error} />;
+  return (
+    <SettingsView
+      locale={locale}
+      role="doctor"
+      path={`/${locale}/doctor/settings`}
+      clinicName={data.me.clinics.find((c) => c.id === desk.context.clinicId)?.name}
+      profile={data.profile}
+    />
+  );
+}

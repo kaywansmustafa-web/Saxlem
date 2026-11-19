@@ -14,6 +14,7 @@ export class AppointmentDtoMapper {
       patientProfileId: source.patientProfileId,
       patientName: source.patientName,
       type: source.type,
+      origin: source.origin,
       reason: source.reason,
       startsAt: source.startsAt,
       endsAt: source.endsAt,
@@ -22,6 +23,7 @@ export class AppointmentDtoMapper {
       status: source.status,
       cancellationReason: source.cancellationReason,
       version: source.version,
+      onTheWayEta: source.onTheWayEta ?? null,
     };
   }
 }

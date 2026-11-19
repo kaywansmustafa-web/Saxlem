@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { ownerConfiguration } from "@/infrastructure/config";
 import { OwnerNavigation } from "./owner-navigation";
+import { GlobalSearch } from "./global-search";
+import { BrandMark } from "@/components/brand-mark";
+import { humanize, statusTone } from "@/domain/labels";
+import { NavIcon } from "./nav-icon";
 
 export const navigation = [
   ["Dashboard", "/dashboard"],
@@ -11,16 +15,74 @@ export const navigation = [
   ["Patients", "/patients"],
   ["Appointments", "/appointments"],
   ["Live Operations", "/live-operations"],
+  ["Reviews", "/reviews"],
   ["Billing", "/billing"],
   ["Commissions", "/commissions"],
   ["Statements", "/statements"],
   ["Plans", "/plans"],
+  ["Payments", "/payments"],
   ["Analytics", "/analytics"],
   ["Documents", "/documents"],
   ["Audit Log", "/audit-log"],
   ["Platform Health", "/platform-health"],
   ["Settings", "/settings"],
 ] as const;
+
+const icons: Record<string, string> = {
+  "/dashboard": "dashboard",
+  "/organizations": "organizations",
+  "/clinics": "clinics",
+  "/doctors": "doctors",
+  "/staff": "staff",
+  "/patients": "patients",
+  "/appointments": "appointments",
+  "/live-operations": "live",
+  "/reviews": "reviews",
+  "/billing": "billing",
+  "/commissions": "commissions",
+  "/statements": "statements",
+  "/plans": "plans",
+  "/payments": "payments",
+  "/analytics": "analytics",
+  "/documents": "documents",
+  "/audit-log": "audit",
+  "/platform-health": "health",
+  "/settings": "settings",
+};
+const groupOf = (href: string) =>
+  ["/dashboard", "/analytics"].includes(href)
+    ? "Overview"
+    : [
+          "/organizations",
+          "/clinics",
+          "/doctors",
+          "/staff",
+          "/patients",
+        ].includes(href)
+      ? "Network"
+      : ["/appointments", "/live-operations", "/reviews"].includes(href)
+        ? "Operations"
+        : [
+              "/billing",
+              "/commissions",
+              "/statements",
+              "/plans",
+              "/payments",
+            ].includes(href)
+          ? "Money"
+          : "System";
+export const navigationGroups = [
+  "Overview",
+  "Network",
+  "Operations",
+  "Money",
+  "System",
+].map((title) => ({
+  title,
+  items: navigation
+    .filter(([, href]) => groupOf(href) === title)
+    .map(([label, href]) => [label, href, icons[href]] as const),
+}));
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const environment = ownerConfiguration().environment;
@@ -31,49 +93,44 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </a>
       <aside className="sidebar" aria-label="Owner navigation">
         <Link className="brand" href="/dashboard">
-          <span className="brand-mark">S</span>
+          <BrandMark className="brand-mark" />
           <span className="brand-copy">
             <strong>Saxlem</strong>
             <small>Owner Portal</small>
           </span>
         </Link>
-        <OwnerNavigation items={navigation} />
+        <OwnerNavigation groups={navigationGroups} />
         <div className="side-foot">
-          <strong>Platform administrator</strong>
-          <br />
-          <span>Global administration</span>
+          <span className="side-foot-avatar" aria-hidden="true">
+            <NavIcon name="audit" />
+          </span>
+          <span>
+            <strong>Platform administrator</strong>
+            <small>All organizations</small>
+          </span>
         </div>
       </aside>
       <div className="workspace">
         <header className="topbar">
-          <label>
-            <span className="sr-only">Global search</span>
-            <input
-              className="search"
-              type="search"
-              placeholder="Search the platform"
-              disabled
-              aria-describedby="search-status"
-            />
-          </label>
-          <span id="search-status" className="sr-only">
-            Global search will be enabled when a privacy-safe backend search API
-            is available.
-          </span>
-        <div className="top-actions">
-          {environment !== "production" && (
-            <span className="environment">{environment}</span>
-          )}
-          <details>
-            <summary className="button button-secondary">Quick create</summary>
-            <div className="card" style={{position:"absolute",padding:10,display:"grid",gap:6}}>
-              <Link href="/organizations/new">Organization</Link>
-              <Link href="/clinics/new">Clinic</Link>
-            </div>
-          </details>
-          <form action="/api/auth/logout" method="post">
-            <button className="button button-secondary">Sign out</button>
-          </form>
+          <GlobalSearch />
+          <div className="top-actions">
+            {environment !== "production" && (
+              <span className="environment">{environment}</span>
+            )}
+            <details>
+              <summary className="button button-secondary">
+                Quick create
+              </summary>
+              <div className="card quick-menu">
+                <Link href="/organizations/new">Organization</Link>
+                <Link href="/clinics/new">Clinic</Link>
+                <Link href="/doctors/new">Doctor</Link>
+                <Link href="/staff/new">Staff member</Link>
+              </div>
+            </details>
+            <form action="/api/auth/logout" method="post">
+              <button className="button button-secondary">Sign out</button>
+            </form>
           </div>
         </header>
         <main className="main" id="main">
@@ -95,7 +152,11 @@ export function PageHeader({
 }) {
   return (
     <>
-      <div className="breadcrumbs">Owner Portal / {title}</div>
+      <div className="breadcrumbs">
+        <span>Owner Portal</span>
+        <span aria-hidden="true">›</span>
+        <span>{title}</span>
+      </div>
       <header className="page-header">
         <div>
           <h1>{title}</h1>
@@ -108,10 +169,9 @@ export function PageHeader({
 }
 
 export const StatusBadge = ({ status }: { status: string }) => (
-  <span
-    className={`badge ${status === "active" || status === "completed" || status === "finalized" ? "badge-success" : status === "inactive" || status === "cancelled" ? "badge-danger" : "badge-warning"}`}
-  >
-    {status}
+  <span className={`badge badge-${statusTone(status)}`}>
+    <span className="badge-dot" aria-hidden="true" />
+    {humanize(status)}
   </span>
 );
 
@@ -125,6 +185,9 @@ export function StateView({
   return (
     <section className="card state" role="status">
       <div>
+        <span className="state-icon" aria-hidden="true">
+          <NavIcon name="plans" />
+        </span>
         <h2>{title}</h2>
         <p>{description}</p>
       </div>

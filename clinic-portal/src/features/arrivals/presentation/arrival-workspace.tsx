@@ -1,4 +1,6 @@
 "use client";
+import { formatter } from "@/lib/format";
+import { appointmentStatusLabel } from "@/features/workday/messages";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -7,11 +9,7 @@ import type { BackendAppointment } from "@/features/appointments/data/backend-ap
 import type { BackendArrival } from "../data/backend-arrival-repository";
 import type { ArrivalMessages } from "./messages";
 export function iraqDateTime(value: string, locale: Locale) {
-  return new Intl.DateTimeFormat(locale, {
-    timeZone: "Asia/Baghdad",
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
+  return formatter(locale).dayTime(value);
 }
 export function ArrivalWorkspace({
   appointment,
@@ -116,7 +114,7 @@ export function ArrivalWorkspace({
             label={m.appointmentTime}
             value={iraqDateTime(appointment.startsAt, locale)}
           />
-          <Row label={m.appointmentStatus} value={appointment.status} />
+          <Row label={m.appointmentStatus} value={appointmentStatusLabel(locale, appointment.status)} />
           <Row label={m.arrivalStatus} value={m[arrival.status]} />
           <Row label={m.version} value={String(arrival.version)} />
           {arrival.arrivedAt && (

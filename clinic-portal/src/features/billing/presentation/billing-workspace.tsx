@@ -1,4 +1,5 @@
 "use client";
+import { formatter } from "@/lib/format";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { Locale } from "@/i18n";
@@ -32,7 +33,7 @@ export function BillingWorkspace({
   statementId,
 }: {
   locale: Locale;
-  role: "clinicManager" | "platformAdministrator";
+  role: "receptionist" | "clinicManager" | "platformAdministrator";
   organizationId?: string;
   mode: Mode;
   statementId?: string;
@@ -126,7 +127,11 @@ export function BillingWorkspace({
           setCommissionCursor(page.nextCursor);
         } else
           setData(
-            body.statement ?? body.statements ?? body.plans ?? body.assignment,
+            body.current ??
+              body.statement ??
+              body.statements ??
+              body.plans ??
+              body.assignment,
           );
       })
       .catch((value) => {
@@ -217,7 +222,7 @@ export function BillingWorkspace({
   return (
     <section className="billing-workspace" aria-labelledby="billing-title">
       <header>
-        <p className="eyebrow">{platform ? "Platform" : "Clinic"}</p>
+        <p className="eyebrow">{platform ? m.platform : m.clinic}</p>
         <h1 id="billing-title">{m.billing}</h1>
         <p>
           {platform ? (selected?.name ?? m.chooseOrganization) : m.readOnly}
@@ -254,14 +259,32 @@ export function BillingWorkspace({
         </div>
       )}
       <nav className="billing-tabs" aria-label={m.billing}>
-        <Link href={`/${locale}/billing${query}`}>{m.overview}</Link>
-        <Link href={`/${locale}/billing/commissions${query}`}>
+        <Link
+          href={`/${locale}/billing${query}`}
+          aria-current={mode === "overview" ? "page" : undefined}
+        >
+          {m.overview}
+        </Link>
+        <Link
+          href={`/${locale}/billing/commissions${query}`}
+          aria-current={mode === "commissions" ? "page" : undefined}
+        >
           {m.commissions}
         </Link>
-        <Link href={`/${locale}/billing/statements${query}`}>
+        <Link
+          href={`/${locale}/billing/statements${query}`}
+          aria-current={mode === "statements" ? "page" : undefined}
+        >
           {m.statements}
         </Link>
-        {platform && <Link href={`/${locale}/billing/plans`}>{m.plans}</Link>}
+        {platform && (
+          <Link
+            href={`/${locale}/billing/plans`}
+            aria-current={mode === "plans" ? "page" : undefined}
+          >
+            {m.plans}
+          </Link>
+        )}
         {organizationId && (
           <Link
             href={`/${locale}/billing/organizations/${organizationId}/plan`}
@@ -361,10 +384,7 @@ function BillingContent({
   const money = (value: number) => <bdi>{formatIqd(value, locale)}</bdi>,
     date = (value: string) => (
       <bdi>
-        {new Intl.DateTimeFormat(locale, {
-          timeZone: "Asia/Baghdad",
-          dateStyle: "medium",
-        }).format(new Date(value))}
+        {formatter(locale).day(value)}
       </bdi>
     );
   if (mode === "commissions")
@@ -376,6 +396,7 @@ function BillingContent({
               <strong>
                 <bdi>{item.appointmentReference}</bdi>
               </strong>
+              <span>{item.doctorName}</span>
               <span>{item.status === "earned" ? m.earned : m.reversed}</span>
               <span>{date(item.completedAt)}</span>
               <span>{money(item.amountIqd)}</span>
@@ -421,6 +442,7 @@ function BillingContent({
             <strong>
               {date(row.periodStart)} – {date(row.periodEnd)}
             </strong>
+            <span>{row.doctorName ?? m.wholeClinic}</span>
             <span>{row.status === "draft" ? m.draft : m.finalized}</span>
             <span>{money(row.netCommissionIqd)}</span>
             <Link
@@ -476,10 +498,65 @@ function BillingContent({
       <p>{m.noData}</p>
     );
   }
+  if (mode === "overview") {
+    // Each doctor is billed separately: one running statement per doctor.
+    const rows = data as BillingStatement[] | null;
+    return rows?.length ? (
+      <div className="billing-doctors">
+        {rows.map((row) => (
+          <StatementCard
+            key={row.id}
+            statement={row as BillingStatementDetail}
+            mode={mode}
+            m={m}
+            money={money}
+            date={date}
+            platform={platform}
+            onFinalize={onFinalize}
+          />
+        ))}
+      </div>
+    ) : (
+      <p>{m.noData}</p>
+    );
+  }
   const statement = data as BillingStatementDetail | null;
   if (!statement) return <p>{m.noData}</p>;
   return (
+    <StatementCard
+      statement={statement}
+      mode={mode}
+      m={m}
+      money={money}
+      date={date}
+      platform={platform}
+      onFinalize={onFinalize}
+    />
+  );
+}
+function StatementCard({
+  statement,
+  mode,
+  m,
+  money,
+  date,
+  platform,
+  onFinalize,
+}: {
+  statement: BillingStatementDetail;
+  mode: Mode;
+  m: ReturnType<typeof billingMessages>;
+  money: (value: number) => React.ReactNode;
+  date: (value: string) => React.ReactNode;
+  platform: boolean;
+  onFinalize: (
+    statement: BillingStatementDetail,
+    button: HTMLButtonElement,
+  ) => void;
+}) {
+  return (
     <article className="billing-card">
+      <p className="billing-doctor">{statement.doctorName ?? m.wholeClinic}</p>
       <h2>{mode === "overview" ? m.currentStatement : m.details}</h2>
       <dl>
         <Metric

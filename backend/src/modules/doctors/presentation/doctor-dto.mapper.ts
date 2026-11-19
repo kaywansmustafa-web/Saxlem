@@ -1,4 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Optional } from '@nestjs/common';
+import { averageOf } from '../../reviews/review-rules';
+import { BACKEND_CONFIGURATION } from '../../../config/configuration.module';
+import type { BackendConfiguration } from '../../../config/environment';
 import type {
   DoctorDiscoveryOptionsProjection,
   DoctorPageProjection,
@@ -7,6 +10,7 @@ import type {
 import type {
   DoctorAvailabilityResponseDto,
   DoctorDetailResponseDto,
+  DoctorRatingResponseDto,
   DoctorDiscoveryOptionsResponseDto,
   DoctorListItemResponseDto,
   DoctorPageResponseDto,
@@ -16,6 +20,27 @@ import type {
 
 @Injectable()
 export class DoctorDtoMapper {
+  constructor(
+    @Optional()
+    @Inject(BACKEND_CONFIGURATION)
+    private readonly configuration?: Pick<
+      BackendConfiguration,
+      'appointmentFoundationFeeIqd'
+    >,
+  ) {}
+
+  /** The fees a patient pays: the doctor's own, or the platform default. */
+  fees(
+    source: Pick<DoctorProjection, 'consultationFeeIqd' | 'followUpFeeIqd'>,
+  ) {
+    const fallback = this.configuration?.appointmentFoundationFeeIqd ?? 25000;
+    return {
+      firstVisitIqd: source.consultationFeeIqd ?? fallback,
+      followUpIqd:
+        source.followUpFeeIqd ?? source.consultationFeeIqd ?? fallback,
+    };
+  }
+
   discoveryOptions(
     source: DoctorDiscoveryOptionsProjection,
   ): DoctorDiscoveryOptionsResponseDto {
@@ -62,6 +87,7 @@ export class DoctorDtoMapper {
       languages: [...source.languages],
       profileImageUrl: null,
       specialties: this.specialties(source),
+      fees: this.fees(source),
     };
   }
   specialties(source: DoctorProjection): SpecialtyResponseDto[] {
@@ -88,6 +114,17 @@ export class DoctorDtoMapper {
       profileImageUrl: null,
       clinics: source.clinics.map(({ id, name }) => ({ id, name })),
       availability: this.availability(source),
+      fees: this.fees(source),
+      rating: this.rating(source),
+    };
+  }
+  rating(
+    source: Pick<DoctorProjection, 'reviewCount' | 'reviewSum'>,
+  ): DoctorRatingResponseDto {
+    const count = source.reviewCount ?? 0;
+    return {
+      average: averageOf(count, source.reviewSum ?? 0),
+      count,
     };
   }
 }

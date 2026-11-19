@@ -118,6 +118,61 @@ void main() {
     expect(keys[1], keys[0]);
     await repository.dispose();
   });
+
+  test(
+    'tells the server which phone gets pushes, and in what language',
+    () async {
+      final calls = <http.Request>[];
+      final client = MockClient((request) async {
+        calls.add(request);
+        return http.Response('', 204);
+      });
+      final config = AppConfiguration.fromValues(
+        environment: 'production',
+        apiBaseUrl: 'https://api.saxlem.test',
+      );
+      final storage = _Storage();
+      final repository = BackendNotificationsRepository(
+        AuthenticatedApiClient(
+          api: ApiClient(configuration: config, client: client),
+          storage: storage,
+          refresh: () async => _session,
+        ),
+        AuthenticatedNotificationSseTransport(
+          configuration: config,
+          storage: storage,
+          refresh: () async => _session,
+          client: MockClient((_) async => http.Response('', 503)),
+        ),
+      );
+      const fid = 'cX3k9Q1mT2a8bB7nN4pP0z';
+      await repository.registerPushDevice(
+        token: fid,
+        platform: 'android',
+        locale: 'ku',
+      );
+      await repository.removePushDevice(fid);
+      expect(calls.map((c) => c.url.path), [
+        '/api/v1/patients/me/push-devices',
+        '/api/v1/patients/me/push-devices/remove',
+      ]);
+      expect(jsonDecode(calls.first.body), {
+        'token': fid,
+        'platform': 'android',
+        'locale': 'ku',
+      });
+      expect(jsonDecode(calls.last.body), {'token': fid});
+      await expectLater(
+        repository.registerPushDevice(
+          token: fid,
+          platform: 'web',
+          locale: 'en',
+        ),
+        throwsA(isA<NotificationFailure>()),
+      );
+      await repository.dispose();
+    },
+  );
 }
 
 Map<String, Object?> _item({required String? readAt}) => {
@@ -130,6 +185,7 @@ Map<String, Object?> _item({required String? readAt}) => {
   'occurredAt': '2026-08-10T06:00:00Z',
   'createdAt': '2026-08-10T06:00:01Z',
   'readAt': readAt,
+  'context': null,
 };
 final _session = StoredSession(
   phoneNumber: 'redacted',

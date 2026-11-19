@@ -12,6 +12,7 @@ import type { BackendConfiguration } from '../../../config/environment';
 import { keyedHash, safeEqualHex } from '../../identity/domain/security';
 import {
   PATIENT_REPOSITORY,
+  type ClinicPatientRegistration,
   type PatientDirectoryAccess,
   type PatientDirectoryCursorProjection,
   type PatientDirectoryDetailProjection,
@@ -75,6 +76,53 @@ export class PatientService {
     const profile = await this.repository.profile(account.id, profileId);
     if (!profile) throw new NotFoundException('Patient profile was not found.');
     return this.project(profile);
+  }
+
+  /**
+   * Registers someone who phoned the clinic or walked in without the app.
+   * The record belongs to this organization only and is never matched to
+   * an app account by phone number (that would reveal who uses Saxlem).
+   */
+  async registerClinicPatient(
+    access: PatientDirectoryAccess,
+    input: {
+      readonly firstName: string;
+      readonly lastName: string;
+      readonly phoneNumber: string;
+      readonly gender: 'female' | 'male' | 'unspecified';
+    },
+    requestId: string,
+  ): Promise<ClinicPatientRegistration> {
+    this.requireStaffAccess(access);
+    const firstName = input.firstName.trim().replace(/\s+/gu, ' ');
+    const lastName = input.lastName.trim().replace(/\s+/gu, ' ');
+    if (
+      !firstName ||
+      !lastName ||
+      firstName.length > 80 ||
+      lastName.length > 80
+    )
+      throw new BadRequestException(
+        'Patient name must contain 1 to 80 characters.',
+      );
+    const phoneNumber = normalizeIraqiMobile(input.phoneNumber);
+    if (!phoneNumber)
+      throw new BadRequestException(
+        'Phone number must be an Iraqi mobile number such as 0750 123 4567.',
+      );
+    try {
+      return await this.repository.registerClinicPatient(
+        access,
+        { firstName, lastName, phoneNumber, gender: input.gender },
+        requestId,
+      );
+    } catch (error) {
+      if (error instanceof PatientAuditPersistenceError)
+        throw new ServiceUnavailableException(
+          'Security audit is temporarily unavailable.',
+        );
+      throw error;
+    }
   }
 
   async searchDirectory(
@@ -206,6 +254,21 @@ export class PatientService {
         'Patient profile changed. Reload and try again.',
       );
     return this.project(updated);
+  }
+
+  /** The patient deletes their own Saxlem account (App Store 5.1.1(v)). */
+  async closeAccount(userId: string, requestId: string): Promise<void> {
+    const account = await this.account(userId);
+    const result = await this.repository.closeAccount(
+      account.id,
+      userId,
+      requestId,
+      new Date(),
+    );
+    if (!result.closed)
+      throw new ConflictException(
+        'Cancel your upcoming appointments before deleting your account.',
+      );
   }
 
   async archive(
@@ -378,4 +441,15 @@ export class PatientService {
       );
     return date;
   }
+}
+
+/** Accepts 0750 123 4567, 750…, 964750… or +964750…; returns +9647XXXXXXXXX. */
+export function normalizeIraqiMobile(value: string): string | null {
+  const digits = value.replace(/[^0-9]/gu, '');
+  const local = digits.startsWith('964')
+    ? digits.slice(3)
+    : digits.startsWith('0')
+      ? digits.slice(1)
+      : digits;
+  return /^7\d{9}$/u.test(local) ? `+964${local}` : null;
 }

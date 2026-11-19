@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import 'app_colors.dart';
 import '../../design_system/foundations/saxlem_radii.dart';
 import '../../design_system/foundations/saxlem_sizes.dart';
 import '../../design_system/foundations/saxlem_typography.dart';
 import '../../design_system/theme/saxlem_colors.dart';
 
+/// The app theme, built from the v2 "Aura" tokens. Most screens use stock
+/// Material widgets, so the component themes below carry the new look to every
+/// screen: 52px buttons with 14px corners, 60px inputs with a focus ring,
+/// 20px cards and 28px sheets on the light canvas.
 abstract final class AppTheme {
   static ThemeData get light => lightFor();
 
@@ -18,97 +20,245 @@ abstract final class AppTheme {
       };
 
   static ThemeData lightFor([Locale? locale]) {
+    const c = SaxlemColors.light;
     final fontFamily = fontFamilyFor(locale);
+    final textFamily = fontFamily ?? SaxlemTypography.text;
+    final displayFamily = fontFamily ?? SaxlemTypography.display;
+    final scheme = ColorScheme.fromSeed(
+      seedColor: c.brandPrimary,
+      primary: c.brandPrimary,
+      onPrimary: c.onFill,
+      primaryContainer: c.brandTint,
+      onPrimaryContainer: c.brandPrimary,
+      secondary: c.brandSecondary,
+      onSecondary: c.onFill,
+      tertiary: c.auraEnd,
+      error: c.criticalContent,
+      errorContainer: c.criticalSurface,
+      surface: c.surfaceRaised,
+      onSurface: c.textPrimary,
+      onSurfaceVariant: c.textSecondary,
+      surfaceContainerLowest: c.surfaceRaised,
+      surfaceContainerLow: c.canvas,
+      surfaceContainer: c.surfaceSunken,
+      surfaceContainerHigh: c.surfaceSunken,
+      surfaceContainerHighest: c.surfaceSunken,
+      outline: c.outlineStrong,
+      outlineVariant: c.border,
+      shadow: c.night,
+    );
     final baseTheme = ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: SaxlemColors.light.brandPrimary,
-        primary: SaxlemColors.light.brandPrimary,
-        secondary: SaxlemColors.light.brandSecondary,
-        error: SaxlemColors.light.criticalContent,
-        surface: SaxlemColors.light.surfaceRaised,
-      ),
-      scaffoldBackgroundColor: AppColors.background,
+      colorScheme: scheme,
+      scaffoldBackgroundColor: c.canvas,
+      fontFamily: textFamily,
+      splashFactory: InkSparkle.splashFactory,
+    );
+    final textTheme = SaxlemTypography.textTheme(
+      baseTheme.textTheme,
+      c.textPrimary,
+      c.textSecondary,
       fontFamily: fontFamily,
     );
+    final buttonText = TextStyle(
+      fontFamily: textFamily,
+      fontSize: 16,
+      height: 1.25,
+      fontWeight: FontWeight.w600,
+      letterSpacing: fontFamily == null ? -.1 : 0,
+    );
+    final buttonShape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(SaxlemRadii.large),
+    );
+    const buttonSize = Size(64, 52);
+    const buttonPadding = EdgeInsetsDirectional.symmetric(horizontal: 22);
+    OutlineInputBorder inputBorder(Color color, [double width = 1.5]) =>
+        OutlineInputBorder(
+          borderRadius: BorderRadius.circular(SaxlemRadii.large),
+          borderSide: BorderSide(color: color, width: width),
+        );
 
     return baseTheme.copyWith(
       extensions: const [SaxlemColors.light],
-      textTheme: SaxlemTypography.textTheme(
-        baseTheme.textTheme,
-        SaxlemColors.light.textPrimary,
-        SaxlemColors.light.textSecondary,
-        fontFamily: fontFamily,
-      ),
+      textTheme: textTheme,
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.background,
-        foregroundColor: SaxlemColors.light.textPrimary,
+        backgroundColor: c.canvas,
+        surfaceTintColor: Colors.transparent,
+        foregroundColor: c.textPrimary,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: false,
-        titleTextStyle: _style(
-          fontFamily,
+        titleTextStyle: TextStyle(
+          fontFamily: displayFamily,
           fontSize: 20,
+          height: 1.3,
           fontWeight: FontWeight.w600,
-          color: SaxlemColors.light.textPrimary,
+          letterSpacing: fontFamily == null ? -.3 : 0,
+          color: c.textPrimary,
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: c.brandPrimary,
+          foregroundColor: c.onFill,
+          disabledBackgroundColor: c.surfaceSunken,
+          disabledForegroundColor: c.textDisabled,
+          minimumSize: buttonSize,
+          padding: buttonPadding,
+          shape: buttonShape,
+          textStyle: buttonText,
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: SaxlemColors.light.brandPrimary,
-          foregroundColor: AppColors.white,
+          backgroundColor: c.brandPrimary,
+          foregroundColor: c.onFill,
+          elevation: 0,
           minimumSize: const Size(
             double.infinity,
-            SaxlemSizes.minimumTouchTarget,
+            SaxlemSizes.minimumTouchTarget + 4,
           ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(SaxlemRadii.large),
-          ),
-          textStyle: _style(
-            fontFamily,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          shape: buttonShape,
+          textStyle: buttonText,
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: c.textPrimary,
+          backgroundColor: c.surfaceRaised,
+          side: BorderSide(color: c.outlineStrong),
+          minimumSize: buttonSize,
+          padding: buttonPadding,
+          shape: buttonShape,
+          textStyle: buttonText,
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: c.brandPrimary,
+          minimumSize: const Size(48, 48),
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: 14),
+          shape: buttonShape,
+          textStyle: buttonText,
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          foregroundColor: c.textPrimary,
+          minimumSize: const Size(48, 48),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: SaxlemColors.light.surfaceRaised,
-        contentPadding: const EdgeInsets.symmetric(
+        fillColor: c.surfaceRaised,
+        contentPadding: const EdgeInsetsDirectional.symmetric(
           horizontal: 16,
-          vertical: 16,
+          vertical: 18,
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SaxlemRadii.large),
-          borderSide: BorderSide(color: SaxlemColors.light.border),
+        labelStyle: TextStyle(color: c.textSecondary, fontFamily: textFamily),
+        floatingLabelStyle: TextStyle(
+          color: c.brandPrimary,
+          fontWeight: FontWeight.w600,
+          fontFamily: textFamily,
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SaxlemRadii.large),
-          borderSide: BorderSide(color: SaxlemColors.light.border),
+        hintStyle: TextStyle(color: c.textSecondary, fontFamily: textFamily),
+        prefixIconColor: c.textSecondary,
+        border: inputBorder(c.outlineStrong),
+        enabledBorder: inputBorder(c.outlineStrong),
+        focusedBorder: inputBorder(c.focus, 2),
+        errorBorder: inputBorder(c.criticalContent),
+        focusedErrorBorder: inputBorder(c.criticalContent, 2),
+        disabledBorder: inputBorder(c.border),
+      ),
+      cardTheme: CardThemeData(
+        color: c.surfaceRaised,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(SaxlemRadii.card),
+          side: BorderSide(color: c.border),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SaxlemRadii.large),
-          borderSide: BorderSide(color: SaxlemColors.light.focus, width: 2),
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: c.surfaceRaised,
+        selectedColor: c.brandPrimary,
+        secondarySelectedColor: c.brandPrimary,
+        checkmarkColor: c.onFill,
+        side: BorderSide(color: c.border),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(SaxlemRadii.small),
         ),
+        labelStyle: TextStyle(
+          fontFamily: textFamily,
+          fontWeight: FontWeight.w600,
+          color: c.textPrimary,
+        ),
+        secondaryLabelStyle: TextStyle(
+          fontFamily: textFamily,
+          fontWeight: FontWeight.w600,
+          color: c.onFill,
+        ),
+        padding: const EdgeInsetsDirectional.symmetric(
+          horizontal: 10,
+          vertical: 8,
+        ),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: c.surfaceRaised,
+        surfaceTintColor: Colors.transparent,
+        showDragHandle: true,
+        dragHandleColor: c.border,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(SaxlemRadii.hero),
+          ),
+        ),
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: c.surfaceRaised,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(SaxlemRadii.hero),
+        ),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: c.night,
+        contentTextStyle: TextStyle(
+          fontFamily: textFamily,
+          color: c.onFill,
+          fontSize: 15,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(SaxlemRadii.medium),
+        ),
+      ),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: c.brandPrimary,
+        linearTrackColor: c.surfaceSunken,
+        circularTrackColor: c.surfaceSunken,
+      ),
+      dividerTheme: DividerThemeData(color: c.divider, space: 1),
+      listTileTheme: ListTileThemeData(
+        iconColor: c.textSecondary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(SaxlemRadii.medium),
+        ),
+      ),
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: SegmentedButton.styleFrom(
+          selectedBackgroundColor: c.brandPrimary,
+          selectedForegroundColor: c.onFill,
+          side: BorderSide(color: c.border),
+          textStyle: buttonText.copyWith(fontSize: 14),
+        ),
+      ),
+      badgeTheme: BadgeThemeData(
+        backgroundColor: c.criticalContent,
+        textColor: c.onFill,
       ),
     );
   }
-
-  static TextStyle _style(
-    String? fontFamily, {
-    required double fontSize,
-    required FontWeight fontWeight,
-    Color? color,
-  }) => fontFamily == null
-      ? GoogleFonts.notoSans(
-          fontSize: fontSize,
-          fontWeight: fontWeight,
-          color: color,
-        )
-      : TextStyle(
-          fontFamily: fontFamily,
-          fontSize: fontSize,
-          fontWeight: fontWeight,
-          color: color,
-        );
 }

@@ -20,6 +20,11 @@ import type {
   AppointmentWrite,
   BookingDayProjection,
   BookingOptionsProjection,
+  DayBoardAppointment,
+  DayBoardDoctor,
+  DayBoardProjection,
+  DayBoardSlot,
+  DayBoardSlotState,
 } from '../domain/appointment';
 import { AppointmentAuditPersistenceError } from '../domain/appointment.errors';
 import {
@@ -38,6 +43,8 @@ export interface CreateAppointmentInput {
   startsAt: Date;
   startsAtSource?: string;
   durationMinutes: number;
+  /** Staff only: the patient is standing at the desk without a booking. */
+  walkIn?: boolean;
 }
 @Injectable()
 export class AppointmentService {
@@ -49,6 +56,19 @@ export class AppointmentService {
     @Inject(BACKEND_CONFIGURATION)
     private readonly configuration: BackendConfiguration,
   ) {}
+
+  /** A receptionist's doctors, or null when the caller isn't scoped. */
+  private receptionScope(access: AppointmentAccess): readonly string[] | null {
+    return access.doctorIds?.length ? access.doctorIds : null;
+  }
+
+  private requireOwnDoctor(access: AppointmentAccess, doctorId: string) {
+    const scope = this.receptionScope(access);
+    if (scope && !scope.includes(doctorId))
+      throw new ForbiddenException(
+        "This doctor isn't on your list. Add them under My doctors first.",
+      );
+  }
   async bookingOptions(
     access: AppointmentAccess,
     doctorId: string,
@@ -59,10 +79,28 @@ export class AppointmentService {
     dateTo: string,
     requestId: string,
   ): Promise<BookingOptionsProjection> {
-    if (!access.patient)
-      throw new ForbiddenException('Booking options are patient-only.');
+    const staff =
+      !access.patient &&
+      !access.platformAdministrator &&
+      !!access.organizationId &&
+      access.clinicId === clinicId;
+    if (!access.patient && !staff)
+      throw new ForbiddenException(
+        'Booking options are limited to patients and staff of this clinic.',
+      );
     this.dateWindow(dateFrom, dateTo);
+    if (staff) this.requireOwnDoctor(access, doctorId);
+    if (access.patient && (await this.repository.hiddenFromApp(doctorId)))
+      throw new NotFoundException('Booking options were not found.');
     const generatedAt = new Date();
+    // Reception may still book the slot that has just begun (a walk-in at
+    // 10:03 takes the 10:00 slot); the app only offers slots in the future.
+    const earliestStart = staff
+      ? new Date(
+          generatedAt.getTime() -
+            this.configuration.appointmentPastToleranceMinutes * 60_000,
+        )
+      : generatedAt;
     const scheduleAt = new Date(`${dateFrom}T12:00:00.000Z`);
     const schedule = await this.schedules.schedule(
       this.doctorAccess(access),
@@ -109,76 +147,23 @@ export class AppointmentService {
     });
     const days: BookingDayProjection[] = [];
     for (let date = dateFrom; date <= dateTo; date = this.addDate(date, 1)) {
-      const noon = this.timezones.instantForLocalDateMinute(
-        date,
-        12 * 60,
-        clinic.timezone.identifier,
-      );
-      const weekday = noon
-        ? this.timezones.localClock(noon, clinic.timezone.identifier).weekday
-        : 0;
-      const periods: { startsMinute: number; endsMinute: number }[] = [
-        ...clinic.weeklySchedule.filter((item) => item.weekday === weekday),
-      ];
-      for (const exception of clinic.exceptions.filter(
-        (item) => item.kind === 'working',
-      )) {
-        const startClock = this.timezones.localClock(
-          new Date(exception.startsAt),
-          clinic.timezone.identifier,
-        );
-        const endClock = this.timezones.localClock(
-          new Date(new Date(exception.endsAt).getTime() - 1),
-          clinic.timezone.identifier,
-        );
-        if (startClock.date === date && endClock.date === date)
-          periods.push({
-            startsMinute: startClock.minuteOfDay,
-            endsMinute: endClock.minuteOfDay + 1,
-          });
-      }
-      const slots = [];
-      const seen = new Set<string>();
-      for (const period of periods.sort(
-        (left, right) => left.startsMinute - right.startsMinute,
-      )) {
-        for (
-          let minute = period.startsMinute;
-          minute + durationMinutes <= period.endsMinute;
-          minute += durationMinutes
-        ) {
-          const start = this.timezones.instantForLocalDateMinute(
-            date,
-            minute,
-            clinic.timezone.identifier,
-          );
-          const end = start
-            ? new Date(start.getTime() + durationMinutes * 60_000)
-            : null;
-          if (
-            !start ||
-            !end ||
-            start <= generatedAt ||
-            !this.scheduleAllows(clinic, weekday, minute, start, end) ||
-            conflicts.some(
+      const slots = this.gridSlots(clinic, date, durationMinutes)
+        .filter(
+          ({ start, end, allowed }) =>
+            allowed &&
+            start > earliestStart &&
+            !conflicts.some(
               (item) =>
                 new Date(item.startsAt) < end && new Date(item.endsAt) > start,
-            )
-          )
-            continue;
-          const key = start.toISOString();
-          if (seen.has(key)) continue;
-          seen.add(key);
-          slots.push(
-            Object.freeze({
-              startsAt: start.toISOString(),
-              endsAt: end.toISOString(),
-              durationMinutes,
-            }),
-          );
-        }
-      }
-      slots.sort((left, right) => left.startsAt.localeCompare(right.startsAt));
+            ),
+        )
+        .map(({ start, end }) =>
+          Object.freeze({
+            startsAt: start.toISOString(),
+            endsAt: end.toISOString(),
+            durationMinutes,
+          }),
+        );
       days.push(Object.freeze({ date, slots: Object.freeze(slots) }));
     }
     return Object.freeze({
@@ -190,7 +175,7 @@ export class AppointmentService {
       clinicTimezone: clinic.timezone.identifier,
       appointmentType,
       durationMinutes,
-      feeIqd: this.configuration.appointmentFoundationFeeIqd,
+      feeIqd: await this.fee(doctorId, appointmentType),
       currency: 'IQD',
       dateFrom,
       dateTo,
@@ -220,7 +205,11 @@ export class AppointmentService {
       throw new BadRequestException(
         'Appointment page size must be between 1 and 50.',
       );
-    const page = await this.repository.list(access, query);
+    const scope = this.receptionScope(access);
+    const page = await this.repository.list(
+      access,
+      scope ? { ...query, doctorIds: scope } : query,
+    );
     await this.audit(access, page.items, requestId);
     return page;
   }
@@ -246,8 +235,17 @@ export class AppointmentService {
       this.repository.replay(access, command),
     );
     if (replay) return replay;
-    const write = this.write(access, input);
+    const write = Object.freeze({
+      ...this.write(access, input),
+      feeIqd: await this.fee(input.doctorId, input.type),
+    });
     this.validateTime(write);
+    if (!access.patient) this.requireOwnDoctor(access, input.doctorId);
+    // Phone and walk-in bookings still work for a hidden doctor.
+    if (access.patient && (await this.repository.hiddenFromApp(input.doctorId)))
+      throw new ConflictException(
+        'This doctor is not taking app bookings right now. Please call the clinic.',
+      );
     return this.commandResult(() =>
       this.repository.create(access, write, requestId, command, () =>
         this.validateContext(access, write, input.startsAtSource),
@@ -375,6 +373,14 @@ export class AppointmentService {
     if (!item) throw new ConflictException('Appointment version is stale.');
     return item;
   }
+  /** The doctor's own fee for this kind of visit, or the platform default. */
+  private async fee(doctorId: string, type: 'initial' | 'followUp') {
+    return (
+      (await this.repository.doctorFee(doctorId, type)) ??
+      this.configuration.appointmentFoundationFeeIqd
+    );
+  }
+
   private write(
     access: AppointmentAccess,
     input: CreateAppointmentInput,
@@ -396,6 +402,15 @@ export class AppointmentService {
         'Appointment duration does not match booking configuration.',
       );
     this.reason(input.reason);
+    if (input.walkIn) {
+      if (access.patient || access.platformAdministrator)
+        throw new ForbiddenException('Only clinic staff can record walk-ins.');
+      const lead = input.startsAt.getTime() - Date.now();
+      if (lead > 60 * 60_000)
+        throw new BadRequestException(
+          'A walk-in must start within the next hour; book it as an appointment instead.',
+        );
+    }
     if (
       !access.patient &&
       !access.platformAdministrator &&
@@ -411,7 +426,11 @@ export class AppointmentService {
       doctorId: input.doctorId,
       patientProfileId: input.patientProfileId,
       type: input.type,
-      origin: access.patient ? 'patientBooked' : 'clinicCreated',
+      origin: access.patient
+        ? 'patientBooked'
+        : input.walkIn
+          ? 'walkIn'
+          : 'clinicCreated',
       reason: input.reason.trim(),
       startsAt: input.startsAt,
       durationMinutes: input.durationMinutes,
@@ -493,6 +512,207 @@ export class AppointmentService {
     date.setUTCDate(date.getUTCDate() + days);
     return date.toISOString().slice(0, 10);
   }
+  /**
+   * Every slot of the doctor's working periods on one clinic-local date, in
+   * order, marked whether breaks, leave and holidays allow it. The app's
+   * booking options and reception's day board both build on this.
+   */
+  private gridSlots(
+    clinic: Awaited<
+      ReturnType<DoctorScheduleService['schedule']>
+    >['clinics'][number],
+    date: string,
+    durationMinutes: number,
+  ): { start: Date; end: Date; allowed: boolean }[] {
+    const zone = clinic.timezone.identifier;
+    const noon = this.timezones.instantForLocalDateMinute(date, 12 * 60, zone);
+    const weekday = noon ? this.timezones.localClock(noon, zone).weekday : 0;
+    const periods: { startsMinute: number; endsMinute: number }[] = [
+      ...clinic.weeklySchedule.filter((item) => item.weekday === weekday),
+    ];
+    for (const exception of clinic.exceptions.filter(
+      (item) => item.kind === 'working',
+    )) {
+      const startClock = this.timezones.localClock(
+        new Date(exception.startsAt),
+        zone,
+      );
+      const endClock = this.timezones.localClock(
+        new Date(new Date(exception.endsAt).getTime() - 1),
+        zone,
+      );
+      if (startClock.date === date && endClock.date === date)
+        periods.push({
+          startsMinute: startClock.minuteOfDay,
+          endsMinute: endClock.minuteOfDay + 1,
+        });
+    }
+    const slots: { start: Date; end: Date; allowed: boolean }[] = [];
+    const seen = new Set<string>();
+    for (const period of periods.sort(
+      (left, right) => left.startsMinute - right.startsMinute,
+    )) {
+      for (
+        let minute = period.startsMinute;
+        minute + durationMinutes <= period.endsMinute;
+        minute += durationMinutes
+      ) {
+        const start = this.timezones.instantForLocalDateMinute(
+          date,
+          minute,
+          zone,
+        );
+        if (!start) continue;
+        const end = new Date(start.getTime() + durationMinutes * 60_000);
+        const key = start.toISOString();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        slots.push({
+          start,
+          end,
+          allowed: this.scheduleAllows(clinic, weekday, minute, start, end),
+        });
+      }
+    }
+    return slots.sort((left, right) => +left.start - +right.start);
+  }
+
+  /**
+   * Reception's day board: every doctor at the signed-in clinic, with each
+   * slot marked free, booked (and how: app, phone or walk-in), unavailable
+   * (break, leave, holiday) or past. Uses the same schedule and conflict
+   * rules as booking, so a slot shown free is one that can be booked.
+   */
+  async dayBoard(
+    access: AppointmentAccess,
+    date: string,
+    requestId: string,
+  ): Promise<DayBoardProjection> {
+    if (
+      access.patient ||
+      access.platformAdministrator ||
+      !access.organizationId ||
+      !access.clinicId
+    )
+      throw new ForbiddenException('Staff tenant context is required.');
+    this.dateWindow(date, date);
+    const organizationId = access.organizationId;
+    const clinicId = access.clinicId;
+    const generatedAt = new Date();
+    const durationMinutes =
+      this.configuration.appointmentFoundationDurationMinutes;
+    const earliestStart = new Date(
+      generatedAt.getTime() -
+        this.configuration.appointmentPastToleranceMinutes * 60_000,
+    );
+    const scope = this.receptionScope(access);
+    const doctors = (
+      await this.repository.clinicDoctors(organizationId, clinicId)
+    ).filter((doctor) => !scope || scope.includes(doctor.id));
+    const schedules = await Promise.all(
+      doctors.map((doctor) =>
+        this.schedules
+          .schedule(
+            this.doctorAccess(access),
+            doctor.id,
+            clinicId,
+            requestId,
+            new Date(`${date}T12:00:00.000Z`),
+          )
+          .then((schedule) =>
+            schedule.clinics.find((item) => item.clinicId === clinicId),
+          )
+          .catch(() => undefined),
+      ),
+    );
+    const timezone =
+      schedules.find(Boolean)?.timezone.identifier ?? 'Asia/Baghdad';
+    const dayStart = this.timezones.instantForLocalDateMinute(
+      date,
+      0,
+      timezone,
+    );
+    const dayEnd = this.timezones.instantForLocalDateMinute(
+      this.addDate(date, 1),
+      0,
+      timezone,
+    );
+    if (!dayStart || !dayEnd)
+      throw new BadRequestException('Board date is invalid.');
+    const appointments = await this.repository.dayAppointments(
+      organizationId,
+      clinicId,
+      dayStart,
+      dayEnd,
+    );
+    const summary = (item: AppointmentProjection): DayBoardAppointment =>
+      Object.freeze({
+        id: item.id,
+        reference: item.reference,
+        origin: item.origin,
+        status: item.status,
+        patientName: item.patientName,
+        onTheWayEta: item.onTheWayEta ?? null,
+      });
+    const board = doctors.map((doctor, index): DayBoardDoctor => {
+      const clinic = schedules[index];
+      const own = appointments.filter((item) => item.doctorId === doctor.id);
+      const placed = new Set<string>();
+      const slots: DayBoardSlot[] = (
+        clinic ? this.gridSlots(clinic, date, durationMinutes) : []
+      ).map(({ start, end, allowed }) => {
+        const booked = own.find(
+          (item) =>
+            new Date(item.startsAt) < end && new Date(item.endsAt) > start,
+        );
+        if (booked) placed.add(booked.id);
+        const state: DayBoardSlotState = booked
+          ? 'booked'
+          : !allowed
+            ? 'unavailable'
+            : start <= earliestStart
+              ? 'past'
+              : 'free';
+        return Object.freeze({
+          startsAt: start.toISOString(),
+          endsAt: end.toISOString(),
+          state,
+          walkIn:
+            state === 'free' &&
+            start.getTime() - generatedAt.getTime() <= 60 * 60_000,
+          appointment: booked ? summary(booked) : null,
+        });
+      });
+      // Bookings outside the normal grid (moved by hand, or after hours)
+      // still appear, so the board never hides a patient.
+      for (const item of own.filter((entry) => !placed.has(entry.id)))
+        slots.push(
+          Object.freeze({
+            startsAt: item.startsAt,
+            endsAt: item.endsAt,
+            state: 'booked',
+            walkIn: false,
+            appointment: summary(item),
+          }),
+        );
+      slots.sort((left, right) => left.startsAt.localeCompare(right.startsAt));
+      return Object.freeze({
+        doctorId: doctor.id,
+        doctorName: doctor.displayName,
+        slots: Object.freeze(slots),
+      });
+    });
+    await this.audit(access, appointments, requestId);
+    return Object.freeze({
+      date,
+      clinicId,
+      clinicTimezone: timezone,
+      durationMinutes,
+      generatedAt: generatedAt.toISOString(),
+      doctors: Object.freeze(board),
+    });
+  }
+
   private scheduleAllows(
     clinic: Awaited<
       ReturnType<DoctorScheduleService['schedule']>

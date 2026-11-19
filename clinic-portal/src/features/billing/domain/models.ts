@@ -17,7 +17,8 @@ export const billingPlanSchema = z
     displayName: z.string().min(1).max(160),
     status: z.enum(["active", "inactive"]),
     currency: z.literal("IQD"),
-    commissionAmountIqd: positiveMoney,
+    // 0 IQD is a free (pilot) plan.
+    commissionAmountIqd: nonnegativeMoney,
     ruleCode: z.string().min(1).max(160),
     ruleVersion: z.number().int().positive(),
     version: z.number().int().positive(),
@@ -40,6 +41,8 @@ export const commissionSchema = z
     id: uuid,
     organizationId: uuid,
     clinicId: uuid,
+    doctorId: uuid,
+    doctorName: z.string().min(1).max(200),
     appointmentId: uuid,
     appointmentReference: z.string().min(1).max(100),
     planCode: z.string().min(1).max(100),
@@ -52,6 +55,7 @@ export const commissionSchema = z
     recognizedAt: timestamp,
     status: z.enum(["earned", "reversed"]),
     originalCommissionId: uuid.nullable(),
+    reason: z.string().nullable(),
   })
   .strict();
 
@@ -80,6 +84,9 @@ export const commissionPageSchema = z
 const statementBase = {
   id: uuid,
   organizationId: uuid,
+  /** Each doctor is billed separately; null on old clinic-wide statements. */
+  doctorId: uuid.nullable(),
+  doctorName: z.string().min(1).max(200).nullable(),
   periodStart: timestamp,
   periodEnd: timestamp,
   timezone: z.literal("Asia/Baghdad"),
@@ -137,6 +144,8 @@ export const billingStatementDetailSchema = z
   })
   .strict();
 export const billingStatementListSchema = unique(billingStatementSchema);
+/** This month's running statement for each doctor. */
+export const currentStatementsSchema = unique(billingStatementSchema);
 
 export type BillingPlan = Readonly<z.infer<typeof billingPlanSchema>>;
 export type OrganizationPlan = Readonly<z.infer<typeof organizationPlanSchema>>;
@@ -146,3 +155,139 @@ export type BillingStatement = Readonly<z.infer<typeof billingStatementSchema>>;
 export type BillingStatementDetail = Readonly<
   z.infer<typeof billingStatementDetailSchema>
 >;
+
+const money = z.number().int();
+/** One doctor's 30-day statement (summary row). */
+export const cycleStatementSchema = z
+  .object({
+    organizationId: uuid,
+    organizationName: z.string(),
+    doctorId: uuid,
+    doctorName: z.string(),
+    cycleNumber: z.number().int().positive(),
+    statementNumber: z.string().min(1).max(40),
+    periodStart: timestamp,
+    periodEnd: timestamp,
+    status: z.enum(["open", "due", "waiting", "settled"]),
+    canSettle: z.boolean(),
+    direction: z.enum(["saxlemPays", "doctorPays", "even"]),
+    grossCollectedIqd: money,
+    clawbackIqd: money,
+    providerFeeIqd: money,
+    commissionIqd: money,
+    carriedInIqd: money,
+    netPayableIqd: money,
+    paymentCount: money,
+    chargeCount: money.nullable(),
+    dueAt: timestamp.nullable(),
+    settlement: z
+      .object({
+        method: z.enum(["fib", "cash", "carried"]),
+        settledAt: timestamp,
+        carriedIntoStatement: z.string().nullable().optional(),
+        reference: z.string().nullable().optional(),
+        counterpartyName: z.string().nullable().optional(),
+        note: z.string().nullable().optional(),
+        settledByName: z.string().nullable().optional(),
+      })
+      .strict()
+      .nullable(),
+  })
+  .strict();
+export type CycleStatement = z.infer<typeof cycleStatementSchema>;
+export const cycleStatementListSchema = z
+  .object({ items: z.array(cycleStatementSchema) })
+  .strict();
+const statementMoneySchema = z
+  .object({
+    id: uuid,
+    at: timestamp,
+    appointmentReference: z.string(),
+    amountIqd: money,
+  })
+  .strict();
+export const cycleStatementDocumentSchema = cycleStatementSchema
+  .extend({
+    issuedAt: timestamp,
+    cycleStart: z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
+    clinicNames: z.array(z.string()),
+    providerFeeBps: money,
+    payoutAccount: z
+      .object({ name: z.string().nullable(), numberHint: z.string() })
+      .strict()
+      .nullable(),
+    visits: z
+      .object({
+        total: money,
+        completed: money,
+        noShow: money,
+        cancelled: money,
+        upcoming: money,
+        app: money,
+        phone: money,
+        walkIn: money,
+      })
+      .strict(),
+    revenue: z
+      .object({
+        totalIqd: money,
+        counterIqd: money,
+        counterCount: money,
+        onlineIqd: money,
+        onlineCount: money,
+      })
+      .strict(),
+    charges: z.array(
+      z
+        .object({
+          id: uuid,
+          recognizedAt: timestamp,
+          appointmentReference: z.string(),
+          appointmentStartsAt: timestamp,
+          clinicName: z.string(),
+          planName: z.string(),
+          amountIqd: money,
+          kind: z.enum(["charge", "credit"]),
+          reason: z.string().nullable(),
+        })
+        .strict(),
+    ),
+    onlinePayments: z.array(statementMoneySchema),
+    refunds: z.array(statementMoneySchema),
+    carriedFrom: z.array(
+      z
+        .object({
+          statementNumber: z.string(),
+          cycleNumber: z.number().int().positive(),
+          amountIqd: money,
+        })
+        .strict(),
+    ),
+  })
+  .strict();
+export type CycleStatementDocument = z.infer<
+  typeof cycleStatementDocumentSchema
+>;
+
+/** What a doctor owes Saxlem and where collection stands. */
+export const collectionSchema = z
+  .object({
+    organizationId: uuid,
+    organizationName: z.string(),
+    doctorId: uuid,
+    doctorName: z.string(),
+    stage: z.enum(["clear", "due", "overdue", "warning", "hidden"]),
+    owedIqd: money,
+    cycleNumber: z.number().int().positive().nullable(),
+    statementNumber: z.string().nullable(),
+    dueAt: timestamp.nullable(),
+    warnOn: timestamp.nullable(),
+    hideOn: timestamp.nullable(),
+    hiddenAt: timestamp.nullable(),
+    graceUntil: timestamp.nullable(),
+  })
+  .strict();
+export type Collection = z.infer<typeof collectionSchema>;
+export const collectionListSchema = z
+  .object({ items: z.array(collectionSchema) })
+  .strict();

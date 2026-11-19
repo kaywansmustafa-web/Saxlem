@@ -1,3 +1,5 @@
+import '../../domain/entities/doctor_discovery_result.dart';
+import '../../../../core/formatting/clinic_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -43,6 +45,23 @@ class DiscoverPage extends StatefulWidget {
 }
 
 class _DiscoverPageState extends State<DiscoverPage> {
+  /// "Free today": only doctors whose next free time is today (clinic time),
+  /// among the doctors loaded so far.
+  bool _todayOnly = false;
+
+  List<DoctorDiscoveryResult> _shown(DiscoverReady state) {
+    if (!_todayOnly) return state.page.results;
+    final today = ClinicFormat.atClinic(DateTime.now());
+    return state.page.results.where((doctor) {
+      final next = doctor.availability.nextAvailableAt;
+      if (next == null) return false;
+      final day = ClinicFormat.atClinic(next);
+      return day.year == today.year &&
+          day.month == today.month &&
+          day.day == today.day;
+    }).toList();
+  }
+
   final _search = TextEditingController();
   final _searchFocus = FocusNode();
   final _filterFocus = FocusNode();
@@ -265,21 +284,29 @@ class _DiscoverPageState extends State<DiscoverPage> {
     );
   }
 
-  Widget _results(DiscoverReady state, {DiscoverProblem? refreshProblem}) =>
-      NotificationListener<ScrollNotification>(
-        onNotification: (event) {
-          if (event.metrics.extentAfter < 300) widget.controller.loadMore();
-          return false;
-        },
-        child: ListView(
-          key: const Key('doctor-results-list'),
-          padding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 36),
+  Widget _results(
+    DiscoverReady state, {
+    DiscoverProblem? refreshProblem,
+  }) => NotificationListener<ScrollNotification>(
+    onNotification: (event) {
+      if (event.metrics.extentAfter < 300) widget.controller.loadMore();
+      return false;
+    },
+    child: ListView(
+      key: const Key('doctor-results-list'),
+      padding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 36),
+      children: [
+        if (refreshProblem != null)
+          Padding(
+            padding: const EdgeInsetsDirectional.only(bottom: 12),
+            child: _problemView(refreshProblem, widget.controller.retry),
+          ),
+        // Wraps at large text sizes instead of overflowing.
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 8,
           children: [
-            if (refreshProblem != null)
-              Padding(
-                padding: const EdgeInsetsDirectional.only(bottom: 12),
-                child: _problemView(refreshProblem, widget.controller.retry),
-              ),
             Focus(
               focusNode: _resultsFocus,
               child: Semantics(
@@ -288,7 +315,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 child: Padding(
                   padding: const EdgeInsetsDirectional.symmetric(vertical: 12),
                   child: Text(
-                    context.l10n.doctorResults(state.page.totalCount),
+                    context.l10n.doctorResults(
+                      _todayOnly ? _shown(state).length : state.page.totalCount,
+                    ),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
@@ -296,40 +325,50 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 ),
               ),
             ),
-            ...state.page.results.map(
-              (doctor) => Padding(
-                padding: const EdgeInsetsDirectional.only(bottom: 14),
-                child: DoctorResultCard(
-                  doctor: doctor,
-                  onProfile: () => _details(doctor.doctorId),
-                ),
-              ),
+            FilterChip(
+              avatar: const Icon(Icons.bolt_rounded, size: 18),
+              label: Text(context.l10n.freeTodayFilter),
+              selected: _todayOnly,
+              onSelected: (value) => setState(() => _todayOnly = value),
             ),
-            if (state.loadingMore)
-              Padding(
-                padding: const EdgeInsets.all(18),
-                child: _loading(context.l10n.loadingMoreDoctors),
-              ),
-            if (state.loadMoreFailed)
-              Semantics(
-                liveRegion: true,
-                container: true,
-                child: Column(
-                  children: [
-                    Text(
-                      context.l10n.loadMoreFailed,
-                      textAlign: TextAlign.center,
-                    ),
-                    TextButton(
-                      onPressed: widget.controller.retryLoadMore,
-                      child: Text(context.l10n.tryAgain),
-                    ),
-                  ],
-                ),
-              ),
           ],
         ),
-      );
+        if (_todayOnly && _shown(state).isEmpty)
+          Padding(
+            padding: const EdgeInsetsDirectional.symmetric(vertical: 12),
+            child: Text(context.l10n.noneFreeToday),
+          ),
+        ..._shown(state).map(
+          (doctor) => Padding(
+            padding: const EdgeInsetsDirectional.only(bottom: 14),
+            child: DoctorResultCard(
+              doctor: doctor,
+              onProfile: () => _details(doctor.doctorId),
+            ),
+          ),
+        ),
+        if (state.loadingMore)
+          Padding(
+            padding: const EdgeInsets.all(18),
+            child: _loading(context.l10n.loadingMoreDoctors),
+          ),
+        if (state.loadMoreFailed)
+          Semantics(
+            liveRegion: true,
+            container: true,
+            child: Column(
+              children: [
+                Text(context.l10n.loadMoreFailed, textAlign: TextAlign.center),
+                TextButton(
+                  onPressed: widget.controller.retryLoadMore,
+                  child: Text(context.l10n.tryAgain),
+                ),
+              ],
+            ),
+          ),
+      ],
+    ),
+  );
 
   (String, String) _problemCopy(DiscoverProblem problem) => switch (problem) {
     DiscoverProblem.offline => (

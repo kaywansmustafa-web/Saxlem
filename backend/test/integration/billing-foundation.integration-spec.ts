@@ -188,6 +188,7 @@ describe('billing foundation', () => {
         data: {
           organizationId: organization.id,
           clinicId: clinic.id,
+          doctorId: entries[0]!.doctorId,
           appointmentId: qualifying.id,
           planId: entries[0]!.planId,
           originalCommissionId: entries[0]!.id,

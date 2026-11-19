@@ -3,6 +3,9 @@ import type {
   BillingStatement,
   BillingStatementDetail,
   CommissionPage,
+  Collection,
+  CycleStatement,
+  CycleStatementDocument,
   OrganizationPlan,
 } from "./models";
 
@@ -25,8 +28,20 @@ export interface BillingRepository {
     cursor?: string;
   }): Promise<CommissionPage>;
   listStatements(organizationId: string): Promise<readonly BillingStatement[]>;
-  getCurrentStatement(organizationId: string): Promise<BillingStatement>;
+  /** One running statement per doctor (each doctor is billed separately). */
+  getCurrentStatements(
+    organizationId: string,
+  ): Promise<readonly BillingStatement[]>;
   getStatement(statementId: string): Promise<BillingStatementDetail>;
+  /** Each doctor's 30-day statements the session may see. */
+  listCycleStatements(): Promise<readonly CycleStatement[]>;
+  /** Doctors who owe Saxlem, in the session's scope. */
+  listCollections(): Promise<readonly Collection[]>;
+  getCycleStatement(
+    organizationId: string,
+    doctorId: string,
+    cycleNumber: number,
+  ): Promise<CycleStatementDocument>;
   finalizeStatement(
     statementId: string,
     version: number,

@@ -15,6 +15,8 @@ class SaxlemTextField extends StatelessWidget {
     this.autofocus = false,
     this.onChanged,
     this.onSubmitted,
+    this.style,
+    this.textAlign = TextAlign.start,
     super.key,
   });
 
@@ -28,6 +30,10 @@ class SaxlemTextField extends StatelessWidget {
   final bool enabled, autofocus;
   final ValueChanged<String>? onChanged, onSubmitted;
 
+  /// Optional larger type, e.g. the one-time code.
+  final TextStyle? style;
+  final TextAlign textAlign;
+
   @override
   Widget build(BuildContext context) => TextField(
     controller: controller,
@@ -39,9 +45,19 @@ class SaxlemTextField extends StatelessWidget {
     maxLength: maxLength,
     onChanged: onChanged,
     onSubmitted: onSubmitted,
+    style: style,
+    textAlign: textAlign,
     decoration: InputDecoration(
       labelText: label,
       hintText: hint,
+      // A spaced-out style (the code field) must not stretch the hint.
+      hintStyle: style == null
+          ? null
+          : Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              letterSpacing: 0,
+              fontWeight: FontWeight.w400,
+            ),
       errorText: errorText,
       prefixText: prefixText,
       counterText: '',

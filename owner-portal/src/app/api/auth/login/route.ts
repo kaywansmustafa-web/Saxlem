@@ -34,7 +34,7 @@ export async function POST(request: Request): Promise<Response> {
     const returnPath = await authenticateOwner(
       body.data.email,
       body.data.password,
-      request.headers.get("user-agent") ?? "unknown",
+      (request.headers.get("user-agent") ?? "unknown").slice(0, 512),
     );
     return noStoreJson({ ok: true, returnPath });
   } catch {

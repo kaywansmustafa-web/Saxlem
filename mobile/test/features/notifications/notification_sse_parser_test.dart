@@ -4,7 +4,7 @@ import 'package:saxlem_app/features/notifications/data/stream/notification_sse_p
 
 void main() {
   const data =
-      '{"id":"11111111-1111-4111-8111-111111111111","patientProfileId":null,"deliverySequence":"42","type":"queue.patient.called","priority":"high","actionCode":"queue.patient.called","occurredAt":"2026-08-10T06:00:00Z","createdAt":"2026-08-10T06:00:01Z","readAt":null}';
+      '{"id":"11111111-1111-4111-8111-111111111111","patientProfileId":null,"deliverySequence":"42","type":"queue.patient.called","priority":"high","actionCode":"queue.patient.called","occurredAt":"2026-08-10T06:00:00Z","createdAt":"2026-08-10T06:00:01Z","readAt":null,"context":null}';
   test('parses notification frame and ignores heartbeat', () async {
     final stream = Stream.value(
       utf8.encode(

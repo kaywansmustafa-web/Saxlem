@@ -10,11 +10,46 @@ import { AppointmentDtoMapper } from './presentation/appointment-dto.mapper';
 import { AppointmentsController } from './presentation/appointments.controller';
 import { BookingOptionsController } from './presentation/booking-options.controller';
 import { BookingOptionsDtoMapper } from './presentation/booking-options-dto.mapper';
+import { BACKEND_CONFIGURATION } from '../../config/configuration.module';
+import type { BackendConfiguration } from '../../config/environment';
+import { DepartureService, ROUTE_TIME } from './application/departure.service';
+import {
+  FallbackRouteTime,
+  GoogleRouteTime,
+  OsrmRouteTime,
+  TomTomRouteTime,
+} from './infrastructure/route-time';
+import { TripLearningService } from './application/trip-learning.service';
+import { EarlierTimeService } from './application/earlier-time.service';
+import { EarlierTimeWorker } from './infrastructure/earlier-time.worker';
+import { EarlierTimeController } from './presentation/earlier-time.controller';
 @Module({
   imports: [IdentityModule, DoctorsModule],
-  controllers: [AppointmentsController, BookingOptionsController],
+  controllers: [
+    AppointmentsController,
+    BookingOptionsController,
+    EarlierTimeController,
+  ],
   providers: [
     AppointmentService,
+    DepartureService,
+    TripLearningService,
+    EarlierTimeService,
+    EarlierTimeWorker,
+    {
+      provide: ROUTE_TIME,
+      inject: [BACKEND_CONFIGURATION],
+      useFactory: ({ routing }: BackendConfiguration) =>
+        new FallbackRouteTime(
+          routing.provider === 'google'
+            ? new GoogleRouteTime(routing.googleApiKey)
+            : routing.provider === 'tomtom'
+              ? new TomTomRouteTime(routing.tomtomApiKey)
+              : routing.provider === 'osrm'
+                ? new OsrmRouteTime(routing.osrmBaseUrl)
+                : null,
+        ),
+    },
     AppointmentDtoMapper,
     BookingOptionsDtoMapper,
     PrismaAppointmentRepository,

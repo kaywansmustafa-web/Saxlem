@@ -25,6 +25,20 @@ const doctor = z
         updatedAt: z.string().datetime({ offset: true }).nullable(),
       })
       .strict(),
+    fees: z
+      .object({
+        firstVisitIqd: z.number().int().nonnegative(),
+        followUpIqd: z.number().int().nonnegative(),
+      })
+      .strict(),
+    // Verified reviews (average and count).
+    rating: z
+      .object({
+        average: z.number().min(0).max(5),
+        count: z.number().int().nonnegative(),
+      })
+      .strict()
+      .optional(),
   })
   .strict();
 const page = z

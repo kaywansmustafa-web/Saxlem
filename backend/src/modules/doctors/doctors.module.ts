@@ -1,3 +1,5 @@
+import { ReceptionDoctorsService } from './application/reception-doctors.service';
+import { ReceptionDoctorsController } from './presentation/reception-doctors.controller';
 import { Module } from '@nestjs/common';
 import { IdentityModule } from '../identity/identity.module';
 import { DoctorService } from './application/doctor.service';
@@ -11,11 +13,18 @@ import { DOCTOR_SCHEDULE_REPOSITORY } from './domain/doctor-schedule.repository'
 import { PrismaDoctorScheduleRepository } from './infrastructure/prisma-doctor-schedule.repository';
 import { DoctorScheduleDtoMapper } from './presentation/doctor-schedule-dto.mapper';
 import { ClinicHoursController } from './presentation/clinic-hours.controller';
+import { SavedDoctorsController } from './presentation/saved-doctors.controller';
 
 @Module({
   imports: [IdentityModule],
-  controllers: [DoctorsController, ClinicHoursController],
+  controllers: [
+    DoctorsController,
+    ClinicHoursController,
+    ReceptionDoctorsController,
+    SavedDoctorsController,
+  ],
   providers: [
+    ReceptionDoctorsService,
     DoctorService,
     DoctorDtoMapper,
     DoctorScheduleService,
@@ -30,6 +39,7 @@ import { ClinicHoursController } from './presentation/clinic-hours.controller';
     },
   ],
   exports: [
+    ReceptionDoctorsService,
     DoctorService,
     DoctorScheduleService,
     TimezoneService,

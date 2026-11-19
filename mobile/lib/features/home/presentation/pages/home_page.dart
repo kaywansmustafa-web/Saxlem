@@ -1,9 +1,22 @@
+import 'dart:async';
+
+import '../../../../core/notifications/push_messaging.dart';
+import '../../../../core/notifications/push_registration.dart';
+import '../../../notifications/data/dto/backend_notification_dto.dart';
+import '../../../saved_doctors/domain/saved_doctors.dart';
+import '../../../../core/localization/supported_app_locale.dart';
 import 'package:flutter/material.dart';
+import '../../../../design_system/design_system.dart';
 
 import '../../../../config/theme/app_colors.dart';
 import '../../../../shared/widgets/navigation/saxlem_bottom_navigation.dart';
 import '../widgets/dashboard_view.dart';
 import '../../../discover/discover_feature.dart';
+import '../../../discover/domain/entities/clinic_location.dart';
+import '../../../live_queue/live_queue_feature.dart';
+import '../../../appointments/presentation/pages/appointment_details_page.dart';
+import '../../../discover/presentation/controllers/discover_controller.dart';
+import '../../../discover/presentation/pages/doctor_details_page.dart';
 import '../../../discover/domain/entities/doctor_search_criteria.dart';
 import '../../../appointments/appointments_feature.dart';
 import '../../../../core/localization/localization_extensions.dart';
@@ -31,6 +44,7 @@ class HomePage extends StatefulWidget {
   const HomePage({
     this.guestMode = false,
     this.onLogout,
+    this.onChangeLanguage,
     this.profilesController,
     this.doctorDiscoveryRepository =
         const UnavailableDoctorDiscoveryRepository(),
@@ -44,6 +58,7 @@ class HomePage extends StatefulWidget {
   });
   final bool guestMode;
   final Future<void> Function()? onLogout;
+  final Future<bool> Function(SupportedAppLocale locale)? onChangeLanguage;
   final PatientProfilesController? profilesController;
   final DoctorDiscoveryRepository doctorDiscoveryRepository;
   final BookingRepository bookingRepository;
@@ -64,6 +79,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool _openDiscoverFilters = false;
   late final NotificationsController _notifications;
 
+  /// Set once Home finds a booking, so first-timer help steps aside.
+  final _returning = ValueNotifier(false);
+
   @override
   void initState() {
     super.initState();
@@ -75,7 +93,44 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (!widget.guestMode) _notifications.load();
     _notifications.addListener(_onNotificationsChanged);
     widget.profilesController?.addListener(_onProfileChanged);
+    if (!widget.guestMode &&
+        widget.notificationsRepository is PushDevicesSource) {
+      _pushTaps = PushMessaging.instance.taps.listen(_openPush);
+      WidgetsBinding.instance.addPostFrameCallback((_) => _startPush());
+    }
   }
+
+  StreamSubscription<PushTap>? _pushTaps;
+  String? _pushLocale;
+
+  Future<void> _startPush() async {
+    if (!mounted) return;
+    final push = PushMessaging.instance;
+    if (!push.enabled) return;
+    _pushLocale = Localizations.localeOf(context).languageCode;
+    await push.start(
+      devices: widget.notificationsRepository as PushDevicesSource,
+      locale: _pushLocale!,
+      channelName: context.l10n.pushChannelName,
+    );
+    final opened = await push.initialTap();
+    if (opened != null && mounted) _openPush(opened);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final locale = Localizations.localeOf(context).languageCode;
+    if (_pushLocale != null && locale != _pushLocale) {
+      _pushLocale = locale;
+      PushMessaging.instance.setLocale(locale);
+    }
+  }
+
+  /// A tapped phone push goes where the same inbox item would.
+  void _openPush(PushTap tap) => _openNotificationAction(
+    BackendNotificationDto.actionFor(tap.type, tap.appointmentId),
+  );
 
   void _onProfileChanged() =>
       _notifications.load(widget.profilesController!.activeProfileId);
@@ -86,14 +141,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _pushTaps?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     _notifications.removeListener(_onNotificationsChanged);
     widget.profilesController?.removeListener(_onProfileChanged);
     _notifications.dispose();
+    _returning.dispose();
     super.dispose();
   }
 
   Future<void> _logout() async {
+    await PushMessaging.instance.stop();
     _notifications.clear();
     await widget.onLogout?.call();
   }
@@ -111,20 +169,100 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   void _openNotificationAction(NotificationAction action) {
+    if (action.destination == NotificationDestination.none) return;
+    // Close the notifications page (and any detail on top) first.
+    final home = ModalRoute.of(context);
+    if (home != null && !home.isCurrent) {
+      Navigator.of(context).popUntil((route) => route == home);
+    }
+    final target = action.targetId;
     switch (action.destination) {
+      case NotificationDestination.liveQueue when target != null:
+        _openVisit(target, inQueue: true);
+      case NotificationDestination.appointment when target != null:
+        _openVisit(target, inQueue: false);
       case NotificationDestination.appointment:
+      case NotificationDestination.liveQueue:
         setState(() => _selectedIndex = 2);
       case NotificationDestination.doctor:
       case NotificationDestination.booking:
         _openDiscover();
-      case NotificationDestination.liveQueue:
-        setState(() => _selectedIndex = 2);
       case NotificationDestination.settings:
-        setState(() => _selectedIndex = 4);
+        setState(() => _selectedIndex = 3);
       case NotificationDestination.none:
         break;
     }
   }
+
+  /// A visit from Home or a notification: the live queue when the patient
+  /// is in it, otherwise the visit's own page (details, check in).
+  Future<void> _openVisit(String appointmentId, {required bool inQueue}) =>
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => inQueue
+              ? LiveQueueFeature(
+                  appointmentId: appointmentId,
+                  repository: widget.liveQueueRepository,
+                  notificationSignals: _notifications.signals,
+                )
+              : AppointmentDetailsPage(
+                  appointmentId: appointmentId,
+                  repository: widget.appointmentsRepository,
+                  bookingRepository: widget.bookingRepository,
+                  arrivalRepository: widget.arrivalRepository,
+                  liveQueueRepository: widget.liveQueueRepository,
+                  notificationSignals: _notifications.signals,
+                  profilesController: widget.profilesController,
+                  clinicLocations: switch (widget.doctorDiscoveryRepository) {
+                    final ClinicLocationSource source => source,
+                    _ => null,
+                  },
+                  onChanged: () async {},
+                ),
+        ),
+      );
+
+  /// One doctor's page, straight from Home (free today, book again).
+  Future<void> _openDoctor(String doctorId) {
+    final controller = DiscoverController(
+      widget.doctorDiscoveryRepository,
+      guest: widget.guestMode,
+    );
+    return Navigator.of(context)
+        .push(
+          MaterialPageRoute<void>(
+            builder: (_) => DoctorDetailsPage(
+              controller: controller,
+              doctorId: doctorId,
+              onAuthenticationRequired: _logout,
+              bookingRepository: widget.bookingRepository,
+              guestMode: widget.guestMode,
+              profilesController: widget.profilesController,
+            ),
+          ),
+        )
+        .whenComplete(controller.dispose);
+  }
+
+  /// Notifications live behind the bell at the top of Home.
+  Future<void> _openNotifications() => Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (context) => Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+        ),
+        body: _quietAura(
+          NotificationsFeature(
+            controller: _notifications,
+            profilesController: widget.profilesController,
+          ),
+        ),
+      ),
+    ),
+  );
 
   void _openDiscover({
     DoctorSearchCriteria? criteria,
@@ -172,64 +310,85 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 children: [
                   DashboardView(
                     onOpenDiscover: _openDiscover,
-                    onOpenAlerts: () => setState(() => _selectedIndex = 3),
+                    onOpenAlerts: _openNotifications,
+                    onOpenFamily: () => setState(() => _selectedIndex = 3),
+                    discoveryRepository: widget.doctorDiscoveryRepository,
+                    liveQueueRepository: widget.guestMode
+                        ? null
+                        : widget.liveQueueRepository,
+                    onOpenDoctor: _openDoctor,
+                    onOpenVisit: widget.guestMode ? null : _openVisit,
+                    returning: _returning,
+                    unreadNotifications: _notifications.unreadCount,
                     onOpenAppointments: () =>
                         setState(() => _selectedIndex = 2),
                     profilesController: widget.profilesController,
+                    appointmentsRepository: widget.guestMode
+                        ? null
+                        : widget.appointmentsRepository,
                   ),
-                  DiscoverFeature(
-                    repository: widget.doctorDiscoveryRepository,
-                    bookingRepository: widget.bookingRepository,
-                    onAuthenticationRequired: _logout,
-                    key: ValueKey(_discoverRequest),
-                    initialCriteria: _discoverCriteria,
-                    focusSearch: _focusDiscover,
-                    openFilters: _openDiscoverFilters,
-                    onOpenAppointments: () =>
-                        setState(() => _selectedIndex = 2),
-                    guestMode: widget.guestMode,
-                    profilesController: widget.profilesController,
+                  _quietAura(
+                    DiscoverFeature(
+                      repository: widget.doctorDiscoveryRepository,
+                      bookingRepository: widget.bookingRepository,
+                      onAuthenticationRequired: _logout,
+                      key: ValueKey(_discoverRequest),
+                      initialCriteria: _discoverCriteria,
+                      focusSearch: _focusDiscover,
+                      openFilters: _openDiscoverFilters,
+                      onOpenAppointments: () =>
+                          setState(() => _selectedIndex = 2),
+                      guestMode: widget.guestMode,
+                      profilesController: widget.profilesController,
+                    ),
                   ),
-                  widget.guestMode
-                      ? InformationalPage(
-                          title: strings.personalizedFeatureTitle,
-                          message: strings.personalizedFeatureBody,
-                          icon: Icons.lock_outline_rounded,
-                          semanticLabel: strings.informationalScreen,
-                          actionLabel: strings.verifyNumber,
-                          onAction: _logout,
-                        )
-                      : AppointmentsFeature(
-                          repository: widget.appointmentsRepository,
-                          bookingRepository: widget.bookingRepository,
-                          arrivalRepository: widget.arrivalRepository,
-                          liveQueueRepository: widget.liveQueueRepository,
-                          notificationSignals: _notifications.signals,
-                          onOpenDiscover: () => _openDiscover(),
-                          profilesController: widget.profilesController,
-                          doctorDiscoveryRepository:
-                              widget.doctorDiscoveryRepository,
-                          onAuthenticationRequired: _logout,
-                        ),
-                  NotificationsFeature(
-                    controller: _notifications,
-                    profilesController: widget.profilesController,
+                  _quietAura(
+                    widget.guestMode
+                        ? InformationalPage(
+                            title: strings.personalizedFeatureTitle,
+                            message: strings.personalizedFeatureBody,
+                            icon: Icons.lock_outline_rounded,
+                            semanticLabel: strings.informationalScreen,
+                            actionLabel: strings.verifyNumber,
+                            onAction: _logout,
+                          )
+                        : AppointmentsFeature(
+                            repository: widget.appointmentsRepository,
+                            bookingRepository: widget.bookingRepository,
+                            arrivalRepository: widget.arrivalRepository,
+                            liveQueueRepository: widget.liveQueueRepository,
+                            notificationSignals: _notifications.signals,
+                            onOpenDiscover: () => _openDiscover(),
+                            profilesController: widget.profilesController,
+                            doctorDiscoveryRepository:
+                                widget.doctorDiscoveryRepository,
+                            onAuthenticationRequired: _logout,
+                          ),
                   ),
-                  widget.guestMode || widget.profilesController == null
-                      ? InformationalPage(
-                          title: strings.profileTitle,
-                          message: strings.profileBody,
-                          icon: Icons.person_outline_rounded,
-                          semanticLabel: strings.informationalScreen,
-                          actionLabel: widget.guestMode
-                              ? strings.verifyNumber
-                              : strings.logOut,
-                          onAction: _logout,
-                        )
-                      : PatientProfilesPage(
-                          controller: widget.profilesController!,
-                          onLogout: _logout,
-                        ),
+                  _quietAura(
+                    widget.guestMode || widget.profilesController == null
+                        ? InformationalPage(
+                            title: strings.profileTitle,
+                            message: strings.profileBody,
+                            icon: Icons.person_outline_rounded,
+                            semanticLabel: strings.informationalScreen,
+                            actionLabel: widget.guestMode
+                                ? strings.verifyNumber
+                                : strings.logOut,
+                            onAction: _logout,
+                          )
+                        : PatientProfilesPage(
+                            controller: widget.profilesController!,
+                            onLogout: _logout,
+                            onChangeLanguage: widget.onChangeLanguage,
+                            savedDoctors:
+                                switch (widget.doctorDiscoveryRepository) {
+                                  final SavedDoctorsSource source => source,
+                                  _ => null,
+                                },
+                            onOpenDoctor: _openDoctor,
+                          ),
+                  ),
                 ],
               ),
             ),
@@ -243,14 +402,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           strings.home,
           strings.discover,
           strings.appointments,
-          strings.notifications,
           strings.profile,
         ],
-        notificationCount: _notifications.unreadCount,
-        notificationBadgeLabel: strings.unreadNotifications(
-          _notifications.unreadCount,
-        ),
       ),
     );
   }
+
+  /// Every tab sits on the same quiet aura as Home.
+  static Widget _quietAura(Widget child) =>
+      SaxlemAuraBackdrop(strength: .55, height: 320, child: child);
 }

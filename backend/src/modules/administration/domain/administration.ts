@@ -1,3 +1,4 @@
+import type { ClinicLocation } from '../../../common/clinics/clinic-location';
 import type { RecordStatus } from '@prisma/client';
 
 export interface AdministrationAccess {
@@ -12,7 +13,7 @@ export interface OrganizationRecord {
   readonly updatedAt: string;
 }
 
-export interface ClinicRecord {
+export interface ClinicRecord extends ClinicLocation {
   readonly id: string;
   readonly organizationId: string;
   readonly name: string;

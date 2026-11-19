@@ -31,6 +31,13 @@ class SaxlemColors extends ThemeExtension<SaxlemColors> {
     required this.appointment,
     required this.booking,
     required this.notification,
+    required this.canvas,
+    required this.night,
+    required this.brandTint,
+    required this.auraStart,
+    required this.auraEnd,
+    required this.tealFill,
+    required this.onFill,
   });
 
   final Color brandPrimary, brandSecondary;
@@ -44,35 +51,60 @@ class SaxlemColors extends ThemeExtension<SaxlemColors> {
   final Color queueReady, queueAttention, queueActionNeeded;
   final Color appointment, booking, notification;
 
+  /// v2 "Aura" additions. [canvas] is the app background, [night] the deep
+  /// brand ground. The Aura gradient ([auraStart] → [auraEnd]) is decoration
+  /// only and never sits behind text; [deepAura] (brand → [tealFill]) is the
+  /// gradient for white text (called ticket, selected day).
+  final Color canvas, night, brandTint, auraStart, auraEnd, tealFill, onFill;
+
+  LinearGradient get aura => LinearGradient(
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
+    colors: [auraStart, auraEnd],
+  );
+
+  LinearGradient get deepAura => LinearGradient(
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
+    colors: [brandPrimary, tealFill],
+  );
+
   static const light = SaxlemColors(
-    brandPrimary: Color(0xFF0B57D0),
-    brandSecondary: Color(0xFF087F8C),
+    brandPrimary: Color(0xFF2950F5),
+    brandSecondary: Color(0xFF0A7F7A),
     surfaceRaised: Color(0xFFFFFFFF),
     surfaceElevated: Color(0xFFFFFFFF),
-    surfaceSunken: Color(0xFFF0F2F4),
-    surfaceDisabled: Color(0xFFF0F2F4),
-    textPrimary: Color(0xFF18202A),
-    textSecondary: Color(0xFF4C5967),
-    textMuted: Color(0xFF687481),
-    textDisabled: Color(0xFF8A949E),
-    border: Color(0xFFD8DEE5),
-    divider: Color(0xFFE6E9ED),
-    outlineStrong: Color(0xFF9DA7B1),
-    focus: Color(0xFF1769E0),
-    positiveSurface: Color(0xFFDDF5EA),
-    positiveContent: Color(0xFF087A55),
-    cautionSurface: Color(0xFFFFF0CE),
-    cautionContent: Color(0xFF8A5100),
-    criticalSurface: Color(0xFFFDE9E7),
-    criticalContent: Color(0xFFB42318),
-    infoSurface: Color(0xFFEAF1FF),
-    infoContent: Color(0xFF155EEF),
-    queueReady: Color(0xFF087A55),
-    queueAttention: Color(0xFF8A5100),
-    queueActionNeeded: Color(0xFFB42318),
-    appointment: Color(0xFF155EEF),
-    booking: Color(0xFF6941C6),
-    notification: Color(0xFFB54708),
+    surfaceSunken: Color(0xFFF2F4F9),
+    surfaceDisabled: Color(0xFFEEF1F6),
+    textPrimary: Color(0xFF0B1533),
+    textSecondary: Color(0xFF5E6A86),
+    textMuted: Color(0xFF5B6680),
+    textDisabled: Color(0xFF8792A8),
+    border: Color(0xFFE8ECF3),
+    divider: Color(0xFFEEF1F6),
+    outlineStrong: Color(0xFF8792A8),
+    focus: Color(0xFF2950F5),
+    positiveSurface: Color(0xFFE5F6EE),
+    positiveContent: Color(0xFF0B7A52),
+    cautionSurface: Color(0xFFFFF3D9),
+    cautionContent: Color(0xFF9A5600),
+    criticalSurface: Color(0xFFFDECEA),
+    criticalContent: Color(0xFFC8261B),
+    infoSurface: Color(0xFFEEF2FF),
+    infoContent: Color(0xFF2950F5),
+    queueReady: Color(0xFF0B7A52),
+    queueAttention: Color(0xFF9A5600),
+    queueActionNeeded: Color(0xFFC8261B),
+    appointment: Color(0xFF2950F5),
+    booking: Color(0xFF0A7F7A),
+    notification: Color(0xFF9A5600),
+    canvas: Color(0xFFF3F5FA),
+    night: Color(0xFF0B1533),
+    brandTint: Color(0xFFEEF2FF),
+    auraStart: Color(0xFF3B6BFF),
+    auraEnd: Color(0xFF14C9C4),
+    tealFill: Color(0xFF0A7F7A),
+    onFill: Color(0xFFFFFFFF),
   );
 
   @override

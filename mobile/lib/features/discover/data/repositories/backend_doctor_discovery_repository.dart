@@ -1,5 +1,10 @@
+import 'package:flutter/foundation.dart';
+import '../../../saved_doctors/domain/saved_doctors.dart';
+import '../../../reviews/data/review_dto.dart';
+import '../../../reviews/domain/review.dart';
 import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/authenticated_api_client.dart';
+import '../../domain/entities/clinic_location.dart';
 import '../../domain/entities/doctor_discovery_options.dart';
 import '../../domain/entities/doctor_discovery_result.dart';
 import '../../domain/entities/doctor_search_criteria.dart';
@@ -7,7 +12,12 @@ import '../../domain/entities/doctor_search_page.dart';
 import '../../domain/repositories/doctor_discovery_repository.dart';
 import '../dto/backend_doctor_discovery_dto.dart';
 
-class BackendDoctorDiscoveryRepository implements DoctorDiscoveryRepository {
+class BackendDoctorDiscoveryRepository
+    implements
+        DoctorDiscoveryRepository,
+        ClinicLocationSource,
+        DoctorReviewsSource,
+        SavedDoctorsSource {
   BackendDoctorDiscoveryRepository(
     this._api, {
     this._parser = const BackendDoctorDiscoveryParser(),
@@ -17,6 +27,88 @@ class BackendDoctorDiscoveryRepository implements DoctorDiscoveryRepository {
   static final _uuid = RegExp(
     r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
   );
+  @override
+  Future<ClinicLocation> clinicLocation(String clinicId) {
+    if (!_uuid.hasMatch(clinicId)) {
+      throw const DoctorDiscoveryFailure(DoctorDiscoveryFailureType.notFound);
+    }
+    return _guard(
+      () async => _parser.clinicLocation(
+        (await _api.getJson('doctors/clinics/$clinicId/location')).body,
+      ),
+    );
+  }
+
+  final _saved = ValueNotifier<Set<String>?>(null);
+
+  @override
+  ValueListenable<Set<String>?> get savedIds => _saved;
+
+  @override
+  Future<List<DoctorDiscoveryResult>> savedDoctors() async {
+    try {
+      final body = (await _api.getJson('patients/me/saved-doctors')).body;
+      if (body.keys.length != 1 || body['items'] is! List) {
+        throw const DoctorContractException();
+      }
+      final items = (body['items'] as List)
+          .take(100)
+          .map((raw) {
+            if (raw is! Map<String, dynamic>) {
+              throw const DoctorContractException();
+            }
+            return _parser.doctor(raw, detail: true);
+          })
+          .toList(growable: false);
+      _saved.value = {for (final doctor in items) doctor.doctorId};
+      return items;
+    } on DoctorContractException {
+      throw const SavedDoctorsFailure();
+    } on FormatException {
+      throw const SavedDoctorsFailure();
+    } on ApiFailure {
+      throw const SavedDoctorsFailure();
+    }
+  }
+
+  @override
+  Future<void> setSaved(String doctorId, {required bool saved}) async {
+    if (!_uuid.hasMatch(doctorId)) throw const SavedDoctorsFailure();
+    final before = _saved.value ?? <String>{};
+    try {
+      if (saved) {
+        // Added once the server has it, so lists that reload see it.
+        await _api.postJson('patients/me/saved-doctors/$doctorId', body: {});
+        _saved.value = {...(_saved.value ?? before), doctorId};
+      } else {
+        // Removed at once; put back if the server says no.
+        _saved.value = {...before}..remove(doctorId);
+        await _api.deleteJson('patients/me/saved-doctors/$doctorId');
+      }
+    } catch (_) {
+      _saved.value = before;
+      throw const SavedDoctorsFailure();
+    }
+  }
+
+  @override
+  Future<ReviewPage> doctorReviews(String doctorId, {String? cursor}) async {
+    if (!_uuid.hasMatch(doctorId) || (cursor != null && cursor.length > 200)) {
+      throw const ReviewFailure();
+    }
+    try {
+      final response = await _api.getJson(
+        'doctors/$doctorId/reviews',
+        queryParameters: {'pageSize': '20', 'cursor': ?cursor},
+      );
+      return ReviewDto.page(response.body);
+    } on FormatException {
+      throw const ReviewFailure();
+    } on ApiFailure {
+      throw const ReviewFailure();
+    }
+  }
+
   @override
   Future<DoctorDiscoveryOptions> loadOptions() => _guard(
     () async =>

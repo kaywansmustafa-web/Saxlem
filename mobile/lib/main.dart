@@ -1,3 +1,6 @@
+import 'core/notifications/push_messaging.dart';
+import 'features/payments/domain/payments_repository.dart';
+import 'features/payments/payments_scope.dart';
 import 'package:flutter/material.dart';
 
 import 'config/theme/app_theme.dart';
@@ -37,8 +40,19 @@ import 'features/live_queue/data/repositories/live_queue_repository_impl.dart';
 import 'features/notifications/domain/repositories/notifications_repository.dart';
 import 'features/notifications/data/repositories/backend_notifications_repository.dart';
 
-void main() {
-  const secureStorage = FlutterSecureStorage();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Phone push when this build has Firebase settings; never blocks start-up.
+  await PushMessaging.setUp().timeout(
+    const Duration(seconds: 5),
+    onTimeout: () {},
+  );
+  const secureStorage = FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    iOptions: IOSOptions(
+      accessibility: KeychainAccessibility.first_unlock_this_device,
+    ),
+  );
   const secureStore = FlutterSecureKeyValueStore(secureStorage);
   final dependencies = AppDependencies.create(
     configuration: AppConfiguration.fromCompileTime(),
@@ -56,6 +70,7 @@ void main() {
       arrivalRepository: dependencies.arrivalRepository,
       liveQueueRepository: dependencies.liveQueueRepository,
       notificationsRepository: dependencies.notificationsRepository,
+      paymentsRepository: dependencies.paymentsRepository,
     ),
   );
 }
@@ -74,8 +89,10 @@ class SaxlemApp extends StatelessWidget {
     this.arrivalRepository = const UnavailablePatientArrivalRepository(),
     this.liveQueueRepository = const UnavailableLiveQueueRepository(),
     this.notificationsRepository = const UnavailableNotificationsRepository(),
+    this.paymentsRepository = const UnavailablePaymentsRepository(),
     super.key,
   });
+  final PaymentsRepository paymentsRepository;
   final LocaleRepository? localeRepository;
   final AuthRepository authRepository;
   final String? developmentOtp;
@@ -89,17 +106,21 @@ class SaxlemApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _AppBootstrap(
-      localeRepository: localeRepository ?? SharedPreferencesLocaleRepository(),
-      authRepository: authRepository,
-      developmentOtp: developmentOtp,
-      patientProfilesRepository: patientProfilesRepository,
-      doctorDiscoveryRepository: doctorDiscoveryRepository,
-      bookingRepository: bookingRepository,
-      appointmentsRepository: appointmentsRepository,
-      arrivalRepository: arrivalRepository,
-      liveQueueRepository: liveQueueRepository,
-      notificationsRepository: notificationsRepository,
+    return PaymentsScope(
+      repository: paymentsRepository,
+      child: _AppBootstrap(
+        localeRepository:
+            localeRepository ?? SharedPreferencesLocaleRepository(),
+        authRepository: authRepository,
+        developmentOtp: developmentOtp,
+        patientProfilesRepository: patientProfilesRepository,
+        doctorDiscoveryRepository: doctorDiscoveryRepository,
+        bookingRepository: bookingRepository,
+        appointmentsRepository: appointmentsRepository,
+        arrivalRepository: arrivalRepository,
+        liveQueueRepository: liveQueueRepository,
+        notificationsRepository: notificationsRepository,
+      ),
     );
   }
 }
@@ -266,6 +287,7 @@ class _AppBootstrapState extends State<_AppBootstrap> {
     return HomePage(
       guestMode: controller.guestMode,
       onLogout: _logout,
+      onChangeLanguage: controller.changeLocale,
       profilesController: activeProfiles,
       doctorDiscoveryRepository: widget.doctorDiscoveryRepository,
       bookingRepository: widget.bookingRepository,

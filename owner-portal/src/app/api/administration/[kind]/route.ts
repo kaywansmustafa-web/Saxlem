@@ -59,12 +59,14 @@ export async function POST(
       400,
     );
   }
-  const parsed = (kind === "organization" ? organization : clinic).safeParse(raw);
-    if (!parsed.success)
-      return noStoreJson(
-        { ok: false, error: { message: "Check the entered information." } },
-        400,
-      );
+  const parsed = (kind === "organization" ? organization : clinic).safeParse(
+    raw,
+  );
+  if (!parsed.success)
+    return noStoreJson(
+      { ok: false, error: { message: "Check the entered information." } },
+      400,
+    );
   const session = await restoreOwnerSession();
   if (!session)
     return noStoreJson(
@@ -85,7 +87,11 @@ export async function POST(
     });
     return noStoreJson({ ok: true, data }, 201);
   } catch (error) {
-    const status = error instanceof OwnerApiError && [400, 403, 404, 409, 422, 429].includes(error.status) ? error.status : 503;
+    const status =
+      error instanceof OwnerApiError &&
+      [400, 403, 404, 409, 422, 429].includes(error.status)
+        ? error.status
+        : 503;
     return noStoreJson(
       {
         ok: false,

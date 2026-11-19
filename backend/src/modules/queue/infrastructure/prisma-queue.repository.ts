@@ -855,6 +855,10 @@ export class PrismaQueueRepository implements QueueRepository {
     return {
       organizationId: access.organizationId,
       clinicId: access.clinicId,
+      // A receptionist runs only their own doctors' queues.
+      ...(access.doctorIds?.length
+        ? { doctorId: { in: [...access.doctorIds] } }
+        : {}),
     };
   }
   private async assertDoctorScope(
@@ -879,7 +883,10 @@ export class PrismaQueueRepository implements QueueRepository {
         },
       },
     });
-    if (!assignment)
+    if (
+      !assignment ||
+      (access.doctorIds?.length && !access.doctorIds.includes(doctorId))
+    )
       throw new NotFoundException('Doctor assignment was not found.');
   }
   private async lockEnqueueParticipants(

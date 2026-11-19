@@ -30,28 +30,35 @@ class PatientNotificationMapper {
     );
   }
 
-  NotificationCategory _category(PatientNotificationType type) =>
-      switch (type) {
-        PatientNotificationType.bookingConfirmed ||
-        PatientNotificationType.appointmentReminder24Hours ||
-        PatientNotificationType.appointmentReminder2Hours ||
-        PatientNotificationType.appointmentCancelled ||
-        PatientNotificationType.appointmentRescheduled ||
-        PatientNotificationType.appointmentCheckedIn =>
-          NotificationCategory.appointment,
-        PatientNotificationType.queueOpened ||
-        PatientNotificationType.queueNumberUpdated ||
-        PatientNotificationType.almostYourTurn ||
-        PatientNotificationType.doctorRunningBehind ||
-        PatientNotificationType.doctorRunningAhead =>
-          NotificationCategory.queue,
-        PatientNotificationType.clinicAnnouncement ||
-        PatientNotificationType.clinicTemporaryClosure =>
-          NotificationCategory.clinic,
-        PatientNotificationType.accountWelcome ||
-        PatientNotificationType.languageChanged => NotificationCategory.account,
-        _ => NotificationCategory.system,
-      };
+  NotificationCategory _category(
+    PatientNotificationType type,
+  ) => switch (type) {
+    PatientNotificationType.bookingConfirmed ||
+    PatientNotificationType.appointmentReminder24Hours ||
+    PatientNotificationType.appointmentReminder2Hours ||
+    PatientNotificationType.appointmentCancelled ||
+    PatientNotificationType.appointmentRescheduled ||
+    PatientNotificationType.appointmentCheckedIn ||
+    PatientNotificationType.reviewRequested => NotificationCategory.appointment,
+    PatientNotificationType.queueOpened ||
+    PatientNotificationType.queueNumberUpdated ||
+    PatientNotificationType.almostYourTurn ||
+    PatientNotificationType.calledIn ||
+    PatientNotificationType.missedTurn ||
+    PatientNotificationType.consultationStarted ||
+    PatientNotificationType.visitCompleted ||
+    PatientNotificationType.queuePaused ||
+    PatientNotificationType.queueResumed ||
+    PatientNotificationType.queueClosed ||
+    PatientNotificationType.doctorRunningBehind ||
+    PatientNotificationType.doctorRunningAhead => NotificationCategory.queue,
+    PatientNotificationType.clinicAnnouncement ||
+    PatientNotificationType.clinicTemporaryClosure =>
+      NotificationCategory.clinic,
+    PatientNotificationType.accountWelcome ||
+    PatientNotificationType.languageChanged => NotificationCategory.account,
+    _ => NotificationCategory.system,
+  };
 
   NotificationDestination _destination(PatientNotificationType type) =>
       switch (type) {
@@ -59,7 +66,9 @@ class PatientNotificationMapper {
         PatientNotificationType.appointmentReminder24Hours ||
         PatientNotificationType.appointmentReminder2Hours ||
         PatientNotificationType.appointmentCancelled ||
-        PatientNotificationType.appointmentRescheduled =>
+        PatientNotificationType.appointmentRescheduled ||
+        PatientNotificationType.reviewRequested ||
+        PatientNotificationType.earlierTimeAvailable =>
           NotificationDestination.appointment,
         PatientNotificationType.queueOpened ||
         PatientNotificationType.queueNumberUpdated ||

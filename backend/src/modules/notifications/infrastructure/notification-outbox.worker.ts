@@ -64,11 +64,15 @@ export class NotificationOutboxWorker
 
   async processTick(): Promise<number> {
     let processed = 0;
+    // An event is attempted at most once per tick. Without this, a failed event
+    // whose short backoff expires mid-tick is reclaimed in the same tick and can
+    // burn through its retry budget almost immediately.
+    const attempted: string[] = [];
     while (
       !this.stopping &&
       processed < this.configuration.notificationWorkerTickLimit
     ) {
-      const outcome = await this.processOne();
+      const outcome = await this.processOne(attempted);
       if (outcome === 'empty') break;
       processed += 1;
     }
@@ -87,7 +91,9 @@ export class NotificationOutboxWorker
     }
   }
 
-  private async processOne(): Promise<'processed' | 'failed' | 'empty'> {
+  private async processOne(
+    attempted: string[] = [],
+  ): Promise<'processed' | 'failed' | 'empty'> {
     let locked: LockedOutboxEvent | undefined;
     try {
       const result = await this.prisma.db.$transaction(async (tx) => {
@@ -97,6 +103,7 @@ export class NotificationOutboxWorker
           WHERE published_at IS NULL
             AND failed_at IS NULL
             AND (next_attempt_at IS NULL OR next_attempt_at <= now())
+            AND NOT (id = ANY(${attempted}::uuid[]))
             AND event_type IN (
               'queue.session.opened', 'queue.session.paused',
               'queue.session.resumed', 'queue.session.closed',
@@ -110,6 +117,7 @@ export class NotificationOutboxWorker
         `;
         locked = rows[0];
         if (!locked) return false;
+        attempted.push(locked.id);
         const event = this.validate(locked);
         const candidates = await this.recipients(tx, event);
         await this.lockRecipients(tx, candidates);
@@ -119,6 +127,9 @@ export class NotificationOutboxWorker
           ({ userId }) => candidateIds.has(userId),
         );
         if (recipients.length) {
+          const context = recipients.some((r) => r.patientProfileId)
+            ? await this.patientContext(tx, event)
+            : {};
           await tx.notificationRecord.createMany({
             data: recipients.map((recipient) => ({
               sourceOutboxEventId: event.id,
@@ -130,6 +141,8 @@ export class NotificationOutboxWorker
               priority: this.priority(event.eventType),
               payload: {
                 actionCode: event.eventType,
+                // Patients see which doctor and ticket the update is about.
+                ...(recipient.patientProfileId ? { context } : {}),
               },
               occurredAt: event.occurredAt,
             })),
@@ -419,8 +432,10 @@ export class NotificationOutboxWorker
       },
     });
     for (const entry of entries) {
-      const userId =
-        entry.patientRegistration.patientProfile.patientAccount.userId;
+      // Clinic-registered patients have no app account to notify.
+      const account = entry.patientRegistration.patientProfile.patientAccount;
+      if (!account) continue;
+      const userId = account.userId;
       recipients.set(userId, {
         userId,
         patientProfileId: entry.patientProfileId,
@@ -429,6 +444,41 @@ export class NotificationOutboxWorker
     return [...recipients.values()].sort((a, b) =>
       a.userId.localeCompare(b.userId),
     );
+  }
+
+  private async patientContext(
+    tx: Prisma.TransactionClient,
+    event: ReturnType<NotificationOutboxWorker['validate']>,
+  ): Promise<Record<string, string | number>> {
+    const session = await tx.queueSession.findUnique({
+      where: { id: event.queueSessionId },
+      select: {
+        clinic: { select: { name: true } },
+        doctorAssignment: {
+          select: { doctor: { select: { displayName: true } } },
+        },
+      },
+    });
+    const entry = event.queueEntryId
+      ? await tx.queueEntry.findUnique({
+          where: { id: event.queueEntryId },
+          select: { ticketNumber: true, appointmentId: true },
+        })
+      : null;
+    return {
+      ...(session
+        ? {
+            doctorName: session.doctorAssignment.doctor.displayName,
+            clinicName: session.clinic.name,
+          }
+        : {}),
+      ...(entry
+        ? {
+            ticketNumber: entry.ticketNumber,
+            appointmentId: entry.appointmentId,
+          }
+        : {}),
+    };
   }
 
   private async isPlatformAdministrator(

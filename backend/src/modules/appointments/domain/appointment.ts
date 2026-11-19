@@ -13,6 +13,8 @@ export interface AppointmentProjection {
   readonly patientProfileId: string;
   readonly patientName: string;
   readonly type: AppointmentType;
+  /** How the booking reached the clinic: the app, a phone call, or the desk. */
+  readonly origin: AppointmentOrigin;
   readonly reason: string;
   readonly startsAt: string;
   readonly endsAt: string;
@@ -21,6 +23,8 @@ export interface AppointmentProjection {
   readonly status: AppointmentStatus;
   readonly cancellationReason: string | null;
   readonly version: number;
+  /** When an on-the-way patient should reach reception; null otherwise. */
+  readonly onTheWayEta?: string | null;
 }
 export interface AppointmentAccess {
   readonly actorId: string;
@@ -29,6 +33,8 @@ export interface AppointmentAccess {
   readonly platformAdministrator: boolean;
   readonly organizationId?: string | undefined;
   readonly clinicId?: string | undefined;
+  /** A receptionist's doctors: every read and write stays within them. */
+  readonly doctorIds?: readonly string[] | undefined;
 }
 export interface AppointmentWrite {
   readonly organizationId: string;
@@ -68,4 +74,36 @@ export interface BookingOptionsProjection {
   readonly dateTo: string;
   readonly days: readonly BookingDayProjection[];
   readonly generatedAt: string;
+}
+
+/** One cell of reception's day board. */
+export type DayBoardSlotState = 'free' | 'booked' | 'unavailable' | 'past';
+export interface DayBoardAppointment {
+  readonly id: string;
+  readonly reference: string;
+  readonly origin: AppointmentOrigin;
+  readonly status: AppointmentStatus;
+  readonly patientName: string;
+  readonly onTheWayEta: string | null;
+}
+export interface DayBoardSlot {
+  readonly startsAt: string;
+  readonly endsAt: string;
+  readonly state: DayBoardSlotState;
+  /** Free and starting within the next hour, so a walk-in can take it. */
+  readonly walkIn: boolean;
+  readonly appointment: DayBoardAppointment | null;
+}
+export interface DayBoardDoctor {
+  readonly doctorId: string;
+  readonly doctorName: string;
+  readonly slots: readonly DayBoardSlot[];
+}
+export interface DayBoardProjection {
+  readonly date: string;
+  readonly clinicId: string;
+  readonly clinicTimezone: string;
+  readonly durationMinutes: number;
+  readonly generatedAt: string;
+  readonly doctors: readonly DayBoardDoctor[];
 }

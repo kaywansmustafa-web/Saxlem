@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+import '../../foundations/saxlem_elevation.dart';
+import '../../foundations/saxlem_motion.dart';
 import '../../foundations/saxlem_radii.dart';
-import '../../foundations/saxlem_sizes.dart';
+import '../../theme/saxlem_colors.dart';
 
 enum SaxlemButtonHierarchy { primary, secondary, tertiary }
 
-class SaxlemButton extends StatelessWidget {
+/// The one action control. `primary` is a filled Saxlem Blue button with a
+/// soft top highlight and a coloured glow; `secondary` is outlined; `tertiary`
+/// is text-only. Every button presses down slightly when touched.
+class SaxlemButton extends StatefulWidget {
   const SaxlemButton({
     required this.label,
     required this.onPressed,
     this.hierarchy = SaxlemButtonHierarchy.primary,
     this.loading = false,
     this.leadingIcon,
+    this.trailingIcon,
     this.expand = false,
     this.semanticLabel,
     super.key,
@@ -19,64 +25,106 @@ class SaxlemButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final SaxlemButtonHierarchy hierarchy;
   final bool loading, expand;
-  final IconData? leadingIcon;
+  final IconData? leadingIcon, trailingIcon;
   final String? semanticLabel;
 
   @override
+  State<SaxlemButton> createState() => _SaxlemButtonState();
+}
+
+class _SaxlemButtonState extends State<SaxlemButton> {
+  bool _pressed = false;
+
+  @override
   Widget build(BuildContext context) {
-    final callback = loading ? null : onPressed;
+    final colors = context.saxlemColors;
+    final callback = widget.loading ? null : widget.onPressed;
+    final enabled = callback != null;
+    final isPrimary = widget.hierarchy == SaxlemButtonHierarchy.primary;
     final child = AnimatedSwitcher(
-      duration: const Duration(milliseconds: 160),
-      child: loading
-          ? const SizedBox.square(
-              key: ValueKey('loading'),
+      duration: SaxlemMotion.fast,
+      child: widget.loading
+          ? SizedBox.square(
+              key: const ValueKey('loading'),
               dimension: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
+              child: CircularProgressIndicator(
+                strokeWidth: 2.5,
+                color: isPrimary ? colors.onFill : colors.brandPrimary,
+              ),
             )
           : Row(
               key: const ValueKey('label'),
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (leadingIcon != null) ...[
-                  Icon(leadingIcon, size: 20),
+                if (widget.leadingIcon != null) ...[
+                  Icon(widget.leadingIcon, size: 20),
                   const SizedBox(width: 8),
                 ],
-                Flexible(child: Text(label)),
+                Flexible(child: Text(widget.label)),
+                if (widget.trailingIcon != null) ...[
+                  const SizedBox(width: 8),
+                  Icon(widget.trailingIcon, size: 20),
+                ],
               ],
             ),
     );
-    final style = ButtonStyle(
-      minimumSize: const WidgetStatePropertyAll(
-        Size(0, SaxlemSizes.minimumTouchTarget),
-      ),
-      shape: WidgetStatePropertyAll(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(SaxlemRadii.large),
-        ),
-      ),
-    );
-    final button = switch (hierarchy) {
+    final button = switch (widget.hierarchy) {
       SaxlemButtonHierarchy.primary => FilledButton(
         onPressed: callback,
-        style: style,
+        style: FilledButton.styleFrom(
+          backgroundBuilder: (context, states, child) => DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: states.contains(WidgetState.disabled)
+                  ? null
+                  : LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.white.withValues(alpha: .16),
+                        Colors.white.withValues(alpha: 0),
+                      ],
+                    ),
+            ),
+            child: child,
+          ),
+        ),
         child: child,
       ),
       SaxlemButtonHierarchy.secondary => OutlinedButton(
         onPressed: callback,
-        style: style,
         child: child,
       ),
       SaxlemButtonHierarchy.tertiary => TextButton(
         onPressed: callback,
-        style: style,
         child: child,
       ),
     };
+    final decorated = DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(SaxlemRadii.large),
+        boxShadow: isPrimary && enabled
+            ? SaxlemElevation.glow(colors.brandPrimary)
+            : SaxlemElevation.none,
+      ),
+      child: button,
+    );
     return Semantics(
       button: true,
-      label: semanticLabel ?? label,
-      child: expand ? SizedBox(width: double.infinity, child: button) : button,
+      label: widget.semanticLabel ?? widget.label,
+      child: Listener(
+        onPointerDown: enabled ? (_) => setState(() => _pressed = true) : null,
+        onPointerUp: (_) => setState(() => _pressed = false),
+        onPointerCancel: (_) => setState(() => _pressed = false),
+        child: AnimatedScale(
+          scale: _pressed ? .97 : 1,
+          duration: SaxlemMotion.instant,
+          curve: SaxlemMotion.press,
+          child: widget.expand
+              ? SizedBox(width: double.infinity, child: decorated)
+              : decorated,
+        ),
+      ),
     );
   }
 }

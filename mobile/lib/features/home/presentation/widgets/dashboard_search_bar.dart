@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../../config/theme/app_colors.dart';
+import '../../../../design_system/foundations/saxlem_radii.dart';
+import '../../../../design_system/theme/saxlem_colors.dart';
 
+/// The home search pill: opens Discover. Sits on the hero card.
 class DashboardSearchBar extends StatelessWidget {
   const DashboardSearchBar({
     required this.hintText,
@@ -21,68 +23,57 @@ class DashboardSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = theme.colorScheme;
+    final colors = context.saxlemColors;
     return Semantics(
       button: true,
       label: searchSemanticLabel,
       child: Material(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(18),
+        color: colors.surfaceRaised,
+        borderRadius: BorderRadius.circular(SaxlemRadii.full),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(18),
-          child: Container(
-            height: 58,
-            padding: const EdgeInsetsDirectional.symmetric(horizontal: 18),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: AppColors.border),
-              boxShadow: [
-                BoxShadow(
-                  color: colors.shadow.withValues(alpha: 0.025),
-                  blurRadius: 18,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.search_rounded, color: colors.onSurfaceVariant),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    hintText,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontSize: 15,
-                      color: colors.onSurfaceVariant,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Semantics(
-                  button: true,
-                  label: filterSemanticLabel,
-                  child: InkWell(
-                    onTap: onFilterPressed,
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: colors.primary.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        Icons.tune_rounded,
-                        color: colors.primary,
-                        size: 20,
+          borderRadius: BorderRadius.circular(SaxlemRadii.full),
+          child: SizedBox(
+            height: 56,
+            child: Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(18, 0, 6, 0),
+              child: Row(
+                children: [
+                  Icon(Icons.search_rounded, color: colors.brandPrimary),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      hintText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 8),
+                  Semantics(
+                    button: true,
+                    label: filterSemanticLabel,
+                    child: Material(
+                      color: colors.brandPrimary,
+                      shape: const CircleBorder(),
+                      child: InkWell(
+                        onTap: onFilterPressed,
+                        customBorder: const CircleBorder(),
+                        child: SizedBox.square(
+                          dimension: 44,
+                          child: Icon(
+                            Icons.tune_rounded,
+                            color: colors.onFill,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
