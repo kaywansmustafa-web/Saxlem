@@ -62,6 +62,8 @@ void main() {
             ..sort();
       expect(offenders, [
         // One on/off switch: whether "Leave by" may read the location.
+        // The phone's copy of the Owner Portal catalog and settings.
+        'lib/core/app_config/app_config_store.dart',
         'lib/core/appearance/appearance.dart',
         'lib/core/location/leave_by_consent.dart',
         'lib/features/language/data/repositories/shared_preferences_locale_repository.dart',

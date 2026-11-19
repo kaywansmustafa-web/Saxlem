@@ -3,76 +3,15 @@ import 'package:flutter/material.dart';
 import '../../../../core/formatting/clinic_format.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../../design_system/design_system.dart';
-import '../../../../l10n/app_localizations.dart';
 import '../../../discover/domain/entities/doctor_discovery_options.dart';
 import '../../../discover/domain/entities/doctor_discovery_result.dart';
 import '../../../discover/domain/entities/doctor_search_criteria.dart';
 import '../../../discover/domain/repositories/doctor_discovery_repository.dart';
 import '../../../discover/presentation/widgets/doctor_result_card.dart';
 import '../../../discover/presentation/widgets/visit_facts.dart';
-
-/// A symptom a patient recognises, and the specialty codes it leads to.
-/// Codes are matched by keyword, because each clinic network names its
-/// specialties itself; a symptom is shown only when a matching specialty
-/// really has doctors.
-class _Symptom {
-  const _Symptom(this.label, this.icon, this.keywords);
-  final String Function(AppLocalizations) label;
-  final IconData icon;
-
-  /// Regular expressions, tried against the lower-case specialty code.
-  final List<String> keywords;
-
-  bool matches(String code) =>
-      keywords.any((pattern) => RegExp(pattern).hasMatch(code.toLowerCase()));
-}
-
-final _symptoms = <_Symptom>[
-  _Symptom((s) => s.symptomFever, Icons.thermostat_rounded, [
-    'general',
-    'family',
-    'internal',
-  ]),
-  _Symptom((s) => s.symptomChild, Icons.child_care_rounded, [
-    'pediat',
-    'paediat',
-  ]),
-  _Symptom((s) => s.symptomTooth, Icons.medical_services_outlined, ['dent']),
-  _Symptom((s) => s.symptomSkin, Icons.spa_outlined, ['derma', 'skin']),
-  _Symptom((s) => s.symptomHeart, Icons.favorite_border_rounded, ['cardi']),
-  _Symptom((s) => s.symptomEyes, Icons.remove_red_eye_outlined, [
-    'ophthal',
-    'eye',
-  ]),
-  _Symptom((s) => s.symptomPregnancy, Icons.pregnant_woman_rounded, [
-    'gyn',
-    'obstet',
-  ]),
-  _Symptom((s) => s.symptomBones, Icons.accessibility_new_rounded, [
-    'ortho',
-    'rheum',
-  ]),
-  // "ent" alone, not inside "dentistry".
-  _Symptom((s) => s.symptomEar, Icons.hearing_rounded, [
-    '^ent\$',
-    '^ent-',
-    '-ent\$',
-    'otolaryng',
-  ]),
-  _Symptom((s) => s.symptomHead, Icons.psychology_outlined, ['neuro']),
-  _Symptom((s) => s.symptomStomach, Icons.lunch_dining_outlined, [
-    'gastro',
-    'digest',
-  ]),
-];
-
-/// The icon for a specialty, by its code.
-IconData specialtyIcon(String code) {
-  for (final symptom in _symptoms) {
-    if (symptom.matches(code)) return symptom.icon;
-  }
-  return Icons.local_hospital_outlined;
-}
+import '../../../../core/app_config/app_config.dart';
+import '../../../../core/app_config/app_config_store.dart';
+import '../../../../core/app_config/catalog_icons.dart';
 
 /// Home's discovery: "What's bothering you?", doctors free today, and the
 /// specialties that really have doctors. Loads once; each part hides itself
@@ -146,17 +85,39 @@ class _HomeDiscoverySectionsState extends State<HomeDiscoverySections> {
   Widget build(BuildContext context) {
     if (_optionsFailed && widget.fallback != null) return widget.fallback!;
     final strings = context.l10n;
-    final specialties = _options?.specialties ?? const [];
-    final symptoms = [
-      for (final symptom in _symptoms)
-        if (specialties.firstWhereOrNull((s) => symptom.matches(s.code))
-            case final match?)
-          (symptom: symptom, code: match.code),
-    ];
+    final config = context.appConfig;
+    final locale = Localizations.localeOf(context);
+    final available = {
+      for (final item
+          in _options?.specialties ?? const <DoctorSpecialtyOption>[])
+        item.code,
+    };
+    // Tiles from Owner Portal → Home tiles; each keeps only the
+    // specialties that really have doctors, and hides when none do.
+    final concerns = !config.home('concerns')
+        ? const <(HomeConcern, List<String>)>[]
+        : [
+            for (final concern in config.concerns)
+              if (concern.specialtyCodes.where(available.contains).toList()
+                  case final codes when codes.isNotEmpty)
+                (concern, codes),
+          ];
+    // Specialties in the owner's order, without those taken off Home.
+    final specialties = !config.home('specialties')
+        ? const <DoctorSpecialtyOption>[]
+        : ((_options?.specialties ?? const <DoctorSpecialtyOption>[])
+              .where((s) => config.specialty(s.code)?.showOnHome ?? true)
+              .toList()
+            ..sort(
+              (a, b) => config
+                  .specialtyRank(a.code)
+                  .compareTo(config.specialtyRank(b.code)),
+            ));
+    final freeToday = config.home('freeToday') ? _freeToday : const [];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (symptoms.isNotEmpty) ...[
+        if (concerns.isNotEmpty) ...[
           const SizedBox(height: 22),
           _Heading(strings.whatsBothering),
           const SizedBox(height: 14),
@@ -169,19 +130,23 @@ class _HomeDiscoverySectionsState extends State<HomeDiscoverySections> {
             childAspectRatio: .72,
             padding: EdgeInsets.zero,
             children: [
-              for (final (index, item) in symptoms.indexed)
+              for (final (index, (concern, codes)) in concerns.indexed)
                 _SymptomTile(
                   index: index,
-                  icon: item.symptom.icon,
-                  label: item.symptom.label(strings),
+                  icon: catalogIcon(concern.icon),
+                  tone: concern.tone,
+                  label: concern.labels.of(locale),
                   onTap: () => widget.onOpenDiscover(
-                    criteria: DoctorSearchCriteria(specialtyCode: item.code),
+                    criteria: DoctorSearchCriteria(
+                      specialtyCodes: codes,
+                      concernLabel: concern.labels.of(locale),
+                    ),
                   ),
                 ),
             ],
           ),
         ],
-        if (_freeToday.isNotEmpty) ...[
+        if (freeToday.isNotEmpty) ...[
           const SizedBox(height: 22),
           _Heading(strings.freeTodayFilter),
           const SizedBox(height: 12),
@@ -189,11 +154,11 @@ class _HomeDiscoverySectionsState extends State<HomeDiscoverySections> {
             height: 160,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: _freeToday.length,
+              itemCount: freeToday.length,
               separatorBuilder: (_, _) => const SizedBox(width: 12),
               itemBuilder: (context, index) => _FreeDoctorCard(
-                doctor: _freeToday[index],
-                onTap: () => widget.onOpenDoctor(_freeToday[index].doctorId),
+                doctor: freeToday[index],
+                onTap: () => widget.onOpenDoctor(freeToday[index].doctorId),
               ),
             ),
           ),
@@ -218,10 +183,17 @@ class _HomeDiscoverySectionsState extends State<HomeDiscoverySections> {
               separatorBuilder: (_, _) => const SizedBox(width: 10),
               itemBuilder: (context, index) {
                 final specialty = specialties[index];
+                final name = config.specialtyName(
+                  specialty.code,
+                  locale,
+                  specialty.displayName,
+                );
                 return _SpecialtyTile(
-                  icon: specialtyIcon(specialty.code),
-                  label: specialty.displayName,
-                  semanticLabel: strings.browseSpecialty(specialty.displayName),
+                  icon: catalogIcon(
+                    config.specialty(specialty.code)?.icon ?? 'hospital',
+                  ),
+                  label: name,
+                  semanticLabel: strings.browseSpecialty(name),
                   onTap: () => widget.onOpenDiscover(
                     criteria: DoctorSearchCriteria(
                       specialtyCode: specialty.code,
@@ -234,15 +206,6 @@ class _HomeDiscoverySectionsState extends State<HomeDiscoverySections> {
         ],
       ],
     );
-  }
-}
-
-extension<T> on List<T> {
-  T? firstWhereOrNull(bool Function(T) test) {
-    for (final item in this) {
-      if (test(item)) return item;
-    }
-    return null;
   }
 }
 
@@ -261,11 +224,13 @@ class _SymptomTile extends StatelessWidget {
   const _SymptomTile({
     required this.index,
     required this.icon,
+    required this.tone,
     required this.label,
     required this.onTap,
   });
   final int index;
   final IconData icon;
+  final String tone;
   final String label;
   final VoidCallback onTap;
 
@@ -278,15 +243,7 @@ class _SymptomTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.saxlemColors;
-    final hues = [
-      (colors.roseSurface, colors.roseContent),
-      (colors.cautionSurface, colors.cautionContent),
-      (colors.liveSurface, colors.liveContent),
-      (colors.lilacSurface, colors.lilacContent),
-      (colors.infoSurface, colors.infoContent),
-    ];
-    final (wash, tint) = hues[index % hues.length];
+    final (wash, tint) = toneColors(context.saxlemColors, tone);
     return Semantics(
       button: true,
       child: InkWell(
@@ -335,7 +292,7 @@ class _FreeDoctorCard extends StatelessWidget {
       child: SaxlemCard(
         onTap: onTap,
         semanticLabel:
-            '${doctor.doctorDisplayName}, ${doctor.primarySpecialtyDisplayName}, ${nextFreeText(context, next)}',
+            '${doctor.doctorDisplayName}, ${context.specialtyLabel(doctor.primarySpecialtyDisplayName)}, ${nextFreeText(context, next)}',
         padding: const EdgeInsets.all(14),
         child: ExcludeSemantics(
           child: Column(
@@ -392,7 +349,7 @@ class _FreeDoctorCard extends StatelessWidget {
                 style: theme.textTheme.titleSmall,
               ),
               Text(
-                doctor.primarySpecialtyDisplayName,
+                context.specialtyLabel(doctor.primarySpecialtyDisplayName),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.bodySmall?.copyWith(

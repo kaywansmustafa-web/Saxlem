@@ -1,4 +1,5 @@
 import { Inject, Injectable, Optional } from '@nestjs/common';
+import { AppSettings } from '../../app-config/app-settings.service';
 import { averageOf } from '../../reviews/review-rules';
 import { BACKEND_CONFIGURATION } from '../../../config/configuration.module';
 import type { BackendConfiguration } from '../../../config/environment';
@@ -27,13 +28,16 @@ export class DoctorDtoMapper {
       BackendConfiguration,
       'appointmentFoundationFeeIqd'
     >,
+    @Optional() private readonly settings?: AppSettings,
   ) {}
 
   /** The fees a patient pays: the doctor's own, or the platform default. */
   fees(
     source: Pick<DoctorProjection, 'consultationFeeIqd' | 'followUpFeeIqd'>,
   ) {
-    const fallback = this.configuration?.appointmentFoundationFeeIqd ?? 25000;
+    const fallback = this.settings
+      ? this.settings.int('booking.defaultFeeIqd')
+      : (this.configuration?.appointmentFoundationFeeIqd ?? 25000);
     return {
       firstVisitIqd: source.consultationFeeIqd ?? fallback,
       followUpIqd:

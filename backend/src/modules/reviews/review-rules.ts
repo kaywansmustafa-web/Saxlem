@@ -1,4 +1,7 @@
-/** A review can be written or changed for this long after the visit. */
+/**
+ * Built-in defaults; the live values are Owner Portal settings
+ * (reviews.windowDays, reviews.commentMax).
+ */
 export const REVIEW_WINDOW_DAYS = 30;
 export const COMMENT_MAX = 500;
 
@@ -12,10 +15,13 @@ const FORBIDDEN = [
   /(\+?\d[\d\s-]{6,}\d)/,
 ];
 
-export function cleanComment(raw: string | null | undefined): string | null {
+export function cleanComment(
+  raw: string | null | undefined,
+  max = COMMENT_MAX,
+): string | null {
   const text = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!text) return null;
-  if (text.length > COMMENT_MAX) throw new Error('COMMENT_TOO_LONG');
+  if (text.length > max) throw new Error('COMMENT_TOO_LONG');
   if (FORBIDDEN.some((pattern) => pattern.test(text)))
     throw new Error('COMMENT_HAS_CONTACT');
   return text;

@@ -1591,10 +1591,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emergencyTitle => 'Emergency';
 
   @override
-  String get emergencySubtitle => 'Ambulance: 122';
+  String emergencySubtitle(String number) {
+    return 'Ambulance: $number';
+  }
 
   @override
-  String get emergencyConfirmTitle => 'Call 122 now?';
+  String emergencyConfirmTitle(String number) {
+    return 'Call $number now?';
+  }
 
   @override
   String get emergencyConfirmBody =>
@@ -1991,4 +1995,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appearanceDark => 'Dark';
+
+  @override
+  String get doctorNotBookable =>
+      'Not taking app bookings right now. Please call the clinic.';
+
+  @override
+  String get doctorFollowUpOnly =>
+      'Not taking new patients in the app: follow-up visits only.';
 }

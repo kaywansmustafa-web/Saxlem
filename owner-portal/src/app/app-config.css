@@ -146,3 +146,97 @@
     max-width: none;
   }
 }
+
+/* Hours and booking */
+.hours-card {
+  display: grid;
+  gap: 18px;
+  margin-top: 16px;
+}
+.hours-section {
+  display: grid;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ax-line);
+}
+.hours-section h3 {
+  margin: 0;
+}
+.week-editor {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.week-editor legend {
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+.week-day {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--ax-line);
+}
+.week-day-name {
+  font-weight: 600;
+}
+.week-periods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  align-items: center;
+}
+.week-period {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+.week-period input {
+  width: auto;
+  min-width: 112px;
+}
+.week-day-actions {
+  display: inline-flex;
+  gap: 6px;
+}
+.time-off-list {
+  margin: 0;
+  padding-inline-start: 18px;
+}
+.time-off-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: end;
+}
+@media (max-width: 760px) {
+  .week-day {
+    grid-template-columns: 1fr;
+  }
+}
+.text-button {
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--ax-brand, #2950f5);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.text-button:hover {
+  text-decoration: underline;
+}
+.text-button:focus-visible {
+  outline: 2px solid var(--ax-brand, #2950f5);
+  outline-offset: 2px;
+}
+.hours-section > .button,
+.catalog-editor .form-actions,
+.hours-card .button-primary {
+  justify-self: start;
+}

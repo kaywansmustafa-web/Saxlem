@@ -5,6 +5,7 @@ import '../../domain/entities/doctor_discovery_options.dart';
 import '../../domain/entities/doctor_discovery_result.dart';
 import '../../domain/entities/doctor_search_criteria.dart';
 import 'applied_doctor_filters.dart';
+import '../../../../core/app_config/app_config_store.dart';
 
 Future<DoctorSearchCriteria?> showDoctorFiltersSheet({
   required BuildContext context,
@@ -40,9 +41,25 @@ Future<DoctorSearchCriteria?> showDoctorFiltersSheet({
                 _FilterDropdown<String>(
                   label: context.l10n.specialtyLabel,
                   value: draft.specialtyCode,
-                  options: options.specialties
-                      .map((item) => (item.code, item.displayName))
-                      .toList(),
+                  options:
+                      (options.specialties.toList()..sort(
+                            (a, b) => context.appConfig
+                                .specialtyRank(a.code)
+                                .compareTo(
+                                  context.appConfig.specialtyRank(b.code),
+                                ),
+                          ))
+                          .map(
+                            (item) => (
+                              item.code,
+                              context.appConfig.specialtyName(
+                                item.code,
+                                Localizations.localeOf(context),
+                                item.displayName,
+                              ),
+                            ),
+                          )
+                          .toList(),
                   onChanged: (value) => setSheet(
                     () => draft = draft.copyWith(
                       specialtyCode: value,

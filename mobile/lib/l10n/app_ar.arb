@@ -635,8 +635,8 @@
   "symptomStomach": "المعدة",
   "specialtiesTitle": "التخصصات",
   "emergencyTitle": "طوارئ",
-  "emergencySubtitle": "الإسعاف: 122",
-  "emergencyConfirmTitle": "الاتصال بـ 122 الآن؟",
+  "emergencySubtitle": "الإسعاف: {number}",
+  "emergencyConfirmTitle": "الاتصال بـ {number} الآن؟",
   "emergencyConfirmBody": "ساخلم لحجز المواعيد وليس للطوارئ. إذا احتاج أحد مساعدة عاجلة، اتصل بالإسعاف.",
   "emergencyCall": "اتصل بـ 122",
   "liveNotOpen": "لم يبدأ الطابور بعد",
@@ -748,5 +748,7 @@
   "appearanceTitle": "المظهر",
   "appearanceSystem": "مثل الهاتف",
   "appearanceLight": "فاتح",
-  "appearanceDark": "داكن"
+  "appearanceDark": "داكن",
+  "doctorNotBookable": "لا يستقبل الحجوزات عبر التطبيق حالياً. يرجى الاتصال بالعيادة.",
+  "doctorFollowUpOnly": "لا يستقبل مرضى جدداً عبر التطبيق: مواعيد المتابعة فقط."
 }

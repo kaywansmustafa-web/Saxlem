@@ -11,6 +11,7 @@ import { PrismaClient } from '@prisma/client';
 import type { BackendConfiguration } from '../../src/config/environment';
 import type { PrismaService } from '../../src/infrastructure/database/prisma.service';
 import { AppointmentService } from '../../src/modules/appointments/application/appointment.service';
+import { AppSettings } from '../../src/modules/app-config/app-settings.service';
 import { PrismaAppointmentRepository } from '../../src/modules/appointments/infrastructure/prisma-appointment.repository';
 import { DoctorScheduleService } from '../../src/modules/doctors/application/doctor-schedule.service';
 import { TimezoneService } from '../../src/modules/doctors/application/timezone.service';
@@ -512,6 +513,8 @@ function appointmentService() {
       appointmentFoundationFeeIqd: 25000,
       appointmentFoundationDurationMinutes: 30,
     } as BackendConfiguration,
+    // These tests book in 2030: lift "How far ahead patients can book".
+    AppSettings.forTests({ 'booking.daysAhead': 100_000 }),
   );
 }
 

@@ -39,7 +39,13 @@ export interface SettingDefinition {
   readonly min?: number;
   readonly max?: number;
   readonly public: boolean;
-  readonly fallback: (configuration: BackendConfiguration) => SettingValue;
+  /**
+   * The built-in default. Env-backed ones read the server configuration
+   * (when it is missing or partial, Saxlem's shipped value).
+   */
+  readonly fallback: (
+    configuration: BackendConfiguration | undefined,
+  ) => SettingValue;
 }
 
 const constant = (value: SettingValue) => () => value;
@@ -170,7 +176,7 @@ export const SETTINGS: readonly SettingDefinition[] = [
     min: 5,
     max: 240,
     public: false,
-    fallback: (c) => c.appointmentFoundationDurationMinutes,
+    fallback: (c) => c?.appointmentFoundationDurationMinutes ?? 30,
   },
   {
     key: 'booking.defaultFeeIqd',
@@ -182,7 +188,7 @@ export const SETTINGS: readonly SettingDefinition[] = [
     min: 0,
     max: 5_000_000,
     public: false,
-    fallback: (c) => c.appointmentFoundationFeeIqd,
+    fallback: (c) => c?.appointmentFoundationFeeIqd ?? 25_000,
   },
   // Leave by
   {
@@ -337,7 +343,7 @@ export const SETTINGS: readonly SettingDefinition[] = [
     min: 0,
     max: 1440,
     public: false,
-    fallback: (c) => c.arrivalEarlyWindowMinutes,
+    fallback: (c) => c?.arrivalEarlyWindowMinutes ?? 60,
   },
   {
     key: 'reception.arrivalLateMinutes',
@@ -349,7 +355,7 @@ export const SETTINGS: readonly SettingDefinition[] = [
     min: 0,
     max: 1440,
     public: false,
-    fallback: (c) => c.arrivalLateWindowMinutes,
+    fallback: (c) => c?.arrivalLateWindowMinutes ?? 120,
   },
   {
     key: 'reception.recallGraceMinutes',
@@ -361,7 +367,7 @@ export const SETTINGS: readonly SettingDefinition[] = [
     min: 1,
     max: 60,
     public: false,
-    fallback: (c) => c.queueRecallGraceMinutes,
+    fallback: (c) => c?.queueRecallGraceMinutes ?? 5,
   },
   {
     key: 'reception.fallbackConsultationMinutes',
@@ -373,7 +379,7 @@ export const SETTINGS: readonly SettingDefinition[] = [
     min: 3,
     max: 120,
     public: false,
-    fallback: (c) => c.queueFallbackConsultationMinutes,
+    fallback: (c) => c?.queueFallbackConsultationMinutes ?? 20,
   },
   // Payments
   {
@@ -386,7 +392,7 @@ export const SETTINGS: readonly SettingDefinition[] = [
     min: 6,
     max: 2880,
     public: false,
-    fallback: (c) => c.paymentLinkMinutes,
+    fallback: (c) => c?.paymentLinkMinutes ?? 30,
   },
   // Limits
   {

@@ -16,8 +16,12 @@ class AppointmentDetailController extends ChangeNotifier {
     required this.bookingRepository,
     required this.operationIds,
     required this.onChanged,
+    this.daysAhead = 14,
     DateTime Function()? now,
   }) : _now = now ?? DateTime.now;
+
+  /// Days of times offered when moving the visit (Owner Portal setting).
+  final int daysAhead;
 
   final String appointmentId;
   PatientProfileId profileId;
@@ -122,7 +126,7 @@ class AppointmentDetailController extends ChangeNotifier {
               ? BookingAppointmentType.initial
               : BookingAppointmentType.followUp,
           dateFrom: from,
-          dateTo: from.add(const Duration(days: 13)),
+          dateTo: from.add(Duration(days: daysAhead.clamp(1, 60) - 1)),
         ),
       );
       if (_disposed || generation != _generation) return;

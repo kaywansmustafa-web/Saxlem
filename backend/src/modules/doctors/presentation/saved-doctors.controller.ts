@@ -9,7 +9,9 @@ import {
   Req,
   UseGuards,
   ConflictException,
+  Optional,
 } from '@nestjs/common';
+import { AppSettings } from '../../app-config/app-settings.service';
 import {
   ApiBearerAuth,
   ApiNoContentResponse,
@@ -30,6 +32,7 @@ import { DoctorDtoMapper } from './doctor-dto.mapper';
 import { DoctorDetailResponseDto } from './doctor.dto';
 
 /** A patient can keep this many doctors. */
+/** Built-in default; the live value is the Owner Portal setting. */
 export const SAVED_DOCTORS_MAX = 100;
 
 class SavedDoctorParamsDto {
@@ -52,7 +55,14 @@ export class SavedDoctorsController {
     private readonly prisma: PrismaService,
     private readonly doctors: DoctorService,
     private readonly mapper: DoctorDtoMapper,
+    @Optional()
+    private readonly settings: AppSettings = AppSettings.defaults(),
   ) {}
+
+  /** Owner Portal → App settings → Limits. */
+  private get max() {
+    return this.settings.int('limits.savedDoctors');
+  }
 
   @Get()
   @ApiOperation({ summary: 'My saved doctors, newest first' })
@@ -64,7 +74,7 @@ export class SavedDoctorsController {
     const saved = await this.prisma.db.savedDoctor.findMany({
       where: { patientAccountId: account },
       orderBy: { createdAt: 'desc' },
-      take: SAVED_DOCTORS_MAX,
+      take: this.max,
     });
     const items = await Promise.all(
       saved.map((row) =>
@@ -96,7 +106,7 @@ export class SavedDoctorsController {
     const count = await this.prisma.db.savedDoctor.count({
       where: { patientAccountId: account },
     });
-    if (count >= SAVED_DOCTORS_MAX)
+    if (count >= this.max)
       throw new ConflictException('You have saved the most doctors allowed.');
     await this.prisma.db.savedDoctor.upsert({
       where: {

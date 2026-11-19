@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 import { PageHeader, StatusBadge } from "@/components/app-shell";
 import { ClinicLocationForm } from "@/components/clinic-location-form";
+import { ClinicHoursForm } from "@/components/app-config/clinic-hours-form";
+import { clinicHours } from "@/data/app-catalog";
 import { clinicDetail } from "@/data/owner-data";
 import { requireOwnerSession } from "@/infrastructure/auth";
 
@@ -13,12 +15,13 @@ export default async function ClinicPage({
 }) {
   const { id } = await params;
   if (!z.string().uuid().safeParse(id).success) notFound();
-  const clinic = await clinicDetail(await requireOwnerSession(), id);
+  const session = await requireOwnerSession();
+  const [clinic, hours] = await Promise.all([clinicDetail(session, id), clinicHours(session, id)]);
   return (
     <>
       <PageHeader
         title={clinic.name}
-        description="Where the clinic is and how patients reach it."
+        description="Where the clinic is, how patients reach it, and when it is open."
         action={
           <Link className="button" href="/clinics">
             All clinics
@@ -39,6 +42,7 @@ export default async function ClinicPage({
           </dl>
         </section>
         <ClinicLocationForm clinicId={clinic.id} location={clinic} />
+        <ClinicHoursForm clinicId={clinic.id} periods={hours.periods} doctorPeriods={hours.doctorPeriods} />
       </div>
     </>
   );

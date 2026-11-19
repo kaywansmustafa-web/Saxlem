@@ -21,7 +21,7 @@ class ReviewDto {
           return PublicReview(
             id: _id(item['id']),
             rating: _int(item['rating'], 1, 5),
-            comment: _nullableText(item['comment'], 500),
+            comment: _nullableText(item['comment'], 2000),
             author: _nullableText(item['author'], 80),
             createdAt: _date(item['createdAt']),
           );
@@ -73,7 +73,7 @@ class ReviewDto {
     return VisitReview(
       id: _id(json['id']),
       rating: _int(json['rating'], 1, 5),
-      comment: _nullableText(json['comment'], 500),
+      comment: _nullableText(json['comment'], 2000),
       anonymous: anonymous,
       hidden: status == 'hidden',
       updatedAt: _date(json['updatedAt']),

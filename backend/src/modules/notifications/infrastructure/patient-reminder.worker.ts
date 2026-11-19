@@ -4,7 +4,9 @@ import {
   Logger,
   OnApplicationBootstrap,
   OnApplicationShutdown,
+  Optional,
 } from '@nestjs/common';
+import { AppSettings } from '../../app-config/app-settings.service';
 import { BACKEND_CONFIGURATION } from '../../../config/configuration.module';
 import type { BackendConfiguration } from '../../../config/environment';
 import { PrismaService } from '../../../infrastructure/database/prisma.service';
@@ -15,7 +17,10 @@ const HOUR = 3_600_000;
 export const DAY_BEFORE = { from: 3 * HOUR, to: 24 * HOUR } as const;
 /** And another shortly before, unless it was booked only just now. */
 export const SOON = { from: 0, to: 2 * HOUR } as const;
-/** "Almost your turn" when this many patients or fewer are ahead. */
+/**
+ * "Almost your turn" when this many patients or fewer are ahead (built-in
+ * default; the live value is the Owner Portal setting).
+ */
 export const ALMOST_AHEAD = 2;
 /** "How was your visit?" this long after it ends, if not rated yet. */
 export const REVIEW_ASK = { from: 1 * HOUR, to: 48 * HOUR } as const;
@@ -55,6 +60,8 @@ export class PatientReminderWorker
     private readonly prisma: PrismaService,
     @Inject(BACKEND_CONFIGURATION)
     private readonly configuration: BackendConfiguration,
+    @Optional()
+    private readonly settings: AppSettings = AppSettings.defaults(),
   ) {}
 
   onApplicationBootstrap(): void {
@@ -118,6 +125,15 @@ export class PatientReminderWorker
         now,
       );
       if (!type) continue;
+      // Owner Portal → App settings → Reminders.
+      if (
+        !this.settings.bool(
+          type === 'appointment.reminder.soon'
+            ? 'reminders.soon'
+            : 'reminders.dayBefore',
+        )
+      )
+        continue;
       const written = await this.prisma.db.$transaction((tx) =>
         notifyPatient(tx, {
           organizationId: appointment.organizationId,
@@ -205,7 +221,7 @@ export class PatientReminderWorker
         entries: {
           where: { status: 'waiting' },
           orderBy: { ticketNumber: 'asc' },
-          take: ALMOST_AHEAD + 1,
+          take: this.settings.int('reminders.almostTurnAhead') + 1,
           select: {
             id: true,
             organizationId: true,

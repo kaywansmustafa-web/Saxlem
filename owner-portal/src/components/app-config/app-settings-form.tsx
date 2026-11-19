@@ -144,11 +144,11 @@ export function AppSettingsForm({
                   )}
                   <p id={`${id}-help`} className="muted setting-help">
                     {s.help} Default: {show(s, s.defaultValue)}.
-                    {s.public ? "" : " Server only."}
+                    
                     {!isDefault && (
                       <>
                         {" "}
-                        <button type="button" className="inline-button" onClick={() => set(s.key, s.defaultValue)}>
+                        <button type="button" className="text-button" onClick={() => set(s.key, s.defaultValue)}>
                           Use default
                         </button>
                       </>

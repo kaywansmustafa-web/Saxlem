@@ -229,24 +229,19 @@ class DiscoverController extends ChangeNotifier {
 
   DoctorSearchCriteria _criteriaSupportedBy(DoctorDiscoveryOptions options) {
     final specialty = criteria.specialtyCode;
-    final clinic = criteria.clinicId;
-    final language = criteria.language;
-    final gender = criteria.gender;
-    final experience = criteria.minimumYearsOfExperience;
-    return criteria.copyWith(
-      clearSpecialty:
-          specialty != null &&
-          !options.specialties.any((item) => item.code == specialty),
-      clearClinic:
-          clinic != null && !options.clinics.any((item) => item.id == clinic),
-      clearLanguage: language != null && !options.languages.contains(language),
-      clearGender: gender != null && !options.genders.contains(gender),
-      clearExperience:
-          experience != null &&
-          (options.minimumExperience == null ||
-              experience < options.minimumExperience! ||
-              experience > options.maximumExperience!),
-    );
+    // A tile keeps the specialties that really have doctors; none left
+    // means there is nothing to filter by.
+    if (criteria.hasConcern) {
+      final known = {for (final item in options.specialties) item.code};
+      final kept = criteria.specialtyCodes.where(known.contains).toList();
+      if (kept.length != criteria.specialtyCodes.length) {
+        return (kept.isEmpty
+                ? criteria.copyWith(clearSpecialty: true)
+                : criteria.copyWith(specialtyCodes: kept))
+            ._supportedOther(options);
+      }
+    }
+    return criteria._supportedOther(options, specialty: specialty);
   }
 
   bool _current(int token) => !_disposed && token == _generation;
@@ -265,5 +260,32 @@ class DiscoverController extends ChangeNotifier {
     ++_generation;
     ++_detailGeneration;
     super.dispose();
+  }
+}
+
+extension on DoctorSearchCriteria {
+  DoctorSearchCriteria _supportedOther(
+    DoctorDiscoveryOptions options, {
+    String? specialty,
+  }) {
+    final criteria = this;
+    final clinic = criteria.clinicId;
+    final language = criteria.language;
+    final gender = criteria.gender;
+    final experience = criteria.minimumYearsOfExperience;
+    return criteria.copyWith(
+      clearSpecialty:
+          specialty != null &&
+          !options.specialties.any((item) => item.code == specialty),
+      clearClinic:
+          clinic != null && !options.clinics.any((item) => item.id == clinic),
+      clearLanguage: language != null && !options.languages.contains(language),
+      clearGender: gender != null && !options.genders.contains(gender),
+      clearExperience:
+          experience != null &&
+          (options.minimumExperience == null ||
+              experience < options.minimumExperience! ||
+              experience > options.maximumExperience!),
+    );
   }
 }

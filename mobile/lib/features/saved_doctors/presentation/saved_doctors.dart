@@ -6,6 +6,7 @@ import '../../discover/domain/entities/doctor_discovery_result.dart';
 import '../../discover/presentation/widgets/doctor_result_card.dart';
 import '../../reviews/presentation/rating_stars.dart';
 import '../domain/saved_doctors.dart';
+import '../../../core/app_config/app_config_store.dart';
 
 /// Home's "Saved doctors" row. Quietly absent until something is saved.
 class SavedDoctorsStrip extends StatefulWidget {
@@ -135,7 +136,9 @@ class _SavedDoctorsStripState extends State<SavedDoctorsStrip> {
                             style: theme.textTheme.titleSmall,
                           ),
                           Text(
-                            doctor.primarySpecialtyDisplayName,
+                            context.specialtyLabel(
+                              doctor.primarySpecialtyDisplayName,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.bodySmall,

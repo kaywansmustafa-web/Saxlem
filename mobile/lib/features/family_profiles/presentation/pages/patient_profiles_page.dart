@@ -15,6 +15,7 @@ import '../controllers/patient_profiles_controller.dart';
 import 'add_patient_page.dart';
 import '../../../../core/localization/supported_app_locale.dart';
 import '../../domain/repositories/patient_profiles_repository.dart';
+import '../../../../core/app_config/app_config_store.dart';
 
 /// Profile tab (v2 "Aura"): the active patient on a hero card, the family
 /// list (tap to switch), add a family member, and log out.
@@ -191,9 +192,9 @@ class PatientProfilesPage extends StatelessWidget {
                   ),
               ],
             ),
-            if (SupportLinks.whatsApp != null ||
-                SupportLinks.terms != null ||
-                SupportLinks.privacy != null) ...[
+            if (SupportLinks.whatsApp(context.appConfig) != null ||
+                SupportLinks.terms(context.appConfig) != null ||
+                SupportLinks.privacy(context.appConfig) != null) ...[
               const SizedBox(height: 28),
               Semantics(
                 header: true,
@@ -207,19 +208,19 @@ class PatientProfilesPage extends StatelessWidget {
               const SizedBox(height: 10),
               _SettingsCard(
                 children: [
-                  if (SupportLinks.whatsApp case final uri?)
+                  if (SupportLinks.whatsApp(context.appConfig) case final uri?)
                     _SettingsRow(
                       icon: Icons.chat_outlined,
                       label: context.l10n.contactSaxlem,
                       onTap: () => _open(uri),
                     ),
-                  if (SupportLinks.terms case final uri?)
+                  if (SupportLinks.terms(context.appConfig) case final uri?)
                     _SettingsRow(
                       icon: Icons.description_outlined,
                       label: context.l10n.termsOfUse,
                       onTap: () => _open(uri),
                     ),
-                  if (SupportLinks.privacy case final uri?)
+                  if (SupportLinks.privacy(context.appConfig) case final uri?)
                     _SettingsRow(
                       icon: Icons.privacy_tip_outlined,
                       label: context.l10n.privacyPolicy,

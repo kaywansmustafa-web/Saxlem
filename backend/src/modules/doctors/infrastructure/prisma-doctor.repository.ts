@@ -394,8 +394,11 @@ export class PrismaDoctorRepository implements DoctorRepository {
     );
     const primary =
       specialties.find((specialty) => specialty.isPrimary) ?? specialties[0];
+    // No availability record means bookable (same rule as booking): the
+    // owner switches a doctor off from the Owner Portal.
     const publiclyAvailable =
-      doctor.status === 'active' && doctor.availability?.status === 'available';
+      doctor.status === 'active' &&
+      (doctor.availability?.status ?? 'available') === 'available';
     return Object.freeze({
       id: doctor.id,
       organizationId: doctor.organizationId,
@@ -432,7 +435,7 @@ export class PrismaDoctorRepository implements DoctorRepository {
         status: publiclyAvailable ? 'available' : 'unavailable',
         acceptingNewPatients:
           publiclyAvailable &&
-          (doctor.availability?.acceptingNewPatients ?? false),
+          (doctor.availability?.acceptingNewPatients ?? true),
         nextAvailableAt: publiclyAvailable
           ? (doctor.availability?.nextAvailableAt?.toISOString() ?? null)
           : null,

@@ -5,6 +5,7 @@ import '../../../core/localization/localization_extensions.dart';
 import '../../../design_system/design_system.dart';
 import '../domain/review.dart';
 import 'rating_stars.dart';
+import '../../../core/app_config/app_config_store.dart';
 
 /// "How was your visit?" on a visit that took place: stars, an optional
 /// comment and whether to show the patient's name. Hidden when the visit
@@ -165,7 +166,7 @@ class _VisitReviewCardState extends State<VisitReviewCard> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: _comment,
-                  maxLength: 500,
+                  maxLength: context.appConfig.reviewCommentMax,
                   minLines: 2,
                   maxLines: 5,
                   decoration: InputDecoration(

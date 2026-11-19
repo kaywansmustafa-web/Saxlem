@@ -2,6 +2,7 @@ import 'core/notifications/push_messaging.dart';
 import 'features/payments/domain/payments_repository.dart';
 import 'features/payments/payments_scope.dart';
 import 'package:flutter/material.dart';
+import 'core/app_config/app_config_store.dart';
 import 'core/appearance/appearance.dart';
 
 import 'config/theme/app_theme.dart';
@@ -72,6 +73,8 @@ Future<void> main() async {
       liveQueueRepository: dependencies.liveQueueRepository,
       notificationsRepository: dependencies.notificationsRepository,
       paymentsRepository: dependencies.paymentsRepository,
+      appConfigRepository: dependencies.appConfigRepository,
+      appConfigCache: const SharedPreferencesAppConfigCache(),
     ),
   );
 }
@@ -92,9 +95,15 @@ class SaxlemApp extends StatelessWidget {
     this.notificationsRepository = const UnavailableNotificationsRepository(),
     this.paymentsRepository = const UnavailablePaymentsRepository(),
     this.appearanceStore = const SharedPreferencesAppearanceStore(),
+    this.appConfigRepository = const BuiltInAppConfigRepository(),
+    this.appConfigCache,
     super.key,
   });
   final AppearanceStore appearanceStore;
+
+  /// Owner Portal catalog and settings (GET /app/config).
+  final AppConfigRepository appConfigRepository;
+  final AppConfigCache? appConfigCache;
   final PaymentsRepository paymentsRepository;
   final LocaleRepository? localeRepository;
   final AuthRepository authRepository;
@@ -113,6 +122,8 @@ class SaxlemApp extends StatelessWidget {
       repository: paymentsRepository,
       child: _AppBootstrap(
         appearanceStore: appearanceStore,
+        appConfigRepository: appConfigRepository,
+        appConfigCache: appConfigCache,
         localeRepository:
             localeRepository ?? SharedPreferencesLocaleRepository(),
         authRepository: authRepository,
@@ -132,6 +143,8 @@ class SaxlemApp extends StatelessWidget {
 class _AppBootstrap extends StatefulWidget {
   const _AppBootstrap({
     required this.appearanceStore,
+    required this.appConfigRepository,
+    this.appConfigCache,
     required this.localeRepository,
     required this.authRepository,
     this.developmentOtp,
@@ -144,6 +157,8 @@ class _AppBootstrap extends StatefulWidget {
     required this.notificationsRepository,
   });
   final AppearanceStore appearanceStore;
+  final AppConfigRepository appConfigRepository;
+  final AppConfigCache? appConfigCache;
   final LocaleRepository localeRepository;
   final AuthRepository authRepository;
   final String? developmentOtp;
@@ -158,9 +173,11 @@ class _AppBootstrap extends StatefulWidget {
   State<_AppBootstrap> createState() => _AppBootstrapState();
 }
 
-class _AppBootstrapState extends State<_AppBootstrap> {
+class _AppBootstrapState extends State<_AppBootstrap>
+    with WidgetsBindingObserver {
   late final AppController controller;
   late final AppearanceController appearance;
+  late final AppConfigController appConfig;
   late final PatientProfilesController profiles;
   late final PatientProfilesController guestProfiles;
   bool _resolvingAccount = false;
@@ -168,6 +185,11 @@ class _AppBootstrapState extends State<_AppBootstrap> {
   void initState() {
     super.initState();
     appearance = AppearanceController(widget.appearanceStore)..load();
+    appConfig = AppConfigController(
+      repository: widget.appConfigRepository,
+      cache: widget.appConfigCache,
+    )..load();
+    WidgetsBinding.instance.addObserver(this);
     controller = AppController(widget.localeRepository, widget.authRepository)
       ..addListener(_onAppChanged)
       ..load();
@@ -183,62 +205,73 @@ class _AppBootstrapState extends State<_AppBootstrap> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Owner Portal changes reach a phone left open within minutes.
+    if (state == AppLifecycleState.resumed) appConfig.refresh();
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     controller.dispose();
     appearance.dispose();
+    appConfig.dispose();
     profiles.dispose();
     guestProfiles.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => AppearanceScope(
-    controller: appearance,
-    child: ListenableBuilder(
-      listenable: Listenable.merge([controller, appearance]),
-      builder: (context, _) {
-        final locale = controller.selectedLocale?.locale;
-        return MaterialApp(
-          onGenerateTitle: (context) => AppLocalizations.of(context).appName,
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightFor(locale),
-          darkTheme: AppTheme.darkFor(locale),
-          themeMode: appearance.themeMode,
-          locale: locale,
-          supportedLocales: AppLocalizations.supportedLocales,
-          localizationsDelegates: [
-            ...badiniFrameworkLocalizationsDelegates,
-            ...AppLocalizations.localizationsDelegates,
-          ],
-          home: switch (controller.status) {
-            AppBootstrapStatus.loading => const SplashScreen(),
-            AppBootstrapStatus.needsLocale => LanguageSelectionScreen(
-              controller: controller,
-            ),
-            AppBootstrapStatus.needsAuthentication => AuthenticationFeature(
-              repository: widget.authRepository,
-              onAuthenticated: _authenticated,
-              onGuest: controller.continueAsGuest,
-              developmentOtp: widget.developmentOtp,
-            ),
-            AppBootstrapStatus.sessionExpired => AuthenticationFeature(
-              repository: widget.authRepository,
-              sessionExpired: true,
-              onAuthenticated: _authenticated,
-              onGuest: controller.continueAsGuest,
-              developmentOtp: widget.developmentOtp,
-            ),
-            AppBootstrapStatus.authenticationUnavailable ||
-            AppBootstrapStatus.malformedLocalSession => AuthenticationFeature(
-              repository: widget.authRepository,
-              onAuthenticated: _authenticated,
-              onGuest: controller.continueAsGuest,
-              developmentOtp: widget.developmentOtp,
-            ),
-            AppBootstrapStatus.ready => _readyContent(),
-          },
-        );
-      },
+  Widget build(BuildContext context) => AppConfigScope(
+    controller: appConfig,
+    child: AppearanceScope(
+      controller: appearance,
+      child: ListenableBuilder(
+        listenable: Listenable.merge([controller, appearance]),
+        builder: (context, _) {
+          final locale = controller.selectedLocale?.locale;
+          return MaterialApp(
+            onGenerateTitle: (context) => AppLocalizations.of(context).appName,
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightFor(locale),
+            darkTheme: AppTheme.darkFor(locale),
+            themeMode: appearance.themeMode,
+            locale: locale,
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: [
+              ...badiniFrameworkLocalizationsDelegates,
+              ...AppLocalizations.localizationsDelegates,
+            ],
+            home: switch (controller.status) {
+              AppBootstrapStatus.loading => const SplashScreen(),
+              AppBootstrapStatus.needsLocale => LanguageSelectionScreen(
+                controller: controller,
+              ),
+              AppBootstrapStatus.needsAuthentication => AuthenticationFeature(
+                repository: widget.authRepository,
+                onAuthenticated: _authenticated,
+                onGuest: controller.continueAsGuest,
+                developmentOtp: widget.developmentOtp,
+              ),
+              AppBootstrapStatus.sessionExpired => AuthenticationFeature(
+                repository: widget.authRepository,
+                sessionExpired: true,
+                onAuthenticated: _authenticated,
+                onGuest: controller.continueAsGuest,
+                developmentOtp: widget.developmentOtp,
+              ),
+              AppBootstrapStatus.authenticationUnavailable ||
+              AppBootstrapStatus.malformedLocalSession => AuthenticationFeature(
+                repository: widget.authRepository,
+                onAuthenticated: _authenticated,
+                onGuest: controller.continueAsGuest,
+                developmentOtp: widget.developmentOtp,
+              ),
+              AppBootstrapStatus.ready => _readyContent(),
+            },
+          );
+        },
+      ),
     ),
   );
 

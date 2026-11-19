@@ -1587,10 +1587,14 @@ class AppLocalizationsKu extends AppLocalizations {
   String get emergencyTitle => 'فریاکەفتن';
 
   @override
-  String get emergencySubtitle => 'ئەمبولانس: 122';
+  String emergencySubtitle(String number) {
+    return 'ئەمبولانس: $number';
+  }
 
   @override
-  String get emergencyConfirmTitle => 'نوکە ب 122 پەیوەندیێ بکەی؟';
+  String emergencyConfirmTitle(String number) {
+    return 'نوکە ب $number پەیوەندیێ بکەی؟';
+  }
 
   @override
   String get emergencyConfirmBody =>
@@ -1991,4 +1995,12 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get appearanceDark => 'تاری';
+
+  @override
+  String get doctorNotBookable =>
+      'نوکە ژڤانان ب ڕێکا ئەپی وەرناگریت. هیڤییە پەیوەندیێ ب کلینیکێ بکە.';
+
+  @override
+  String get doctorFollowUpOnly =>
+      'نەخۆشێن نوو ب ڕێکا ئەپی وەرناگریت: بتنێ ژڤانێن دویڤچوونێ.';
 }

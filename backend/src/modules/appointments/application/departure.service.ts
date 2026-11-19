@@ -5,7 +5,9 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  Optional,
 } from '@nestjs/common';
+import { AppSettings } from '../../app-config/app-settings.service';
 import { PrismaService } from '../../../infrastructure/database/prisma.service';
 import type { AppointmentAccess } from '../domain/appointment';
 import {
@@ -19,6 +21,7 @@ import { TripLearningService, type TripClinic } from './trip-learning.service';
 export const ROUTE_TIME = Symbol('ROUTE_TIME');
 
 /** Minutes to park and walk in. */
+/** Built-in defaults; the live values are Owner Portal settings. */
 export const PARK_AND_WALK_MINUTES = 5;
 /** Arrive this early to check in: longer for a first visit (registration). */
 export const CHECK_IN_MINUTES = { initial: 10, followUp: 5 } as const;
@@ -62,7 +65,25 @@ export class DepartureService {
       drive(a: LatLng, b: LatLng, at: Date): Promise<RouteTime>;
     },
     private readonly learning: TripLearningService,
+    @Optional()
+    private readonly settings: AppSettings = AppSettings.defaults(),
   ) {}
+
+  /** Owner Portal → App settings → Leave by. */
+  private checkInMinutes(type: 'initial' | 'followUp') {
+    return this.settings.int(
+      type === 'initial'
+        ? 'leaveBy.checkInFirstVisit'
+        : 'leaveBy.checkInFollowUp',
+    );
+  }
+  private parkMs() {
+    return this.settings.int('leaveBy.parkAndWalk') * 60_000;
+  }
+  private requireOn() {
+    if (!this.settings.bool('features.leaveBy'))
+      throw new NotFoundException('Leave-by is switched off.');
+  }
 
   async plan(
     access: AppointmentAccess,
@@ -70,6 +91,7 @@ export class DepartureService {
     origin: LatLng,
     now = new Date(),
   ): Promise<DeparturePlan> {
+    this.requireOn();
     const { appointment, clinic, destination } = await this.trip(
       access,
       appointmentId,
@@ -77,14 +99,10 @@ export class DepartureService {
     );
     const arriveBy = new Date(
       new Date(appointment.startsAt).getTime() -
-        CHECK_IN_MINUTES[appointment.type] * 60_000,
+        this.checkInMinutes(appointment.type) * 60_000,
     );
     const leaveFor = (route: { seconds: number }) =>
-      new Date(
-        arriveBy.getTime() -
-          route.seconds * 1000 -
-          PARK_AND_WALK_MINUTES * 60_000,
-      );
+      new Date(arriveBy.getTime() - route.seconds * 1000 - this.parkMs());
     // First with traffic now, then with the traffic expected when they
     // actually set off (Google predicts it), if that is later.
     let route: Route = await this.routes.drive(origin, destination, now);
@@ -122,6 +140,7 @@ export class DepartureService {
     origin: LatLng,
     now = new Date(),
   ): Promise<OnTheWay> {
+    this.requireOn();
     const { appointment, clinic, destination } = await this.trip(
       access,
       appointmentId,
@@ -145,7 +164,7 @@ export class DepartureService {
         ? raw
         : await this.learned(clinic, raw, now, now);
     const arrivalEta = new Date(
-      now.getTime() + route.seconds * 1000 + PARK_AND_WALK_MINUTES * 60_000,
+      now.getTime() + route.seconds * 1000 + this.parkMs(),
     );
     const trip = {
       startedAt: now,

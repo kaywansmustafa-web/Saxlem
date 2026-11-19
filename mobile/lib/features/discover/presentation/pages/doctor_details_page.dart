@@ -17,6 +17,7 @@ import '../../../booking/domain/entities/booking_clinic_option.dart';
 import '../../../booking/domain/entities/booking_doctor_reference.dart';
 import '../../../booking/domain/repositories/booking_repository.dart';
 import '../../../family_profiles/presentation/controllers/patient_profiles_controller.dart';
+import '../../../../core/app_config/app_config_store.dart';
 
 class DoctorDetailsPage extends StatefulWidget {
   const DoctorDetailsPage({
@@ -75,7 +76,8 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
       actions: [
-        if (widget.controller.savedDoctors case final saved?)
+        if (widget.controller.savedDoctors case final saved?
+            when context.appConfig.savedDoctorsOn)
           ListenableBuilder(
             listenable: widget.controller,
             builder: (context, _) => switch (widget.controller.detailState) {
@@ -216,7 +218,9 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          doctor.primarySpecialtyDisplayName,
+                          context.specialtyLabel(
+                            doctor.primarySpecialtyDisplayName,
+                          ),
                           textAlign: TextAlign.center,
                           style: theme.textTheme.bodyLarge?.copyWith(
                             color: colors.textSecondary,
@@ -237,7 +241,8 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
                                   : SaxlemStatusTone.neutral,
                             ),
                             if (doctor.rating case final rating?
-                                when rating.count > 0)
+                                when rating.count > 0 &&
+                                    context.appConfig.reviewsOn)
                               RatingLine(
                                 average: rating.average,
                                 count: rating.count,
@@ -318,7 +323,8 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
                       ),
                     ),
                   ],
-                  if (widget.controller.reviews case final reviews?) ...[
+                  if (widget.controller.reviews case final reviews?
+                      when context.appConfig.reviewsOn) ...[
                     const SizedBox(height: 14),
                     _Section(
                       title: context.l10n.reviewsTitle,
@@ -399,11 +405,31 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
             top: false,
             child: Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 20, 12),
-              child: SaxlemButton(
-                label: context.l10n.bookAppointment,
-                leadingIcon: Icons.calendar_month_rounded,
-                expand: true,
-                onPressed: () => _book(doctor),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // The owner can stop app bookings for a doctor; reception
+                  // still books by phone.
+                  if (!available || !doctor.availability.acceptingNewPatients)
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(bottom: 8),
+                      child: Text(
+                        available
+                            ? context.l10n.doctorFollowUpOnly
+                            : context.l10n.doctorNotBookable,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  SaxlemButton(
+                    label: context.l10n.bookAppointment,
+                    leadingIcon: Icons.calendar_month_rounded,
+                    expand: true,
+                    onPressed: available ? () => _book(doctor) : null,
+                  ),
+                ],
               ),
             ),
           ),
@@ -431,6 +457,7 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
                   ),
                 )
                 .toList(growable: false),
+            followUpOnly: !doctor.availability.acceptingNewPatients,
           ),
           repository: widget.bookingRepository,
           profilesController: widget.profilesController!,

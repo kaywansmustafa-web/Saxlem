@@ -137,7 +137,20 @@ class BackendDoctorDiscoveryRepository
     }
     final params = <String, String>{'page': '$page', 'pageSize': '$pageSize'};
     if (query.isNotEmpty) params['name'] = query;
-    if (criteria.specialtyCode case final value?) params['specialty'] = value;
+    if (criteria.specialtyCode case final value?) {
+      params['specialty'] = value;
+    } else if (criteria.specialtyCodes.isNotEmpty) {
+      final codes = criteria.specialtyCodes;
+      if (codes.length > 30 ||
+          codes.any(
+            (code) => !RegExp(r'^[a-z][a-z0-9-]{1,63}$').hasMatch(code),
+          )) {
+        throw const DoctorDiscoveryFailure(
+          DoctorDiscoveryFailureType.malformedResponse,
+        );
+      }
+      params['specialties'] = codes.join(',');
+    }
     if (criteria.clinicId case final value?) params['clinicId'] = value;
     if (criteria.language case final value?) params['language'] = value;
     if (criteria.gender case final value?) params['gender'] = value.name;

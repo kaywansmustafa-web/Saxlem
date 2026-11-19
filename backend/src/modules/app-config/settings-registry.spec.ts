@@ -79,10 +79,11 @@ describe('settings registry', () => {
     });
   });
 
-  it('env-based defaults need the server configuration', () => {
-    expect(() =>
-      AppSettings.defaults().int('booking.defaultVisitMinutes'),
-    ).toThrow(/needs the server configuration/);
+  it('env-based defaults fall back to the shipped values without configuration', () => {
+    expect(AppSettings.defaults().int('booking.defaultVisitMinutes')).toBe(30);
+    expect(AppSettings.defaults({} as never).int('booking.defaultFeeIqd')).toBe(
+      25000,
+    );
     expect(AppSettings.defaults().int('booking.daysAhead')).toBe(14);
   });
 });

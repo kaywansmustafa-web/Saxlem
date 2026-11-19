@@ -405,6 +405,8 @@ model Doctor {
   licenseNumber        String                        @map("license_number")
   yearsOfExperience    Int                           @map("years_of_experience")
   biography            String                        @default("")
+  /// Own visit length; null = the "Default visit length" app setting.
+  visitMinutes         Int?                          @map("visit_minutes")
   languages            String[]
   profilePhotoKey      String?                       @map("profile_photo_key")
   /// The doctor's own fees in IQD; null means the platform default.

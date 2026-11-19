@@ -18,6 +18,7 @@ import '../../../family_profiles/presentation/controllers/patient_profiles_contr
 import '../../../family_profiles/presentation/widgets/patient_selector.dart';
 import 'dashboard_header.dart';
 import 'dashboard_search_bar.dart';
+import '../../../../core/app_config/app_config_store.dart';
 
 /// Home (v2 "Aura"): a greeting, one hero card that leads straight to search,
 /// a shortcut to the patient's appointments and the specialty grid. Only real
@@ -101,6 +102,7 @@ class DashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final strings = context.l10n;
+    final config = context.appConfig;
     final profiles = profilesController;
     void openSpecialty(Specialty item) => onOpenDiscover(
       criteria: DoctorSearchCriteria(
@@ -213,10 +215,14 @@ class DashboardView extends StatelessWidget {
               )
             else
               specialtyFallback,
-            if (profiles != null && onOpenDoctor != null)
+            if (profiles != null &&
+                onOpenDoctor != null &&
+                config.savedDoctorsOn)
               if (discoveryRepository case final SavedDoctorsSource saved)
                 SavedDoctorsStrip(source: saved, onOpenDoctor: onOpenDoctor!),
-            if (profiles != null && appointmentsRepository != null)
+            if (profiles != null &&
+                appointmentsRepository != null &&
+                config.home('bookAgain'))
               ListenableBuilder(
                 listenable: profiles,
                 builder: (context, _) => RecentDoctorsStrip(
@@ -232,17 +238,20 @@ class DashboardView extends StatelessWidget {
                         ),
                 ),
               ),
-            const SizedBox(height: 22),
-            _QuickTile(
-              icon: Icons.emergency_outlined,
-              title: strings.emergencyTitle,
-              subtitle: strings.emergencySubtitle,
-              danger: true,
-              onTap: () => _confirmEmergency(context),
-            ),
+            if (config.home('emergency')) ...[
+              const SizedBox(height: 22),
+              _QuickTile(
+                icon: Icons.emergency_outlined,
+                title: strings.emergencyTitle,
+                subtitle: strings.emergencySubtitle(config.emergencyNumber),
+                danger: true,
+                onTap: () => _confirmEmergency(context),
+              ),
+            ],
             ValueListenableBuilder<bool>(
               valueListenable: returning ?? ValueNotifier(false),
-              builder: (context, isReturning, _) => isReturning
+              builder: (context, isReturning, _) =>
+                  isReturning || !config.home('howItWorks')
                   ? const SizedBox.shrink()
                   : Padding(
                       padding: const EdgeInsetsDirectional.only(top: 22),
@@ -268,11 +277,12 @@ class DashboardView extends StatelessWidget {
   /// Never dials by accident: the patient confirms first.
   static Future<void> _confirmEmergency(BuildContext context) async {
     final strings = context.l10n;
+    final number = context.appConfig.emergencyNumber;
     final call = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         icon: const Icon(Icons.emergency_outlined),
-        title: Text(strings.emergencyConfirmTitle),
+        title: Text(strings.emergencyConfirmTitle(number)),
         content: Text(strings.emergencyConfirmBody),
         actions: [
           TextButton(
@@ -287,7 +297,7 @@ class DashboardView extends StatelessWidget {
         ],
       ),
     );
-    if (call == true) await launchUrl(Uri(scheme: 'tel', path: '122'));
+    if (call == true) await launchUrl(Uri(scheme: 'tel', path: number));
   }
 
   Widget _header(BuildContext context, String? name) {

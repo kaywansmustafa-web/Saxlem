@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 
 import '../config/environment/app_configuration.dart';
+import '../core/app_config/app_config_store.dart';
 import '../core/device/device_identity.dart';
 import '../core/network/api_client.dart';
 import '../core/network/authenticated_api_client.dart';
@@ -42,6 +43,7 @@ class AppDependencies {
     this.liveQueueRepository = const UnavailableLiveQueueRepository(),
     this.notificationsRepository = const UnavailableNotificationsRepository(),
     this.paymentsRepository = const UnavailablePaymentsRepository(),
+    this.appConfigRepository = const BuiltInAppConfigRepository(),
     this.developmentOtp,
   });
 
@@ -84,6 +86,7 @@ class AppDependencies {
     );
     return AppDependencies(
       authRepository: auth,
+      appConfigRepository: BackendAppConfigRepository(api),
       patientProfilesRepository: BackendPatientProfilesRepository(
         authenticatedApi,
       ),
@@ -117,5 +120,6 @@ class AppDependencies {
   final LiveQueueRepository liveQueueRepository;
   final NotificationsRepository notificationsRepository;
   final PaymentsRepository paymentsRepository;
+  final AppConfigRepository appConfigRepository;
   final String? developmentOtp;
 }

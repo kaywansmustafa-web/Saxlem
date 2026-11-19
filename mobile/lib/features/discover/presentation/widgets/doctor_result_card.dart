@@ -6,6 +6,7 @@ import '../../../../design_system/design_system.dart';
 import '../../domain/entities/doctor_discovery_result.dart';
 import 'applied_doctor_filters.dart';
 import 'visit_facts.dart';
+import '../../../../core/app_config/app_config_store.dart';
 
 class DoctorResultCard extends StatelessWidget {
   const DoctorResultCard({
@@ -22,13 +23,14 @@ class DoctorResultCard extends StatelessWidget {
     final strings = context.l10n;
     final semanticParts = <String>[
       doctor.doctorDisplayName,
-      doctor.primarySpecialtyDisplayName,
+      context.specialtyLabel(doctor.primarySpecialtyDisplayName),
       strings.yearsExperience(doctor.yearsOfExperience),
       if (doctor.clinics.isNotEmpty)
         '${strings.clinicsLabel}: ${doctor.clinics.map((item) => item.name).join(', ')}',
       if (doctor.languages.isNotEmpty)
         '${strings.languagesLabel}: ${doctor.languages.map((item) => localizedDoctorLanguage(context, item)).join(', ')}',
-      if (doctor.rating case final rating? when rating.count > 0)
+      if (doctor.rating case final rating?
+          when rating.count > 0 && context.appConfig.reviewsOn)
         '${strings.starsLabel(rating.average.toStringAsFixed(1))}, ${strings.reviewCount(rating.count)}',
       if (doctor.fees case final fees?)
         '${strings.feeFirstVisit}: ${feeText(context, fees.firstVisitIqd)}',
@@ -78,11 +80,14 @@ class DoctorResultCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        doctor.primarySpecialtyDisplayName,
+                        context.specialtyLabel(
+                          doctor.primarySpecialtyDisplayName,
+                        ),
                         style: theme.textTheme.bodySmall,
                       ),
                       if (doctor.rating case final rating?
-                          when rating.count > 0) ...[
+                          when rating.count > 0 &&
+                              context.appConfig.reviewsOn) ...[
                         const SizedBox(height: 4),
                         RatingLine(
                           average: rating.average,

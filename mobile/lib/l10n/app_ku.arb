@@ -635,8 +635,8 @@
   "symptomStomach": "گەدە",
   "specialtiesTitle": "پسپۆڕی",
   "emergencyTitle": "فریاکەفتن",
-  "emergencySubtitle": "ئەمبولانس: 122",
-  "emergencyConfirmTitle": "نوکە ب 122 پەیوەندیێ بکەی؟",
+  "emergencySubtitle": "ئەمبولانس: {number}",
+  "emergencyConfirmTitle": "نوکە ب {number} پەیوەندیێ بکەی؟",
   "emergencyConfirmBody": "ساخلەم بۆ گرتنا ژڤانانە، نە بۆ فریاکەفتنێ. ئەگەر کەسەکێ پێدڤی ب هاریکاریا لەز هەبیت، پەیوەندی ب ئەمبولانسێ بکە.",
   "emergencyCall": "نوکە ب 122 پەیوەندیێ بکە",
   "liveNotOpen": "ڕێزبەندی هێشتا ڤەنەبوویە",
@@ -748,5 +748,7 @@
   "appearanceTitle": "ڕۆهن یان تاری",
   "appearanceSystem": "وەکی مۆبایلی",
   "appearanceLight": "ڕۆهن",
-  "appearanceDark": "تاری"
+  "appearanceDark": "تاری",
+  "doctorNotBookable": "نوکە ژڤانان ب ڕێکا ئەپی وەرناگریت. هیڤییە پەیوەندیێ ب کلینیکێ بکە.",
+  "doctorFollowUpOnly": "نەخۆشێن نوو ب ڕێکا ئەپی وەرناگریت: بتنێ ژڤانێن دویڤچوونێ."
 }

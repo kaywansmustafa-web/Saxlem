@@ -5,7 +5,9 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  Optional,
 } from '@nestjs/common';
+import { AppSettings } from '../../app-config/app-settings.service';
 import { randomBytes } from 'node:crypto';
 import type { DocumentRecord, Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/database/prisma.service';
@@ -68,6 +70,10 @@ export class PlatformControlService {
     private readonly rateLimit: RateLimitBoundary,
     @Inject(DOCUMENT_STORAGE)
     private readonly documentStorage: DocumentStorage,
+    @Optional()
+    private readonly appSettings: AppSettings = AppSettings.defaults(
+      configuration,
+    ),
   ) {}
 
   async staff(query: StaffListQueryDto) {
@@ -659,7 +665,7 @@ export class PlatformControlService {
       const average = durations.length
         ? durations.reduce((total, minutes) => total + minutes, 0) /
           durations.length
-        : this.configuration.queueFallbackConsultationMinutes;
+        : this.appSettings.int('reception.fallbackConsultationMinutes');
       const firstStartedAt = session.entries
         .map((entry) => entry.consultationStartedAt)
         .filter((date): date is Date => date !== null)
@@ -695,13 +701,16 @@ export class PlatformControlService {
           session.status === 'paused'
             ? 'paused'
             : deriveQueueHealth(behindMinutes, {
-                recallGraceMinutes: this.configuration.queueRecallGraceMinutes,
+                recallGraceMinutes: this.appSettings.int(
+                  'reception.recallGraceMinutes',
+                ),
                 busyThresholdMinutes:
                   this.configuration.queueHealthBusyThresholdMinutes,
                 delayedThresholdMinutes:
                   this.configuration.queueHealthDelayedThresholdMinutes,
-                fallbackConsultationMinutes:
-                  this.configuration.queueFallbackConsultationMinutes,
+                fallbackConsultationMinutes: this.appSettings.int(
+                  'reception.fallbackConsultationMinutes',
+                ),
               }),
         updatedAt: session.updatedAt.toISOString(),
       };
@@ -1424,8 +1433,9 @@ export class PlatformControlService {
             updatedAt: doctor.availability.updatedAt.toISOString(),
           }
         : {
-            status: 'unavailable',
-            acceptingNewPatients: false,
+            // No record: bookable, as in booking itself.
+            status: 'available',
+            acceptingNewPatients: true,
             nextAvailableAt: null,
             updatedAt: null,
           },
@@ -1434,11 +1444,11 @@ export class PlatformControlService {
       fees: {
         firstVisitIqd:
           doctor.consultationFeeIqd ??
-          this.configuration.appointmentFoundationFeeIqd,
+          this.appSettings.int('booking.defaultFeeIqd'),
         followUpIqd:
           doctor.followUpFeeIqd ??
           doctor.consultationFeeIqd ??
-          this.configuration.appointmentFoundationFeeIqd,
+          this.appSettings.int('booking.defaultFeeIqd'),
       },
       customFees: {
         firstVisitIqd: doctor.consultationFeeIqd,
@@ -1461,6 +1471,17 @@ export class PlatformControlService {
     requestId: string,
   ) {
     return this.prisma.db.$transaction(async (tx) => {
+      // A doctor leaving Saxlem keeps no working hours (the database
+      // refuses to deactivate a doctor with active schedule records).
+      if (input.status && input.status !== 'active') {
+        const where = { doctorId: id, status: 'active' as const };
+        const off = { status: 'inactive' as const };
+        await tx.doctorBreak.updateMany({ where, data: off });
+        await tx.doctorWeeklySchedule.updateMany({ where, data: off });
+        await tx.doctorLeave.updateMany({ where, data: off });
+        await tx.doctorHoliday.updateMany({ where, data: off });
+        await tx.doctorScheduleException.updateMany({ where, data: off });
+      }
       const result = await tx.doctor.updateMany({
         where: { id, version: input.version },
         data: {

@@ -7,7 +7,9 @@ import {
   Logger,
   NotFoundException,
   ServiceUnavailableException,
+  Optional,
 } from '@nestjs/common';
+import { AppSettings } from '../../app-config/app-settings.service';
 import { randomBytes } from 'node:crypto';
 import { BACKEND_CONFIGURATION } from '../../../config/configuration.module';
 import type { BackendConfiguration } from '../../../config/environment';
@@ -62,6 +64,10 @@ export class PaymentService {
     private readonly gateways: readonly PaymentGateway[],
     @Inject(BACKEND_CONFIGURATION)
     private readonly configuration: BackendConfiguration,
+    @Optional()
+    private readonly settings: AppSettings = AppSettings.defaults(
+      configuration,
+    ),
   ) {
     this.cipher = configuration.paymentCredentialsKey
       ? new CredentialCipher(configuration.paymentCredentialsKey)
@@ -150,7 +156,7 @@ export class PaymentService {
       this.gateway(credentials.provider).create(credentials, {
         amountIqd: appointment.feeIqd,
         description: `Saxlem ${appointment.reference}`,
-        expiresInMinutes: this.configuration.paymentLinkMinutes,
+        expiresInMinutes: this.settings.int('payments.linkMinutes'),
         statusCallbackUrl: this.callbackUrl(
           credentials.provider,
           callbackToken,
@@ -583,7 +589,12 @@ export class PaymentService {
     collectedBy: PaymentCollector;
     credentials: GatewayCredentials;
   } | null> {
-    if (!this.configuration.paymentsOnlineEnabled) return null;
+    // Needs FIB set up on the server AND the owner's switch on.
+    if (
+      !this.configuration.paymentsOnlineEnabled ||
+      !this.settings.bool('features.onlinePayments')
+    )
+      return null;
     if (this.configuration.paymentCollectionMode === 'platform') {
       const platform = this.configuration.paymentPlatformAccount;
       if (!platform || !this.providerAllowed(platform.provider)) return null;

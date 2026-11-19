@@ -59,10 +59,29 @@ describe("catalog and settings route", () => {
       expect.objectContaining({ path: `/api/v1/platform/catalog/concerns/${id}`, method: "DELETE", body: undefined }),
     );
 
+    expect(
+      (await call(PUT, ["doctors", id, "hours", id], { weekly: [{ weekday: 1, startsMinute: 540, endsMinute: 780 }], breaks: [] }))
+        .status,
+    ).toBe(200);
+    expect(request).toHaveBeenLastCalledWith(
+      expect.objectContaining({ path: `/api/v1/platform/doctors/${id}/hours/${id}`, method: "PUT" }),
+    );
+    expect((await call(PUT, ["clinics", id, "hours"], { periods: [] })).status).toBe(200);
+    expect(
+      (await call(POST, ["doctors", id, "leave"], { startsAt: "2026-11-20T00:00:00+03:00", endsAt: "2026-11-21T00:00:00+03:00" }))
+        .status,
+    ).toBe(200);
+    expect((await call(DELETE, ["doctors", id, "leave", id])).status).toBe(200);
+    expect(
+      (await call(PUT, ["doctors", id, "booking"], { visitMinutes: null, bookable: true, acceptingNewPatients: false })).status,
+    ).toBe(200);
+    expect(request).toHaveBeenCalledTimes(8);
+    expect((await call(PUT, ["doctors", id, "hours", "x"], { weekly: [], breaks: [] })).status).toBe(404);
+    expect((await call(PUT, ["doctors", id, "booking"], { visitMinutes: 3, bookable: true, acceptingNewPatients: true })).status).toBe(400);
     expect((await call(DELETE, ["specialties", id])).status).toBe(404);
     expect((await call(PATCH, ["concerns", "../staff"], { status: "active" })).status).toBe(404);
     expect((await call(POST, ["settings"], { changes: {} })).status).toBe(404);
-    expect(request).toHaveBeenCalledTimes(3);
+    expect(request).toHaveBeenCalledTimes(8);
   });
 
   it("refuses other sites, bad bodies and signed-out owners", async () => {

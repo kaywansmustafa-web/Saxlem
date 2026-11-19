@@ -856,10 +856,10 @@
   "@specialtiesTitle": {},
   "emergencyTitle": "Emergency",
   "@emergencyTitle": {},
-  "emergencySubtitle": "Ambulance: 122",
-  "@emergencySubtitle": {},
-  "emergencyConfirmTitle": "Call 122 now?",
-  "@emergencyConfirmTitle": {},
+  "emergencySubtitle": "Ambulance: {number}",
+  "@emergencySubtitle": {"placeholders": {"number": {"type": "String"}}},
+  "emergencyConfirmTitle": "Call {number} now?",
+  "@emergencyConfirmTitle": {"placeholders": {"number": {"type": "String"}}},
   "emergencyConfirmBody": "Saxlem is for booking visits, not emergencies. If someone needs urgent help, call the ambulance.",
   "@emergencyConfirmBody": {},
   "emergencyCall": "Call 122",
@@ -1232,5 +1232,9 @@
   "appearanceDark": "Dark",
   "@appearanceDark": {
     "description": "Appearance option: dark"
-  }
+  },
+  "doctorNotBookable": "Not taking app bookings right now. Please call the clinic.",
+  "@doctorNotBookable": {},
+  "doctorFollowUpOnly": "Not taking new patients in the app: follow-up visits only.",
+  "@doctorFollowUpOnly": {}
 }

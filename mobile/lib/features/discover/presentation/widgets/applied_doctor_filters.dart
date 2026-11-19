@@ -4,6 +4,7 @@ import '../../../../core/localization/localization_extensions.dart';
 import '../../domain/entities/doctor_discovery_options.dart';
 import '../../domain/entities/doctor_discovery_result.dart';
 import '../../domain/entities/doctor_search_criteria.dart';
+import '../../../../core/app_config/app_config_store.dart';
 
 class AppliedDoctorFilters extends StatelessWidget {
   const AppliedDoctorFilters({
@@ -50,15 +51,16 @@ class AppliedDoctorFilters extends StatelessWidget {
   }
 
   List<(String, _FilterKind)> _labels(BuildContext context) => [
-    if (criteria.specialtyCode case final code?)
+    if (criteria.hasConcern)
       (
-        options.specialties
-                .where((item) => item.code == code)
-                .map((item) => item.displayName)
-                .firstOrNull ??
-            code,
+        criteria.concernLabel ??
+            criteria.specialtyCodes
+                .map((code) => _specialty(context, code))
+                .join(', '),
         _FilterKind.specialty,
       ),
+    if (criteria.specialtyCode case final code?)
+      (_specialty(context, code), _FilterKind.specialty),
     if (criteria.clinicId case final id?)
       (
         options.clinics
@@ -75,6 +77,17 @@ class AppliedDoctorFilters extends StatelessWidget {
     if (criteria.minimumYearsOfExperience case final years?)
       (context.l10n.yearsExperience(years), _FilterKind.experience),
   ];
+
+  String _specialty(BuildContext context, String code) =>
+      context.appConfig.specialtyName(
+        code,
+        Localizations.localeOf(context),
+        options.specialties
+                .where((item) => item.code == code)
+                .map((item) => item.displayName)
+                .firstOrNull ??
+            code,
+      );
 
   DoctorSearchCriteria _remove(_FilterKind kind) => switch (kind) {
     _FilterKind.specialty => criteria.copyWith(clearSpecialty: true),

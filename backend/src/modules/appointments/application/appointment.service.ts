@@ -6,8 +6,10 @@ import {
   Injectable,
   NotFoundException,
   ServiceUnavailableException,
+  Optional,
 } from '@nestjs/common';
 import { createHash } from 'node:crypto';
+import { AppSettings } from '../../app-config/app-settings.service';
 import { BACKEND_CONFIGURATION } from '../../../config/configuration.module';
 import type { BackendConfiguration } from '../../../config/environment';
 import { DoctorScheduleService } from '../../doctors/application/doctor-schedule.service';
@@ -55,7 +57,103 @@ export class AppointmentService {
     private readonly timezones: TimezoneService,
     @Inject(BACKEND_CONFIGURATION)
     private readonly configuration: BackendConfiguration,
+    @Optional()
+    private readonly settings: AppSettings = AppSettings.defaults(
+      configuration,
+    ),
   ) {}
+
+  /** The doctor's own visit length, or the "Default visit length" setting. */
+  async visitMinutes(doctorId: string): Promise<number> {
+    return (
+      (await this.repository.doctorVisitMinutes?.(doctorId)) ??
+      this.settings.int('booking.defaultVisitMinutes')
+    );
+  }
+
+  /** Why a patient can't book this doctor in the app now, or null. */
+  private async appBookingBlock(
+    doctorId: string,
+    type: AppointmentType,
+  ): Promise<string | null> {
+    const bookability = await this.repository.doctorBookability?.(doctorId);
+    if (bookability && !bookability.available)
+      return 'This doctor is not taking app bookings right now. Please call the clinic.';
+    if (bookability && type === 'initial' && !bookability.acceptingNewPatients)
+      return 'This doctor is not taking new patients in the app right now.';
+    return null;
+  }
+
+  /**
+   * The doctor's first free time from [now] within "How far ahead patients
+   * can book", over all their active clinics; null when there is none.
+   * Uses the same grid and rules as booking, so it is a time that can be
+   * booked.
+   */
+  async nextFreeTime(doctorId: string, now = new Date()): Promise<Date | null> {
+    const schedule = await this.schedules.internalSchedule(doctorId, now);
+    if (!schedule) return null;
+    const minutes = await this.visitMinutes(doctorId);
+    const horizon = this.bookingHorizon(now);
+    const conflicts = await this.repository.findBookingConflicts({
+      organizationId: schedule.organizationId,
+      doctorId,
+      startsAt: now,
+      endsAt: horizon,
+    });
+    let best: Date | null = null;
+    for (const clinic of schedule.clinics) {
+      let date = this.timezones.localClock(
+        now,
+        clinic.timezone.identifier,
+      ).date;
+      for (let day = 0; day <= this.settings.int('booking.daysAhead'); day++) {
+        const slot = this.gridSlots(clinic, date, minutes).find(
+          ({ start, end, allowed }) =>
+            allowed &&
+            start > now &&
+            start < horizon &&
+            !conflicts.some(
+              (item) =>
+                new Date(item.startsAt) < end && new Date(item.endsAt) > start,
+            ),
+        );
+        if (slot) {
+          if (!best || slot.start < best) best = slot.start;
+          break;
+        }
+        date = this.addDate(date, 1);
+      }
+    }
+    return best;
+  }
+
+  /** Recomputes and stores next free times; returns how many were saved. */
+  async refreshNextFree(doctorIds?: readonly string[], now = new Date()) {
+    if (!this.repository.saveNextFree) return 0;
+    const ids =
+      doctorIds ?? (await this.repository.bookableDoctorIds?.()) ?? [];
+    let saved = 0;
+    for (const id of ids) {
+      try {
+        await this.repository.saveNextFree(
+          id,
+          await this.nextFreeTime(id, now),
+        );
+        saved += 1;
+      } catch {
+        // One doctor's broken schedule must not stop the others.
+      }
+    }
+    return saved;
+  }
+
+  /** Latest start a patient may book: "How far ahead patients can book". */
+  private bookingHorizon(now = new Date()): Date {
+    return new Date(
+      now.getTime() + this.settings.int('booking.daysAhead') * 86_400_000,
+    );
+  }
 
   /** A receptionist's doctors, or null when the caller isn't scoped. */
   private receptionScope(access: AppointmentAccess): readonly string[] | null {
@@ -111,8 +209,12 @@ export class AppointmentService {
     );
     const clinic = schedule.clinics.find((item) => item.clinicId === clinicId);
     if (!clinic) throw new NotFoundException('Booking options were not found.');
-    const durationMinutes =
-      this.configuration.appointmentFoundationDurationMinutes;
+    const durationMinutes = await this.visitMinutes(doctorId);
+    // Patients see no times while the owner has the doctor switched off,
+    // or beyond how far ahead they may book.
+    const closed =
+      access.patient && (await this.appBookingBlock(doctorId, appointmentType));
+    const horizon = access.patient ? this.bookingHorizon(generatedAt) : null;
     const rangeStart = this.timezones.instantForLocalDateMinute(
       dateFrom,
       0,
@@ -136,7 +238,7 @@ export class AppointmentService {
       startsAt: rangeStart,
       endsAt: new Date(rangeStart.getTime() + durationMinutes * 60_000),
       durationMinutes,
-      feeIqd: this.configuration.appointmentFoundationFeeIqd,
+      feeIqd: this.settings.int('booking.defaultFeeIqd'),
     });
     const conflicts = await this.repository.findBookingConflicts({
       organizationId: schedule.organizationId,
@@ -151,6 +253,8 @@ export class AppointmentService {
         .filter(
           ({ start, end, allowed }) =>
             allowed &&
+            !closed &&
+            (!horizon || start < horizon) &&
             start > earliestStart &&
             !conflicts.some(
               (item) =>
@@ -246,6 +350,15 @@ export class AppointmentService {
       throw new ConflictException(
         'This doctor is not taking app bookings right now. Please call the clinic.',
       );
+    if (access.patient) {
+      await this.patientDuration(input.doctorId, write.durationMinutes);
+      const blocked = await this.appBookingBlock(input.doctorId, input.type);
+      if (blocked) throw new ConflictException(blocked);
+      if (write.startsAt >= this.bookingHorizon())
+        throw new BadRequestException(
+          'This time is further ahead than patients can book.',
+        );
+    }
     return this.commandResult(() =>
       this.repository.create(access, write, requestId, command, () =>
         this.validateContext(access, write, input.startsAtSource),
@@ -359,6 +472,13 @@ export class AppointmentService {
       durationMinutes,
     });
     this.validateTime(write);
+    if (access.patient) {
+      await this.patientDuration(current.doctorId, write.durationMinutes);
+      if (write.startsAt >= this.bookingHorizon())
+        throw new BadRequestException(
+          'This time is further ahead than patients can book.',
+        );
+    }
     const item = await this.commandResult(() =>
       this.repository.reschedule(
         access,
@@ -377,8 +497,16 @@ export class AppointmentService {
   private async fee(doctorId: string, type: 'initial' | 'followUp') {
     return (
       (await this.repository.doctorFee(doctorId, type)) ??
-      this.configuration.appointmentFoundationFeeIqd
+      this.settings.int('booking.defaultFeeIqd')
     );
+  }
+
+  /** Patients book the doctor's own visit length, nothing else. */
+  private async patientDuration(doctorId: string, minutes: number) {
+    if (minutes !== (await this.visitMinutes(doctorId)))
+      throw new BadRequestException(
+        'Appointment duration does not match booking configuration.',
+      );
   }
 
   private write(
@@ -392,14 +520,6 @@ export class AppointmentService {
     )
       throw new BadRequestException(
         'Appointment duration must be between 5 and 480 minutes.',
-      );
-    if (
-      access.patient &&
-      input.durationMinutes !==
-        this.configuration.appointmentFoundationDurationMinutes
-    )
-      throw new BadRequestException(
-        'Appointment duration does not match booking configuration.',
       );
     this.reason(input.reason);
     if (input.walkIn) {
@@ -434,7 +554,7 @@ export class AppointmentService {
       reason: input.reason.trim(),
       startsAt: input.startsAt,
       durationMinutes: input.durationMinutes,
-      feeIqd: this.configuration.appointmentFoundationFeeIqd,
+      feeIqd: this.settings.int('booking.defaultFeeIqd'),
       endsAt: new Date(
         input.startsAt.getTime() + input.durationMinutes * 60_000,
       ),
@@ -599,8 +719,7 @@ export class AppointmentService {
     const organizationId = access.organizationId;
     const clinicId = access.clinicId;
     const generatedAt = new Date();
-    const durationMinutes =
-      this.configuration.appointmentFoundationDurationMinutes;
+    const durationMinutes = this.settings.int('booking.defaultVisitMinutes');
     const earliestStart = new Date(
       generatedAt.getTime() -
         this.configuration.appointmentPastToleranceMinutes * 60_000,
@@ -609,6 +728,10 @@ export class AppointmentService {
     const doctors = (
       await this.repository.clinicDoctors(organizationId, clinicId)
     ).filter((doctor) => !scope || scope.includes(doctor.id));
+    // Each doctor's slots follow their own visit length.
+    const lengths = await Promise.all(
+      doctors.map((doctor) => this.visitMinutes(doctor.id)),
+    );
     const schedules = await Promise.all(
       doctors.map((doctor) =>
         this.schedules
@@ -659,7 +782,7 @@ export class AppointmentService {
       const own = appointments.filter((item) => item.doctorId === doctor.id);
       const placed = new Set<string>();
       const slots: DayBoardSlot[] = (
-        clinic ? this.gridSlots(clinic, date, durationMinutes) : []
+        clinic ? this.gridSlots(clinic, date, lengths[index]!) : []
       ).map(({ start, end, allowed }) => {
         const booked = own.find(
           (item) =>
@@ -737,7 +860,7 @@ export class AppointmentService {
       (period) =>
         period.weekday === weekday &&
         period.startsMinute <
-          minute + this.configuration.appointmentFoundationDurationMinutes &&
+          minute + (endsAt.getTime() - startsAt.getTime()) / 60_000 &&
         period.endsMinute > minute,
     );
   }

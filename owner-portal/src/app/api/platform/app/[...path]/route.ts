@@ -51,6 +51,27 @@ const doctorSpecialties = z
   })
   .strict();
 
+const minute = z.number().int().min(0).max(1440);
+const week = z
+  .array(z.object({ weekday: z.number().int().min(0).max(6), startsMinute: minute, endsMinute: minute }).strict())
+  .max(28);
+const doctorWeek = z.object({ weekly: week, breaks: week }).strict();
+const clinicWeek = z.object({ periods: week }).strict();
+const booking = z
+  .object({
+    visitMinutes: z.number().int().min(5).max(240).nullable(),
+    bookable: z.boolean(),
+    acceptingNewPatients: z.boolean(),
+  })
+  .strict();
+const leave = z
+  .object({
+    clinicId: uuid.nullable().optional(),
+    startsAt: z.string().datetime({ offset: true }),
+    endsAt: z.string().datetime({ offset: true }),
+  })
+  .strict();
+
 type Method = "POST" | "PUT" | "PATCH" | "DELETE";
 type Route = { path: string; body?: z.ZodType; message: string };
 
@@ -82,14 +103,32 @@ function route(method: Method, parts: readonly string[]): Route | null {
   }
   if (a === "settings" && one && method === "PUT")
     return { path: "app-settings", body: settings, message: "The settings could not be saved." };
-  if (a === "doctors" && three && c === "specialties" && method === "PUT" && uuid.safeParse(b).success)
-    return { path: `doctors/${b}/specialties`, body: doctorSpecialties, message: "The specialties could not be saved." };
+  const [, , , d] = parts;
+  if (a === "doctors" && uuid.safeParse(b).success) {
+    if (three && c === "specialties" && method === "PUT")
+      return { path: `doctors/${b}/specialties`, body: doctorSpecialties, message: "The specialties could not be saved." };
+    if (three && c === "booking" && method === "PUT")
+      return { path: `doctors/${b}/booking`, body: booking, message: "The booking settings could not be saved." };
+    if (three && c === "leave" && method === "POST")
+      return { path: `doctors/${b}/leave`, body: leave, message: "The time off could not be added." };
+    if (parts.length === 4 && c === "leave" && method === "DELETE" && uuid.safeParse(d).success)
+      return { path: `doctors/${b}/leave/${d}`, message: "The time off could not be removed." };
+    if (parts.length === 4 && c === "hours" && method === "PUT" && uuid.safeParse(d).success)
+      return { path: `doctors/${b}/hours/${d}`, body: doctorWeek, message: "The hours could not be saved." };
+  }
+  if (a === "clinics" && three && c === "hours" && method === "PUT" && uuid.safeParse(b).success)
+    return { path: `clinics/${b}/hours`, body: clinicWeek, message: "The opening hours could not be saved." };
   return null;
 }
 
 const conflictMessages: Record<string, string> = {
   "catalog/specialties": "A specialty with this English name already exists.",
 };
+const conflictFor = (path: string) =>
+  conflictMessages[path] ??
+  (/^clinics\/[^/]+\/hours$/.test(path)
+    ? "Some doctors work outside these hours. Change their hours first."
+    : undefined);
 
 async function handle(
   method: Method,
@@ -131,7 +170,7 @@ async function handle(
     const status = [400, 403, 404, 409, 429].includes(code) ? code : 503;
     const message =
       status === 409
-        ? (conflictMessages[target.path] ?? target.message)
+        ? (conflictFor(target.path) ?? target.message)
         : status === 400
           ? `${target.message} Check the values and limits.`
           : target.message;

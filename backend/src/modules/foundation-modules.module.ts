@@ -12,6 +12,7 @@ import { BillingModule } from './billing/billing.module';
 import { PlatformControlModule } from './platform-control/platform-control.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { AppConfigModule } from './app-config/app-config.module';
+import { DoctorHoursModule } from './doctor-hours/doctor-hours.module';
 
 @Module({})
 export class ClinicStaffModule {}
@@ -27,6 +28,7 @@ export class AuditModule {}
   imports: [
     AppConfigModule,
     IdentityModule,
+    DoctorHoursModule,
     AdministrationModule,
     BillingModule,
     PlatformControlModule,

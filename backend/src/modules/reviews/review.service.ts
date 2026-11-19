@@ -4,15 +4,12 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  Optional,
 } from '@nestjs/common';
+import { AppSettings } from '../app-config/app-settings.service';
 import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../../infrastructure/database/prisma.service';
-import {
-  authorName,
-  averageOf,
-  cleanComment,
-  REVIEW_WINDOW_DAYS,
-} from './review-rules';
+import { authorName, averageOf, cleanComment } from './review-rules';
 import type {
   AppointmentReviewResponseDto,
   DoctorReviewPageDto,
@@ -53,7 +50,15 @@ const after = (cursor: Cursor | null): Prisma.DoctorReviewWhereInput =>
  */
 @Injectable()
 export class ReviewService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Optional()
+    private readonly settings: AppSettings = AppSettings.defaults(),
+  ) {}
+
+  private get windowMs() {
+    return this.settings.int('reviews.windowDays') * DAY;
+  }
 
   /** The patient's view of one visit: can they rate it, and their rating. */
   async forAppointment(
@@ -62,8 +67,11 @@ export class ReviewService {
     now = new Date(),
   ): Promise<AppointmentReviewResponseDto> {
     const visit = await this.ownVisit(userId, appointmentId);
-    const until = new Date(visit.endsAt.getTime() + REVIEW_WINDOW_DAYS * DAY);
-    const open = visit.status === 'completed' && now <= until;
+    const until = new Date(visit.endsAt.getTime() + this.windowMs);
+    const open =
+      visit.status === 'completed' &&
+      now <= until &&
+      this.settings.bool('features.reviews');
     return {
       canReview: open,
       reviewableUntil:
@@ -81,16 +89,21 @@ export class ReviewService {
     const visit = await this.ownVisit(userId, appointmentId);
     if (visit.status !== 'completed')
       throw new ConflictException('Only a visit that took place can be rated.');
-    if (now.getTime() > visit.endsAt.getTime() + REVIEW_WINDOW_DAYS * DAY)
-      throw new ConflictException('Reviews close 30 days after the visit.');
+    if (!this.settings.bool('features.reviews'))
+      throw new ConflictException('Reviews are switched off.');
+    if (now.getTime() > visit.endsAt.getTime() + this.windowMs)
+      throw new ConflictException('Reviews have closed for this visit.');
     if (visit.review?.status === 'hidden')
       throw new ConflictException('This review was removed by Saxlem.');
     let comment: string | null;
     try {
-      comment = cleanComment(input.comment);
+      comment = cleanComment(
+        input.comment,
+        this.settings.int('reviews.commentMax'),
+      );
     } catch {
       throw new BadRequestException(
-        'Comments are up to 500 characters, without links, emails or phone numbers.',
+        'The comment is too long or has a link, email or phone number.',
       );
     }
     const profile = visit.patientRegistration.patientProfile;

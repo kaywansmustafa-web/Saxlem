@@ -20,9 +20,13 @@ class BookingController extends ChangeNotifier {
     required this.operationIds,
     required this.profileId,
     this.payments = const UnavailablePaymentsRepository(),
+    this.daysAhead = 14,
     DateTime Function()? now,
   }) : _now = now ?? DateTime.now;
   final PaymentsRepository payments;
+
+  /// Days of times shown, today included (Owner Portal → App settings).
+  final int daysAhead;
 
   /// Payment choice made on the review step. Counter is always possible.
   PaymentMethod paymentMethod = PaymentMethod.counter;
@@ -35,7 +39,9 @@ class BookingController extends ChangeNotifier {
   final DateTime Function() _now;
   PatientProfileId profileId;
   BookingClinicOption? clinic;
-  BookingAppointmentType appointmentType = BookingAppointmentType.initial;
+  late BookingAppointmentType appointmentType = doctor.followUpOnly
+      ? BookingAppointmentType.followUp
+      : BookingAppointmentType.initial;
   String reason = '';
   AppointmentSlot? selectedSlot;
   String? _operationId;
@@ -105,7 +111,7 @@ class BookingController extends ChangeNotifier {
           patientProfileId: profileId.value,
           appointmentType: appointmentType,
           dateFrom: from,
-          dateTo: from.add(const Duration(days: 13)),
+          dateTo: from.add(Duration(days: daysAhead.clamp(1, 60) - 1)),
         ),
       );
       if (_disposed || generation != _generation) return;

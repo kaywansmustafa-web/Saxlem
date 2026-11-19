@@ -159,8 +159,8 @@ describe('phone push', () => {
     expect(gateway.sent[0]).toMatchObject({
       token,
       message: {
-        title: 'موعدك قريب',
-        body: 'Dr. Shilan · 1 كانون الثاني · 09:00',
+        title: '\u200Fموعدك قريب',
+        body: '\u200FDr. Shilan · 1 كانون الثاني · 09:00',
         urgent: true,
         data: {
           type: 'appointment.reminder.soon',

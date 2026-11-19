@@ -1546,10 +1546,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get emergencyTitle => 'طوارئ';
 
   @override
-  String get emergencySubtitle => 'الإسعاف: 122';
+  String emergencySubtitle(String number) {
+    return 'الإسعاف: $number';
+  }
 
   @override
-  String get emergencyConfirmTitle => 'الاتصال بـ 122 الآن؟';
+  String emergencyConfirmTitle(String number) {
+    return 'الاتصال بـ $number الآن؟';
+  }
 
   @override
   String get emergencyConfirmBody =>
@@ -1944,4 +1948,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get appearanceDark => 'داكن';
+
+  @override
+  String get doctorNotBookable =>
+      'لا يستقبل الحجوزات عبر التطبيق حالياً. يرجى الاتصال بالعيادة.';
+
+  @override
+  String get doctorFollowUpOnly =>
+      'لا يستقبل مرضى جدداً عبر التطبيق: مواعيد المتابعة فقط.';
 }

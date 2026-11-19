@@ -28,10 +28,14 @@ export class WriteReviewDto {
   @Min(1)
   @Max(5)
   rating!: number;
-  @ApiPropertyOptional({ maxLength: 500, nullable: true })
+  @ApiPropertyOptional({
+    maxLength: 2000,
+    nullable: true,
+    description: "Up to the owner's limit (App settings → Reviews).",
+  })
   @IsOptional()
   @IsString()
-  @MaxLength(600)
+  @MaxLength(2100)
   comment?: string | null;
   @ApiProperty({ description: 'Show "Saxlem patient" instead of the name.' })
   @IsBoolean()

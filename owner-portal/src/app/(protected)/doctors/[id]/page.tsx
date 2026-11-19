@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import { PageHeader, StatusBadge } from "@/components/app-shell";
 import { DoctorEditForm } from "@/components/doctor-edit-form";
 import { DoctorSpecialtiesForm } from "@/components/app-config/doctor-specialties-form";
-import { listCatalogSpecialties } from "@/data/app-catalog";
+import { DoctorHoursCard } from "@/components/app-config/doctor-hours-card";
+import { doctorHours, listCatalogSpecialties } from "@/data/app-catalog";
 import { doctorDetail } from "@/data/owner-data";
 import { requireOwnerSession } from "@/infrastructure/auth";
 import { z } from "zod";
@@ -14,15 +15,16 @@ export default async function DoctorPage({
   const { id } = await params;
   if (!z.string().uuid().safeParse(id).success) notFound();
   const session = await requireOwnerSession();
-  const [doctor, specialties] = await Promise.all([
+  const [doctor, specialties, hours] = await Promise.all([
     doctorDetail(session, id),
     listCatalogSpecialties(session),
+    doctorHours(session, id),
   ]);
   return (
     <>
       <PageHeader
         title={doctor.displayName}
-        description="Professional profile and the details you can edit."
+        description="Profile, specialties, working hours and booking."
       />
       <div className="grid split">
         <section className="card detail-card">
@@ -61,6 +63,7 @@ export default async function DoctorPage({
             .map((s) => ({ id: s.id, nameEn: s.status === "active" ? s.nameEn : `${s.nameEn} (hidden)` }))}
         />
       </div>
+      <DoctorHoursCard hours={hours} />
     </>
   );
 }

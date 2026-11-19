@@ -45,6 +45,22 @@ export class AppSettings implements OnModuleInit, OnModuleDestroy {
     return new AppSettings(undefined, configuration);
   }
 
+  /**
+   * Fixed values without the database or limits: for tests that need, for
+   * example, bookings years ahead.
+   */
+  static forTests(
+    values: Readonly<Record<string, SettingValue>>,
+    configuration?: BackendConfiguration,
+  ): AppSettings {
+    const settings = new AppSettings(undefined, configuration);
+    for (const [key, value] of Object.entries(values)) {
+      if (!SETTINGS_BY_KEY.has(key)) throw new Error(`Unknown setting ${key}.`);
+      settings.stored.set(key, { value, updatedAt: new Date(0) });
+    }
+    return settings;
+  }
+
   async onModuleInit(): Promise<void> {
     if (!this.prisma) return;
     await this.refresh();
@@ -216,9 +232,7 @@ export class AppSettings implements OnModuleInit, OnModuleDestroy {
     if (!definition) throw new Error(`Unknown setting ${key}.`);
     if (!this.configuration) {
       try {
-        return definition.fallback(
-          undefined as unknown as BackendConfiguration,
-        );
+        return definition.fallback(undefined);
       } catch {
         throw new Error(`${key} needs the server configuration.`);
       }

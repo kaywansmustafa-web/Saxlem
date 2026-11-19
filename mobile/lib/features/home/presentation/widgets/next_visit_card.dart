@@ -14,6 +14,7 @@ import '../../../appointments/domain/repositories/patient_appointments_repositor
 import '../../../live_queue/domain/entities/patient_queue_status.dart';
 import '../../../live_queue/domain/repositories/live_queue_repository.dart';
 import '../../../discover/presentation/widgets/doctor_result_card.dart';
+import '../../../../core/app_config/app_config_store.dart';
 
 /// Home's first answer to "what's next?": the active patient's nearest booked
 /// visit. Quietly absent when there is none or it can't be loaded.
@@ -304,7 +305,7 @@ class _NextVisitCardState extends State<NextVisitCard> {
                         ),
                     ],
                   ),
-                  if (!_inQueue)
+                  if (!_inQueue && context.appConfig.leaveByOn)
                     LeaveByPanel(
                       key: ValueKey('leave-${next.id}'),
                       appointment: next,

@@ -5,7 +5,9 @@ import {
   Injectable,
   NotFoundException,
   ServiceUnavailableException,
+  Optional,
 } from '@nestjs/common';
+import { AppSettings } from '../../app-config/app-settings.service';
 import { createHash } from 'node:crypto';
 import { BACKEND_CONFIGURATION } from '../../../config/configuration.module';
 import type { BackendConfiguration } from '../../../config/environment';
@@ -30,7 +32,19 @@ export class ArrivalService {
     private readonly appointments: AppointmentService,
     @Inject(BACKEND_CONFIGURATION)
     private readonly configuration: BackendConfiguration,
+    @Optional()
+    private readonly settings: AppSettings = AppSettings.defaults(
+      configuration,
+    ),
   ) {}
+
+  // Owner Portal → App settings → Reception.
+  private get earlyMinutes() {
+    return this.settings.int('reception.arrivalEarlyMinutes');
+  }
+  private get lateMinutes() {
+    return this.settings.int('reception.arrivalLateMinutes');
+  }
 
   async get(
     access: ArrivalAccess,
@@ -89,8 +103,8 @@ export class ArrivalService {
         requestId,
         command,
         {
-          earlyMinutes: this.configuration.arrivalEarlyWindowMinutes,
-          lateMinutes: this.configuration.arrivalLateWindowMinutes,
+          earlyMinutes: this.earlyMinutes,
+          lateMinutes: this.lateMinutes,
         },
       ),
     );
@@ -124,7 +138,7 @@ export class ArrivalService {
     });
     if (!eligibility.canArrive)
       throw new ConflictException(
-        `Arrival is available from ${this.configuration.arrivalEarlyWindowMinutes} minutes before until ${this.configuration.arrivalLateWindowMinutes} minutes after the appointment.`,
+        `Arrival is available from ${this.earlyMinutes} minutes before until ${this.lateMinutes} minutes after the appointment.`,
       );
   }
 
@@ -147,8 +161,8 @@ export class ArrivalService {
 
   private policy() {
     return Object.freeze({
-      earlyMinutes: this.configuration.arrivalEarlyWindowMinutes,
-      lateMinutes: this.configuration.arrivalLateWindowMinutes,
+      earlyMinutes: this.earlyMinutes,
+      lateMinutes: this.lateMinutes,
     });
   }
 

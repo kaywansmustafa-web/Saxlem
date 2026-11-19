@@ -22,6 +22,7 @@ import {
 import { TripLearningService } from './application/trip-learning.service';
 import { EarlierTimeService } from './application/earlier-time.service';
 import { EarlierTimeWorker } from './infrastructure/earlier-time.worker';
+import { NextFreeWorker } from './infrastructure/next-free.worker';
 import { EarlierTimeController } from './presentation/earlier-time.controller';
 @Module({
   imports: [IdentityModule, DoctorsModule],
@@ -36,6 +37,7 @@ import { EarlierTimeController } from './presentation/earlier-time.controller';
     TripLearningService,
     EarlierTimeService,
     EarlierTimeWorker,
+    NextFreeWorker,
     {
       provide: ROUTE_TIME,
       inject: [BACKEND_CONFIGURATION],

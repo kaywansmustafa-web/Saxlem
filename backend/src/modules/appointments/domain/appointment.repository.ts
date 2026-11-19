@@ -13,6 +13,19 @@ export interface AppointmentRepository {
   /** True while a doctor is hidden from the patient app for an overdue
    * Saxlem balance. */
   hiddenFromApp(doctorId: string): Promise<boolean>;
+  /** The doctor's own visit length, or null for the default setting. */
+  doctorVisitMinutes?(doctorId: string): Promise<number | null>;
+  /**
+   * Whether patients may book in the app (Owner Portal → doctor → Booking).
+   * A doctor without the record is bookable and takes new patients.
+   */
+  /** Stores a doctor's next free time (Home's "Free today", doctor cards). */
+  saveNextFree?(doctorId: string, at: Date | null): Promise<void>;
+  /** Active doctors patients can see, for refreshing next free times. */
+  bookableDoctorIds?(): Promise<readonly string[]>;
+  doctorBookability?(
+    doctorId: string,
+  ): Promise<{ available: boolean; acceptingNewPatients: boolean }>;
   replay(
     access: AppointmentAccess,
     command: AppointmentCommand,
@@ -85,7 +98,8 @@ export interface AppointmentRepository {
 export interface BookingConflictQuery {
   readonly organizationId: string;
   readonly doctorId: string;
-  readonly patientProfileId: string;
+  /** Omitted: only the doctor's own bookings count (next free time). */
+  readonly patientProfileId?: string;
   readonly startsAt: Date;
   readonly endsAt: Date;
 }

@@ -2845,14 +2845,14 @@ abstract class AppLocalizations {
   /// No description provided for @emergencySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Ambulance: 122'**
-  String get emergencySubtitle;
+  /// **'Ambulance: {number}'**
+  String emergencySubtitle(String number);
 
   /// No description provided for @emergencyConfirmTitle.
   ///
   /// In en, this message translates to:
-  /// **'Call 122 now?'**
-  String get emergencyConfirmTitle;
+  /// **'Call {number} now?'**
+  String emergencyConfirmTitle(String number);
 
   /// No description provided for @emergencyConfirmBody.
   ///
@@ -3525,6 +3525,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dark'**
   String get appearanceDark;
+
+  /// No description provided for @doctorNotBookable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not taking app bookings right now. Please call the clinic.'**
+  String get doctorNotBookable;
+
+  /// No description provided for @doctorFollowUpOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Not taking new patients in the app: follow-up visits only.'**
+  String get doctorFollowUpOnly;
 }
 
 class _AppLocalizationsDelegate

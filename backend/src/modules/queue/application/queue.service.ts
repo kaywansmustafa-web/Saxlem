@@ -4,7 +4,9 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  Optional,
 } from '@nestjs/common';
+import { AppSettings } from '../../app-config/app-settings.service';
 import { createHash } from 'node:crypto';
 import { BACKEND_CONFIGURATION } from '../../../config/configuration.module';
 import type { BackendConfiguration } from '../../../config/environment';
@@ -16,17 +18,26 @@ import {
 
 @Injectable()
 export class QueueService {
-  private readonly policy: QueuePolicy;
   constructor(
     @Inject(QUEUE_REPOSITORY) private readonly repository: QueueRepository,
-    @Inject(BACKEND_CONFIGURATION) configuration: BackendConfiguration,
-  ) {
-    this.policy = Object.freeze({
-      recallGraceMinutes: configuration.queueRecallGraceMinutes,
-      busyThresholdMinutes: configuration.queueHealthBusyThresholdMinutes,
-      delayedThresholdMinutes: configuration.queueHealthDelayedThresholdMinutes,
-      fallbackConsultationMinutes:
-        configuration.queueFallbackConsultationMinutes,
+    @Inject(BACKEND_CONFIGURATION)
+    private readonly configuration: BackendConfiguration,
+    @Optional()
+    private readonly settings: AppSettings = AppSettings.defaults(
+      configuration,
+    ),
+  ) {}
+
+  /** Read per call, so Owner Portal changes apply without a restart. */
+  private get policy(): QueuePolicy {
+    return Object.freeze({
+      recallGraceMinutes: this.settings.int('reception.recallGraceMinutes'),
+      busyThresholdMinutes: this.configuration.queueHealthBusyThresholdMinutes,
+      delayedThresholdMinutes:
+        this.configuration.queueHealthDelayedThresholdMinutes,
+      fallbackConsultationMinutes: this.settings.int(
+        'reception.fallbackConsultationMinutes',
+      ),
     });
   }
   async get(access: QueueAccess, id: string) {

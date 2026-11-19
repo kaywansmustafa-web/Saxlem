@@ -32,6 +32,7 @@ import '../../../live_queue/domain/repositories/live_queue_repository.dart';
 import '../../../live_queue/live_queue_feature.dart';
 import '../../../notifications/domain/entities/notification_page.dart';
 import '../../../payments/presentation/widgets/appointment_payment_card.dart';
+import '../../../../core/app_config/app_config_store.dart';
 
 class AppointmentDetailsPage extends StatefulWidget {
   const AppointmentDetailsPage({
@@ -80,6 +81,7 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
       bookingRepository: widget.bookingRepository,
       operationIds: SecureBookingOperationIdGenerator(),
       onChanged: widget.onChanged,
+      daysAhead: AppConfigScope.read(context).bookingDaysAhead,
     )..load();
     _createArrivalController();
     _notificationSubscription = widget.notificationSignals?.listen((signal) {
@@ -189,27 +191,31 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
               statusLabel: _status(item.status),
             ),
             const SizedBox(height: 16),
-            if (item.status == PatientAppointmentStatus.completed)
+            if (item.status == PatientAppointmentStatus.completed &&
+                context.appConfig.reviewsOn)
               if (widget.repository case final VisitReviewSource reviews)
                 VisitReviewCard(
                   appointmentId: item.id,
                   doctorName: item.doctor.displayName,
                   source: reviews,
                 ),
-            if (widget.repository case final EarlierTimeSource earlier)
-              EarlierTimeCard(
-                key: ValueKey('earlier-${item.id}-${item.version}'),
+            if (context.appConfig.earlierTimeOn)
+              if (widget.repository case final EarlierTimeSource earlier)
+                EarlierTimeCard(
+                  key: ValueKey('earlier-${item.id}-${item.version}'),
+                  minLeadHours: context.appConfig.earlierTimeMinLeadHours,
+                  appointment: item,
+                  source: earlier,
+                  onMove: (slot) => controller.reschedule(slot, offered: true),
+                ),
+            if (context.appConfig.leaveByOn)
+              LeaveByPanel(
                 appointment: item,
-                source: earlier,
-                onMove: (slot) => controller.reschedule(slot, offered: true),
+                planner: switch (widget.repository) {
+                  final DeparturePlanner planner => planner,
+                  _ => null,
+                },
               ),
-            LeaveByPanel(
-              appointment: item,
-              planner: switch (widget.repository) {
-                final DeparturePlanner planner => planner,
-                _ => null,
-              },
-            ),
             _DetailsCard(
               children: [
                 _DetailRow(context.l10n.patient, item.patientName),
@@ -672,7 +678,9 @@ class _AppointmentHero extends StatelessWidget {
                       ),
                       if (appointment.doctor.specialtyDisplayName.isNotEmpty)
                         Text(
-                          appointment.doctor.specialtyDisplayName,
+                          context.specialtyLabel(
+                            appointment.doctor.specialtyDisplayName,
+                          ),
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: sub,
                           ),

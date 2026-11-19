@@ -48,6 +48,53 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       : doctor.consultationFeeIqd;
   }
 
+  async doctorVisitMinutes(doctorId: string) {
+    const doctor = await this.prisma.db.doctor.findUnique({
+      where: { id: doctorId },
+      select: { visitMinutes: true },
+    });
+    return doctor?.visitMinutes ?? null;
+  }
+
+  async saveNextFree(doctorId: string, at: Date | null) {
+    // A doctor without the record is bookable: create it that way.
+    await this.prisma.db.doctorAvailabilityFoundation.upsert({
+      where: { doctorId },
+      create: {
+        doctorId,
+        status: 'available',
+        acceptingNewPatients: true,
+        nextAvailableAt: at,
+      },
+      update: { nextAvailableAt: at },
+    });
+  }
+
+  async bookableDoctorIds() {
+    const rows = await this.prisma.db.doctor.findMany({
+      where: {
+        status: 'active',
+        appHiddenAt: null,
+        clinicAssignments: { some: { status: 'active' } },
+        OR: [{ availability: null }, { availability: { status: 'available' } }],
+      },
+      select: { id: true },
+      take: 2000,
+    });
+    return rows.map((row) => row.id);
+  }
+
+  async doctorBookability(doctorId: string) {
+    const row = await this.prisma.db.doctorAvailabilityFoundation.findUnique({
+      where: { doctorId },
+      select: { status: true, acceptingNewPatients: true },
+    });
+    return {
+      available: (row?.status ?? 'available') === 'available',
+      acceptingNewPatients: row?.acceptingNewPatients ?? true,
+    };
+  }
+
   async hiddenFromApp(doctorId: string) {
     const doctor = await this.prisma.db.doctor.findUnique({
       where: { id: doctorId },
@@ -175,7 +222,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
   async findBookingConflicts(input: {
     organizationId: string;
     doctorId: string;
-    patientProfileId: string;
+    patientProfileId?: string;
     startsAt: Date;
     endsAt: Date;
   }) {
@@ -187,7 +234,9 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
         endsAt: { gt: input.startsAt },
         OR: [
           { doctorId: input.doctorId },
-          { patientProfileId: input.patientProfileId },
+          ...(input.patientProfileId
+            ? [{ patientProfileId: input.patientProfileId }]
+            : []),
         ],
       },
       select: { startsAt: true, endsAt: true },

@@ -5,6 +5,7 @@ import '../../../../core/localization/localization_extensions.dart';
 import '../../../../design_system/components/content/saxlem_status_pill.dart';
 import '../../../../design_system/foundations/saxlem_radii.dart';
 import '../../../../design_system/theme/saxlem_colors.dart';
+import '../../../../core/app_config/app_config_store.dart';
 
 /// One appointment in the list (v2 "Aura"): a date tile, the doctor, time and
 /// clinic, and a status pill. The whole card opens the appointment.
@@ -90,7 +91,9 @@ class AppointmentCard extends StatelessWidget {
                               .specialtyDisplayName
                               .isNotEmpty)
                             Text(
-                              appointment.doctor.specialtyDisplayName,
+                              context.specialtyLabel(
+                                appointment.doctor.specialtyDisplayName,
+                              ),
                               style: theme.textTheme.bodySmall,
                             ),
                           const SizedBox(height: 10),

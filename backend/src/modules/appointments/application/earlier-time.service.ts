@@ -5,8 +5,10 @@ import {
   Injectable,
   Logger,
   NotFoundException,
+  Optional,
 } from '@nestjs/common';
 import { PrismaService } from '../../../infrastructure/database/prisma.service';
+import { AppSettings } from '../../app-config/app-settings.service';
 import { notifyPatient } from '../../../common/notifications/patient-notifications';
 import type { AppointmentAccess } from '../domain/appointment';
 import {
@@ -16,6 +18,7 @@ import {
 import { AppointmentService } from './appointment.service';
 
 const HOUR = 3_600_000;
+// Built-in defaults; the live values are Owner Portal settings.
 /** Watching only makes sense for a visit at least this far away. */
 export const EARLIER_MIN_LEAD = 3 * HOUR;
 /** An offered time is at least this far from now… */
@@ -59,7 +62,23 @@ export class EarlierTimeService {
     @Inject(APPOINTMENT_REPOSITORY)
     private readonly appointments: AppointmentRepository,
     private readonly booking: AppointmentService,
+    @Optional()
+    private readonly settings: AppSettings = AppSettings.defaults(),
   ) {}
+
+  // Owner Portal → App settings → Earlier time.
+  private get minLead() {
+    return this.settings.int('earlierTime.minLeadHours') * HOUR;
+  }
+  private get fromNow() {
+    return this.settings.int('earlierTime.fromNowHours') * HOUR;
+  }
+  private get by() {
+    return this.settings.int('earlierTime.byMinutes') * 60_000;
+  }
+  private get every() {
+    return this.settings.int('earlierTime.offerEveryHours') * HOUR;
+  }
 
   async status(
     access: AppointmentAccess,
@@ -75,7 +94,7 @@ export class EarlierTimeService {
     const offer =
       offered &&
       offered.getTime() > now.getTime() + HOUR &&
-      offered.getTime() <= start - EARLIER_BY
+      offered.getTime() <= start - this.by
         ? {
             startsAt: offered.toISOString(),
             endsAt: new Date(
@@ -92,10 +111,12 @@ export class EarlierTimeService {
     appointmentId: string,
     now = new Date(),
   ): Promise<EarlierStatus> {
+    if (!this.settings.bool('features.earlierTime'))
+      throw new ConflictException('Earlier-time alerts are switched off.');
     const visit = await this.own(access, appointmentId);
     if (
       (visit.status !== 'scheduled' && visit.status !== 'confirmed') ||
-      new Date(visit.startsAt).getTime() - now.getTime() < EARLIER_MIN_LEAD
+      new Date(visit.startsAt).getTime() - now.getTime() < this.minLead
     )
       throw new ConflictException('This visit is too soon to move earlier.');
     await this.prisma.db.earlierTimeRequest.upsert({
@@ -120,6 +141,7 @@ export class EarlierTimeService {
 
   /** Looks for earlier times for everyone watching. Returns offers sent. */
   async offer(now = new Date()): Promise<number> {
+    if (!this.settings.bool('features.earlierTime')) return 0;
     const requests = await this.prisma.db.earlierTimeRequest.findMany({
       orderBy: { createdAt: 'asc' },
       take: 200,
@@ -158,7 +180,7 @@ export class EarlierTimeService {
       if (
         !userId ||
         (visit.status !== 'scheduled' && visit.status !== 'confirmed') ||
-        visit.startsAt.getTime() - now.getTime() < EARLIER_MIN_LEAD
+        visit.startsAt.getTime() - now.getTime() < this.minLead
       ) {
         await this.prisma.db.earlierTimeRequest.deleteMany({
           where: { appointmentId: visit.id },
@@ -167,7 +189,7 @@ export class EarlierTimeService {
       }
       if (
         request.lastOfferedAt &&
-        now.getTime() - request.lastOfferedAt.getTime() < EARLIER_OFFER_EVERY
+        now.getTime() - request.lastOfferedAt.getTime() < this.every
       )
         continue;
       try {
@@ -237,8 +259,8 @@ export class EarlierTimeService {
       clinicDate(last, zone),
       'earlier-time-worker',
     );
-    const earliest = now.getTime() + EARLIER_SLOT_FROM_NOW;
-    const latest = visit.startsAt.getTime() - EARLIER_BY;
+    const earliest = now.getTime() + this.fromNow;
+    const latest = visit.startsAt.getTime() - this.by;
     for (const day of options.days)
       for (const slot of day.slots) {
         const at = new Date(slot.startsAt).getTime();

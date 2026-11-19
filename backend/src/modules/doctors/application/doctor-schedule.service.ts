@@ -50,6 +50,18 @@ export class DoctorScheduleService {
     return projection;
   }
 
+  /**
+   * A doctor's schedule at their active clinics, for the server's own use
+   * (next free time). Not audited: nobody is looking at it.
+   */
+  internalSchedule(doctorId: string, at = new Date()) {
+    return this.repository.findDoctorSchedule(
+      doctorId,
+      { clinicAssignmentVisibility: 'active' },
+      this.window(at),
+    );
+  }
+
   async availability(
     access: DoctorAccessContext,
     doctorId: string,

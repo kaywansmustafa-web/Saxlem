@@ -81,3 +81,56 @@ export const appSettings = (session: OwnerSession) =>
     session,
     schema: appSettingsSchema,
   });
+
+const period = z.object({
+  weekday: z.number().int().min(0).max(6),
+  startsMinute: z.number().int(),
+  endsMinute: z.number().int(),
+});
+export type WeekPeriod = z.infer<typeof period>;
+
+export const doctorHoursSchema = z.object({
+  doctorId: id,
+  displayName: z.string(),
+  visitMinutes: z.number().int().nullable(),
+  defaultVisitMinutes: z.number().int(),
+  bookable: z.boolean(),
+  acceptingNewPatients: z.boolean(),
+  nextAvailableAt: z.string().nullable(),
+  clinics: z.array(
+    z.object({
+      clinicId: id,
+      clinicName: z.string(),
+      timezone: z.string(),
+      clinicActive: z.boolean(),
+      openingHours: z.array(period),
+      weekly: z.array(period),
+      breaks: z.array(period),
+      leave: z.array(z.object({ id, startsAt: z.string(), endsAt: z.string() })),
+    }),
+  ),
+});
+export type DoctorHours = z.infer<typeof doctorHoursSchema>;
+
+export const clinicHoursSchema = z.object({
+  clinicId: id,
+  clinicName: z.string(),
+  timezone: z.string(),
+  periods: z.array(period),
+  doctorPeriods: z.array(period.extend({ doctorId: id, doctorName: z.string() })),
+});
+export type ClinicHours = z.infer<typeof clinicHoursSchema>;
+
+export const doctorHours = (session: OwnerSession, doctorId: string) =>
+  ownerApi().request({
+    path: `/api/v1/platform/doctors/${doctorId}/hours`,
+    session,
+    schema: doctorHoursSchema,
+  });
+
+export const clinicHours = (session: OwnerSession, clinicId: string) =>
+  ownerApi().request({
+    path: `/api/v1/platform/clinics/${clinicId}/hours`,
+    session,
+    schema: clinicHoursSchema,
+  });

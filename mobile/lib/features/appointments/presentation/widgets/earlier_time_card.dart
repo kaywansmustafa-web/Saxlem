@@ -15,8 +15,12 @@ class EarlierTimeCard extends StatefulWidget {
     required this.source,
     required this.onMove,
     this.now = DateTime.now,
+    this.minLeadHours = 3,
     super.key,
   });
+
+  /// Owner Portal → App settings → Earlier time.
+  final int minLeadHours;
   final PatientAppointment appointment;
   final EarlierTimeSource source;
   final Future<void> Function(AppointmentSlot slot) onMove;
@@ -33,7 +37,7 @@ class _EarlierTimeCardState extends State<EarlierTimeCard> {
   bool get _farEnough =>
       widget.appointment.canMutate &&
       widget.appointment.startsAt.difference(widget.now()) >=
-          const Duration(hours: 3);
+          Duration(hours: widget.minLeadHours);
 
   @override
   void initState() {

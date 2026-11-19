@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:saxlem_app/config/theme/app_theme.dart';
+import 'package:saxlem_app/core/app_config/app_config.dart';
+import 'package:saxlem_app/core/app_config/app_config_store.dart';
+import 'package:saxlem_app/core/localization/badini_framework_localizations.dart';
 import 'package:saxlem_app/core/models/doctor_reference.dart';
 import 'package:saxlem_app/core/models/patient_profile.dart';
 import 'package:saxlem_app/features/appointments/domain/entities/appointments_snapshot.dart';
@@ -18,14 +21,76 @@ import 'package:saxlem_app/features/live_queue/domain/entities/patient_queue_sta
 import 'package:saxlem_app/features/live_queue/domain/repositories/live_queue_repository.dart';
 import 'package:saxlem_app/l10n/app_localizations.dart';
 
-Widget _app(Widget child) => MaterialApp(
-  theme: AppTheme.light,
-  localizationsDelegates: const [
-    ...AppLocalizations.localizationsDelegates,
-    GlobalWidgetsLocalizations.delegate,
+Widget _app(
+  Widget child, {
+  AppConfig config = AppConfig.builtIn,
+  Locale? locale,
+}) => AppConfigScope(
+  controller: AppConfigController(
+    repository: BuiltInAppConfigRepository(config),
+  )..load(),
+  child: MaterialApp(
+    theme: AppTheme.light,
+    locale: locale,
+    localizationsDelegates: const [
+      ...badiniFrameworkLocalizationsDelegates,
+      ...AppLocalizations.localizationsDelegates,
+      GlobalWidgetsLocalizations.delegate,
+    ],
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: Scaffold(body: SingleChildScrollView(child: child)),
+  ),
+);
+
+LocalizedText _t(String en, [String? ku]) =>
+    LocalizedText(en: en, ar: en, ku: ku ?? en);
+
+AppConfig _catalog({Map<String, Object> settings = const {}}) => AppConfig(
+  fromServer: true,
+  settings: settings,
+  specialties: [
+    CatalogSpecialty(
+      code: 'pediatrics',
+      names: _t('pediatrics', 'زارۆک'),
+      icon: 'child',
+      showOnHome: true,
+    ),
+    CatalogSpecialty(
+      code: 'dentistry',
+      names: _t('dentistry', 'ددان'),
+      icon: 'tooth',
+      showOnHome: false,
+    ),
+    CatalogSpecialty(
+      code: 'internal-medicine',
+      names: _t('internal-medicine', 'نەخۆشیێن ناڤخۆیی'),
+      icon: 'general',
+      showOnHome: true,
+    ),
   ],
-  supportedLocales: AppLocalizations.supportedLocales,
-  home: Scaffold(body: SingleChildScrollView(child: child)),
+  concerns: [
+    HomeConcern(
+      id: 'fever',
+      labels: _t('Fever or cold', 'تا یان سەرمابوون'),
+      icon: 'fever',
+      tone: 'rose',
+      specialtyCodes: const ['general-practice', 'internal-medicine'],
+    ),
+    HomeConcern(
+      id: 'ear',
+      labels: _t('Ear, nose, throat'),
+      icon: 'ear',
+      tone: 'lilac',
+      specialtyCodes: const ['ent'],
+    ),
+    HomeConcern(
+      id: 'tooth',
+      labels: _t('Tooth pain'),
+      icon: 'tooth',
+      tone: 'aqua',
+      specialtyCodes: const ['dentistry'],
+    ),
+  ],
 );
 
 class _Directory implements DoctorDiscoveryRepository {
@@ -82,27 +147,93 @@ DoctorDiscoveryResult _doctor(String name, DateTime? next) =>
     );
 
 void main() {
-  testWidgets('symptoms lead only to specialties that have doctors', (
-    tester,
-  ) async {
+  testWidgets('Home tiles come from the Owner Portal and open all their '
+      'specialties that have doctors', (tester) async {
     DoctorSearchCriteria? opened;
     await tester.pumpWidget(
       _app(
         HomeDiscoverySections(
-          repository: _Directory(['dentistry', 'pediatrics']),
+          repository: _Directory([
+            'dentistry',
+            'pediatrics',
+            'internal-medicine',
+          ]),
           onOpenDiscover: ({criteria}) => opened = criteria,
+          onOpenDoctor: (_) {},
+        ),
+        config: _catalog(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Fever or cold'), findsOneWidget);
+    expect(find.text('Tooth pain'), findsOneWidget);
+    // No ENT doctors: the tile waits until there are some.
+    expect(find.text('Ear, nose, throat'), findsNothing);
+    await tester.tap(find.text('Fever or cold'));
+    expect(opened?.specialtyCodes, ['internal-medicine']);
+    expect(opened?.specialtyCode, isNull);
+    expect(opened?.concernLabel, 'Fever or cold');
+
+    // Specialties strip: the owner's order, without those taken off Home.
+    final strip = tester
+        .widgetList<Text>(find.byType(Text))
+        .map((text) => text.data)
+        .toList();
+    expect(
+      strip.indexOf('pediatrics'),
+      lessThan(strip.indexOf('internal-medicine')),
+    );
+    expect(strip, isNot(contains('dentistry')));
+  });
+
+  testWidgets('tiles and specialty names follow the language', (tester) async {
+    await tester.pumpWidget(
+      _app(
+        HomeDiscoverySections(
+          repository: _Directory(['pediatrics', 'internal-medicine']),
+          onOpenDiscover: ({criteria}) {},
+          onOpenDoctor: (_) {},
+        ),
+        config: _catalog(),
+        locale: const Locale('ku'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('تا یان سەرمابوون'), findsOneWidget);
+    expect(find.text('زارۆک'), findsOneWidget);
+  });
+
+  testWidgets('the owner can switch Home sections off', (tester) async {
+    await tester.pumpWidget(
+      _app(
+        HomeDiscoverySections(
+          repository: _Directory(['pediatrics', 'internal-medicine']),
+          onOpenDiscover: ({criteria}) {},
+          onOpenDoctor: (_) {},
+        ),
+        config: _catalog(
+          settings: const {'home.concerns': false, 'home.specialties': false},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Fever or cold'), findsNothing);
+    expect(find.text('pediatrics'), findsNothing);
+  });
+
+  testWidgets('without the catalog, no tiles are invented', (tester) async {
+    await tester.pumpWidget(
+      _app(
+        HomeDiscoverySections(
+          repository: _Directory(['dentistry']),
+          onOpenDiscover: ({criteria}) {},
           onOpenDoctor: (_) {},
         ),
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Tooth pain'), findsOneWidget);
-    expect(find.text('My child is sick'), findsOneWidget);
-    // "dentistry" contains "ent" but is not ear, nose and throat.
-    expect(find.text('Ear, nose, throat'), findsNothing);
-    expect(find.text('Heart and blood pressure'), findsNothing);
-    await tester.tap(find.text('Tooth pain'));
-    expect(opened?.specialtyCode, 'dentistry');
+    expect(find.text('Tooth pain'), findsNothing);
+    expect(find.text('dentistry'), findsOneWidget);
   });
 
   testWidgets('shows doctors with a free time left today, earliest first', (
