@@ -185,7 +185,11 @@ class BackendNotificationDto {
   /// Where tapping goes: the live queue for queue news about a visit, the
   /// visit itself for booking news, or the Appointments tab when the
   /// notification doesn't say which visit.
-  static NotificationAction _action(String value, String? appointmentId) {
+  static NotificationAction _action(String value, String? appointmentId) =>
+      actionFor(value, appointmentId);
+
+  /// Also used for a tapped phone push, which carries the same type.
+  static NotificationAction actionFor(String value, String? appointmentId) {
     if (value.startsWith('queue.')) {
       return appointmentId == null
           ? const NotificationAction(NotificationDestination.appointment)

@@ -1929,4 +1929,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get receiptTextHeading => 'إيصال ساكسلم';
+
+  @override
+  String get pushChannelName => 'تحديثات المواعيد والطابور';
 }

@@ -3495,6 +3495,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saxlem receipt'**
   String get receiptTextHeading;
+
+  /// No description provided for @pushChannelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit and queue updates'**
+  String get pushChannelName;
 }
 
 class _AppLocalizationsDelegate

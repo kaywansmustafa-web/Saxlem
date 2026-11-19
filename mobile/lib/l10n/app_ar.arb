@@ -743,5 +743,6 @@
   "receiptAddress": "العنوان",
   "receiptPhone": "الهاتف",
   "receiptVisit": "الزيارة",
-  "receiptTextHeading": "إيصال ساكسلم"
+  "receiptTextHeading": "إيصال ساكسلم",
+  "pushChannelName": "تحديثات المواعيد والطابور"
 }

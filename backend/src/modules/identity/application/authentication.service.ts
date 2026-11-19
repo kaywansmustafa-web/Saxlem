@@ -410,6 +410,10 @@ export class AuthenticationService {
         where: { id: session.id, revokedAt: null },
         data: { revokedAt: new Date() },
       });
+      // A signed-out phone stops getting this person's notifications.
+      await this.prisma.db.pushDevice.deleteMany({
+        where: { userId: session.userId, deviceId: session.deviceId },
+      });
       await this.event('logout', session.userId);
     }
   }
@@ -426,6 +430,9 @@ export class AuthenticationService {
     await this.prisma.db.refreshSession.updateMany({
       where: { userId: session.userId, revokedAt: null },
       data: { revokedAt: new Date() },
+    });
+    await this.prisma.db.pushDevice.deleteMany({
+      where: { userId: session.userId },
     });
     await this.event('logoutAll', session.userId);
   }

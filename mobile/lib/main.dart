@@ -1,3 +1,4 @@
+import 'core/notifications/push_messaging.dart';
 import 'features/payments/domain/payments_repository.dart';
 import 'features/payments/payments_scope.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,13 @@ import 'features/live_queue/data/repositories/live_queue_repository_impl.dart';
 import 'features/notifications/domain/repositories/notifications_repository.dart';
 import 'features/notifications/data/repositories/backend_notifications_repository.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Phone push when this build has Firebase settings; never blocks start-up.
+  await PushMessaging.setUp().timeout(
+    const Duration(seconds: 5),
+    onTimeout: () {},
+  );
   const secureStorage = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
     iOptions: IOSOptions(

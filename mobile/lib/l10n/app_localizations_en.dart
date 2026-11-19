@@ -1976,4 +1976,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get receiptTextHeading => 'Saxlem receipt';
+
+  @override
+  String get pushChannelName => 'Visit and queue updates';
 }

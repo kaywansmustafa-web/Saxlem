@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import '../../../../core/models/patient_profile.dart';
+import '../../../../core/notifications/push_registration.dart';
 import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/authenticated_api_client.dart';
 import '../../domain/entities/notification_page.dart';
@@ -12,7 +13,10 @@ import '../dto/backend_notification_dto.dart';
 import '../stream/authenticated_notification_sse_transport.dart';
 
 class BackendNotificationsRepository
-    implements NotificationsRepository, AuthoritativeNotificationsRepository {
+    implements
+        NotificationsRepository,
+        AuthoritativeNotificationsRepository,
+        PushDevicesSource {
   BackendNotificationsRepository(this._api, this._transport, {Random? random})
     : _random = random ?? Random.secure();
   final AuthenticatedApiClient _api;
@@ -20,6 +24,33 @@ class BackendNotificationsRepository
   final Random _random;
   final _inFlight = <String, Future<PatientNotification>>{};
   final _operationIds = <String, String>{};
+  @override
+  Future<void> registerPushDevice({
+    required String token,
+    required String platform,
+    required String locale,
+  }) async {
+    if (token.length < 20 ||
+        token.length > 4096 ||
+        !const {'android', 'ios'}.contains(platform) ||
+        !const {'en', 'ar', 'ku'}.contains(locale)) {
+      throw const NotificationFailure(NotificationProblem.validation);
+    }
+    await _api.postJson(
+      '/patients/me/push-devices',
+      body: {'token': token, 'platform': platform, 'locale': locale},
+    );
+  }
+
+  @override
+  Future<void> removePushDevice(String token) async {
+    if (token.length < 20 || token.length > 4096) return;
+    await _api.postJson(
+      '/patients/me/push-devices/remove',
+      body: {'token': token},
+    );
+  }
+
   @override
   Future<NotificationPage> list({String? cursor, int pageSize = 25}) async {
     if (pageSize < 1 ||

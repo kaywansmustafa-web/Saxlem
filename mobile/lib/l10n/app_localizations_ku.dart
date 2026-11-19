@@ -1947,4 +1947,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get receiptTextHeading => 'وەسلا ساخله‌م';
+
+  @override
+  String get pushChannelName => 'نووکرنێن ژڤان و رێزبەندیێ';
 }

@@ -1082,5 +1082,7 @@
   "receiptVisit": "Visit",
   "@receiptVisit": {},
   "receiptTextHeading": "Saxlem receipt",
-  "@receiptTextHeading": {}
+  "@receiptTextHeading": {},
+  "pushChannelName": "Visit and queue updates",
+  "@pushChannelName": {}
 }

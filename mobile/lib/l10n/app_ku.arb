@@ -743,5 +743,6 @@
   "receiptAddress": "ناڤنیشان",
   "receiptPhone": "تەلەفۆن",
   "receiptVisit": "سەرەدان",
-  "receiptTextHeading": "وەسلا ساخله‌م"
+  "receiptTextHeading": "وەسلا ساخله‌م",
+  "pushChannelName": "نووکرنێن ژڤان و رێزبەندیێ"
 }

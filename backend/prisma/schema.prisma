@@ -250,6 +250,7 @@ model User {
   roles                IdentityRoleAssignment[]
   sessionFamilies      SessionFamily[]
   authenticationEvents AuthenticationEvent[]
+  pushDevices          PushDevice[]
   billingReversals     CommissionLedgerEntry[]        @relation("BillingReversalActor")
   finalizedStatements  BillingStatement[]             @relation("BillingStatementFinalizer")
   uploadedDocuments    DocumentRecord[]               @relation("DocumentUploader")
@@ -1517,4 +1518,31 @@ model EarlierTimeRequest {
   @@unique([organizationId, clinicId, appointmentId, patientProfileId])
   @@index([createdAt])
   @@map("earlier_time_requests")
+}
+
+/// A phone that receives push notifications for a signed-in patient. A
+/// token belongs to one person at a time: signing in as someone else on the
+/// same phone moves it.
+model PushDevice {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  token      String   @unique
+  platform   String
+  locale     String
+  deviceId   String?  @map("device_id")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  lastSeenAt DateTime @default(now()) @map("last_seen_at") @db.Timestamptz(3)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("push_devices")
+}
+
+/// How far push sending has read the notification records. One row.
+model PushDispatchCursor {
+  id           Int      @id @default(1)
+  lastSequence BigInt   @map("last_sequence")
+  updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz(3)
+
+  @@map("push_dispatch_cursor")
 }

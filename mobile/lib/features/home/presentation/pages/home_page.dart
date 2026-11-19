@@ -1,3 +1,8 @@
+import 'dart:async';
+
+import '../../../../core/notifications/push_messaging.dart';
+import '../../../../core/notifications/push_registration.dart';
+import '../../../notifications/data/dto/backend_notification_dto.dart';
 import '../../../saved_doctors/domain/saved_doctors.dart';
 import '../../../../core/localization/supported_app_locale.dart';
 import 'package:flutter/material.dart';
@@ -88,7 +93,44 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (!widget.guestMode) _notifications.load();
     _notifications.addListener(_onNotificationsChanged);
     widget.profilesController?.addListener(_onProfileChanged);
+    if (!widget.guestMode &&
+        widget.notificationsRepository is PushDevicesSource) {
+      _pushTaps = PushMessaging.instance.taps.listen(_openPush);
+      WidgetsBinding.instance.addPostFrameCallback((_) => _startPush());
+    }
   }
+
+  StreamSubscription<PushTap>? _pushTaps;
+  String? _pushLocale;
+
+  Future<void> _startPush() async {
+    if (!mounted) return;
+    final push = PushMessaging.instance;
+    if (!push.enabled) return;
+    _pushLocale = Localizations.localeOf(context).languageCode;
+    await push.start(
+      devices: widget.notificationsRepository as PushDevicesSource,
+      locale: _pushLocale!,
+      channelName: context.l10n.pushChannelName,
+    );
+    final opened = await push.initialTap();
+    if (opened != null && mounted) _openPush(opened);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final locale = Localizations.localeOf(context).languageCode;
+    if (_pushLocale != null && locale != _pushLocale) {
+      _pushLocale = locale;
+      PushMessaging.instance.setLocale(locale);
+    }
+  }
+
+  /// A tapped phone push goes where the same inbox item would.
+  void _openPush(PushTap tap) => _openNotificationAction(
+    BackendNotificationDto.actionFor(tap.type, tap.appointmentId),
+  );
 
   void _onProfileChanged() =>
       _notifications.load(widget.profilesController!.activeProfileId);
@@ -99,6 +141,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _pushTaps?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     _notifications.removeListener(_onNotificationsChanged);
     widget.profilesController?.removeListener(_onProfileChanged);
@@ -108,6 +151,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Future<void> _logout() async {
+    await PushMessaging.instance.stop();
     _notifications.clear();
     await widget.onLogout?.call();
   }

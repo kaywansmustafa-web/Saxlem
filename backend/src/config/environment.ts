@@ -195,6 +195,13 @@ const configurationSchema = z
       .default('estimate'),
     GOOGLE_ROUTES_API_KEY: z.string().optional(),
     TOMTOM_API_KEY: z.string().optional(),
+    /**
+     * Phone push: fcm (Firebase Cloud Messaging), log (writes what it would
+     * send, for development) or none. The in-app inbox works either way.
+     */
+    PUSH_PROVIDER: z.enum(['none', 'log', 'fcm']).default('none'),
+    /** The Firebase service-account JSON, as is or base64-encoded. */
+    FIREBASE_SERVICE_ACCOUNT: z.string().optional(),
     // Empty in .env.example; an empty value means "not set".
     OSRM_BASE_URL: z.preprocess(
       (value) => (value === '' ? undefined : value),
@@ -219,6 +226,16 @@ const configurationSchema = z
         code: 'custom',
         path: ['TOMTOM_API_KEY'],
         message: 'ROUTES_PROVIDER=tomtom needs TOMTOM_API_KEY.',
+      });
+    if (
+      input.PUSH_PROVIDER === 'fcm' &&
+      !readServiceAccount(input.FIREBASE_SERVICE_ACCOUNT)
+    )
+      context.addIssue({
+        code: 'custom',
+        path: ['FIREBASE_SERVICE_ACCOUNT'],
+        message:
+          'PUSH_PROVIDER=fcm needs FIREBASE_SERVICE_ACCOUNT (the service-account JSON).',
       });
     if (input.ROUTES_PROVIDER === 'osrm' && !input.OSRM_BASE_URL)
       context.addIssue({
@@ -322,6 +339,13 @@ const configurationSchema = z
         tomtomApiKey: input.TOMTOM_API_KEY ?? '',
         osrmBaseUrl: (input.OSRM_BASE_URL ?? '').replace(/\/+$/, ''),
       },
+      push: {
+        provider: input.PUSH_PROVIDER,
+        serviceAccount:
+          input.PUSH_PROVIDER === 'fcm'
+            ? readServiceAccount(input.FIREBASE_SERVICE_ACCOUNT)
+            : null,
+      },
       apiRateLimitPerMinute: input.API_RATE_LIMIT_PER_MINUTE,
       appointmentPastToleranceMinutes: input.APPOINTMENT_PAST_TOLERANCE_MINUTES,
       appointmentFoundationFeeIqd: input.APPOINTMENT_FOUNDATION_FEE_IQD,
@@ -387,4 +411,37 @@ export function loadConfiguration(
   environment: NodeJS.ProcessEnv = process.env,
 ): BackendConfiguration {
   return configurationSchema.parse(environment);
+}
+
+export interface FirebaseServiceAccount {
+  readonly projectId: string;
+  readonly clientEmail: string;
+  readonly privateKey: string;
+}
+
+/** Accepts the downloaded JSON key as is, or base64-encoded. */
+export function readServiceAccount(
+  value: string | undefined,
+): FirebaseServiceAccount | null {
+  const raw = (value ?? '').trim();
+  if (!raw) return null;
+  const text = raw.startsWith('{')
+    ? raw
+    : Buffer.from(raw, 'base64').toString('utf8');
+  try {
+    const json = JSON.parse(text) as Record<string, unknown>;
+    const projectId = json.project_id,
+      clientEmail = json.client_email,
+      privateKey = json.private_key;
+    if (
+      typeof projectId !== 'string' ||
+      typeof clientEmail !== 'string' ||
+      typeof privateKey !== 'string' ||
+      !privateKey.includes('PRIVATE KEY')
+    )
+      return null;
+    return { projectId, clientEmail, privateKey };
+  } catch {
+    return null;
+  }
 }

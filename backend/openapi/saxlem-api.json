@@ -10652,6 +10652,67 @@
           "Notifications"
         ]
       }
+    },
+    "/api/v1/patients/me/push-devices": {
+      "post": {
+        "description": "Called at sign-in, on app start and when the language or token changes.",
+        "operationId": "PushDevicesController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterPushDeviceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Receive push notifications on this phone",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/patients/me/push-devices/remove": {
+      "post": {
+        "operationId": "PushDevicesController_remove",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PushTokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Stop push notifications on this phone",
+        "tags": [
+          "notifications"
+        ]
+      }
     }
   },
   "info": {
@@ -17674,6 +17735,48 @@
         },
         "required": [
           "notification"
+        ]
+      },
+      "RegisterPushDeviceDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Where Firebase Cloud Messaging reaches this app install: its Firebase Installation ID."
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "android",
+              "ios"
+            ]
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "ar",
+              "ku"
+            ],
+            "description": "The app language; pushes are written in it."
+          }
+        },
+        "required": [
+          "token",
+          "platform",
+          "locale"
+        ]
+      },
+      "PushTokenDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Where Firebase Cloud Messaging reaches this app install: its Firebase Installation ID."
+          }
+        },
+        "required": [
+          "token"
         ]
       }
     }

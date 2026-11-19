@@ -227,6 +227,7 @@ export class PrismaPatientRepository implements PatientRepository {
       await tx.savedDoctor.deleteMany({
         where: { patientAccountId: accountId },
       });
+      await tx.pushDevice.deleteMany({ where: { userId } });
       await tx.patientAccount.update({
         where: { id: accountId },
         data: { normalizedPhoneNumber: `closed:${accountId}` },
