@@ -265,7 +265,7 @@ const ku: StatementMessages = {
   saxlemPays: (name) => `ساخلەم پارێ ددەتە ${name}`,
   doctorPays: (name) => `${name} پارێ ددەتە ساخلەم`,
   even: "چ لایەن قەرزدار نینە",
-  inCash: "ب کاش و ب دەستێ خۆ دهێتە دان.",
+  inCash: "ب کاش و ب دەستێ خو دهێتە دان.",
   byFibTo: (account) => `ب FIB بۆ ${account}، یان ب کاش.`,
   byFibOrCash: "ب ڤەگوهاستنا FIB یان ب کاش.",
   noPayment: "ئەڤ کەشفە بێی پارەدان دهێتە گرتن.",
@@ -302,7 +302,7 @@ const ku: StatementMessages = {
   settlement: "یەکلاکرن",
   cash: "کاش",
   fib: "ڤەگوهاستنا FIB",
-  receipt: "وەسل",
+  receipt: "پسوولە",
   reference: "ژمارا ڤەگوهاستنێ",
   paidBy: "دای ژ لایێ",
   receivedBy: "وەرگرت ژ لایێ",
@@ -322,7 +322,7 @@ const ku: StatementMessages = {
   notFound: "ئەڤ کەشفە نەهاتە دیتن.",
   reminder: "بیرئینانا پارەدانێ",
   remindDue: (name, amount, n, day) =>
-    `${amount} ل سەر ${name} یە بۆ ساخلەم ل کەشفێ ${n}. هیڤییە بەری ${day} ب کاش بدەی؛ ساخلەم ب دەستێ خۆ وەردگریت.`,
+    `${amount} ل سەر ${name} یە بۆ ساخلەم ل کەشفێ ${n}. هیڤییە بەری ${day} ب کاش بدەی؛ ساخلەم ب دەستێ خو وەردگریت.`,
   remindOverdue: (name, amount, day) =>
     `${amount} یا ل سەر ${name} ل ${day} دەمێ وێ بوو. ئەگەر نەهێتە دان، دێ ژ پارەدانێن ئەپی یێن ${name} یێن دویڤدا هێتە برین.`,
   remindWarning: (name, amount, day) =>
@@ -331,7 +331,7 @@ const ku: StatementMessages = {
     `${name} ژ ئەپێ ساخلەم هاتیە ڤەشارتن چونکی ${amount} نەهاتیە دان. ژڤانێن تەلەفۆنێ و راستەوخۆ بەردەوامن. پشتی دانا کاش، ${name} دیسا د ئەپی دا دیار دبیت.`,
   unpaidFrom: (n) => `نەدای ژ کەشفێ ${n}`,
   carriedNote: (n) =>
-    `د دەمێ خۆ دا نەهاتە دان. بڕ چوو بۆ کەشفێ ${n} و ژ پارەدانێن ئەپی ل وێرێ دهێتە برین.`,
+    `د دەمێ خو دا نەهاتە دان. بڕ چوو بۆ کەشفێ ${n} و ژ پارەدانێن ئەپی ل وێرێ دهێتە برین.`,
   payBy: (day) => `ب کاش و ب دەستێ خۆ، بەری ${day}.`,
   iqd: "IQD",
 };

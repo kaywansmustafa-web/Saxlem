@@ -150,7 +150,7 @@ Only explicitly approved terminology is recorded. Do not invent or normalize uns
 | Verification required | پشتراستکرن پێویستە |
 | Authentication Required | پشتراستکرن پێتڤییە |
 | Your session has expired | دانیشتنا تە دەرچووە |
-| Verify your number again to continue securely. | بۆ بەردەوامبوونێ ژمارا خۆ دیسان پشتراست بکە. |
+| Verify your number again to continue securely. | بۆ بەردەوامبوونێ ژمارا خو دیسان پشتراست بکە. |
 | Welcome to Saxlem | بخێر بهێی بو ساخلەم |
 | Healthcare made clearer | چاڤدانا تەندروستیێ ئاسانتر بوو |
 

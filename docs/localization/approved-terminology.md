@@ -2,6 +2,14 @@
 
 This document is the durable source of truth for Saxlem English, Arabic, and Badini product language. Product-owner-approved wording must not be silently normalized or respelled.
 
+## Founder decisions, 2026-11-19
+
+- The name in Badini is **ساخلەم** (with ە), never ساخله‌م.
+- The language is written **کوردی (بادینی)**.
+- A receipt (patient or clinic) is **پسوولە** (پسوولێ, پسوولا).
+- "Own" is written **خو**, not خۆ.
+
+
 ## Policy
 
 - English is the canonical source language.
@@ -84,7 +92,7 @@ This document is the durable source of truth for Saxlem English, Arabic, and Bad
 | Back to clinics | ? | ب ڤەگەرە بو کلینیکان |
 | Back to organizations | العودة إلى المؤسسات | ب ڤەگەرە بو رێکخراوان |
 | Back to Patients | ? | ب ڤەگەرە بو نەخوشان |
-| Badini Kurdish | الكردية البادينية | کوردی بادینی |
+| Badini Kurdish | الكردية البادينية | کوردی (بادینی) |
 | Billing | الفوترة | حیسابکرن |
 | Billing information | معلومات الفوترة | زانیاریێن حیسابکرنێ |
 | Billing is unavailable. Try again. | ? | حیسابکرن بەردەست نینە. دیسان هەول بدە. |
@@ -559,7 +567,7 @@ This document is the durable source of truth for Saxlem English, Arabic, and Bad
 | Room | الغرفة | ژوور |
 | RTL status | ? | رەوشا راست بو چەپ |
 | Running behind | ? | پاشکەفتی |
-| Running on time | يسير في الموعد | د دەمێ خۆ دایە |
+| Running on time | يسير في الموعد | د دەمێ خو دایە |
 | Running {minutes} minutes late | متأخر {minutes} دقيقة | {minutes} خولەک پاشکەفتییە |
 | Save | حفظ | پارێزە |
 | Saving | جارٍ الحفظ… | دهێتە پاراستن… |

@@ -50,7 +50,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               ),
               const SizedBox(height: 40),
               _LanguageCard(
-                title: 'کوردی بادینی',
+                title: 'کوردی (بادینی)',
                 titleFont: 'Rudaw',
                 badge: 'ک',
                 subtitle: strings.badiniKurdish,

@@ -110,7 +110,7 @@ const NEXT: Record<string, Record<PushLocale, string>> = {
   'appointment.earlier.available': {
     en: 'Open your visit to move to it. Whoever confirms first gets it.',
     ar: 'افتح موعدك لتنتقل إليه. من يؤكد أولًا يحصل عليه.',
-    ku: 'ژڤانا خۆ ڤەکە دا بۆ وی بگوهێزی. یێ ئێکەمین پشتڕاست بکەت دێ وەرگریت.',
+    ku: 'ژڤانا خو ڤەکە دا بۆ وی بگوهێزی. یێ ئێکەمین پشتڕاست بکەت دێ وەرگریت.',
   },
   'queue.patient.almost': {
     en: 'Make your way to the waiting area and stay close.',

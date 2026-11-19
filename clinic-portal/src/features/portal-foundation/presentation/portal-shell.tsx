@@ -57,7 +57,7 @@ const roleLabels: Record<PortalStaffRole, keyof FoundationMessages> = {
   clinicManager: "clinicManager",
   platformAdministrator: "platformAdministrator",
 };
-const localeNames: Record<Locale, string> = { en: "English", ar: "العربية", ku: "بادینی" };
+const localeNames: Record<Locale, string> = { en: "English", ar: "العربية", ku: "کوردی (بادینی)" };
 
 /** The one Saxlem workspace frame (Aura v3): floating glass rail, quiet top bar. */
 export function PortalShell({

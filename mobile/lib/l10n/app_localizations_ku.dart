@@ -9,16 +9,16 @@ class AppLocalizationsKu extends AppLocalizations {
   AppLocalizationsKu([String locale = 'ku']) : super(locale);
 
   @override
-  String get appName => 'ساخله‌م';
+  String get appName => 'ساخلەم';
 
   @override
   String get chooseLanguage => 'زمانێ خو ب هەلبژێرە';
 
   @override
-  String get languageCanChange => 'دێ شێی پاشتر ل پروفایلێ خۆ بگوهۆڕی.';
+  String get languageCanChange => 'دێ شێی پاشتر ل پروفایلێ خو بگوهۆڕی.';
 
   @override
-  String get badiniKurdish => 'کوردی بادینی';
+  String get badiniKurdish => 'کوردی (بادینی)';
 
   @override
   String get english => 'ئینگلیزی';
@@ -63,7 +63,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get profileBody =>
-      'دێ شێی زانیاری، زمان و هەلبژاردنێن چاڤدێریا خۆ رێک بخەی.';
+      'دێ شێی زانیاری، زمان و هەلبژاردنێن چاڤدێریا خو رێک بخەی.';
 
   @override
   String get goodMorning => 'ڕۆژباش،';
@@ -278,7 +278,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get firstAppointmentBody =>
-      'سەردانا خۆ یا ئێکێ ل گەل نوژدارەکێ باوەرپێکری بگرە.';
+      'سەردانا خو یا ئێکێ ل گەل نوژدارەکێ باوەرپێکری بگرە.';
 
   @override
   String get emptyAppointmentsTitle => 'نوکە هیچ تشتەک ل ڤێرێ نینە';
@@ -363,11 +363,11 @@ class AppLocalizationsKu extends AppLocalizations {
   String get informationalScreen => 'پەڕا زانیاریێ';
 
   @override
-  String get welcomeTitle => 'ساخله‌می، ڕوونتر';
+  String get welcomeTitle => 'ساخلەمی، ڕوونتر';
 
   @override
   String get welcomeBody =>
-      'ساخله‌م چاڤدێرییا باوەرپێکری، وەعدە و نویکرنێن زیندی یێن کلینیکێ د ئەزموونەکا ئارام دا دکەتە ئێک.';
+      'ساخلەم چاڤدێرییا باوەرپێکری، وەعدە و نویکرنێن زیندی یێن کلینیکێ د ئەزموونەکا ئارام دا دکەتە ئێک.';
 
   @override
   String get welcomeTrust => 'بۆ نەخۆشێن کوردستان و عیراقێ هاتیە چێکرن';
@@ -376,10 +376,10 @@ class AppLocalizationsKu extends AppLocalizations {
   String get welcomeBook => 'نوژدارێن باوەرپێکری ببینە و وەعدە بگرە';
 
   @override
-  String get welcomeQueue => 'جهێ خۆ د ڕیزا زیندی دا بزانە';
+  String get welcomeQueue => 'جهێ خو د ڕیزا زیندی دا بزانە';
 
   @override
-  String get welcomeAppointments => 'چاڤدێرییا خۆ ڕێک و پێک بکە';
+  String get welcomeAppointments => 'چاڤدێرییا خو ڕێک و پێک بکە';
 
   @override
   String get continueAsGuest => 'وەک مێهڤان بەردەوام بە';
@@ -392,7 +392,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get guestModeMessage =>
-      'تو دشێی ساخله‌مێ بگەڕی، لێ وەعدە و تایبەتمەندیێن کەسی پشتڕاستکرنێ دخوازن.';
+      'تو دشێی ساخلەمێ بگەڕی، لێ وەعدە و تایبەتمەندیێن کەسی پشتڕاستکرنێ دخوازن.';
 
   @override
   String get phoneTitle => 'ژمارا موبایلا تە';
@@ -481,7 +481,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get personalizedFeatureBody =>
-      'ب ژمارا خۆ بچە ژوور بۆ بکارئینانا وەعدە و تایبەتمەندیێن چاڤدێرییا کەسی.';
+      'ب ژمارا خو بچە ژوور بۆ بکارئینانا وەعدە و تایبەتمەندیێن چاڤدێرییا کەسی.';
 
   @override
   String get notifications => 'ئاگەهداری';
@@ -590,15 +590,15 @@ class AppLocalizationsKu extends AppLocalizations {
   String get notificationWelcome => 'بخێر بهێی بو ساخلەم';
 
   @override
-  String get notificationWelcomeHappened => 'ئەزموونا تە یا ساخله‌مێ بەرهەڤە.';
+  String get notificationWelcomeHappened => 'ئەزموونا تە یا ساخلەمێ بەرهەڤە.';
 
   @override
   String get notificationWelcomeWhy =>
-      'تە ل سەر ڤێ ئامیرێ دەست ب بکارئینانا ساخله‌مێ کر.';
+      'تە ل سەر ڤێ ئامیرێ دەست ب بکارئینانا ساخلەمێ کر.';
 
   @override
   String get notificationWelcomeNext =>
-      'نوژدارێن باوەرپێکری ببینە و چاڤدێرییا خۆ رێک بخە.';
+      'نوژدارێن باوەرپێکری ببینە و چاڤدێرییا خو رێک بخە.';
 
   @override
   String get notificationReservedType => 'نووکرنا وەعدەیێ';
@@ -826,7 +826,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get discoveryAuthBody =>
-      'ژمارا موبایلا خۆ پشتڕاست بکە بۆ دیتنا زانیاریێن نوژداران.';
+      'ژمارا موبایلا خو پشتڕاست بکە بۆ دیتنا زانیاریێن نوژداران.';
 
   @override
   String get doctorNotFound => 'نوژدار نەهاتە دیتن';
@@ -1122,7 +1122,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get paymentWaitingBody =>
-      'پارەدانێ د FIB دا قەبویل بکە و ڤەگەڕە. ئەڤ پەڕە ب خۆ نوی دبیت.';
+      'پارەدانێ د FIB دا قەبویل بکە و ڤەگەڕە. ئەڤ پەڕە ب خو نوی دبیت.';
 
   @override
   String get paymentPaidTitle => 'پارە گەهشت';
@@ -1215,7 +1215,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get deleteAccount => 'ژێبرنا هەژمارێ';
 
   @override
-  String get deleteAccountTitle => 'هەژمارا خۆ یا ساخلەم ژێ دبەی؟';
+  String get deleteAccountTitle => 'هەژمارا خو یا ساخلەم ژێ دبەی؟';
 
   @override
   String get deleteAccountBody =>
@@ -1226,7 +1226,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get deleteAccountUpcoming =>
-      'پێشی ژڤانێن خۆ یێن بێن هەلوەشینە، پاشان دووبارە هەول بدە.';
+      'پێشی ژڤانێن خو یێن بێن هەلوەشینە، پاشان دووبارە هەول بدە.';
 
   @override
   String get deleteAccountFailed =>
@@ -1274,10 +1274,10 @@ class AppLocalizationsKu extends AppLocalizations {
   String get stepBook => 'د ئەپێ دا ژڤانی بگرە';
 
   @override
-  String get stepCheckIn => 'ل پێشوازیێ هاتنا خۆ تۆمار بکە';
+  String get stepCheckIn => 'ل پێشوازیێ هاتنا خو تۆمار بکە';
 
   @override
-  String get stepCalled => 'ل سەر مۆبایلا خۆ گازی تە دهێتە کرن';
+  String get stepCalled => 'ل سەر مۆبایلا خو گازی تە دهێتە کرن';
 
   @override
   String get alertsSubtitle => 'گازیێن رێزێ و نووکرنێن ژڤانان';
@@ -1306,7 +1306,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get ntfReminderNext =>
-      'دەمێ دگەهیە کلینیکێ خۆ ل پێشوازیێ تومار بکە. ئەگەر نەشێی بهێی، ژڤانی ژ بەشێ ژڤانان هەلوەشینە دا کەسەکێ دی ب کار بینیت.';
+      'دەمێ دگەهیە کلینیکێ خو ل پێشوازیێ تومار بکە. ئەگەر نەشێی بهێی، ژڤانی ژ بەشێ ژڤانان هەلوەشینە دا کەسەکێ دی ب کار بینیت.';
 
   @override
   String get ntfCancelledTitle => 'کلینیکێ ژڤانێ تە هەلوەشاند';
@@ -1335,7 +1335,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get ntfQueueOpenedTitle => 'رێزبەندی ڤەبوو';
 
   @override
-  String get ntfFollowQueue => 'جهێ خۆ د رێزبەندییا زندی دا ببینە.';
+  String get ntfFollowQueue => 'جهێ خو د رێزبەندییا زندی دا ببینە.';
 
   @override
   String get ntfPausedTitle => 'رێزبەندی بۆ دەمەکێ کورت راوەستا';
@@ -1466,7 +1466,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get callClinic => 'تەلەفۆن';
 
   @override
-  String get clinicLocationMissing => 'کلینیکێ هێشتا ناڤنیشانێ خۆ زێدە نەکریە.';
+  String get clinicLocationMissing => 'کلینیکێ هێشتا ناڤنیشانێ خو زێدە نەکریە.';
 
   @override
   String get openMapsFailed => 'نەشیا نەخشەیێ ل سەر ڤی مۆبایلی ڤەکەت.';
@@ -1483,7 +1483,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get familyTileTitle => 'خێزان';
 
   @override
-  String get familyTileSubtitle => 'بۆ زارۆک و دەیبابێن خۆ بگرە';
+  String get familyTileSubtitle => 'بۆ زارۆک و دەیبابێن خو بگرە';
 
   @override
   String get addToCalendar => 'زێدە بکە بۆ سالنامێ';
@@ -1576,7 +1576,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get liveNotOpen => 'رێزبەندی هێشتا ڤەنەبوویە';
 
   @override
-  String get liveCheckIn => 'رێزبەندی ڤەکریە · خۆ ل پێشوازیێ تومار بکە';
+  String get liveCheckIn => 'رێزبەندی ڤەکریە · خو ل پێشوازیێ تومار بکە';
 
   @override
   String get liveWithDoctor => 'نوکە ل دەڤ نوژداری یی';
@@ -1631,7 +1631,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String leaveArriveBy(String time) {
-    return 'بەری $time ل پێشوازیێ بە دا خۆ تومار بکەی';
+    return 'بەری $time ل پێشوازیێ بە دا خو تومار بکەی';
   }
 
   @override
@@ -1674,7 +1674,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get leaveAlertChannel => 'دەمێ دەرکەفتنێ';
 
   @override
-  String get leaveAlertTitle => 'دەمێ خۆ ئامادەکرنێ یە بۆ ژڤانا تە';
+  String get leaveAlertTitle => 'دەمێ خو ئامادەکرنێ یە بۆ ژڤانا تە';
 
   @override
   String leaveAlertBody(String leave, String doctor, String time, int minutes) {
@@ -1763,7 +1763,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String rateWith(String doctor) {
-    return 'سەرەدانا خۆ ل دەڤ $doctor هەلسەنگینە';
+    return 'سەرەدانا خو ل دەڤ $doctor هەلسەنگینە';
   }
 
   @override
@@ -1859,10 +1859,10 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get ntfEarlierNext =>
-      'ژڤانا خۆ ڤەکە دا بۆ وی بگوهێزی. یێ ئێکەمین پشتڕاست بکەت دێ وەرگریت.';
+      'ژڤانا خو ڤەکە دا بۆ وی بگوهێزی. یێ ئێکەمین پشتڕاست بکەت دێ وەرگریت.';
 
   @override
-  String get receiptsTitle => 'پارەدان و وەسل';
+  String get receiptsTitle => 'پارەدان و پسوولە';
 
   @override
   String get receiptsFailed => 'نەشیاین پارەدانێن تە ڤەکەین';
@@ -1875,22 +1875,22 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get receiptsEmptyBody =>
-      'دەمێ تو پارێ سەرەدانەکێ ددەی، ل ئەپی یان ل کلینیکێ، وەسلا وێ دێ ل ڤێرە دیار بیت.';
+      'دەمێ تو پارێ سەرەدانەکێ ددەی، ل ئەپی یان ل کلینیکێ، پسوولا وێ دێ ل ڤێرە دیار بیت.';
 
   @override
-  String get receiptTitle => 'وەسل';
+  String get receiptTitle => 'پسوولە';
 
   @override
-  String get receiptFailed => 'نەشیاین ڤی وەسلی ڤەکەین';
+  String get receiptFailed => 'نەشیاین ڤێ پسوولێ ڤەکەین';
 
   @override
-  String get receiptCopy => 'وەسلێ کۆپی بکە';
+  String get receiptCopy => 'پسوولێ کۆپی بکە';
 
   @override
-  String get receiptCopied => 'وەسل هاتە کۆپیکرن';
+  String get receiptCopied => 'پسوولە هاتە کۆپیکرن';
 
   @override
-  String get receiptView => 'وەسلێ ببینە';
+  String get receiptView => 'پسوولێ ببینە';
 
   @override
   String get receiptAmount => 'بڕ';
@@ -1899,7 +1899,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get receiptStatus => 'رەوش';
 
   @override
-  String get receiptNumber => 'ژمارا وەسلێ';
+  String get receiptNumber => 'ژمارا پسوولێ';
 
   @override
   String get receiptPaidOn => 'دەمێ پارەدانێ';
@@ -1927,7 +1927,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String receiptPaidToPlatform(String organization) {
-    return 'ساخله‌م، بۆ $organization';
+    return 'ساخلەم، بۆ $organization';
   }
 
   @override
@@ -1946,7 +1946,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get receiptVisit => 'سەرەدان';
 
   @override
-  String get receiptTextHeading => 'وەسلا ساخله‌م';
+  String get receiptTextHeading => 'پسوولا ساخلەم';
 
   @override
   String get pushChannelName => 'نووکرنێن ژڤان و رێزبەندیێ';
