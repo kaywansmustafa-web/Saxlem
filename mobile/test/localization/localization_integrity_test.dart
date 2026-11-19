@@ -97,6 +97,8 @@ void main() {
     const letter = r'[\u0621-\u064A\u0671-\u06D3\u06D5]';
     final soraniSuffix = RegExp('$letterەکان(?!$letter)');
     final soraniSelf = RegExp('(?<!$letter)خۆ(?!$letter)');
+    // A heavy r at the start of a word is written ڕ, as everywhere else.
+    final plainInitialR = RegExp('(?<!$letter)ر(?=$letter)');
     for (final entry in badini.entries) {
       if (entry.key.startsWith('@') || entry.value is! String) continue;
       final text = entry.value as String;
@@ -109,6 +111,7 @@ void main() {
       }
       expect(soraniSuffix.hasMatch(text), isFalse, reason: entry.key);
       expect(soraniSelf.hasMatch(text), isFalse, reason: '${entry.key}: خو');
+      expect(plainInitialR.hasMatch(text), isFalse, reason: '${entry.key}: ڕ');
       expect(
         RegExp('[٠-٩]').hasMatch(text),
         isFalse,

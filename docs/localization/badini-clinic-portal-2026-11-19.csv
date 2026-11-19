@@ -1,0 +1,780 @@
+file,key,english,before,after,changed
+src/features/appointments/presentation/booking-messages.ts,newBooking,New booking,ژڤانا نوی,ژڤانا نوی,
+src/features/appointments/presentation/booking-messages.ts,walkIn,Walk-in,هاتنا راستەوخۆ,بێ ژڤان,yes
+src/features/appointments/presentation/booking-messages.ts,phoneTitle,Book a phone call,ژڤان ب رێکا تەلەفۆنێ,ژڤان ب ڕێکا تەلەفۆنێ,yes
+src/features/appointments/presentation/booking-messages.ts,phoneHelp,"For patients who call the clinic. The booking goes into the same calendar as the Saxlem app, so the two can never take the same time.",بۆ وان نەخۆشێن تەلەفۆنێ بۆ کلینیکێ دکەن. ژڤان دچیتە هەمان ساڵنامەیا ئەپێ Saxlem، لەوما دوو ژڤان نەشێن هەمان دەمی بگرن.,بۆ وان نەخۆشێن تەلەفۆنی کلینیکێ دکەن. ژڤان دچیتە هەمان سالنامەیا ئەپێ ساخلەم، ژبەر هندێ دوو ژڤان نەشێن هەمان دەمی بگرن.,yes
+src/features/appointments/presentation/booking-messages.ts,walkInTitle,Add a walk-in,زێدەکرنا هاتنا راستەوخۆ,نەخۆشەکێ بێ ژڤان زێدە بکە,yes
+src/features/appointments/presentation/booking-messages.ts,walkInHelp,"For patients standing at the desk without a booking. They get the next free time within the hour and are checked in, ready for the queue.",بۆ وان نەخۆشێن ب بێ ژڤان دهێنە ل پێشوازیێ. نێزیکترین دەمێ ڤالا د دەمژمێرێ دا وەردگرن و هاتنا وان تۆمار دبیت، بۆ ریزێ ئامادە دبن.,بۆ وان نەخۆشێن بێ ژڤان ل پێشوازیێ. نێزیکترین دەمێ ڤالا د ڤێ دەمژمێرێ دا وەردگرن، هاتنا وان تۆمار دبیت و بۆ ڕێزبەندیێ ئامادە دبن.,yes
+src/features/appointments/presentation/booking-messages.ts,back,Appointments,ژڤان,ژڤان,
+src/features/appointments/presentation/booking-messages.ts,stepPatient,Patient,نەخۆش,نەخۆش,
+src/features/appointments/presentation/booking-messages.ts,stepDoctor,Doctor,نوژدار,نوژدار,
+src/features/appointments/presentation/booking-messages.ts,stepTime,Time,دەم,دەم,
+src/features/appointments/presentation/booking-messages.ts,stepConfirm,Confirm,پشتراستکرن,پشتڕاستکرن,yes
+src/features/appointments/presentation/booking-messages.ts,searchLabel,Search by name or phone,ب ناڤی یان ژمارا تەلەفۆنێ بگەڕێ,ب ناڤی یان ژمارا تەلەفۆنێ بگەڕێ,
+src/features/appointments/presentation/booking-messages.ts,searchPlaceholder,e.g. Shilan or 0750 123 4567,نموونە: شیلان یان 0750 123 4567,نموونە: شیلان یان 0750 123 4567,
+src/features/appointments/presentation/booking-messages.ts,search,Search,گەڕیان,بگەڕێ,yes
+src/features/appointments/presentation/booking-messages.ts,searching,Searching...,دگەڕیێت...,دهێتە گەڕیان…,yes
+src/features/appointments/presentation/booking-messages.ts,noMatches,No patient found. Add them as a new patient.,چ نەخۆش نەهاتنە دیتن. وەک نەخۆشەکێ نوی زێدە بکە.,چ نەخۆش نەهاتە دیتن. وەک نەخۆشەکێ نوی زێدە بکە.,yes
+src/features/appointments/presentation/booking-messages.ts,newPatient,New patient,نەخۆشێ نوی,نەخۆشێ نوی,
+src/features/appointments/presentation/booking-messages.ts,existingPatient,Find a patient,گەڕیان ل نەخۆشەکی,ل نەخۆشەکی بگەڕێ,yes
+src/features/appointments/presentation/booking-messages.ts,firstName,First name,ناڤێ ئێکێ,ناڤێ ئێکێ,
+src/features/appointments/presentation/booking-messages.ts,lastName,Last name,ناڤێ بنەماڵێ,پاشناڤ,yes
+src/features/appointments/presentation/booking-messages.ts,phone,Mobile number,ژمارا مۆبایلێ,ژمارا مۆبایلێ,
+src/features/appointments/presentation/booking-messages.ts,gender,Gender,ڕەگەز,ڕەگەز,
+src/features/appointments/presentation/booking-messages.ts,female,Female,مێ,مێ,
+src/features/appointments/presentation/booking-messages.ts,male,Male,نێر,نێر,
+src/features/appointments/presentation/booking-messages.ts,unspecified,Not given,نەهاتیە دیارکرن,نەهاتیە دیارکرن,
+src/features/appointments/presentation/booking-messages.ts,savePatient,Add patient,زێدەکرنا نەخۆشی,نەخۆشی زێدە بکە,yes
+src/features/appointments/presentation/booking-messages.ts,saving,Saving...,پاشەکەفت دبیت...,پاشەکەفت دبیت…,yes
+src/features/appointments/presentation/booking-messages.ts,change,Change,گوهۆڕین,بگوهۆڕە,yes
+src/features/appointments/presentation/booking-messages.ts,noAppHint,Patients added here don't need the Saxlem app.,ئەو نەخۆشێن ل ڤێرێ دهێنە زێدەکرن پێتڤی ب ئەپێ Saxlem نینن.,ئەو نەخۆشێن ل ڤێرێ دهێنە زێدەکرن پێدڤی ب ئەپێ ساخلەم نینن.,yes
+src/features/appointments/presentation/booking-messages.ts,chooseDoctor,Choose a doctor,نوژدارەکی هەلبژێرە,نوژدارەکی هەلبژێرە,
+src/features/appointments/presentation/booking-messages.ts,noDoctors,No active doctors at this clinic.,چ نوژدارێن چالاک د ڤێ کلینیکێ دا نینن.,چ نوژدارێن چالاک د ڤێ کلینیکێ دا نینن.,
+src/features/appointments/presentation/booking-messages.ts,visitType,Visit type,جۆرێ سەرەدانێ,جۆرێ سەرەدانێ,
+src/features/appointments/presentation/booking-messages.ts,initial,First visit,سەرەدانا ئێکێ,سەرەدانا ئێکێ,
+src/features/appointments/presentation/booking-messages.ts,followUp,Follow-up,سەرەدانا دووبارە,سەرەدانا دویڤچوونێ,yes
+src/features/appointments/presentation/booking-messages.ts,day,Day,رۆژ,ڕۆژ,yes
+src/features/appointments/presentation/booking-messages.ts,otherDay,Another day,رۆژەکا دی,ڕۆژەکا دی,yes
+src/features/appointments/presentation/booking-messages.ts,loadingSlots,Finding free times...,ل دەمێن ڤالا دگەڕیێت...,دەمێن ڤالا دهێنە گەڕیان…,yes
+src/features/appointments/presentation/booking-messages.ts,noSlots,No free times on this day. Try another day or doctor.,چ دەمێن ڤالا د ڤێ رۆژێ دا نینن. رۆژەکا دی یان نوژدارەکێ دی تاقی بکە.,چ دەمێن ڤالا د ڤێ ڕۆژێ دا نینن. ڕۆژەکا دی یان نوژدارەکێ دی تاقی بکە.,yes
+src/features/appointments/presentation/booking-messages.ts,noSlotsToday,"No free time with this doctor in the next hour. Try another doctor, or book an appointment for later.",د دەمژمێرا بێت دا چ دەمێ ڤالا ل دەڤ ڤی نوژداری نینە. نوژدارەکێ دی تاقی بکە، یان ژڤانەکێ بۆ پاشتر بگرە.,د دەمژمێرا داهاتی دا چ دەمێ ڤالا ل دەڤ ڤی نوژداری نینە. نوژدارەکێ دی تاقی بکە، یان ژڤانەکێ بۆ پاشتر بگرە.,yes
+src/features/appointments/presentation/booking-messages.ts,nextFree,Next free time,نێزیکترین دەمێ ڤالا,نێزیکترین دەمێ ڤالا,
+src/features/appointments/presentation/booking-messages.ts,reason,Reason for visit,ئەگەرێ سەرەدانێ,ئەگەرێ سەرەدانێ,
+src/features/appointments/presentation/booking-messages.ts,reasonPlaceholder,"e.g. Check-up, follow-up on results",نموونە: پشکنین، دیتنا ئەنجامان,نموونە: پشکنین، دیتنا ئەنجامان,
+src/features/appointments/presentation/booking-messages.ts,walkInReason,Walk-in,هاتنا راستەوخۆ,بێ ژڤان,yes
+src/features/appointments/presentation/booking-messages.ts,confirmPhone,Book appointment,گرتنا ژڤانێ,ژڤانێ بگرە,yes
+src/features/appointments/presentation/booking-messages.ts,confirmWalkIn,Add walk-in and mark arrived,زێدەکرن و تۆمارکرنا هاتنێ,زێدە بکە و هاتنێ تۆمار بکە,yes
+src/features/appointments/presentation/booking-messages.ts,booking,Booking...,ژڤان دهێتە گرتن...,ژڤان دهێتە گرتن…,yes
+src/features/appointments/presentation/booking-messages.ts,taken,"Someone booked that time a moment ago, maybe in the app. The free times have been refreshed; pick another.",ئەڤ دەمە بەری کێلیەکێ هاتە گرتن، بەلکی ژ ئەپێ. دەمێن ڤالا هاتنە نویکرن؛ دەمەکێ دی هەلبژێرە.,ئەڤ دەمە بەری کێلیەکێ هاتە گرتن، بەلکی ژ ئەپی. دەمێن ڤالا هاتنە نویکرن؛ دەمەکێ دی هەلبژێرە.,yes
+src/features/appointments/presentation/booking-messages.ts,invalidPhone,"Enter an Iraqi mobile number, such as 0750 123 4567.",ژمارەکا مۆبایلا عێراقی بنڤیسە، وەک 0750 123 4567.,ژمارەکا مۆبایلا عیراقی بنڤیسە، وەک 0750 123 4567.,yes
+src/features/appointments/presentation/booking-messages.ts,failed,Something went wrong. Try again.,خەلەتیەک چێبوو. دووبارە تاقی بکە.,تشتەک خەلەت چوو. دیسان هەول بدە.,yes
+src/features/appointments/presentation/booking-messages.ts,summary,"{patient} with {doctor}, {time}",{patient} دگەل {doctor}، {time},{patient} دگەل {doctor}، {time},
+src/features/appointments/presentation/booking-messages.ts,sourceApp,App,ئەپ,ئەپ,
+src/features/appointments/presentation/booking-messages.ts,sourcePhone,Phone,تەلەفۆن,تەلەفۆن,
+src/features/appointments/presentation/booking-messages.ts,sourceWalkIn,Walk-in,هاتنا راستەوخۆ,بێ ژڤان,yes
+src/features/appointments/presentation/booking-messages.ts,source,Booked via,ژ رێکا,ب ڕێکا,yes
+src/features/appointments/presentation/booking-messages.ts,dayBoard,Day board,تەختەیا رۆژێ,تەختەیا ڕۆژێ,yes
+src/features/appointments/presentation/booking-messages.ts,list,List,لیست,لیست,
+src/features/appointments/presentation/booking-messages.ts,boardTitle,Today's schedule,خشتەیا ئەڤرۆ,خشتەیا ئەڤرۆ,
+src/features/appointments/presentation/booking-messages.ts,boardHelp,Every doctor's day at a glance. Tap a free time to book a phone call or a walk-in.,رۆژا هەمی نوژداران ب ئێک نێرین. ل سەر دەمەکێ ڤالا بدە بۆ گرتنا ژڤانا تەلەفۆنێ یان هاتنا راستەوخۆ.,ڕۆژا هەمی نوژداران ب ئێک نێرین. دەمەکێ ڤالا هەلبژێرە دا ژڤانەکێ تەلەفۆنێ یان نەخۆشەکێ بێ ژڤان زێدە بکەی.,yes
+src/features/appointments/presentation/booking-messages.ts,today,Today,ئەڤرۆ,ئەڤرۆ,
+src/features/appointments/presentation/booking-messages.ts,tomorrow,Tomorrow,سوبەهی,سوبەهی,
+src/features/appointments/presentation/booking-messages.ts,nextSevenDays,Next 7 days,حەفت رۆژێن بهێن,7 ڕۆژێن داهاتی,yes
+src/features/appointments/presentation/booking-messages.ts,quickRange,Quick range,دەمێ لەز,ماوێن بلەز,yes
+src/features/appointments/presentation/booking-messages.ts,previousDay,Previous day,رۆژا بەری,ڕۆژا بەرێ,yes
+src/features/appointments/presentation/booking-messages.ts,nextDay,Next day,رۆژا پشتی,ڕۆژا پشتی,yes
+src/features/appointments/presentation/booking-messages.ts,legend,Key,رێبەرێ رەنگان,ڕێبەرێ ڕەنگان,yes
+src/features/appointments/presentation/booking-messages.ts,legendFree,Free,ڤالا,ڤالا,
+src/features/appointments/presentation/booking-messages.ts,legendApp,Saxlem app,ئەپێ Saxlem,ئەپێ ساخلەم,yes
+src/features/appointments/presentation/booking-messages.ts,legendPhone,Phone,تەلەفۆن,تەلەفۆن,
+src/features/appointments/presentation/booking-messages.ts,legendWalkIn,Walk-in,هاتنا راستەوخۆ,بێ ژڤان,yes
+src/features/appointments/presentation/booking-messages.ts,legendUnavailable,Break or off,بێهنڤەدان یان پشوو,بێهنڤەدان یان ل دەوامێ نینە,yes
+src/features/appointments/presentation/booking-messages.ts,legendPast,Past,بۆری,بۆری,
+src/features/appointments/presentation/booking-messages.ts,time,Time,دەم,دەم,
+src/features/appointments/presentation/booking-messages.ts,free,Free,ڤالا,ڤالا,
+src/features/appointments/presentation/booking-messages.ts,walkInReady,Walk-in OK,بۆ هاتنا راستەوخۆ,بۆ بێ ژڤانان,yes
+src/features/appointments/presentation/booking-messages.ts,notWorking,Not working,ل دەوامێ نینە,ل دەوامێ نینە,
+src/features/appointments/presentation/booking-messages.ts,now,Now,نوکە,نوکە,
+src/features/appointments/presentation/booking-messages.ts,noDoctorsToday,No doctors are working at this clinic on this day.,د ڤێ رۆژێ دا چ نوژدار ل ڤێ کلینیکێ کار ناکەن.,د ڤێ ڕۆژێ دا چ نوژدار ل ڤێ کلینیکێ کار ناکەن.,yes
+src/features/appointments/presentation/booking-messages.ts,updated,Updated {time},دووماهیک نویکرن {time},نویکرن: {time},yes
+src/features/appointments/presentation/booking-messages.ts,bookThisTime,Book {time} with {doctor},گرتنا {time} دگەل {doctor},{time} دگەل {doctor} بگرە,yes
+src/features/appointments/presentation/booking-messages.ts,phoneOption,Phone booking,ژڤان ب تەلەفۆنێ,ژڤان ب تەلەفۆنێ,
+src/features/appointments/presentation/booking-messages.ts,walkInOption,Walk-in now,هاتنا راستەوخۆ نوکە,بێ ژڤان، نوکە,yes
+src/features/appointments/presentation/booking-messages.ts,walkInLater,Walk-ins can only take a time within the next hour.,هاتنا راستەوخۆ تەنێ دشێت دەمەکێ د دەمژمێرا بێت دا بگریت.,نەخۆشێن بێ ژڤان تنێ دشێن دەمەکێ د دەمژمێرا داهاتی دا بگرن.,yes
+src/features/appointments/presentation/booking-messages.ts,close,Close,گرتن,بگرە,yes
+src/features/appointments/presentation/booking-messages.ts,show,Show,نیشان بدە,نیشان بدە,
+src/features/appointments/presentation/booking-messages.ts,holding,{time} with {doctor}. Choose the patient to confirm.,{time} دگەل {doctor}. نەخۆشی هەلبژێرە بۆ پشتراستکرنێ.,{time} دگەل {doctor}. نەخۆشی هەلبژێرە دا پشتڕاست ببیت.,yes
+src/features/appointments/presentation/booking-messages.ts,completedTag,Done,تەمام,تەمام,
+src/features/appointments/presentation/booking-messages.ts,noShowTag,No-show,نەهات,نەهات,
+src/features/appointments/presentation/booking-messages.ts,onTheWay,On the way · {time},ل ڕێکێ یە · {time},ل ڕێکێ یە · {time},
+src/features/appointments/presentation/booking-messages.ts,onTheWayLabel,"On the way, expected at",ل ڕێکێ یە، دێ گەهیت دەمژمێر,ل ڕێکێ یە، دێ گەهیت دەمژمێر,
+src/features/billing/presentation/messages.ts,billing,Billing,حیسابکرن,حیسابکرن,
+src/features/billing/presentation/messages.ts,platform,Platform,پلاتفورم,پلاتفورم,
+src/features/billing/presentation/messages.ts,overview,Overview,پوختە,پوختە,
+src/features/billing/presentation/messages.ts,commissions,Commissions,کومیسیون,کۆمیسیۆن,yes
+src/features/billing/presentation/messages.ts,statements,Statements,کەشفێن حیسابێ,کەشفێن حیسابێ,
+src/features/billing/presentation/messages.ts,plans,Plans,پلان,پلان,
+src/features/billing/presentation/messages.ts,organization,Organization,رێکخراو,ڕێکخراو,yes
+src/features/billing/presentation/messages.ts,chooseOrganization,Choose an organization,رێکخراوەکێ ب هەلبژێرە,ڕێکخراوەکێ هەلبژێرە,yes
+src/features/billing/presentation/messages.ts,chooseOrganizationHelp,Select an authoritative organization before viewing global billing.,بەری دیتنا حیسابکرنا گشتی، رێکخراوەکا دەستهەلاتدار ب هەلبژێرە.,بەری دیتنا حیسابکرنا گشتی، ڕێکخراوەکا دەستهەلاتدار هەلبژێرە.,yes
+src/features/billing/presentation/messages.ts,loadMore,Load more,پتر بار بکە,پتر بار بکە,
+src/features/billing/presentation/messages.ts,retry,Try again,دیسان هەول بدە,دیسان هەول بدە,
+src/features/billing/presentation/messages.ts,refresh,Refresh,نوو بکە,نوی بکە,yes
+src/features/billing/presentation/messages.ts,loading,Loading billing information,زانیاریێن حیسابکرنێ دهێنە بارکرن…,زانیاریێن حیسابکرنێ دهێنە بارکرن…,
+src/features/billing/presentation/messages.ts,noData,No billing data is available.,چ زانیاریێن حیسابکرنێ بەردەست نینن.,چ زانیاریێن حیسابکرنێ بەردەست نینن.,
+src/features/billing/presentation/messages.ts,unavailable,Billing is unavailable. Try again.,حیسابکرن بەردەست نینە. دیسان هەول بدە.,حیسابکرن بەردەست نینە. دیسان هەول بدە.,
+src/features/billing/presentation/messages.ts,forbidden,You do not have access to this billing information.,دەستویری تە بو دیتنا ڤان زانیاریێن حیسابکرنێ نینە.,دەستهەلاتا تە بۆ دیتنا ڤان زانیاریێن حیسابکرنێ نینە.,yes
+src/features/billing/presentation/messages.ts,currentStatement,Current statement,کەشفا حیسابێ یا نوکە,کەشفا حیسابێ یا نوکە,
+src/features/billing/presentation/messages.ts,wholeClinic,Whole clinic (before per-doctor billing),هەمی کلینیک (بەری حیسابکرنا هەر نوژدارەکی),هەمی کلینیک (بەری حیسابکرنا هەر نوژدارەکی),
+src/features/billing/presentation/messages.ts,currentPlan,Current plan,پلانا نوکە,پلانا نوکە,
+src/features/billing/presentation/messages.ts,period,Period,ماوە,ماوە,
+src/features/billing/presentation/messages.ts,status,Status,رەوش,ڕەوش,yes
+src/features/billing/presentation/messages.ts,gross,Gross earned,کوی گشتی یێ کومیسیونێن دەستکەفتی,کوی گشتی یێ کۆمیسیۆنێن دەستکەفتی,yes
+src/features/billing/presentation/messages.ts,reversals,Reversals,ڤەگەراندنێن کومیسیونێ,ڤەگەڕاندنێن کۆمیسیۆنێ,yes
+src/features/billing/presentation/messages.ts,net,Net commission,کومیسیونا خالص,کۆمیسیۆنا خالص,yes
+src/features/billing/presentation/messages.ts,qualifying,Qualifying appointments,ژڤانێن گونجای,ژڤانێن گونجای,
+src/features/billing/presentation/messages.ts,reversalCount,Reversal count,ژمارا ڤەگەراندنان,ژمارا ڤەگەڕاندنان,yes
+src/features/billing/presentation/messages.ts,clinic,Clinic,کلینیک,کلینیک,
+src/features/billing/presentation/messages.ts,appointment,Appointment reference,ناسناما ژڤانێ,کودێ ژڤانێ,yes
+src/features/billing/presentation/messages.ts,completion,Completion date,رێکەفتا تەمامبوونێ,ڕێکەفتا تەمامبوونێ,yes
+src/features/billing/presentation/messages.ts,rule,Billing rule,یاسایا حیسابکرنێ,یاسایا حیسابکرنێ,
+src/features/billing/presentation/messages.ts,earned,Earned,دەستکەفتی,دەستکەفتی,
+src/features/billing/presentation/messages.ts,reversed,Reversed,ڤەگەراندی,ڤەگەڕاندی,yes
+src/features/billing/presentation/messages.ts,draft,Draft,رەشنڤیس,ڕەشنڤیس,yes
+src/features/billing/presentation/messages.ts,finalized,Finalized,دووماهی هات,ب دوماهی هاتی,yes
+src/features/billing/presentation/messages.ts,view,View statement,کەشفا حیسابێ ببینە,کەشفا حیسابێ ببینە,
+src/features/billing/presentation/messages.ts,finalize,Finalize statement,کەشفا حیسابێ ب دووماهی بینە,کەشفا حیسابێ ب دوماهی بینە,yes
+src/features/billing/presentation/messages.ts,finalizeTitle,Finalize this statement?,تو دخوازی کەشفا حیسابێ ب دووماهی بینی؟,تو دخوازی کەشفا حیسابێ ب دوماهی بینی؟,yes
+src/features/billing/presentation/messages.ts,finalizeHelp,The figures will become an immutable snapshot. This is not a payment or settlement action.,ژمارە دێ ببنە وێنەیەکا نەگهور. ئەڤە کارەکێ پارەدانێ یان رێکخستنا پارەیی نینە.,ژمارە دێ ببنە وێنەیەکێ نەگوهۆڕ. ئەڤە نە پارەدان و نە یەکلاکرنا پارەیی یە.,yes
+src/features/billing/presentation/messages.ts,confirm,Confirm finalization,دووماهی هاتنێ پشتراست بکە,ب دوماهی ئینانێ پشتڕاست بکە,yes
+src/features/billing/presentation/messages.ts,cancel,Cancel,ب هەلوەشینە,هەلوەشینە,yes
+src/features/billing/presentation/messages.ts,finalizedNotice,Statement finalized.,کەشفا حیسابێ یا دووماهی هاتی,کەشفا حیسابێ ب دوماهی هات.,yes
+src/features/billing/presentation/messages.ts,draftNotice,Draft values may change until the period is finalized.,بها د رەشنڤیسێ دا دشێن بهێنە گهورین هەتا ماوە ب دووماهی دهێت.,بها د ڕەشنڤیسێ دا دشێن بهێنە گوهۆڕین هەتا ماوە ب دوماهی دهێت.,yes
+src/features/billing/presentation/messages.ts,snapshotNotice,This is the finalized statement snapshot.,ئەڤە وێنەیا دووماهی یا کەشفا حیسابێ یە.,ئەڤە وێنەیا دوماهی یا کەشفا حیسابێ یە.,yes
+src/features/billing/presentation/messages.ts,conflict,The statement changed. Reload it before trying again.,کەشفا حیسابێ هاتە گهورین. بەری دیسان هەولدانێ وێ دیسان بار بکە.,کەشفا حیسابێ هاتە گوهۆڕین. بەری دیسان هەول بدەی، وێ دیسان بار بکە.,yes
+src/features/billing/presentation/messages.ts,planCode,Plan code,کودێ پلانێ,کودێ پلانێ,
+src/features/billing/presentation/messages.ts,planName,Plan name,ناڤێ پلانێ,ناڤێ پلانێ,
+src/features/billing/presentation/messages.ts,amount,Commission amount,بهایێ کومیسیونێ,بهایێ کۆمیسیۆنێ,yes
+src/features/billing/presentation/messages.ts,active,Active,چالاک,چالاک,
+src/features/billing/presentation/messages.ts,inactive,Inactive,نەچالاک,نەچالاک,
+src/features/billing/presentation/messages.ts,effectiveFrom,Effective from,ژ ڤی دەمێ ڤە,ژ ڤی دەمێ ڤە,
+src/features/billing/presentation/messages.ts,effectiveUntil,Effective until,هەتا ڤی دەمی,هەتا ڤی دەمی,
+src/features/billing/presentation/messages.ts,assign,Assign plan,پلانێ دیار بکە,پلانێ دیار بکە,
+src/features/billing/presentation/messages.ts,assigned,Plan assigned.,پلان هاتە دیارکرن.,پلان هاتە دیارکرن.,
+src/features/billing/presentation/messages.ts,historySafe,Plan changes are effective-dated. Historical commissions remain unchanged.,گهورینێن پلانێ ژ رێکەفتا دیارکری دەستپێدکەن. کومیسیونێن بوری وەکی خو دمینن,گوهۆڕینێن پلانێ ژ ڕێکەفتا دیارکری دەست پێ دکەن. کۆمیسیۆنێن بۆری وەک خو دمینن.,yes
+src/features/billing/presentation/messages.ts,readOnly,Read-only billing,حیسابکرنا تنێ بو خواندنێ,حیسابکرن (تنێ بۆ خواندنێ),yes
+src/features/billing/presentation/messages.ts,back,Back to billing,ب ڤەگەرە بو حیسابکرنێ,ڤەگەڕە بۆ حیسابکرنێ,yes
+src/features/billing/presentation/messages.ts,details,Statement detail,هویرکاتیێن کەشفا حیسابێ,هویرکاریێن کەشفا حیسابێ,yes
+src/features/billing/presentation/messages.ts,timezone,Billing timezone,ناوچەیا دەمێ حیسابکرنێ,هەرێما دەمێ حیسابکرنێ,yes
+src/features/billing/presentation/messages.ts,lines,Finalized lines,رێزێن دووماهی یێن کەشفا حیسابێ,هێلێن کەشفا حیسابێ یێن ب دوماهی هاتی,yes
+src/features/billing/presentation/messages.ts,breakdown,Clinic breakdown,جوداکرنا کلینیکان,جوداکرنا کلینیکان,
+src/features/billing/presentation/messages.ts,noPayment,Billing records only. No payment or settlement is collected here.,ئەڤە تنێ تومارێن حیسابکرنێ نە. ل ڤێرێ چ پارەدان یان رێکخستنا پارەیی ناهێتە ئەنجامدان.,ئەڤە تنێ تۆمارێن حیسابکرنێ نە. ل ڤێرێ چ پارەدان یان یەکلاکرنا پارەیی ناهێتە کرن.,yes
+src/features/administration/presentation/messages.ts,administration,Administration,رێڤەبەری,ڕێڤەبەری,yes
+src/features/administration/presentation/messages.ts,administrationHelp,Onboard organizations and clinics for the Saxlem platform.,رێکخراو و کلینیکان بو پلاتفورما ساخلەم زێدە بکە.,ڕێکخراو و کلینیکان بۆ پلاتفورما ساخلەم زێدە بکە.,yes
+src/features/administration/presentation/messages.ts,organizations,Organizations,رێکخراو,ڕێکخراو,yes
+src/features/administration/presentation/messages.ts,organization,Organization,رێکخراو,ڕێکخراو,yes
+src/features/administration/presentation/messages.ts,organizationName,Organization name,ناڤێ رێکخراوێ,ناڤێ ڕێکخراوێ,yes
+src/features/administration/presentation/messages.ts,organizationsHelp,View the organizations currently registered with Saxlem.,رێکخراوێن نوکە تومارکری ل ساخلەم ببینە.,ڕێکخراوێن نوکە تۆمارکری ل ساخلەم ببینە.,yes
+src/features/administration/presentation/messages.ts,createOrganization,Create organization,رێکخراوەکێ چێکە,ڕێکخراوەکێ دروست بکە,yes
+src/features/administration/presentation/messages.ts,organizationCreated,Organization created,رێکخراو هاتە دروستکرن,ڕێکخراو هاتە دروستکرن,yes
+src/features/administration/presentation/messages.ts,noOrganizations,No organizations have been created yet.,هێشتا چ رێکخراو نەهاتیە دروستکرن.,هێشتا چ ڕێکخراو نەهاتیە دروستکرن.,yes
+src/features/administration/presentation/messages.ts,viewOrganization,View organization,رێکخراوی ببینە,ڕێکخراوی ببینە,yes
+src/features/administration/presentation/messages.ts,clinics,Clinics,کلینیک,کلینیک,
+src/features/administration/presentation/messages.ts,clinic,Clinic,کلینیک,کلینیک,
+src/features/administration/presentation/messages.ts,clinicName,Clinic name,ناڤێ کلینیکێ,ناڤێ کلینیکێ,
+src/features/administration/presentation/messages.ts,clinicCode,Clinic code,کودێ کلینیکێ,کودێ کلینیکێ,
+src/features/administration/presentation/messages.ts,clinicsHelp,View clinics across registered organizations.,کلینیکێن د رێکخراوێن تومارکری دا ببینە.,کلینیکێن د ڕێکخراوێن تۆمارکری دا ببینە.,yes
+src/features/administration/presentation/messages.ts,createClinic,Onboard clinic,کلینیکەکێ زێدە بکە,کلینیکەکێ زێدە بکە,
+src/features/administration/presentation/messages.ts,clinicCreated,Clinic created,کلینیک هاتە دروستکرن,کلینیک هاتە دروستکرن,
+src/features/administration/presentation/messages.ts,noClinics,No clinics have been created yet.,هێشتا چ کلینیک نەهاتیە دروستکرن.,هێشتا چ کلینیک نەهاتیە دروستکرن.,
+src/features/administration/presentation/messages.ts,viewClinic,View clinic,کلینیکێ ببینە,کلینیکێ ببینە,
+src/features/administration/presentation/messages.ts,selectOrganization,Select organization,رێکخراو هەلبژێرە,ڕێکخراو هەلبژێرە,yes
+src/features/administration/presentation/messages.ts,clinicsInOrganization,Clinics in organization,کلینیکێن رێکخراوێ,کلینیکێن ڕێکخراوێ,yes
+src/features/administration/presentation/messages.ts,onboardClinic,Onboard clinic,کلینیکەکێ زێدە بکە,کلینیکەکێ زێدە بکە,
+src/features/administration/presentation/messages.ts,active,Active,چالاک,چالاک,
+src/features/administration/presentation/messages.ts,inactive,Inactive,نەچالاک,نەچالاک,
+src/features/administration/presentation/messages.ts,status,Status,رەوش,ڕەوش,yes
+src/features/administration/presentation/messages.ts,created,Created,هاتە چێکرن,هاتە دروستکرن,yes
+src/features/administration/presentation/messages.ts,updated,Updated,دویماهیک نویکرن,نویکرنا دوماهیێ,yes
+src/features/administration/presentation/messages.ts,identifier,Identifier,ناسنامە,ناسنامە,
+src/features/administration/presentation/messages.ts,timezone,Timezone,ناڤچەیا دەمێ,هەرێما دەمێ,yes
+src/features/administration/presentation/messages.ts,required,This field is required.,ئەڤ خانە پێدڤییە.,ئەڤ خانە پێدڤییە.,
+src/features/administration/presentation/messages.ts,invalidValue,Enter a valid value.,بهایەکێ دروست بنڤیسە,بهایەکێ دروست بنڤیسە.,yes
+src/features/administration/presentation/messages.ts,maximumLength,The value is too long.,بها زۆر درێژە.,بها گەلەک درێژە.,yes
+src/features/administration/presentation/messages.ts,invalidCode,"Use 2–32 letters, numbers, underscores, or hyphens.",2–32 پیت، ژمارە، _ یان - بکاربینە.,2–32 پیت، ژمارە، _ یان - بکار بینە.,yes
+src/features/administration/presentation/messages.ts,invalidTimezone,Enter an IANA timezone such as Asia/Baghdad.,ناوچەیا دەمێ یا IANA وەک Asia/Baghdad بنڤیسە.,هەرێما دەمێ یا IANA وەک Asia/Baghdad بنڤیسە.,yes
+src/features/administration/presentation/messages.ts,duplicateClinicCode,That clinic code is already used in this organization.,ئەو کودێ کلینیکێ ژبەری د ڤی رێکخراوی دا هاتیە بکارئینان.,ئەڤ کودێ کلینیکێ بەری نوکە د ڤی ڕێکخراوی دا هاتیە بکارئینان.,yes
+src/features/administration/presentation/messages.ts,create,Create,دروستبکە,دروست بکە,yes
+src/features/administration/presentation/messages.ts,creating,Creating…,دهێتە دروستکرن…,دهێتە دروستکرن…,
+src/features/administration/presentation/messages.ts,cancel,Cancel,ب هەلوەشینە,هەلوەشینە,yes
+src/features/administration/presentation/messages.ts,retry,Try again,دیسان هەول بدە,دیسان هەول بدە,
+src/features/administration/presentation/messages.ts,loadMore,Load more,پتر بار بکە,پتر بار بکە,
+src/features/administration/presentation/messages.ts,loading,Loading…,دهێتە بارکرن…,دهێتە بارکرن…,
+src/features/administration/presentation/messages.ts,loadingOrganizations,Loading organizations…,رێکخراو دهێنە بارکرن…,ڕێکخراو دهێنە بارکرن…,yes
+src/features/administration/presentation/messages.ts,organizationSelectionLimit,The organization list is too large to show safely. Review Organizations before trying again.,لیستا رێکخراوان زۆر مەزنە و ب پاراستی ناهێتە نیشاندان. بەری دیسان هەول بدەی، رێکخراوان بپشکنە.,لیستا ڕێکخراوان گەلەک مەزنە و ب پارێزراوی نیشان نادەین. بەری دیسان هەول بدەی، ڕێکخراوان بپشکنە.,yes
+src/features/administration/presentation/messages.ts,loadingClinics,Loading clinics…,کلینیک دهێنە بارکرن…,کلینیک دهێنە بارکرن…,
+src/features/administration/presentation/messages.ts,unavailable,Saxlem services are temporarily unavailable.,خزمەتگوزاریێن ساخلەم بو دەمکی بەردەست نینن.,خزمەتێن ساخلەم بۆ دەمەکێ کورت بەردەست نینن.,yes
+src/features/administration/presentation/messages.ts,forbidden,You do not have permission to use administration.,دەستگەهیشتن بۆ ڤێ بەشێ نینە.,دەستهەلاتا تە بۆ ڤێ بەشێ نینە.,yes
+src/features/administration/presentation/messages.ts,sessionExpired,Your session expired. Sign in again.,دانیشتنا تە دوماهی هات. دیسان بچۆ ژوور.,دانیشتنا تە دوماهی هات. دیسان بچە ژوور.,yes
+src/features/administration/presentation/messages.ts,notFound,The requested record could not be found.,تۆمار نەهاتە دیتن.,تۆمار نەهاتە دیتن.,
+src/features/administration/presentation/messages.ts,failure,Something went wrong. No unsafe change was made.,کێشەیەک روو دا. چ گوهۆڕینەکا نەپاراستی نەهاتە کرن.,تشتەک خەلەت چوو. چ گوهۆڕینەکا نەپاراستی نەهاتە کرن.,yes
+src/features/administration/presentation/messages.ts,conflict,This information conflicts with an existing record.,ئەڤ زانیاری ل گەل تومارەکێ هەیی ناکۆکە.,ئەڤ زانیاری دگەل تۆمارەکێ هەیی ناکۆکە.,yes
+src/features/administration/presentation/messages.ts,validation,Review the highlighted information.,زانیاریێن دیارکری بپشکنە.,زانیاریێن دیارکری بپشکنە.,
+src/features/administration/presentation/messages.ts,errorSummary,Please correct the following:,هیڤییە ئەڤێن ل خوارێ راست بکە:,هیڤییە ئەڤێن ل خوارێ دروست بکە:,yes
+src/features/administration/presentation/messages.ts,operationalDetails,Operational details,هویرکاتیێن کارکرنێ,هویرکاریێن کارکرنێ,yes
+src/features/administration/presentation/messages.ts,backToOrganizations,Back to organizations,ب ڤەگەرە بو رێکخراوان,ڤەگەڕە بۆ ڕێکخراوان,yes
+src/features/administration/presentation/messages.ts,backToClinics,Back to clinics,ب ڤەگەرە بو کلینیکان,ڤەگەڕە بۆ کلینیکان,yes
+src/features/administration/presentation/messages.ts,openOrganizations,Open organizations,رێکخراوان ڤەکە,ڕێکخراوان ڤەکە,yes
+src/features/administration/presentation/messages.ts,openClinics,Open clinics,کلینیک ڤەکرییە,کلینیکان ڤەکە,yes
+src/features/administration/presentation/messages.ts,onboarding,Onboarding,زێدەکرن,زێدەکرن,
+src/features/arrivals/presentation/messages.ts,title,Record patient arrival,تۆمارکرنا هاتنا نەخۆشی,تۆمارکرنا هاتنا نەخۆشی,
+src/features/arrivals/presentation/messages.ts,subtitle,Confirm the appointment before recording that the patient is physically at the clinic.,بەری تۆمارکرنا هاتنێ، ژوان و هاتنا نەخۆشی بۆ کلینیکێ پشتڕاست بکە.,بەری تۆمار بکەی کو نەخۆش ل کلینیکێ یە، ژڤانێ پشتڕاست بکە.,yes
+src/features/arrivals/presentation/messages.ts,arrival,Arrival,هاتن,هاتن,
+src/features/arrivals/presentation/messages.ts,patient,Patient,نەخوش,نەخۆش,yes
+src/features/arrivals/presentation/messages.ts,doctor,Doctor,نوژدار,نوژدار,
+src/features/arrivals/presentation/messages.ts,clinic,Clinic,کلینیک,کلینیک,
+src/features/arrivals/presentation/messages.ts,appointmentTime,Appointment time,دەمێ ژڤانێ,دەمێ ژڤانێ,
+src/features/arrivals/presentation/messages.ts,appointmentStatus,Appointment status,رەوشا ژڤانێ,ڕەوشا ژڤانێ,yes
+src/features/arrivals/presentation/messages.ts,arrivalStatus,Arrival status,رەوشا هاتنێ,ڕەوشا هاتنێ,yes
+src/features/arrivals/presentation/messages.ts,version,Arrival version,وەشانا هاتنێ,وەشانا هاتنێ,
+src/features/arrivals/presentation/messages.ts,expected,No arrival recorded,هاتن نەهاتە تۆمارکرن,هاتن نەهاتە تۆمارکرن,
+src/features/arrivals/presentation/messages.ts,arrived,Arrived,گەهشت,گەهشت,
+src/features/arrivals/presentation/messages.ts,queueReady,Ready to join the queue,ئامادەیە بچیتە رێزێ,ئامادەیە بچیتە ڕێزبەندیێ,yes
+src/features/arrivals/presentation/messages.ts,arrivedAt,Arrived at,دەمێ گەهشتنێ,دەمێ گەهشتنێ,
+src/features/arrivals/presentation/messages.ts,queueReadyAt,Queue ready at,دەمێ ئامادەبوونا رێزێ,دەمێ ئامادەبوونا ڕێزبەندیێ,yes
+src/features/arrivals/presentation/messages.ts,record,Record arrival,هاتنێ تومار بکە,هاتنێ تۆمار بکە,yes
+src/features/arrivals/presentation/messages.ts,confirmTitle,Record this patient’s arrival?,هاتنا ڤی نەخۆشی تۆمار بکەی؟,هاتنا ڤی نەخۆشی تۆمار بکەی؟,
+src/features/arrivals/presentation/messages.ts,confirmBody,This confirms the patient is physically at reception. It does not assign a queue ticket.,ئەڤە پشتڕاست دکەت کو نەخۆش ل پێشوازیێ ئامادەیە. ژمارەیەکا رێزێ ناهێتە دان.,ئەڤە پشتڕاست دکەت کو نەخۆش ل پێشوازیێ یە. ژمارا ڕێزبەندیێ نادەت.,yes
+src/features/arrivals/presentation/messages.ts,confirm,Confirm arrival,هاتنێ پشتراست بکە,هاتنێ پشتڕاست بکە,yes
+src/features/arrivals/presentation/messages.ts,cancel,Cancel,ب هەلوەشینە,هەلوەشینە,yes
+src/features/arrivals/presentation/messages.ts,pending,Recording…,دهێتە تۆمارکرن…,دهێتە تۆمارکرن…,
+src/features/arrivals/presentation/messages.ts,success,Arrival recorded.,هاتن هاتە تومارکرن,هاتن هاتە تۆمارکرن.,yes
+src/features/arrivals/presentation/messages.ts,replay,This arrival was already recorded. The latest status is shown.,ئەڤ هاتنە بەری نوکە هاتیە تۆمارکرن. رەوشا نوو دهێتە نیشاندان.,ئەڤ هاتنە بەری نوکە هاتیە تۆمارکرن. دوماهیک ڕەوش دیار دبیت.,yes
+src/features/arrivals/presentation/messages.ts,conflict,The arrival changed. Review the latest information and try again.,رەوشا هاتنێ هاتیە گوهارتن. زانیاریێن نوو ببینە و دیسان هەول بدە.,ڕەوشا هاتنێ هاتیە گوهۆڕین. دوماهیک زانیاریان ببینە و دیسان هەول بدە.,yes
+src/features/arrivals/presentation/messages.ts,invalidState,This appointment cannot be marked as arrived in its current state.,د ڤێ رەوشێ دا هاتنا ڤی ژوانی ناهێتە تۆمارکرن.,د ڕەوشا نوکە دا نابیت هاتنا ڤێ ژڤانێ بهێتە تۆمارکرن.,yes
+src/features/arrivals/presentation/messages.ts,outsideWindow,Arrival can only be recorded during the clinic’s arrival window.,هاتن تنێ د دەمێ دیارکری یێ کلینیکێ دا دهێتە تۆمارکرن.,هاتن تنێ د دەمێ دیارکری یێ کلینیکێ دا دهێتە تۆمارکرن.,
+src/features/arrivals/presentation/messages.ts,auditFailure,Arrival was not recorded because the security audit is unavailable.,هاتن نەهاتە تۆمارکرن چونکی تۆمارا پاراستنێ بەردەست نینە.,هاتن نەهاتە تۆمارکرن چونکی تۆمارا پاراستنێ بەردەست نینە.,
+src/features/arrivals/presentation/messages.ts,offline,The service cannot be reached. Check the connection and try again.,خزمەت ناهێتە گەهشتن. پەیوەندیێ بپشکنە و دیسان هەول بدە.,خزمەت ناهێتە گەهشتن. پەیوەندیێ بپشکنە و دیسان هەول بدە.,
+src/features/arrivals/presentation/messages.ts,unauthorized,Your session has expired. Sign in again.,دانیشتن دووماهی هات. دیسان بچو ژوور.,دانیشتن دوماهی هات. دیسان بچە ژوور.,yes
+src/features/arrivals/presentation/messages.ts,forbidden,You do not have permission to record arrival for this clinic.,دەستهەلاتا تۆمارکرنا هاتنێ بۆ ڤێ کلینیکێ نینە.,دەستهەلاتا تۆمارکرنا هاتنێ بۆ ڤێ کلینیکێ نینە.,
+src/features/arrivals/presentation/messages.ts,notFound,The appointment or arrival record was not found.,ژوان یان تۆمارا هاتنێ نەهاتە دیتن.,ژڤان یان تۆمارا هاتنێ نەهاتە دیتن.,yes
+src/features/arrivals/presentation/messages.ts,validation,Check the appointment information and try again.,زانیاریێن ژوانی بپشکنە و دیسان هەول بدە.,زانیاریێن ژڤانێ بپشکنە و دیسان هەول بدە.,yes
+src/features/arrivals/presentation/messages.ts,backendError,Arrival could not be completed.,هاتن نەشیا تەمام ببیت.,هاتن تەمام نەبوو.,yes
+src/features/arrivals/presentation/messages.ts,retry,Try again,دیسان هەول بدە,دیسان هەول بدە,
+src/features/arrivals/presentation/messages.ts,back,Back to appointment,ڤەگەڕە ژوانی,ڤەگەڕە بۆ ژڤانێ,yes
+src/features/arrivals/presentation/messages.ts,queueSeparate,Queue entry is a separate next step. Recording arrival alone never assigns a ticket.,چوونا رێزێ گاڤەکا جودایە. تۆمارکرنا هاتنێ بتنێ ژمارەی رێزێ نادەت.,چوونا ڕێزبەندیێ گاڤەکا جودایە. تۆمارکرنا هاتنێ ب تنێ ژمارا ڕێزبەندیێ نادەت.,yes
+src/features/arrivals/presentation/messages.ts,loading,Loading arrival status…,رەوشا هاتنێ بار دبیت…,ڕەوشا هاتنێ بار دبیت…,yes
+src/features/arrivals/presentation/messages.ts,partialError,"Appointment details are available, but arrival status could not be loaded.",وردەکاریێن ژوانی بەردەستن، لێ رەوشا هاتنێ بار نەبوو.,هویرکاریێن ژڤانێ بەردەستن، لێ ڕەوشا هاتنێ بار نەبوو.,yes
+src/features/arrivals/presentation/messages.ts,openArrival,Open arrival workflow,کارێ هاتنێ ڤەکە,کارێ هاتنێ ڤەکە,
+src/features/live-queue/presentation/messages.ts,liveQueue,Live Queue,رێزبەندییا زندی,ڕێزبەندییا زندی,yes
+src/features/live-queue/presentation/messages.ts,title,Queue Operations,کارێن سرایێ,کارێن ڕێزبەندیێ,yes
+src/features/live-queue/presentation/messages.ts,subtitle,"See who is being seen, who is next, and the action required now.",ببینە کێ د پشکنینێ دایە، کێ ل دویفرا یە، و نوکە چ کار پێدڤییە.,ببینە کێ ل دەڤ نوژداری یە، کێ ل دویفرا یە، و نوکە چ کار پێدڤییە.,yes
+src/features/live-queue/presentation/messages.ts,clinicQueueStatus,Clinic Queue Status,رەوشا سرایا کلینیکێ,ڕەوشا ڕێزبەندییا کلینیکێ,yes
+src/features/live-queue/presentation/messages.ts,queue,Queue,سرا,سرا,
+src/features/live-queue/presentation/messages.ts,open,Open,ڤەکە,ڤەکری,yes
+src/features/live-queue/presentation/messages.ts,closed,Closed,گرتی,گرتی,
+src/features/live-queue/presentation/messages.ts,paused,Paused,بو دەمکی هاتە راگرتن,بۆ دەمەکێ کورت هاتە ڕاگرتن,yes
+src/features/live-queue/presentation/messages.ts,currentNumber,Current number,ژمارا نوکە,ژمارا نوکە,
+src/features/live-queue/presentation/messages.ts,waitingPatients,Waiting patients,نەخوشێن چاڤەرێ,نەخۆشێن ل چاڤەڕێ,yes
+src/features/live-queue/presentation/messages.ts,averageWait,Average wait,تێکڕا چاڤەرێکرنێ,تێکڕا چاڤەڕێکرنێ,yes
+src/features/live-queue/presentation/messages.ts,minutes,{minutes} minutes,{minutes} خولەک,{minutes} خولەک,
+src/features/live-queue/presentation/messages.ts,queueHealth,Queue Health,رەوشا سرایێ,ڕەوشا ڕێزبەندیێ,yes
+src/features/live-queue/presentation/messages.ts,healthy,Healthy,باش,باش,
+src/features/live-queue/presentation/messages.ts,busy,Busy,مژویل,مژویل,
+src/features/live-queue/presentation/messages.ts,delayed,Delayed,پاشکەفتی,درەنگ,yes
+src/features/live-queue/presentation/messages.ts,healthyHelp,The queue is moving at a comfortable pace.,سرا ب خێراییەکا باش دچیت.,ڕێزبەندی ب لەزەکا ئاسایی دچیتە پێش.,yes
+src/features/live-queue/presentation/messages.ts,busyHelp,More patients are waiting than usual. Keep the queue moving.,ژ ئاسایی پتر نەخوش ل چاڤەرێ نە. سرایێ بەردەوام ببە پێش.,ژ ئاسایی پتر نەخۆش ل چاڤەڕێ نە. ڕێزبەندیێ بەردەوام ببە پێش.,yes
+src/features/live-queue/presentation/messages.ts,delayedHelp,Patients are waiting longer than expected.,نەخوش پتر ژ دەمێ پێشبینی کری چاڤەرێ نە.,نەخۆش ژ دەمێ پێشبینی کری پتر ل چاڤەڕێ نە.,yes
+src/features/live-queue/presentation/messages.ts,currentPatient,Current Patient,نەخوشێ نوکە,نەخۆشێ نوکە,yes
+src/features/live-queue/presentation/messages.ts,patient,Patient,نەخوش,نەخۆش,yes
+src/features/live-queue/presentation/messages.ts,number,Number,ژمارە,ژمارە,
+src/features/live-queue/presentation/messages.ts,elapsed,Elapsed consultation time,دەمێ بوری یێ پشکنینێ,دەمێ بۆری یێ پشکنینێ,yes
+src/features/live-queue/presentation/messages.ts,status,Status,رەوش,ڕەوش,yes
+src/features/live-queue/presentation/messages.ts,called,Called,هاتە بانگکرن,هاتە بانگکرن,
+src/features/live-queue/presentation/messages.ts,inConsultation,In consultation,د پشکنینێ دا,د پشکنینێ دا,
+src/features/live-queue/presentation/messages.ts,completeConsultation,Complete Consultation,پشکنینێ تەمام بکە,پشکنینێ تەمام بکە,
+src/features/live-queue/presentation/messages.ts,recallPatient,Recall Patient,نەخوشی دیسان بانگ بکە,نەخۆشی دیسان بانگ بکە,yes
+src/features/live-queue/presentation/messages.ts,markNoResponse,Mark No Response,بێ بەرسڤ تومار بکە,بێ بەرسڤ تۆمار بکە,yes
+src/features/live-queue/presentation/messages.ts,noCurrent,No patient is currently being seen.,نوکە چ نەخوش د پشکنینێ دا نینە,نوکە چ نەخۆش د پشکنینێ دا نینە.,yes
+src/features/live-queue/presentation/messages.ts,nextThree,Next Three Patients,سێ نەخوشێن ل دویفرا,سێ نەخۆشێن ل دویفرا,yes
+src/features/live-queue/presentation/messages.ts,ready,Ready,ئامادە,ئامادە,
+src/features/live-queue/presentation/messages.ts,estimatedWait,About {minutes} minutes,نێزیکی {minutes} خولەکان,نێزیکی {minutes} خولەکان,
+src/features/live-queue/presentation/messages.ts,arrived,Arrived,گەهشت,گەهشت,
+src/features/live-queue/presentation/messages.ts,waiting,Waiting,ل چاڤەرێ,ل چاڤەڕێ,yes
+src/features/live-queue/presentation/messages.ts,callNext,Call Next,نەخوشێ ل دویفرا بانگ بکە,نەخۆشێ ل دویفرا بانگ بکە,yes
+src/features/live-queue/presentation/messages.ts,noWaiting,No patients are ready to be called.,چ نەخوش بو بانگکرنێ ئامادە نینن,چ نەخۆش بۆ بانگکرنێ ئامادە نینن.,yes
+src/features/live-queue/presentation/messages.ts,waitingList,Waiting List,سرایا چاڤەرێ,لیستا چاڤەڕێیێ,yes
+src/features/live-queue/presentation/messages.ts,queueNumber,Queue #,ژمارا سرایێ,ژمارا ڕێزبەندیێ,yes
+src/features/live-queue/presentation/messages.ts,doctor,Doctor,نوژدار,نوژدار,
+src/features/live-queue/presentation/messages.ts,arrival,Arrival,هاتن,هاتن,
+src/features/live-queue/presentation/messages.ts,estimatedWaitLabel,Estimated wait,دەمێ چاڤەرێکرنا پێشبینی کری,مەزەندەیا چاڤەڕێیێ,yes
+src/features/live-queue/presentation/messages.ts,action,Action,کار,کار,
+src/features/live-queue/presentation/messages.ts,viewWorkspace,View Workspace,جهێ کاری ببینە,جهێ کاری ببینە,
+src/features/live-queue/presentation/messages.ts,recentActivity,Recent Activity,چالاکییا نوی,چالاکیێن دوماهیێ,yes
+src/features/live-queue/presentation/messages.ts,operationalActions,Operational Actions,کارێن بەڕێڤەبرنێ,کارێن ڕێڤەبرنێ,yes
+src/features/live-queue/presentation/messages.ts,openQueue,Open Queue,رێزبەندی ڤەکریە,ڕێزبەندیێ ڤەکە,yes
+src/features/live-queue/presentation/messages.ts,pauseQueue,Pause Queue,سرایێ بو دەمکی رابگرە,ڕێزبەندیێ بۆ دەمەکێ کورت ڕابگرە,yes
+src/features/live-queue/presentation/messages.ts,resumeQueue,Resume Queue,سرایێ دیسان بەردەوام بکە,ڕێزبەندیێ دیسان بەردەوام بکە,yes
+src/features/live-queue/presentation/messages.ts,confirmPause,Pause this queue? Patients will remain in their current positions.,تو دخوازی ڤێ سرایێ بو دەمکی رابگری؟ نەخوش د جهێن خو یێن نوکە دا دمینن.,تە دڤێت ڤێ ڕێزبەندیێ بۆ دەمەکێ کورت ڕابگری؟ نەخۆش د جهێن خو یێن نوکە دا دمینن.,yes
+src/features/live-queue/presentation/messages.ts,confirmComplete,Complete this consultation? The patient will leave the active queue.,تو دخوازی ڤێ پشکنینێ تەمام بکەی؟ نەخوش دێ ژ سرایا چالاک دەرکەڤیت.,تە دڤێت ڤێ پشکنینێ تەمام بکەی؟ نەخۆش دێ ژ ڕێزبەندییا چالاک دەرکەڤیت.,yes
+src/features/live-queue/presentation/messages.ts,queueOpened,Queue opened,سرا هاتە ڤەکرن,ڕێزبەندی هاتە ڤەکرن,yes
+src/features/live-queue/presentation/messages.ts,queuePaused,Queue paused,رێزبەندی بو دەمکی هاتە راگرتن,ڕێزبەندی بۆ دەمەکێ کورت هاتە ڕاگرتن,yes
+src/features/live-queue/presentation/messages.ts,queueResumed,Queue resumed,سرا دیسان بەردەوام بوو,ڕێزبەندی دیسان دەست پێ کر,yes
+src/features/live-queue/presentation/messages.ts,patientCalled,Patient called,نەخوش هاتە بانگکرن,نەخۆش هاتە بانگکرن,yes
+src/features/live-queue/presentation/messages.ts,patientRecalled,Patient recalled,نەخوش دیسان هاتە بانگکرن,نەخۆش دیسان هاتە بانگکرن,yes
+src/features/live-queue/presentation/messages.ts,noResponse,No response recorded,بێ بەرسڤ هاتە تومارکرن,بێ بەرسڤ هاتە تۆمارکرن,yes
+src/features/live-queue/presentation/messages.ts,consultationCompleted,Consultation completed,پشکنین تەمام بوو,پشکنین تەمام بوو,
+src/features/live-queue/presentation/messages.ts,success,{change}. Current patient: {current}. Next patient: {next}. Queue health: {health}.,{change}. نەخوشێ نوکە: {current}. نەخوشێ ل دویفرا: {next}. رەوشا سرایێ: {health}.,{change}. نەخۆشێ نوکە: {current}. نەخۆشێ ل دویفرا: {next}. ڕەوشا ڕێزبەندیێ: {health}.,yes
+src/features/live-queue/presentation/messages.ts,none,None,نینە,نینە,
+src/features/live-queue/presentation/messages.ts,stale,The queue changed before your action was saved. Refresh and try again.,بەری پاراستنا کارێ تە، سرا هاتە گهورین. لاپەری نوو بکە و دیسان هەول بدە.,بەری کارێ تە بهێتە پاراستن، ڕێزبەندی هاتە گوهۆڕین. لاپەڕێ نوی بکە و دیسان هەول بدە.,yes
+src/features/live-queue/presentation/messages.ts,queueClosed,Open the queue before calling a patient.,بەری بانگکرنا نەخوشی سرایێ ڤەکە.,بەری بانگکرنا نەخۆشی ڕێزبەندیێ ڤەکە.,yes
+src/features/live-queue/presentation/messages.ts,queueIsPaused,Resume the queue before continuing.,بەری بەردەوامبوونێ سرایێ دیسان بەردەوام بکە.,بەری بەردەوام ببی، ڕێزبەندیێ دیسان دەست پێ بکە.,yes
+src/features/live-queue/presentation/messages.ts,operationFailed,The queue could not be updated. No unsafe change was made.,نویکرنا سرایێ سەرنەکەفت. چ گهورینەکا نەپاراستی نەهاتە کرن.,نویکرنا ڕێزبەندیێ سەرنەکەفت. چ گوهۆڕینەکا نەپاراستی نەهاتە کرن.,yes
+src/features/billing/presentation/statement-messages.ts,billing,Billing,پسوولە,پسوولە,
+src/features/billing/presentation/statement-messages.ts,intro,"Every 30 days each doctor gets a statement from Saxlem: commission on app bookings, money patients paid in the app, and who pays whom.",هەر 30 رۆژان جارەکێ هەر نوژدارەک کەشفەکێ ژ ساخلەم وەردگریت: کۆمیسیۆن ل سەر ژڤانێن ئەپی، ئەو پارەیێن نەخوشان د ئەپی دا داین، و کی پارێ ددەتە کێ.,هەر 30 ڕۆژان جارەکێ هەر نوژدارەک کەشفەکێ ژ ساخلەم وەردگریت: کۆمیسیۆن ل سەر ژڤانێن ئەپی، ئەو پارەیێن نەخۆشان د ئەپی دا داین، و کێ پارێ ددەتە کێ.,yes
+src/features/billing/presentation/statement-messages.ts,current,Current statement,کەشفێ نوکە,کەشفێ نوکە,
+src/features/billing/presentation/statement-messages.ts,history,Statements,کەشف,کەشف,
+src/features/billing/presentation/statement-messages.ts,noStatements,No statements yet.,هێشتا چ کەشف نینن.,هێشتا چ کەشف نینن.,
+src/features/billing/presentation/statement-messages.ts,view,Open statement,کەشفی ڤەکە,کەشفی ڤەکە,
+src/features/billing/presentation/statement-messages.ts,commissionSoFar,Commission,کۆمیسیۆن,کۆمیسیۆن,
+src/features/billing/presentation/statement-messages.ts,appPayments,Paid in the app,د ئەپی دا هاتیە دان,د ئەپی دا هاتیە دان,
+src/features/billing/presentation/statement-messages.ts,result,Result,ئەنجام,ئەنجام,
+src/features/billing/presentation/statement-messages.ts,commissionsTab,Commission lines,هێلێن کۆمیسیۆنێ,هێلێن کۆمیسیۆنێ,
+src/features/billing/presentation/statement-messages.ts,statement,Statement,کەشفێ حسابی,کەشفێ حسابی,
+src/features/billing/presentation/statement-messages.ts,number,Number,ژمارە,ژمارە,
+src/features/billing/presentation/statement-messages.ts,period,Period,ماوە,ماوە,
+src/features/billing/presentation/statement-messages.ts,cycle,Cycle,خول,خول,
+src/features/billing/presentation/statement-messages.ts,issued,Issued,دەرچوون,دەرچوون,
+src/features/billing/presentation/statement-messages.ts,status,Status,رەوش,ڕەوش,yes
+src/features/billing/presentation/statement-messages.ts,statuses.open,Running: amounts can still change,بەردەوامە: بڕ دشێن بگوهۆڕن,بەردەوامە: بڕ دشێن بگوهۆڕن,
+src/features/billing/presentation/statement-messages.ts,statuses.due,Ready to settle,ئامادەیە بۆ یەکلاکرنێ,ئامادەیە بۆ یەکلاکرنێ,
+src/features/billing/presentation/statement-messages.ts,statuses.waiting,Waiting for an older statement,چاڤەڕێی کەشفەکێ کەڤنترە,چاڤەڕێی کەشفەکێ کەڤنترە,
+src/features/billing/presentation/statement-messages.ts,statuses.settled,Settled,یەکلاکرییە,یەکلاکرییە,
+src/features/billing/presentation/statement-messages.ts,short.open,Running,بەردەوامە,بەردەوامە,
+src/features/billing/presentation/statement-messages.ts,short.due,Ready to settle,ئامادەیە بۆ یەکلاکرنێ,ئامادەیە بۆ یەکلاکرنێ,
+src/features/billing/presentation/statement-messages.ts,short.waiting,Waiting,چاڤەڕێیە,چاڤەڕێیە,
+src/features/billing/presentation/statement-messages.ts,short.settled,Settled,یەکلاکرییە,یەکلاکرییە,
+src/features/billing/presentation/statement-messages.ts,short.carried,"Unpaid, carried forward",نەدای، چوو بۆ کەشفێ دویڤدا,نەدای، چوو بۆ کەشفێ دویڤدا,
+src/features/billing/presentation/statement-messages.ts,from,From,ژ,ژ,
+src/features/billing/presentation/statement-messages.ts,to,To,بۆ,بۆ,
+src/features/billing/presentation/statement-messages.ts,saxlemPlace,"Duhok, Kurdistan Region of Iraq",دهۆک، هەرێما کوردستانا عێراقێ,دهۆک، هەرێما کوردستانا عیراقێ,yes
+src/features/billing/presentation/statement-messages.ts,tagline,Healthcare booking · Kurdistan Region,گرتنا ژڤانێن نوژداری · هەرێما کوردستانێ,گرتنا ژڤانێن نوژداری · هەرێما کوردستانێ,
+src/features/billing/presentation/statement-messages.ts,even,Nothing owed either way,چ لایەن قەرزدار نینە,چ لایەن قەرزدار نینە,
+src/features/billing/presentation/statement-messages.ts,inCash,"Paid in cash, in person.",ب کاش و ب دەستێ خو دهێتە دان.,ب کاش و ب دەستێ خو دهێتە دان.,
+src/features/billing/presentation/statement-messages.ts,byFibOrCash,By FIB transfer or in cash.,ب ڤەگوهاستنا FIB یان ب کاش.,ب ڤەگوهاستنا FIB یان ب کاش.,
+src/features/billing/presentation/statement-messages.ts,noPayment,This statement closes with no payment.,ئەڤ کەشفە بێی پارەدان دهێتە گرتن.,ئەڤ کەشفە بێی پارەدان دهێتە گرتن.,
+src/features/billing/presentation/statement-messages.ts,howItAddsUp,How it adds up,حساب چاوا دهێتە کرن,حساب چاوا دهێتە کرن,
+src/features/billing/presentation/statement-messages.ts,refundsBack,"Refunds of earlier payouts, taken back",زڤڕاندنێن پارەدانێن بەری، هاتینە ڤەگرتن,ڤەگەڕاندنێن پارەدانێن بەری، هاتینە ڤەگرتن,yes
+src/features/billing/presentation/statement-messages.ts,visits,Visits,سەردان,سەردان,
+src/features/billing/presentation/statement-messages.ts,completed,Completed,تەمام بووی,تەمام بووی,
+src/features/billing/presentation/statement-messages.ts,noShows,No-shows,نەهاتین,نەهاتین,
+src/features/billing/presentation/statement-messages.ts,cancelled,Cancelled,هاتینە هەلوەشاندن,هاتینە هەلوەشاندن,
+src/features/billing/presentation/statement-messages.ts,upcoming,Still to come,دێ هێن,یێن داهاتی,yes
+src/features/billing/presentation/statement-messages.ts,bookedInApp,Booked in the app,ب ئەپی هاتینە گرتن,ب ئەپی هاتینە گرتن,
+src/features/billing/presentation/statement-messages.ts,byPhone,By phone,ب تەلەفۆنێ,ب تەلەفۆنێ,
+src/features/billing/presentation/statement-messages.ts,walkIns,Walk-ins,راستەوخۆ هاتین,بێ ژڤان هاتین,yes
+src/features/billing/presentation/statement-messages.ts,revenue,Revenue recorded,داهاتێ تۆمارکری,داهاتێ تۆمارکری,
+src/features/billing/presentation/statement-messages.ts,total,Total,کۆ,کۆ,
+src/features/billing/presentation/statement-messages.ts,counterNote,Counter money stays with the clinic. Only app bookings carry a commission.,پارێ پێشوازیێ ل دەڤ کلینیکێ دمینیت. تنێ ژڤانێن ئەپی کۆمیسیۆن هەیە.,پارێ پێشوازیێ ل دەڤ کلینیکێ دمینیت. تنێ ژڤانێن ئەپی کۆمیسیۆن هەیە.,
+src/features/billing/presentation/statement-messages.ts,commissionTitle,Commission on app bookings,کۆمیسیۆن ل سەر ژڤانێن ئەپی,کۆمیسیۆن ل سەر ژڤانێن ئەپی,
+src/features/billing/presentation/statement-messages.ts,visit,Visit,سەردان,سەردان,
+src/features/billing/presentation/statement-messages.ts,booking,Booking,ژڤان,ژڤان,
+src/features/billing/presentation/statement-messages.ts,plan,Plan,پلان,پلان,
+src/features/billing/presentation/statement-messages.ts,amount,Amount,بڕ,بڕ,
+src/features/billing/presentation/statement-messages.ts,noCommission,No commission this period.,د ڤێ ماوەیێ دا چ کۆمیسیۆن نینە.,د ڤێ ماوەیێ دا چ کۆمیسیۆن نینە.,
+src/features/billing/presentation/statement-messages.ts,appPaymentsTitle,Paid by patients in the app,ئەوێ نەخوشان د ئەپی دا داین,ئەوێ نەخۆشان د ئەپی دا داین,yes
+src/features/billing/presentation/statement-messages.ts,paid,Paid,هاتیە دان,هاتیە دان,
+src/features/billing/presentation/statement-messages.ts,noAppPayments,No app payments this period.,د ڤێ ماوەیێ دا چ پارەدانێن ئەپی نینن.,د ڤێ ماوەیێ دا چ پارەدانێن ئەپی نینن.,
+src/features/billing/presentation/statement-messages.ts,refundsTitle,Refunds taken back,زڤڕاندنێن ڤەگرتی,ڤەگەڕاندنێن ڤەگرتی,yes
+src/features/billing/presentation/statement-messages.ts,settlement,Settlement,یەکلاکرن,یەکلاکرن,
+src/features/billing/presentation/statement-messages.ts,cash,Cash,کاش,کاش,
+src/features/billing/presentation/statement-messages.ts,fib,FIB transfer,ڤەگوهاستنا FIB,ڤەگوهاستنا FIB,
+src/features/billing/presentation/statement-messages.ts,receipt,Receipt,پسوولە,پسوولە,
+src/features/billing/presentation/statement-messages.ts,reference,Reference,ژمارا ڤەگوهاستنێ,ژمارا ڤەگوهاستنێ,
+src/features/billing/presentation/statement-messages.ts,paidBy,Paid by,دای ژ لایێ,دای ژ لایێ,
+src/features/billing/presentation/statement-messages.ts,receivedBy,Received by,وەرگرت ژ لایێ,وەرگرت ژ لایێ,
+src/features/billing/presentation/statement-messages.ts,recordedBy,Recorded by,تۆمارکر ژ لایێ,تۆمارکر ژ لایێ,
+src/features/billing/presentation/statement-messages.ts,note,Note,تێبینی,تێبینی,
+src/features/billing/presentation/statement-messages.ts,notSettled,Not settled yet.,هێشتا نەهاتیە یەکلاکرن.,هێشتا نەهاتیە یەکلاکرن.,
+src/features/billing/presentation/statement-messages.ts,forSaxlem,For Saxlem,بۆ ساخلەم,بۆ ساخلەم,
+src/features/billing/presentation/statement-messages.ts,print,Print or save as PDF,چاپکرن یان پاشەکەفتن وەک PDF,چاپ بکە یان وەک PDF پاشەکەفت بکە,yes
+src/features/billing/presentation/statement-messages.ts,back,Billing,پسوولە,پسوولە,
+src/features/billing/presentation/statement-messages.ts,previous,Previous statement,کەشفێ بەری,کەشفێ بەری,
+src/features/billing/presentation/statement-messages.ts,next,Next statement,کەشفێ دویڤدا,کەشفێ دویڤدا,
+src/features/billing/presentation/statement-messages.ts,unavailable,Statements are unavailable right now. Try again.,کەشف نوکە بەردەست نینن. دیسا هەول بدە.,کەشف نوکە بەردەست نینن. دیسان هەول بدە.,yes
+src/features/billing/presentation/statement-messages.ts,notFound,This statement was not found.,ئەڤ کەشفە نەهاتە دیتن.,ئەڤ کەشفە نەهاتە دیتن.,
+src/features/billing/presentation/statement-messages.ts,reminder,Payment reminder,بیرئینانا پارەدانێ,بیرئینانا پارەدانێ,
+src/features/billing/presentation/statement-messages.ts,iqd,IQD,IQD,IQD,
+src/features/live-queue/presentation/production-messages.ts,title,Live queue,رێزبەندییا زندی,ڕێزبەندییا زندی,yes
+src/features/live-queue/presentation/production-messages.ts,selectDoctor,Choose doctor,نوژداری هەلبژێرە,نوژداری هەلبژێرە,
+src/features/live-queue/presentation/production-messages.ts,chooseHint,"Choose a doctor to see and run today’s queue: call the next patient, recall, pause or close.",نوژدارەکی هەلبژێرە دا رێزبەندییا ئەڤرۆ ببینی و ب رێڤە ببەی: بانگکرنا نەخوشێ دویڤدا، دیسان بانگکرن، راگرتن یان گرتن.,نوژدارەکی هەلبژێرە دا ڕێزبەندییا ئەڤرۆ ببینی و ب ڕێڤە ببەی: بانگکرنا نەخۆشێ دویڤدا، دیسان بانگکرن، ڕاگرتن یان گرتن.,yes
+src/features/live-queue/presentation/production-messages.ts,choose,Choose,هەلبژارتن,هەلبژێرە,yes
+src/features/live-queue/presentation/production-messages.ts,noQueue,No queue is open for this doctor today.,بۆ ڤی نوژداری ئەڤڕۆ هیچ رێزەک ڤەنەکریە.,بۆ ڤی نوژداری ئەڤرۆ چ ڕێزبەندی نەهاتیە ڤەکرن.,yes
+src/features/live-queue/presentation/production-messages.ts,openQueue,Open today’s queue,رێزبەندییا ئەڤرو ڤەکە,ڕێزبەندییا ئەڤرۆ ڤەکە,yes
+src/features/live-queue/presentation/production-messages.ts,status,Queue status,رەوشا رێزبەندیێ,ڕەوشا ڕێزبەندیێ,yes
+src/features/live-queue/presentation/production-messages.ts,open,Open,ڤەکری,ڤەکری,
+src/features/live-queue/presentation/production-messages.ts,paused,Paused,بو دەمکی هاتە راگرتن,بۆ دەمەکێ کورت هاتە ڕاگرتن,yes
+src/features/live-queue/presentation/production-messages.ts,closed,Closed,گرتی,گرتی,
+src/features/live-queue/presentation/production-messages.ts,notStarted,Not started,دەستپێ نەکری,دەست پێ نەکرییە,yes
+src/features/live-queue/presentation/production-messages.ts,waiting,Waiting,ل چاڤەرێ,ل چاڤەڕێ,yes
+src/features/live-queue/presentation/production-messages.ts,current,Current patient,نەخوشێ نوکە,نەخۆشێ نوکە,yes
+src/features/live-queue/presentation/production-messages.ts,none,None,نینە,نینە,
+src/features/live-queue/presentation/production-messages.ts,ticket,Ticket,ژمارە,تیکێت,yes
+src/features/live-queue/presentation/production-messages.ts,patient,Patient,نەخوش,نەخۆش,yes
+src/features/live-queue/presentation/production-messages.ts,entryStatus,Entry status,رەوشا چوونا ژور,ڕەوشا چوونا ڕێزبەندیێ,yes
+src/features/live-queue/presentation/production-messages.ts,enqueuedAt,Enqueued,دەمێ چوونا رێزێ,دەمێ چوونا ڕێزبەندیێ,yes
+src/features/live-queue/presentation/production-messages.ts,updated,Updated,نووکرنا دوماهیێ,نویکرنا دوماهیێ,yes
+src/features/live-queue/presentation/production-messages.ts,refresh,Refresh,نوو بکە,نوی بکە,yes
+src/features/live-queue/presentation/production-messages.ts,next,Next page,لاپەڕا پاش,لاپەڕا پاش,
+src/features/live-queue/presentation/production-messages.ts,pause,Pause queue,رێزێ بوەستینە,ڕێزبەندیێ ڕابگرە,yes
+src/features/live-queue/presentation/production-messages.ts,resume,Resume queue,رێزێ بەردەوام بکە,ڕێزبەندیێ دیسان دەست پێ بکە,yes
+src/features/live-queue/presentation/production-messages.ts,close,Close queue,رێزبەندیێ بگرە,ڕێزبەندیێ بگرە,yes
+src/features/live-queue/presentation/production-messages.ts,callNext,Call next,نەخوشێ ل دویفرا بانگ بکە,نەخۆشێ ل دویفرا بانگ بکە,yes
+src/features/live-queue/presentation/production-messages.ts,recall,Recall,دیسان بانگ بکە,دیسان بانگ بکە,
+src/features/live-queue/presentation/production-messages.ts,noResponse,Mark no response,بێ بەرسڤ تومار بکە,بێ بەرسڤ تۆمار بکە,yes
+src/features/live-queue/presentation/production-messages.ts,enqueue,Add arrival to queue,هاتنێ بخە رێزێ,هاتنێ بخە ڕێزبەندیێ,yes
+src/features/live-queue/presentation/production-messages.ts,appointmentId,Appointment ID,ژمارا ژڤانێ,ژمارا ژڤانێ,
+src/features/live-queue/presentation/production-messages.ts,appointmentReference,Appointment reference,ناسناما ژڤانێ,کودێ ژڤانێ,yes
+src/features/live-queue/presentation/production-messages.ts,ticketAssigned,Ticket assigned,ژمارا رێزێ هاتە دان,تیکێت هاتە دان,yes
+src/features/live-queue/presentation/production-messages.ts,queueSeparate,Recording arrival does not assign a ticket. Adding the patient to this queue is a separate action.,تۆمارکرنا هاتنێ ژمارە نادەت. خستنا نەخۆشی د رێزێ دا گاڤەکا جودایە.,تۆمارکرنا هاتنێ تیکێتێ نادەت. خستنا نەخۆشی د ڤێ ڕێزبەندیێ دا گاڤەکا جودایە.,yes
+src/features/live-queue/presentation/production-messages.ts,success,Queue updated.,رێز هاتە نووکرن.,ڕێزبەندی هاتە نویکرن.,yes
+src/features/live-queue/presentation/production-messages.ts,conflict,The queue changed. Refresh and try again.,سرا هاتە گهورین. لاپەری نوی بکە و دیسان هەول بدە.,ڕێزبەندی هاتە گوهۆڕین. لاپەڕێ نوی بکە و دیسان هەول بدە.,yes
+src/features/live-queue/presentation/production-messages.ts,offline,The service cannot be reached.,خزمەت ناهێتە گەهشتن.,خزمەت ناهێتە گەهشتن.,
+src/features/live-queue/presentation/production-messages.ts,forbidden,You do not have access to this clinic queue.,دەستهەلاتا ڤێ رێزا کلینیکێ نینە.,دەستهەلاتا تە بۆ ڤێ ڕێزبەندییا کلینیکێ نینە.,yes
+src/features/live-queue/presentation/production-messages.ts,notFound,The queue was not found.,رێز نەهاتە دیتن.,ڕێزبەندی نەهاتە دیتن.,yes
+src/features/live-queue/presentation/production-messages.ts,validation,Check the information and try again.,زانیارییان بپشکنە و دیسان هەول بدە,زانیارییان بپشکنە و دیسان هەول بدە.,yes
+src/features/live-queue/presentation/production-messages.ts,backendError,The queue operation could not be completed.,کارێ رێزێ تەمام نەبوو.,کارێ ڕێزبەندیێ تەمام نەبوو.,yes
+src/features/live-queue/presentation/production-messages.ts,paginationError,More entries could not be loaded. Existing entries remain visible.,زانیاریێن زێدە بار نەبوون. یێن هەین د نیشاندانێ دا دەمینن.,نەشیاین پتر بار بکەین. یێن هەین هێشتا دیارن.,yes
+src/features/live-queue/presentation/production-messages.ts,confirm,Confirm operation,پشتڕاست بکە,پشتڕاست بکە,
+src/features/live-queue/presentation/production-messages.ts,confirmDescription,Review this queue action before continuing.,بەری بەردەوامبوونێ کارێ ڕێزێ بپشکنە.,بەری بەردەوام ببی، کارێ ڕێزبەندیێ بپشکنە.,yes
+src/features/live-queue/presentation/production-messages.ts,cancel,Cancel,ب هەلوەشینە,هەلوەشینە,yes
+src/features/live-queue/presentation/production-messages.ts,pending,Working…,د کار دایە,د کار دایە…,yes
+src/features/live-queue/presentation/production-messages.ts,timezone,Queue timezone,دەمژمێرا رێزێ,هەرێما دەمێ ڕێزبەندیێ,yes
+src/features/live-queue/presentation/production-messages.ts,timezoneUnavailable,Not exposed by the current backend contract,د گرێبەستا نوکە یا خادم دا نینە,د گرێبەستا نوکە یا سێرڤەری دا نینە,yes
+src/features/live-queue/presentation/production-messages.ts,operationalDate,Operational date,رۆژا کارکردنێ,ڕۆژا کاری,yes
+src/features/live-queue/presentation/production-messages.ts,dateUnavailable,Not exposed by the current backend contract,د گرێبەستا نوکە یا خادم دا نینە,د گرێبەستا نوکە یا سێرڤەر دا نینە,yes
+src/features/live-queue/presentation/production-messages.ts,expected,Waiting,ل چاڤەرێ,ل چاڤەڕێ,yes
+src/features/live-queue/presentation/production-messages.ts,called,Called,هاتە بانگکرن,هاتە بانگکرن,
+src/features/live-queue/presentation/production-messages.ts,inConsultation,In consultation,د پشکنینێ دا,د پشکنینێ دا,
+src/features/live-queue/presentation/production-messages.ts,completed,Completed,تەمامبووی,تەمامبووی,
+src/features/live-queue/presentation/production-messages.ts,noResponseStatus,No response,بێ بەرسڤ,بێ بەرسڤ,
+src/features/live-queue/presentation/production-messages.ts,removed,Removed,هاتیە لادان,هاتە لادان,yes
+src/features/live-queue/presentation/production-messages.ts,nobodyWithDoctor,Nobody is with the doctor right now.,نوکە کەس ل دەڤ نوژداری نینە.,نوکە کەس ل دەڤ نوژداری نینە.,
+src/features/live-queue/presentation/production-messages.ts,nobodyWaiting,Nobody is waiting. New arrivals appear here.,کەس ل چاڤەرێ نینە. هاتیێن نوی ل ڤێرە دیار دبن.,کەس ل چاڤەڕێ نینە. هاتنێن نوی ل ڤێرێ دیار دبن.,yes
+src/features/live-queue/presentation/production-messages.ts,closeWarning,Closing ends today’s queue for this doctor. Patients still waiting will not be called.,گرتن رێزبەندییا ئەڤرو بو ڤی نوژداری ب دوماهی دئینیت. ئەوێن هێشتا ل چاڤەرێ بانگ ناهێنە کرن.,گرتن ڕێزبەندییا ئەڤرۆ یا ڤی نوژداری ب دوماهی دئینیت. ئەوێن هێشتا ل چاڤەڕێ، بانگ ناهێنە کرن.,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,loginTitle,Staff sign in,چوونا ژوور یا کارمەندان,چوونا ژوور بۆ کارمەندان,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,loginBody,Secure access for Saxlem clinic teams.,دەستگەیشتنی پارێزراو بۆ تیمی کلینیکا ساخلم.,چوونا ژوورا پارێزراو بۆ تیمێن کلینیکێن ساخلەم.,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,email,Email,ئیمەیڵ,ئیمەیل,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,password,Password,وشەی نهێنی,پەیڤا نهێنی,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,showPassword,Show password,وشەی نهێنی پیشان بدە,پەیڤا نهێنی نیشان بدە,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,hidePassword,Hide password,وشەی نهێنی بشارەوە,پەیڤا نهێنی ڤەشێرە,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,signIn,Sign in,چوونا ژوور,چوونا ژوور,
+src/features/portal-foundation/presentation/foundation-messages.ts,signingIn,Signing in,چوونا ژوور...,چوونا ژوور…,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,emailInvalid,Enter a valid email address.,ئیمەیڵەکا دروست بنڤیسە.,ئیمەیلەکا دروست بنڤیسە.,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,passwordInvalid,Password must contain at least 12 characters.,وشەی نهێنی پێدڤیە کێمترین ١٢ پیت بیت.,پەیڤا نهێنی دڤێت لانیکێم 12 پیت بیت.,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,invalidCredentials,The email or password is incorrect.,ئیمەیڵ یان وشەی نهێنی دروست نینە.,ئیمەیل یان پەیڤا نهێنی نە دروستە.,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,disabledAccount,This staff account is disabled.,ئەڤ هەژمارە هاتیە وەستاندن.,ئەڤ هەژمارا کارمەندی هاتیە ڕاوەستاندن.,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,unavailable,The service is temporarily unavailable.,خزمەتگوزاری نوکە بەردەست نینە.,خزمەت بۆ دەمەکێ کورت بەردەست نینە.,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,timeout,The request took too long. Try again.,داواکاری درێژ خایاند. دیسان هەول بدە.,داخوازێ گەلەک دەم کێشا. دیسان هەول بدە.,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,genericError,Sign in could not be completed.,چوونا ژوور سەرنەکەفت.,چوونا ژوور سەرنەکەفت.,
+src/features/portal-foundation/presentation/foundation-messages.ts,dashboard,Today,ئەڤرۆ,ئەڤرۆ,
+src/features/portal-foundation/presentation/foundation-messages.ts,patients,Patients,نەخۆش,نەخۆش,
+src/features/portal-foundation/presentation/foundation-messages.ts,appointments,Appointments,ژڤان,ژڤان,
+src/features/portal-foundation/presentation/foundation-messages.ts,liveQueue,Live queue,ریز بەندییا زندی,ڕێزبەندییا زندی,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,doctors,Doctors,نوژدار,نوژدار,
+src/features/portal-foundation/presentation/foundation-messages.ts,schedule,Schedule,خشتە,خشتە,
+src/features/portal-foundation/presentation/foundation-messages.ts,notifications,Notifications,ئاگەهداری,ئاگەهداری,
+src/features/portal-foundation/presentation/foundation-messages.ts,settings,Settings,رێکخستن,ڕێکخستن,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,workspace,Today,ئەڤرۆ,ئەڤرۆ,
+src/features/portal-foundation/presentation/foundation-messages.ts,todayPatients,Today’s Patients,نەخۆشێن ئەڤرۆ,نەخۆشێن ئەڤرۆ,
+src/features/portal-foundation/presentation/foundation-messages.ts,clinicManagement,Clinic Management,بەڕێڤەبرنا کلینیکێ,ڕێڤەبرنا کلینیکێ,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,administration,Administration,بەڕێڤەبرن,ڕێڤەبەری,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,organizations,Organizations,رێکخراو,ڕێکخراو,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,clinics,Clinics,کلینیک,کلینیک,
+src/features/portal-foundation/presentation/foundation-messages.ts,billing,Billing,پسوولە,پسوولە,
+src/features/portal-foundation/presentation/foundation-messages.ts,logout,Log out,دەرکەفتن,دەرکەفتن,
+src/features/portal-foundation/presentation/foundation-messages.ts,logoutAll,Log out all devices,دەرکەفتن ژ هەمی ئامێران,دەرکەفتن ژ هەمی ئامیران,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,openMenu,Open navigation,مێنوی ڤەکە,مێنوی ڤەکە,
+src/features/portal-foundation/presentation/foundation-messages.ts,closeMenu,Close navigation,مێنوی بگرە,مێنوی بگرە,
+src/features/portal-foundation/presentation/foundation-messages.ts,language,Language,زمان,زمان,
+src/features/portal-foundation/presentation/foundation-messages.ts,receptionist,Receptionist,کارمەندێ پێشوازیێ,کارمەندێ پێشوازیێ,
+src/features/portal-foundation/presentation/foundation-messages.ts,doctor,Doctor,نوژدار,نوژدار,
+src/features/portal-foundation/presentation/foundation-messages.ts,clinicManager,Clinic manager,بەڕێڤەبەرێ کلینیکێ,ڕێڤەبەرێ کلینیکێ,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,platformAdministrator,Platform administrator,بەڕێڤەبەرێ پلاتفۆرمێ,ڕێڤەبەرێ پلاتفۆرمێ,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,context,Current clinic context,چوارچۆڤەیا کلینیکا نوکە,کلینیکا نوکە,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,featureUnavailable,Not available yet,هێشتا بەردەست نینە,هێشتا بەردەست نینە,
+src/features/portal-foundation/presentation/foundation-messages.ts,futureOwner,Planned for {owner}.,بۆ {owner} هاتیە پلانکرن.,بۆ {owner} هاتیە پلانکرن.,
+src/features/portal-foundation/presentation/foundation-messages.ts,comingSoonBody,We are building this part of the portal. Everything else keeps working as usual.,ئەم ڤێ بەشا پۆرتالێ ئاڤا دکەین. هەمی بەشێن دی وەک هەردەم کار دکەن.,ئەم ڤێ بەشا پۆرتالێ ئاڤا دکەین. هەمی بەشێن دی وەک هەر جار کار دکەن.,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,loading,Loading secure portal,پۆرتالا پارێزراو دهێتە بارکرن,پۆرتالا پارێزراو دهێتە بارکرن,
+src/features/portal-foundation/presentation/foundation-messages.ts,unauthorized,Sign in required,چوونا ژوور پێدڤییە,چوونا ژوور پێدڤییە,
+src/features/portal-foundation/presentation/foundation-messages.ts,forbidden,You do not have access to this area.,دەستگەیشتن بۆ ڤێ بەشێ نینە.,دەستگەهشتن بۆ ڤێ بەشێ نینە.,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,sessionExpired,Your session expired. Sign in again.,دانیشتنا تە دوماهی هات. دیسان بچۆ ژوور.,دانیشتنا تە دوماهی هات. دیسان بچە ژوور.,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,offline,The portal cannot reach Saxlem services.,پۆرتال ناگەهیتە خزمەتگوزاریێن ساخلم.,پۆرتال ناگەهیتە خزمەتێن ساخلەم.,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,failure,Something went wrong.,کێشەیەک روو دا.,تشتەک خەلەت چوو.,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,notFound,Page not found,پەڕە نەهاتە دیتن,لاپەڕە نەهاتە دیتن,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,retry,Try again,دیسان هەول بدە,دیسان هەول بدە,
+src/features/portal-foundation/presentation/foundation-messages.ts,goHome,Back to home,ڤەگەڕە بو سەرەکی,ڤەگەڕە بۆ سەرەکی,yes
+src/features/portal-foundation/presentation/foundation-messages.ts,goLogin,Go to sign in,چوونا ژوور,چوونا ژوور,
+src/features/portal-foundation/presentation/foundation-messages.ts,skip,Skip to main content,بچۆ ناڤەرۆکا سەرەکی,بچە ناڤەرۆکا سەرەکی,yes
+src/features/workday/messages.ts,today,Today,ئەڤرۆ,ئەڤرۆ,
+src/features/workday/messages.ts,goodMorning,Good morning,سپێدە باش,سپێدە باش,
+src/features/workday/messages.ts,goodAfternoon,Good afternoon,رۆژباش,ڕۆژباش,yes
+src/features/workday/messages.ts,goodEvening,Good evening,ئێڤار باش,ئێڤار باش,
+src/features/workday/messages.ts,live,Live,راستەوخۆ,زندی,yes
+src/features/workday/messages.ts,updatedEvery,Updates by itself every 20 seconds,هەر 20 چرکەیان ب خو نووی دبیت,هەر 20 چرکەیان ب خو نوی دبیت,yes
+src/features/workday/messages.ts,receptionTitle,Today at the clinic,ئەڤرۆ ل نۆرینگەهێ,ئەڤرۆ ل کلینیکێ,yes
+src/features/workday/messages.ts,booked,Booked today,ژڤانێن ئەڤرۆ,ژڤانێن ئەڤرۆ,
+src/features/workday/messages.ts,arrived,Arrived,گەهشتین,گەهشتین,
+src/features/workday/messages.ts,waiting,Waiting now,نوکە چاڤەرێنە,نوکە ل چاڤەڕێ نە,yes
+src/features/workday/messages.ts,seen,Seen,هاتینە دیتن,هاتینە دیتن,
+src/features/workday/messages.ts,noShows,No-shows,نەهاتین,نەهاتین,
+src/features/workday/messages.ts,cancelled,Cancelled,هاتینە هەلوەشاندن,هاتینە هەلوەشاندن,
+src/features/workday/messages.ts,freeSlots,Free times left,دەمێن ڤالا,دەمێن ڤالا یێن مایین,yes
+src/features/workday/messages.ts,toCollect,To collect at the counter,پارە ل پێشوازیێ,پارە بۆ وەرگرتنێ ل پێشوازیێ,yes
+src/features/workday/messages.ts,nextUp,Coming up next,یێن دهێن,یێن ل دویفرا,yes
+src/features/workday/messages.ts,nothingNext,No more appointments today.,چ ژڤانێن دی نینن ئەڤرۆ.,ئەڤرۆ چ ژڤانێن دی نینن.,yes
+src/features/workday/messages.ts,queueClosed,Queue not open,رێز نەڤەکریە,ڕێزبەندی ڤەنەبوویە,yes
+src/features/workday/messages.ts,queueOpen,Queue open,رێز ڤەکریە,ڕێزبەندی ڤەکرییە,yes
+src/features/workday/messages.ts,queuePaused,Queue paused,رێز راوەستیایە,ڕێزبەندی ڕاوەستیایە,yes
+src/features/workday/messages.ts,inRoom,With the doctor,دگەل نوژداری,دگەل نوژداری,
+src/features/workday/messages.ts,nobodyInRoom,Nobody with the doctor,کەس دگەل نوژداری نینە,کەس دگەل نوژداری نینە,
+src/features/workday/messages.ts,readyNext,Ready for the next patient,ئامادەیە بۆ نەخۆشێ دی,ئامادەیە بۆ نەخۆشێ دی,
+src/features/workday/messages.ts,openBoard,Day board,تەختەیا رۆژێ,تەختەیا ڕۆژێ,yes
+src/features/workday/messages.ts,newBooking,New booking,ژڤانەکێ نوو,ژڤانەکا نوی,yes
+src/features/workday/messages.ts,walkIn,Walk-in,هاتنا راستەوخۆ,بێ ژڤان,yes
+src/features/workday/messages.ts,findPatient,Find a patient,نەخۆشەکی ببینە,ل نەخۆشەکی بگەڕێ,yes
+src/features/workday/messages.ts,liveQueue,Live queue,رێزا راستەوخۆ,ڕێزبەندییا زندی,yes
+src/features/workday/messages.ts,markArrived,Check in,هاتنێ تۆمار بکە,هاتنێ تۆمار بکە,
+src/features/workday/messages.ts,open,Open,ڤەکرن,ڤەکە,yes
+src/features/workday/messages.ts,app,App,ئەپ,ئەپ,
+src/features/workday/messages.ts,phone,Phone,تەلەفۆن,تەلەفۆن,
+src/features/workday/messages.ts,walkInShort,Walk-in,راستەوخۆ,بێ ژڤان,yes
+src/features/workday/messages.ts,statusScheduled,Booked,ژڤان هەیە,گرتی,yes
+src/features/workday/messages.ts,statusConfirmed,Confirmed,پشتراستکری,پشتڕاستکری,yes
+src/features/workday/messages.ts,statusCompleted,Seen,هاتە دیتن,هاتە دیتن,
+src/features/workday/messages.ts,statusNoShow,No-show,نەهات,نەهات,
+src/features/workday/messages.ts,statusCancelled,Cancelled,هەلوەشیا,هاتە هەلوەشاندن,yes
+src/features/workday/messages.ts,noDoctors,You don't work for any doctor yet.,هێشتا تە چ نوژدار هەلنەبژارتینە.,هێشتا تە چ نوژدار هەلنەبژارتینە.,
+src/features/workday/messages.ts,chooseDoctors,Choose your doctors,نوژدارێن خو هەلبژێرە,نوژدارێن خو هەلبژێرە,
+src/features/workday/messages.ts,doctorTitle,Your day,رۆژا تە,ڕۆژا تە,yes
+src/features/workday/messages.ts,queueNotOpenTitle,Your queue isn't open yet,رێزا تە هێشتا نەڤەکریە,ڕێزبەندییا تە هێشتا نەهاتیە ڤەکرن,yes
+src/features/workday/messages.ts,queueNotOpenBody,Open it when you're ready to see patients. Reception adds people as they arrive.,دەمێ تو ئامادەبی نەخۆشان ببینی ڤەکە. پێشوازی نەخۆشان زێدە دکەت دەمێ دگەهن.,دەمێ تو ئامادە بی نەخۆشان ببینی، ڤەکە. پێشوازی نەخۆشان زێدە دکەت دەمێ دگەهن.,yes
+src/features/workday/messages.ts,openQueue,Open today's queue,رێزا ئەڤرۆ ڤەکە,ڕێزبەندییا ئەڤرۆ ڤەکە,yes
+src/features/workday/messages.ts,nowSeeing,Now seeing,نوکە دبینی,نوکە ل دەڤ تە,yes
+src/features/workday/messages.ts,called,Called — on the way in,هاتە گازیکرن — یێ دهێت,هاتە بانگکرن — یێ دهێت,yes
+src/features/workday/messages.ts,calledShort,Called,هاتە گازیکرن,هاتە بانگکرن,yes
+src/features/workday/messages.ts,inConsultation,In consultation,د پشکنینێ دایە,د پشکنینێ دایە,
+src/features/workday/messages.ts,ticket,Ticket,ژمارە,ژمارە,
+src/features/workday/messages.ts,callNext,Call next patient,گازی نەخۆشێ دی بکە,نەخۆشێ ل دویفرا بانگ بکە,yes
+src/features/workday/messages.ts,startConsultation,Start consultation,پشکنینێ دەستپێبکە,پشکنینێ دەست پێ بکە,yes
+src/features/workday/messages.ts,finish,Finish consultation,پشکنینێ ب دوماهی بینە,پشکنینێ ب دوماهی بینە,
+src/features/workday/messages.ts,pause,Pause queue,رێزێ راوەستینە,ڕێزبەندیێ ڕابگرە,yes
+src/features/workday/messages.ts,resume,Resume queue,رێزێ بەردەوام بکە,ڕێزبەندیێ بەردەوام بکە,yes
+src/features/workday/messages.ts,pausedNote,Paused. Patients keep their place; nobody new is called.,راوەستیایە. نەخۆش جهێ خو دپارێزن، کەس گازی ناهێتە کرن.,هاتیە ڕاگرتن. نەخۆش جهێ خو دپارێزن؛ کەسێ نوی بانگ ناهێتە کرن.,yes
+src/features/workday/messages.ts,waitingList,Waiting,چاڤەرێ,ل چاڤەڕێ,yes
+src/features/workday/messages.ts,nobodyWaiting,Nobody is waiting. New arrivals appear here.,کەس چاڤەرێ نینە. یێن دگەهن ل ڤێرە دیار دبن.,کەس ل چاڤەڕێ نینە. هاتنێن نوی ل ڤێرێ دیار دبن.,yes
+src/features/workday/messages.ts,todaysAppointments,Today's appointments,ژڤانێن ئەڤرۆ,ژڤانێن ئەڤرۆ,
+src/features/workday/messages.ts,noAppointments,No appointments today.,چ ژڤان نینن ئەڤرۆ.,ئەڤرۆ چ ژڤان نینن.,yes
+src/features/workday/messages.ts,followUp,Follow-up,پێداچوون,دویڤچوون,yes
+src/features/workday/messages.ts,firstVisit,First visit,سەرەدانا ئێکێ,سەرەدانا ئێکێ,
+src/features/workday/messages.ts,busy,Working…,یێ کار دکەت...,د کار دایە…,yes
+src/features/workday/messages.ts,failed,That didn't go through. Please try again.,سەرنەکەفت. دووبارە هەول بدە.,سەرنەکەفت. دیسان هەول بدە.,yes
+src/features/workday/messages.ts,stale,Someone else changed the queue. It has been refreshed.,کەسەکێ دی رێز گوهۆڕی. هاتە نووکرن.,کەسەکێ دی ڕێزبەندی گوهۆڕی. هاتە نویکرن.,yes
+src/features/workday/messages.ts,scheduleTitle,Schedule,خشتە,خشتە,
+src/features/workday/messages.ts,scheduleLead,Your working hours and the next 7 days of appointments.,دەمێن کارێ تە و ژڤانێن 7 رۆژێن بێن.,دەمێن کارێ تە و ژڤانێن 7 ڕۆژێن داهاتی.,yes
+src/features/workday/messages.ts,weeklyHours,Working hours,دەمێن کاری,دەمێن کاری,
+src/features/workday/messages.ts,dayOff,Day off,پشوو,ڕۆژا بێهنڤەدانێ,yes
+src/features/workday/messages.ts,breakLabel,Break,بێهنڤەدان,بێهنڤەدان,
+src/features/workday/messages.ts,upcoming,Next 7 days,7 رۆژێن بێن,7 ڕۆژێن داهاتی,yes
+src/features/workday/messages.ts,leave,Leave,مۆڵەت,مۆلەت,yes
+src/features/workday/messages.ts,noLeave,No leave planned.,چ مۆڵەت نینن.,چ مۆلەت نەهاتینە دانان.,yes
+src/features/workday/messages.ts,weekdays.0,Sunday,یەکشەمبی,یەکشەمبی,
+src/features/workday/messages.ts,weekdays.1,Monday,دووشەمبی,دووشەمبی,
+src/features/workday/messages.ts,weekdays.2,Tuesday,سێشەمبی,سێشەمبی,
+src/features/workday/messages.ts,weekdays.3,Wednesday,چارشەمبی,چارشەمبی,
+src/features/workday/messages.ts,weekdays.4,Thursday,پێنجشەمبی,پێنجشەمبی,
+src/features/workday/messages.ts,weekdays.5,Friday,ئەینی,ئەینی,
+src/features/workday/messages.ts,weekdays.6,Saturday,شەمبی,شەمبی,
+src/features/workday/messages.ts,allDay,All day,هەمی رۆژێ,هەمی ڕۆژێ,yes
+src/features/workday/messages.ts,settingsTitle,Settings,رێکخستن,ڕێکخستن,yes
+src/features/workday/messages.ts,account,Your account,هەژمارا تە,هەژمارا تە,
+src/features/workday/messages.ts,profile,Profile,پرۆفایل,پڕۆفایل,yes
+src/features/workday/messages.ts,specialty,Specialty,پسپۆری,پسپۆڕی,yes
+src/features/workday/messages.ts,license,License,مۆڵەتا کاری,مۆلەتا کاری,yes
+src/features/workday/messages.ts,experience,Experience,ئەزموون,ئەزموون,
+src/features/workday/messages.ts,languages,Languages,زمان,زمان,
+src/features/workday/messages.ts,firstVisitFee,First visit,سەرەدانا ئێکێ,سەرەدانا ئێکێ,
+src/features/workday/messages.ts,followUpFee,Follow-up,پێداچوون,دویڤچوون,yes
+src/features/workday/messages.ts,clinic,Clinic,نۆرینگەه,کلینیک,yes
+src/features/workday/messages.ts,role,Role,رۆل,ڕۆل,yes
+src/features/workday/messages.ts,roleDoctor,Doctor,نوژدار,نوژدار,
+src/features/workday/messages.ts,roleReceptionist,Receptionist,پێشوازی,کارمەندێ پێشوازیێ,yes
+src/features/workday/messages.ts,roleManager,Clinic manager,رێڤەبەرێ نۆرینگەهێ,ڕێڤەبەرێ کلینیکێ,yes
+src/features/workday/messages.ts,language,Portal language,زمانێ پۆرتالی,زمانێ پۆرتالی,
+src/features/workday/messages.ts,security,Sign-in and security,چوونا ژوور و پاراستن,چوونا ژوور و پاراستن,
+src/features/workday/messages.ts,securityBody,Signed in on a computer you don't use any more? Sign out everywhere and sign in again here.,تە ل سەر کۆمپیوتەرەکێ دی چوونا ژوور کریە؟ ژ هەمی ئامیران دەرکەڤە و ل ڤێرە دووبارە بچە ژوور.,تە ل سەر کۆمپیوتەرەکێ چوونا ژوور کرییە کو ئیدی بکار نائینی؟ ژ هەمی ئامیران دەرکەڤە و ل ڤێرێ دیسان بچە ژوور.,yes
+src/features/workday/messages.ts,signOut,Sign out,دەرکەفتن,دەرکەفتن,
+src/features/workday/messages.ts,signOutEverywhere,Sign out on every device,ژ هەمی ئامیران دەرکەڤە,ژ هەمی ئامیران دەرکەڤە,
+src/features/workday/messages.ts,profileChanges,"To change your profile, ask Saxlem support. Patients see these details in the app.",بۆ گوهۆڕینا پرۆفایلێ پەیوەندیێ ب پشتەڤانیا Saxlem بکە. نەخۆش ڤان زانیاریان د ئەپێ دا دبینن.,بۆ گوهۆڕینا پڕۆفایلێ پەیوەندیێ ب پشتەڤانیا ساخلەم بکە. نەخۆش ڤان زانیاریان د ئەپی دا دبینن.,yes
+src/features/workday/messages.ts,languageNames.badiniKurdish,Kurdish (Badini),کوردی (بادینی),کوردی (بادینی),
+src/features/workday/messages.ts,languageNames.soraniKurdish,Kurdish (Sorani),کوردی (سۆرانی),کوردی (سۆرانی),
+src/features/workday/messages.ts,languageNames.kurdish,Kurdish,کوردی,کوردی,
+src/features/workday/messages.ts,languageNames.arabic,Arabic,عەرەبی,عەرەبی,
+src/features/workday/messages.ts,languageNames.english,English,ئینگلیزی,ئینگلیزی,
+src/features/workday/messages.ts,languageNames.turkish,Turkish,تورکی,تورکی,
+src/features/workday/messages.ts,languageNames.persian,Persian,فارسی,فارسی,
+src/features/workday/messages.ts,languageNames.syriac,Syriac,سریانی,سریانی,
+src/features/workday/messages.ts,doctorsTitle,Doctors,نوژدار,نوژدار,
+src/features/workday/messages.ts,doctorsLead,"The doctors you work for, their hours this week and today's queue.",ئەو نوژدارێن تو بۆ کار دکەی، دەمێن وان ڤێ هەفتیێ و رێزا ئەڤرۆ.,ئەو نوژدارێن تو بۆ کار دکەی، دەمێن وان ڤێ هەفتیێ و ڕێزبەندییا ئەڤرۆ.,yes
+src/features/workday/messages.ts,manageDoctors,Add or remove doctors,نوژداران زێدە یان لابە,نوژداران زێدە بکە یان لابە,yes
+src/i18n/index.ts,app,Saxlem Clinic Portal,پۆرتالا کلینیکێ یا ساخلەم,پۆرتالا کلینیکێ یا ساخلەم,
+src/i18n/index.ts,skip,Skip to main content,بڕۆ ناڤەرۆکا سەرەکی,بچە ناڤەرۆکا سەرەکی,yes
+src/i18n/index.ts,dashboard,Dashboard,سەرەکی,سەرەکی,
+src/i18n/index.ts,patients,Patients,نەخوش,نەخۆش,yes
+src/i18n/index.ts,appointments,Appointments,ژڤان,ژڤان,
+src/i18n/index.ts,queue,Live Queue,رێزبەندییا زندی,ڕێزبەندییا زندی,yes
+src/i18n/index.ts,doctors,Doctors,نوژدار,نوژدار,
+src/i18n/index.ts,schedule,Schedule,خشتە,خشتە,
+src/i18n/index.ts,notifications,Notifications,ئاگەهداری,ئاگەهداری,
+src/i18n/index.ts,settings,Settings,رێکخستن,ڕێکخستن,yes
+src/i18n/index.ts,receptionist,Receptionist,کارمەندێ پێشوازیێ,کارمەندێ پێشوازیێ,
+src/i18n/index.ts,clinicOpen,Clinic open,کلینیک ڤەکرییە,کلینیک ڤەکرییە,
+src/i18n/index.ts,clinicDelayed,Some doctors are delayed,هندەک نوژدار پاشکەفتینە,هندەک نوژدار درەنگن,yes
+src/i18n/index.ts,shift,Morning shift · 8:00 AM–4:00 PM,شێفتا سپێدێ · 8:00 AM–4:00 PM,شێفتا سپێدێ · 8:00 AM–4:00 PM,
+src/i18n/index.ts,heading,Today at a glance,پوختەیا ئەڤرو,پوختەیا ئەڤرۆ,yes
+src/i18n/index.ts,subheading,The information you need for the current shift.,زانیاریێن کو بو شێفتا نوکە پێدڤی نە.,زانیاریێن بۆ شێفتا نوکە پێدڤی.,yes
+src/i18n/index.ts,todayAppointments,Today's appointments,ژڤانێن ئەڤرو,ژڤانێن ئەڤرۆ,yes
+src/i18n/index.ts,waiting,Patients waiting,نەخوشێن چاڤەرێ,نەخۆشێن چاڤەڕێ,yes
+src/i18n/index.ts,checkedIn,Checked-in patients,نەخوشێن هاتن تۆمارکری,نەخۆشێن هاتنا وان تۆمارکری,yes
+src/i18n/index.ts,delayedDoctors,Delayed doctors,نوژدار پاشکەفتییە,نوژدارێن درەنگ,yes
+src/i18n/index.ts,liveQueues,Live Queues,رێزبەندییا زندی,ڕێزبەندییا زندی,yes
+src/i18n/index.ts,queueHelp,Delayed and busiest queues appear first.,سرایێن پاشکەفتی و یێن پتر مژویل ل سەری دیار دبن.,ڕێزبەندیێن درەنگ و یێن مژویلتر ل سەری دیار دبن.,yes
+src/i18n/index.ts,doctor,Doctor,نوژدار,نوژدار,
+src/i18n/index.ts,current,Current number,ژمارا نوکە,ژمارا نوکە,
+src/i18n/index.ts,delay,Delay,پاشکەفتن,درەنگی,yes
+src/i18n/index.ts,status,Status,رەوش,ڕەوش,yes
+src/i18n/index.ts,viewQueue,View queue,سرایێ ببینە,ڕێزبەندیێ ببینە,yes
+src/i18n/index.ts,late,Running {minutes} minutes late,{minutes} خولەک پاشکەفتییە,{minutes} خولەک درەنگە,yes
+src/i18n/index.ts,onTime,Running on time,د دەمێ خو دایە,د دەمێ خو دایە,
+src/i18n/index.ts,paused,Queue paused,رێزبەندی بو دەمکی هاتە راگرتن,ڕێزبەندی بۆ دەمەکێ کورت هاتە ڕاگرتن,yes
+src/i18n/index.ts,nextArrivals,Next Arrivals,هاتنێن ل دویفرا,هاتنێن ل دویفرا,
+src/i18n/index.ts,arrivalHelp,The next expected patients.,نەخوشێن ل دویفرا یێن هاتنا وان چاڤەرێکری.,نەخۆشێن ل دویفرا یێن چاڤەڕێ دهێن.,yes
+src/i18n/index.ts,time,Appointment time,دەمێ ژڤانێ,دەمێ ژڤانێ,
+src/i18n/index.ts,patient,Patient,نەخوش,نەخۆش,yes
+src/i18n/index.ts,arrivalStatus,Arrival status,رەوشا هاتنێ,ڕەوشا هاتنێ,yes
+src/i18n/index.ts,nextStep,Next step,گاڤا ل دویفرا,گاڤا ل دویفرا,
+src/i18n/index.ts,expected,Expected,چاڤەرێکری,چاڤەڕێکری,yes
+src/i18n/index.ts,arrived,Arrived,گەهشت,گەهشت,
+src/i18n/index.ts,confirm,Confirm arrival at reception,هاتنێ ل پێشوازیێ پشتراست بکە,هاتنێ ل پێشوازیێ پشتڕاست بکە,yes
+src/i18n/index.ts,welcome,Welcome patient at reception,پێشوازیێ ل نەخوشی بکە,پێشوازیێ ل نەخۆشی بکە,yes
+src/i18n/index.ts,doctorsWorking,Doctors Working,نوژدارێن د کار دا,نوژدارێن د کار دا,
+src/i18n/index.ts,specialty,Specialty,پسپۆڕی,پسپۆڕی,
+src/i18n/index.ts,working,Working,د کار دایە,د کار دایە,
+src/i18n/index.ts,break,On break,د بێهنڤەدانێ دایە,د بێهنڤەدانێ دایە,
+src/i18n/index.ts,finished,Finished,دووماهی هات,ب دوماهی هات,yes
+src/i18n/index.ts,queueLoad,Queue load,بارێ سرایێ,بارێ ڕێزبەندیێ,yes
+src/i18n/index.ts,availability,Next availability,بەردەستییا ل دویفرا,بەردەستییا ل دویفرا,
+src/i18n/index.ts,count,{count} patients,نەخوش {count},{count} نەخۆش,yes
+src/i18n/index.ts,updates,Important Updates,نویکرنێن گرنگ,نویکرنێن گرنگ,
+src/i18n/index.ts,updatesHelp,Only updates affecting today's work.,تنێ نویکرنێن کو کارێ ئەڤرو کارتێدکەن ل ڤێرێ دیارن.,تنێ ئەو نویکرنێن کارێ ئەڤرۆ کارتێدکەن.,yes
+src/i18n/index.ts,quick,Quick Actions,کارێن بلەز,کارێن بلەز,
+src/i18n/index.ts,findPatient,Find Patient,ل نەخوشی بگەڕێ,ل نەخۆشی بگەڕێ,yes
+src/i18n/index.ts,viewLiveQueue,View Live Queue,رێزبەندییا زندی ببینە,ڕێزبەندییا زندی ببینە,yes
+src/i18n/index.ts,futureTitle,This section is not available yet,ئەڤ بەشە هێشتا بەردەست نینە,ئەڤ بەشە هێشتا بەردەست نینە,
+src/i18n/index.ts,futureBody,This section will be available in a future Sprint.,ئەڤ بەشە دێ د سپرینتەکا داهاتی دا بەردەست بیت.,ئەڤ بەشە دێ د وەشانەکا داهاتی دا بەردەست بیت.,yes
+src/i18n/index.ts,back,Return to dashboard,ڤەگەڕە سەرەکی,ڤەگەڕە بۆ سەرەکی,yes
+src/i18n/index.ts,loading,Loading today's clinic overview,پوختەیا کلینیکا ئەڤرو دهێتە بارکرن…,پوختەیا کلینیکا ئەڤرۆ دهێتە بارکرن…,yes
+src/i18n/index.ts,empty,No clinic activity yet,هێشتا چ چالاکییەکا کلینیکێ نینە.,هێشتا چ چالاکییەکا کلینیکێ نینە.,
+src/i18n/index.ts,emptyBody,"There are no appointments, queues, or arrivals for this shift.",د ڤی شێفتی دا چ ژڤان، سرا یان هاتن نینن.,د ڤی شێفتی دا چ ژڤان، ڕێزبەندی یان هاتن نینن.,yes
+src/i18n/index.ts,unavailable,Portal session unavailable,دانیشتنا پۆرتالێ بەردەست نینە,دانیشتنا پۆرتالێ بەردەست نینە,
+src/i18n/index.ts,unavailableBody,The receptionist demo session is disabled in this environment.,دانیشتنا تاقیکرنا پێشوازی د ڤی ژینگەهی دا نەچالاککرییە.,دانیشتنا تاقیکرنا پێشوازیێ د ڤی ژینگەهی دا نەچالاککرییە.,yes
+src/i18n/index.ts,language,Change language,زمانی بگهورە,زمانی بگوهۆڕە,yes
+src/i18n/index.ts,openNotifications,Open notifications,ئاگەهدارییان ڤەکە,ئاگەهدارییان ڤەکە,
+src/i18n/index.ts,openMenu,Open navigation,رێنیشاندانێ ڤەکە,ڕێنیشاندانێ ڤەکە,yes
+src/i18n/index.ts,update1,Dr. Karwan is running 12 minutes late.,زانیاری,زانیاری,
+src/i18n/index.ts,update2,Dr. Shilan's queue is paused for a short break.,زانیاری,زانیاری,
+src/i18n/index.ts,update3,Two appointments need reception review at 2:00 PM.,زانیاری,زانیاری,
+src/i18n/index.ts,update4,Morning handover is ready for review.,رادەستکرنا سپێدێ بو پشکنینێ ئامادەیە.,ڕادەستکرنا سپێدێ بۆ پشکنینێ ئامادەیە.,yes
+src/features/payments/presentation/messages.ts,payment,Payment,پارەدان,پارەدان,
+src/features/payments/presentation/messages.ts,amount,Amount,بڕ,بڕ,
+src/features/payments/presentation/messages.ts,method,Method,رێکا پارەدانێ,ڕێکا پارەدانێ,yes
+src/features/payments/presentation/messages.ts,counter,At the counter,ل پێشوازیێ,ل پێشوازیێ,
+src/features/payments/presentation/messages.ts,online,Online (FIB),ب ئەپێ (FIB),ئۆنلاین (FIB),yes
+src/features/payments/presentation/messages.ts,paidAt,Paid at,دەمێ پارەدانێ,دەمێ پارەدانێ,
+src/features/payments/presentation/messages.ts,dueAtCounter,Pay at counter,پارەدان ل پێشوازیێ,پارەدان ل پێشوازیێ,
+src/features/payments/presentation/messages.ts,pending,Paying in app,ب ئەپێ پارەی ددەت,د ئەپی دا پارەی ددەت,yes
+src/features/payments/presentation/messages.ts,paid,Paid,پارە هاتیە دان,پارە هاتیە دان,
+src/features/payments/presentation/messages.ts,expired,Not completed,ب دووماهی نەهات,تەمام نەبوو,yes
+src/features/payments/presentation/messages.ts,cancelled,Not completed,ب دووماهی نەهات,تەمام نەبوو,yes
+src/features/payments/presentation/messages.ts,refundPending,Refund in progress,زڤڕاندنا پارەی ل رێیێ,ڤەگەڕاندنا پارەی ل ڕێیێ,yes
+src/features/payments/presentation/messages.ts,refunded,Refunded,پارە زڤڕی,پارە هاتە ڤەگەڕاندن,yes
+src/features/payments/presentation/messages.ts,refundFailed,Refund by hand,ب دەستی بزڤڕینە,ب دەستی ڤەگەڕینە,yes
+src/features/payments/presentation/messages.ts,void,Nothing due,چ پارە نینن,چ پارە نینە,yes
+src/features/payments/presentation/messages.ts,markPaid,Mark as paid,وەک دایی تۆمار بکە,وەک دایی تۆمار بکە,
+src/features/payments/presentation/messages.ts,markPaidTitle,Record a counter payment,تۆمارکرنا پارەدانێ ل پێشوازیێ,تۆمارکرنا پارەدانێ ل پێشوازیێ,
+src/features/payments/presentation/messages.ts,markPaidBody,Confirm the patient paid {amount} at the counter. This is recorded with your name.,پشتراست بکە کو نەخۆشی {amount} ل پێشوازیێ دایە. ئەڤە ب ناڤێ تە دهێتە تۆمارکرن.,پشتڕاست بکە کو نەخۆشی {amount} ل پێشوازیێ دایە. ئەڤە ب ناڤێ تە دهێتە تۆمارکرن.,yes
+src/features/payments/presentation/messages.ts,confirm,Confirm payment,پارەدانێ پشتراست بکە,پارەدانێ پشتڕاست بکە,yes
+src/features/payments/presentation/messages.ts,cancel,Cancel,ب هەلوەشینە,هەلوەشینە,yes
+src/features/payments/presentation/messages.ts,saving,Saving…,دهێتە پاراستن...,دهێتە پاراستن…,yes
+src/features/payments/presentation/messages.ts,recorded,Payment recorded.,پارەدان هاتە تۆمارکرن.,پارەدان هاتە تۆمارکرن.,
+src/features/payments/presentation/messages.ts,paidInApp,The patient already paid in the app. Nothing to collect.,نەخۆشی ب ئەپێ پارە دایە. چ پارە نینن وەربگری.,نەخۆشی د ئەپی دا پارە دایە. چ پارە نینە بۆ وەرگرتنێ.,yes
+src/features/payments/presentation/messages.ts,pendingHint,"The patient is paying in the app. If they pay you instead, mark it as paid and the app link is closed.",نەخۆش ب ئەپێ پارەی ددەت. ئەگەر پارە دا تە، وەک دایی تۆمار بکە و لینکا ئەپێ دهێتە گرتن.,نەخۆش د ئەپی دا پارەی ددەت. ئەگەر پارە دا تە، وەک دایی تۆمار بکە و لینکا ئەپی دێ هێتە گرتن.,yes
+src/features/payments/presentation/messages.ts,refundFailedHint,The automatic refund did not go through. Refund the patient by hand.,زڤڕاندنا ئۆتۆماتیکی سەرنەکەفت. پارەی ب دەستی بۆ نەخۆشی بزڤڕینە.,ڤەگەڕاندنا ئۆتۆماتیکی سەرنەکەفت. پارەی ب دەستی بۆ نەخۆشی ڤەگەڕینە.,yes
+src/features/payments/presentation/messages.ts,failed,The payment could not be recorded. Try again.,پارەدان نەهاتە تۆمارکرن. دیسان هەول بدە.,پارەدان نەهاتە تۆمارکرن. دیسان هەول بدە.,
+src/features/payments/presentation/messages.ts,unavailable,Payment status is unavailable right now.,رەوشا پارەدانێ نوکە بەردەست نینە.,ڕەوشا پارەدانێ نوکە بەردەست نینە.,yes
+src/features/reception/presentation/messages.ts,chooseTitle,Which doctor do you work for?,تو دگەل کیژ نوژداری کار دکەی؟,تو دگەل کیژ نوژداری کار دکەی؟,
+src/features/reception/presentation/messages.ts,chooseBody,"Most receptionists work for one doctor. Your board, list, queue and bookings will show only the doctors you choose. You can add more later, for example when you cover for a colleague.",پترانیا کارمەندێن پێشوازیێ دگەل ئێک نوژداری کار دکەن. تەختە، لیست، ریز و ژڤانێن تە تەنێ ئەو نوژدارێن تو هەلدبژێری نیشان ددەن. پاشی دشێی پتر زێدە بکەی، بۆ نموونە دەمێ تو جهێ هەڤالەکی دگری.,پترانیا کارمەندێن پێشوازیێ دگەل ئێک نوژداری کار دکەن. تەختە، لیست، ڕێزبەندی و ژڤانێن تە تنێ ئەو نوژدارێن تو هەلدبژێری نیشان ددەن. پاشی دشێی پتر زێدە بکەی، بۆ نموونە دەمێ تو جهێ هەڤالەکی دگری.,yes
+src/features/reception/presentation/messages.ts,myDoctors,My doctors,نوژدارێن من,نوژدارێن من,
+src/features/reception/presentation/messages.ts,change,Add or remove,زێدەکرن یان لابرن,زێدە بکە یان لابە,yes
+src/features/reception/presentation/messages.ts,editTitle,My doctors,نوژدارێن من,نوژدارێن من,
+src/features/reception/presentation/messages.ts,editBody,Choose the doctors you work for. Usually one; add more if you are covering for someone.,ئەو نوژدارێن تو دگەل کار دکەی هەلبژێرە. ب گشتی ئێک؛ پتر زێدە بکە ئەگەر تو جهێ کەسەکی دگری.,ئەو نوژدارێن تو دگەل کار دکەی هەلبژێرە. ب گشتی ئێک؛ پتر زێدە بکە ئەگەر تو جهێ کەسەکی دگری.,
+src/features/reception/presentation/messages.ts,save,Save,پاشەکەفتکرن,پاشەکەفت بکە,yes
+src/features/reception/presentation/messages.ts,saving,Saving...,پاشەکەفت دبیت...,پاشەکەفت دبیت…,yes
+src/features/reception/presentation/messages.ts,close,Cancel,هەلوەشاندن,هەلوەشینە,yes
+src/features/reception/presentation/messages.ts,atLeastOne,Choose at least one doctor.,لانیکەم ئێک نوژداری هەلبژێرە.,لانیکێم ئێک نوژداری هەلبژێرە.,yes
+src/features/reception/presentation/messages.ts,failed,Couldn't save. Try again.,پاشەکەفت نەبوو. دووبارە تاقی بکە.,پاشەکەفت نەبوو. دیسان هەول بدە.,yes
+src/features/reception/presentation/messages.ts,noDoctors,There are no active doctors at this clinic yet. Ask the clinic owner to add one.,هێشتا چ نوژدارێن چالاک د ڤێ کلینیکێ دا نینن. داخوازێ ژ خودانێ کلینیکێ بکە ئێکی زێدە بکەت.,هێشتا چ نوژدارێن چالاک د ڤێ کلینیکێ دا نینن. داخوازێ ژ خودانێ کلینیکێ بکە کو ئێکی زێدە بکەت.,yes
+src/features/clinical-presentation/messages.ts,appointments,Appointments,ژڤان,ژڤان,
+src/features/clinical-presentation/messages.ts,appointmentHelp,Review and manage clinic appointments.,ژوانێن کلینیکێ ببینە و ڕێک بخە.,ژڤانێن کلینیکێ ببینە و ڕێک بخە.,yes
+src/features/clinical-presentation/messages.ts,patients,Patient lookup,لێگەڕین ل نەخۆشی,ل نەخۆشی بگەڕێ,yes
+src/features/clinical-presentation/messages.ts,patientHelp,"Search securely by name, phone number, or patient ID.",ب پاراستی ب ناڤ، ژمارا تەلەفونێ یان ژمارا نەخۆشی بگەڕێ.,ب پارێزراوی ب ناڤ، ژمارا تەلەفۆنێ یان ژمارا نەخۆشی بگەڕێ.,yes
+src/features/clinical-presentation/messages.ts,from,From,ژ,ژ,
+src/features/clinical-presentation/messages.ts,to,To,هەتا,هەتا,
+src/features/clinical-presentation/messages.ts,status,Status,رەوش,ڕەوش,yes
+src/features/clinical-presentation/messages.ts,allStatuses,All statuses,هەمی دۆخ,هەمی ڕەوش,yes
+src/features/clinical-presentation/messages.ts,apply,Apply filters,جوداکرنێ جێبەجێ بکە,فلتەران جێبەجێ بکە,yes
+src/features/clinical-presentation/messages.ts,date,Date and time,ڕێکەوت و دەم,ڕێکەفت و دەم,yes
+src/features/clinical-presentation/messages.ts,patient,Patient,نەخوش,نەخۆش,yes
+src/features/clinical-presentation/messages.ts,doctor,Doctor,نوژدار,نوژدار,
+src/features/clinical-presentation/messages.ts,clinic,Clinic,کلینیک,کلینیک,
+src/features/clinical-presentation/messages.ts,reason,Reason,ئەگەر,ئەگەر,
+src/features/clinical-presentation/messages.ts,duration,Duration,مایی,ماوە,yes
+src/features/clinical-presentation/messages.ts,fee,Fee,کرێ,بها,yes
+src/features/clinical-presentation/messages.ts,reference,Appointment ID,ژمارا ژڤانێ,ژمارا ژڤانێ,
+src/features/clinical-presentation/messages.ts,actions,Actions,کار,کار,
+src/features/clinical-presentation/messages.ts,view,View appointment,ژوانی ببینە,ژڤانێ ببینە,yes
+src/features/clinical-presentation/messages.ts,previous,Previous,پێشتر,پێشتر,
+src/features/clinical-presentation/messages.ts,next,Next page,لاپەڕا پاش,لاپەڕا پاش,
+src/features/clinical-presentation/messages.ts,noAppointments,No appointments match these filters.,هیچ ژوانەک گونجای نەهاتە دیتن.,چ ژڤان دگەل ڤان فلتەران ناگونجن.,yes
+src/features/clinical-presentation/messages.ts,dateRangeInvalid,Choose real dates and make sure From is not after To.,رێکەفتێن دروست ب هەلبژێرە و پشتراست بکە رێکەفتا دەستپێکێ پشتی رێکەفتا دووماهیێ نەبیت,ڕێکەفتێن دروست هەلبژێرە و پشتڕاست بکە کو ڕێکەفتا دەستپێکێ نە پشتی ڕێکەفتا دوماهیێ یە.,yes
+src/features/clinical-presentation/messages.ts,scheduled,Scheduled,دیارکری,دیارکری,
+src/features/clinical-presentation/messages.ts,confirmed,Confirmed,پشتڕاستکری,پشتڕاستکری,
+src/features/clinical-presentation/messages.ts,cancelled,Cancelled,هەلوەشای,هاتیە هەلوەشاندن,yes
+src/features/clinical-presentation/messages.ts,completed,Completed,تەمامبووی,تەمامبووی,
+src/features/clinical-presentation/messages.ts,noShow,No show,نەهات,نەهات,
+src/features/clinical-presentation/messages.ts,appointmentDetails,Appointment details,هویرکاتیێن ژڤانێ,هویرکاریێن ژڤانێ,yes
+src/features/clinical-presentation/messages.ts,backAppointments,Back to appointments,ڤەگەڕە ژوانان,ڤەگەڕە بۆ ژڤانان,yes
+src/features/clinical-presentation/messages.ts,cancel,Cancel appointment,ژوانی هەلوەشێنە,ژڤانێ هەلوەشینە,yes
+src/features/clinical-presentation/messages.ts,reschedule,Reschedule appointment,دەمێ ژڤانێ بگهورە,دەمێ ژڤانێ بگوهۆڕە,yes
+src/features/clinical-presentation/messages.ts,cancelTitle,Cancel this appointment?,ژوانی هەلوەشێنی؟,ڤێ ژڤانێ هەلوەشینی؟,yes
+src/features/clinical-presentation/messages.ts,cancelHelp,Explain the reason. This action cannot be undone.,ئەگەری بنڤیسە. ئەڤ کارە ناهێتە ڤەگەڕاندن.,ئەگەری بنڤیسە. ئەڤ کارە ناهێتە ڤەگەڕاندن.,
+src/features/clinical-presentation/messages.ts,rescheduleTitle,Reschedule appointment,دەمێ ژڤانێ بگهورە,دەمێ ژڤانێ بگوهۆڕە,yes
+src/features/clinical-presentation/messages.ts,startsAt,New date and time,رێکەفت و دەمێ نوی,ڕێکەفت و دەمێ نوی,yes
+src/features/clinical-presentation/messages.ts,minutes,Duration in minutes,ماوە ب خولەکان,ماوە ب خولەکان,
+src/features/clinical-presentation/messages.ts,close,Close,بگرە,بگرە,
+src/features/clinical-presentation/messages.ts,confirmAction,Confirm,پشتراست بکە,پشتڕاست بکە,yes
+src/features/clinical-presentation/messages.ts,saving,Saving…,دهێتە پاراستن…,دهێتە پاراستن…,
+src/features/clinical-presentation/messages.ts,success,Appointment updated.,ژڤان هاتە نویکرن,ژڤان هاتە نویکرن.,yes
+src/features/clinical-presentation/messages.ts,validation,Check the information and try again.,زانیارییان بپشکنە و دیسان هەول بدە,زانیارییان بپشکنە و دیسان هەول بدە,
+src/features/clinical-presentation/messages.ts,conflict,The appointment changed. Refresh before trying again.,ژوان هاتیە گوهۆڕین. لاپەڕێ نوو بکە.,ژڤان هاتیە گوهۆڕین. بەری دیسان هەول بدەی، لاپەڕێ نوی بکە.,yes
+src/features/clinical-presentation/messages.ts,search,Search,لێ بگەرە,بگەڕێ,yes
+src/features/clinical-presentation/messages.ts,searchAction,Search patients,ل نەخوشان بگەرە,ل نەخۆشان بگەڕێ,yes
+src/features/clinical-presentation/messages.ts,searchHint,Enter at least 2 characters,کێمترین دوو پیتان بنڤیسە,لانیکێم 2 پیتان بنڤیسە,yes
+src/features/clinical-presentation/messages.ts,noPatients,No patients match your search.,چ نەخوش ل گەل لێگەریانا تە ناگونجن,چ نەخۆش دگەل گەڕیانا تە ناگونجن.,yes
+src/features/clinical-presentation/messages.ts,searchFirst,"Enter a name, phone number, or patient ID to begin.",ناڤ، ژمارا تەلەفونێ یان ژمارا نەخۆشی بنڤیسە.,دا دەست پێ بکەی، ناڤ، ژمارا تەلەفۆنێ یان ژمارا نەخۆشی بنڤیسە.,yes
+src/features/clinical-presentation/messages.ts,patientDetails,Patient details,هویرکاتیێن نەخوشی,هویرکاریێن نەخۆشی,yes
+src/features/clinical-presentation/messages.ts,active,Active,چالاک,چالاک,
+src/features/clinical-presentation/messages.ts,inactive,Inactive,نەچالاک,نەچالاک,
+src/features/clinical-presentation/messages.ts,upcoming,Upcoming appointments,ژڤانێن داهاتی,ژڤانێن داهاتی,
+src/features/clinical-presentation/messages.ts,recent,Recent appointments,ژوانێن بۆری,ژڤانێن بۆری,yes
+src/features/clinical-presentation/messages.ts,noUpcoming,No upcoming appointments.,چ ژڤان ل دویفرا نینن,چ ژڤانێن داهاتی نینن.,yes
+src/features/clinical-presentation/messages.ts,noRecent,No recent appointments.,ژوانێن بۆری نینن.,چ ژڤانێن بۆری نینن.,yes
+src/features/clinical-presentation/messages.ts,openAppointment,Open appointment,ژڤانی ڤەکە,ژڤانێ ڤەکە,yes
+src/features/clinical-presentation/messages.ts,backPatients,Back to patient lookup,ڤەگەڕە لێگەڕینا نەخۆشان,ڤەگەڕە بۆ گەڕیانا نەخۆشان,yes
+src/features/clinical-presentation/messages.ts,loading,Loading…,دهێتە بارکرن…,دهێتە بارکرن…,
+src/features/clinical-presentation/messages.ts,offline,The backend cannot be reached. Check the connection and try again.,خزمەت ناهێتە گەهشتن. پەیوەندیێ بپشکنە.,خزمەت ناهێتە گەهشتن. پەیوەندیێ بپشکنە و دیسان هەول بدە.,yes
+src/features/clinical-presentation/messages.ts,unauthorized,Your session has expired. Sign in again.,دانیشتن دووماهی هات. دیسان بچۆ ژوور.,دانیشتن دوماهی هات. دیسان بچە ژوور.,yes
+src/features/clinical-presentation/messages.ts,forbidden,You do not have access to this clinic information.,دەستهەلاتا دیتنا زانیاریێن ڤێ کلینیکێ نینە.,دەستهەلاتا تە بۆ دیتنا زانیاریێن ڤێ کلینیکێ نینە.,yes
+src/features/clinical-presentation/messages.ts,notFound,The requested record was not found.,تۆمار نەهاتە دیتن.,تۆمار نەهاتە دیتن.,
+src/features/clinical-presentation/messages.ts,backendError,The service could not complete the request.,خزمەتێ نەشیا داخوازیێ تەمام بکەت.,خزمەتێ نەشیا داخوازێ تەمام بکەت.,yes
+src/features/clinical-presentation/messages.ts,retry,Try again,دیسان هەول بدە,دیسان هەول بدە,

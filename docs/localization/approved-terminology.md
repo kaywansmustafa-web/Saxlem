@@ -22,7 +22,9 @@ The founder's reviewed file (an external machine draft) was checked line by line
 - Weekdays: دووشەمبی, سێشەمبی, چارشەمبی, پێنجشەمبی, ئەینی, شەمبی, یەکشەمبی.
 - Digits are Western (0–9). Phone numbers, references, codes and versions are isolated left-to-right in code (`ltrIsolate`), never with control characters in the ARB.
 - Push titles and next steps use exactly the in-app inbox wording.
-- Still for a native ear: ئەینی vs ئێنی (Friday), ڕ vs ر at the start of words (the Clinic Portal still writes ر), the gender of ژڤان in the Clinic Portal (it uses ژڤانێ/ژڤانی), and specialty names (deferred by the founder).
+- Founder, 2026-11-19: "use ئەینی and the others as you prefer". So: Friday is **ئەینی**; a heavy r at the start of a word is always written **ڕ** (ڕۆژ, ڕێک, ڕەوش, ڕێزبەندی), in the app, the Clinic Portal and push texts.
+- The Clinic Portal was brought in line the same day (430 of 779 strings; record `badini-clinic-portal-2026-11-19.csv`): queue is **ڕێزبەندی** (no more سرا / رێز), walk-in is **بێ ژڤان**, ژوان → **ژڤان** (feminine), نەخوش → **نەخۆش**, نۆرینگەه → **کلینیک**, password **پەیڤا نهێنی**, delayed **درەنگ**, follow-up **دویڤچوون**, Sorani forms and ڵ removed. `clinic-portal/tests/badini-wording.test.ts` keeps them out.
+- Still open: specialty names (deferred by the founder). The mapping table below predates these reviews; where it disagrees, the ARB and the portal message files win.
 
 ## Policy
 

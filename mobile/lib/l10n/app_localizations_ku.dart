@@ -63,7 +63,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get profileBody =>
-      'دێ شێی ل ڤێرێ زانیاریێن خو، زمان و هەلبژاردنێن چاڤدێریا خو رێک بخەی.';
+      'دێ شێی ل ڤێرێ زانیاریێن خو، زمان و هەلبژاردنێن چاڤدێریا خو ڕێک بخەی.';
 
   @override
   String get goodMorning => 'سپێدە باش،';
@@ -126,7 +126,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get filters => 'فلتەر';
 
   @override
-  String get sortResults => 'ئەنجامان رێک بخە';
+  String get sortResults => 'ئەنجامان ڕێک بخە';
 
   @override
   String get tryAgain => 'دیسان هەول بدە';
@@ -166,7 +166,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get chooseClinic => 'کلینیکەکێ هەلبژێرە';
 
   @override
-  String get chooseDate => 'رێکەفتەکێ هەلبژێرە';
+  String get chooseDate => 'ڕێکەفتەکێ هەلبژێرە';
 
   @override
   String get chooseTime => 'دەمەکێ هەلبژێرە';
@@ -295,7 +295,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get clinic => 'کلینیک';
 
   @override
-  String get date => 'رێکەفت';
+  String get date => 'ڕێکەفت';
 
   @override
   String get time => 'دەم';
@@ -313,7 +313,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get appointmentId => 'ژمارا ژڤانێ';
 
   @override
-  String get queueOpensAppointmentDay => 'ڕێزبەندی ل رۆژا ژڤانێ ڤەدبیت.';
+  String get queueOpensAppointmentDay => 'ڕێزبەندی ل ڕۆژا ژڤانێ ڤەدبیت.';
 
   @override
   String get queueAvailableToday => 'ڕێزبەندییا زندی بۆ ژڤانا ئەڤرۆ بەردەستە.';
@@ -603,7 +603,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get notificationWelcomeNext =>
-      'نوژدارێن باوەرپێکری ببینە و چاڤدێریا خو رێک بخە.';
+      'نوژدارێن باوەرپێکری ببینە و چاڤدێریا خو ڕێک بخە.';
 
   @override
   String get notificationReservedType => 'نویکرنا ژڤانێ';
@@ -617,7 +617,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get notificationReservedNext =>
-      'هیڤییە چاڤەڕێی رێنماییێن پێشوازیێ بە.';
+      'هیڤییە چاڤەڕێی ڕێنماییێن پێشوازیێ بە.';
 
   @override
   String get notificationGeneralHappened =>
@@ -628,7 +628,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get notificationGeneralNext =>
-      'نویکرنێ بخوینە و هەر رێنماییەک هەیە پەیڕەوی بکە.';
+      'نویکرنێ بخوینە و هەر ڕێنماییەک هەیە پەیڕەوی بکە.';
 
   @override
   String get notificationTimeJustNow => 'نوکە هاتە نویکرن';
@@ -660,10 +660,10 @@ class AppLocalizationsKu extends AppLocalizations {
   String get relationship => 'پەیوەندی';
 
   @override
-  String get gender => 'رەگەز';
+  String get gender => 'ڕەگەز';
 
   @override
-  String get dateOfBirth => 'رێکەفتا ژدایکبوونێ';
+  String get dateOfBirth => 'ڕێکەفتا ژدایکبوونێ';
 
   @override
   String patientRelationship(String relationship) {
@@ -978,7 +978,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get rescheduleAppointment => 'ژڤانێ بۆ دەمەکێ دی بگوهێزە';
 
   @override
-  String get chooseNewDateTime => 'رێکەفت و دەمەکێ نوی هەلبژێرە';
+  String get chooseNewDateTime => 'ڕێکەفت و دەمەکێ نوی هەلبژێرە';
 
   @override
   String get confirmCancellation => 'هەلوەشاندنێ پشتڕاست بکە';
@@ -1014,7 +1014,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get queueIsLive => 'ڕێزبەندی نوکە کارایە';
 
   @override
-  String get queueIsPaused => 'ڕێزبەندی بۆ دەمەکێ کورت هاتیە راگرتن';
+  String get queueIsPaused => 'ڕێزبەندی بۆ دەمەکێ کورت هاتیە ڕاگرتن';
 
   @override
   String get queueIsClosed => 'ڕێزبەندی هاتیە گرتن';
@@ -1046,7 +1046,7 @@ class AppLocalizationsKu extends AppLocalizations {
       'نویکرنا دوماهی یا پاراستی ل ڤی ئامیری نیشان ددەین.';
 
   @override
-  String get queuePausedTitle => 'ڕێزبەندی بۆ دەمەکێ کورت هاتیە راگرتن';
+  String get queuePausedTitle => 'ڕێزبەندی بۆ دەمەکێ کورت هاتیە ڕاگرتن';
 
   @override
   String get queuePausedBody =>
@@ -1231,7 +1231,7 @@ class AppLocalizationsKu extends AppLocalizations {
       'نەشیاین ئەپێ FIB ڤەکەین. ئەپێ FIB دابەزینە یان نوی بکە، یان کودێ QR ژ مۆبایلەکێ دی سکان بکە.';
 
   @override
-  String get settingsTitle => 'رێکخستن';
+  String get settingsTitle => 'ڕێکخستن';
 
   @override
   String get appLanguage => 'زمانێ ئەپی';
@@ -1321,7 +1321,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get ntfBookedNext =>
-      'دێ رۆژەکێ بەری ژڤانا تە و دەمەکێ کورت بەری وێ، تە ئاگەهدار کەین.';
+      'دێ ڕۆژەکێ بەری ژڤانا تە و دەمەکێ کورت بەری وێ، تە ئاگەهدار کەین.';
 
   @override
   String get ntfReminderDayTitle => 'ژڤانا تە سوبەهی یە';
@@ -1363,7 +1363,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get ntfFollowQueue => 'جهێ خو د ڕێزبەندییا زندی دا ببینە.';
 
   @override
-  String get ntfPausedTitle => 'ڕێزبەندی بۆ دەمەکێ کورت راوەستایە';
+  String get ntfPausedTitle => 'ڕێزبەندی بۆ دەمەکێ کورت ڕاوەستایە';
 
   @override
   String get ntfPausedNext =>
@@ -1440,7 +1440,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String ntfDoctorPaused(String doctor) {
-    return '$doctor بۆ دەمەکێ کورت ڕێزبەندیێ راگرت.';
+    return '$doctor بۆ دەمەکێ کورت ڕێزبەندیێ ڕاگرت.';
   }
 
   @override
@@ -1485,7 +1485,7 @@ class AppLocalizationsKu extends AppLocalizations {
   }
 
   @override
-  String get directions => 'رێنیشاندان';
+  String get directions => 'ڕێنیشاندان';
 
   @override
   String get callClinic => 'پەیوەندی بکە';
@@ -1525,7 +1525,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get noneFreeToday =>
-      'ئەڤرۆ چ دەمێن ڤالا ل دەڤ ڤان نوژداران نەمایە. فلتەرا «ئەڤرۆ ڤالایە» ڕاکە، دا رۆژێن دی ببینی.';
+      'ئەڤرۆ چ دەمێن ڤالا ل دەڤ ڤان نوژداران نەمایە. فلتەرا «ئەڤرۆ ڤالایە» ڕاکە، دا ڕۆژێن دی ببینی.';
 
   @override
   String get helpTitle => 'هاریکاری و پشتگیری';
@@ -1937,16 +1937,16 @@ class AppLocalizationsKu extends AppLocalizations {
   String get receiptRefundedOn => 'دەمێ ڤەگەڕاندنێ';
 
   @override
-  String get receiptPaidBy => 'رێکا پارەدانێ';
+  String get receiptPaidBy => 'ڕێکا پارەدانێ';
 
   @override
   String get receiptMethodCounter => 'ل پێشوازیا کلینیکێ';
 
   @override
-  String get receiptMethodFib => 'FIB، ب رێکا ئەپی';
+  String get receiptMethodFib => 'FIB، ب ڕێکا ئەپی';
 
   @override
-  String get receiptMethodOnline => 'ئۆنلاین، ب رێکا ئەپی';
+  String get receiptMethodOnline => 'ئۆنلاین، ب ڕێکا ئەپی';
 
   @override
   String get receiptTransaction => 'ژمارا مامەلێ';

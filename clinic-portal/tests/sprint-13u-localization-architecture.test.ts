@@ -38,7 +38,7 @@ describe("Sprint 13U localization boundaries", () => {
     expect(messages("ar").queue).toBe("قائمة الانتظار المباشرة");
     expect(messages("ku").doctor).toBe("نوژدار");
     expect(messages("ku").appointments).toBe("ژڤان");
-    expect(messages("ku").queue).toBe("رێزبەندییا زندی");
+    expect(messages("ku").queue).toBe("ڕێزبەندییا زندی");
   });
 
   it("keeps production localization sources valid UTF-8", () => {

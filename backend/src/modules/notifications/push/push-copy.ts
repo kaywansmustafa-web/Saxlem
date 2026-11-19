@@ -56,7 +56,7 @@ const TITLES: Record<string, Record<PushLocale, string>> = {
   'queue.session.paused': {
     en: 'The queue is paused',
     ar: 'توقف الطابور مؤقتاً',
-    ku: 'ڕێزبەندی بۆ دەمەکێ کورت راوەستایە',
+    ku: 'ڕێزبەندی بۆ دەمەکێ کورت ڕاوەستایە',
   },
   'queue.session.resumed': {
     en: 'The queue is moving again',
