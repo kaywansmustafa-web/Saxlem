@@ -42,7 +42,8 @@ export class ReviewListQueryDto {
   @ApiPropertyOptional({ description: 'From nextCursor.' })
   @IsOptional()
   @IsString()
-  @MaxLength(64)
+  // base64url of "<ISO time>|<uuid>": 82 characters.
+  @MaxLength(120)
   cursor?: string;
   @ApiPropertyOptional({ type: 'integer', minimum: 1, maximum: 50 })
   @IsOptional()

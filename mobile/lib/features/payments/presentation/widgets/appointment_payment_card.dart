@@ -3,8 +3,10 @@ import '../../../../core/localization/localization_extensions.dart';
 import '../../../../design_system/design_system.dart';
 import '../../domain/appointment_payment.dart';
 import '../../domain/payments_repository.dart';
+import '../../domain/receipt.dart';
 import '../../payments_scope.dart';
 import '../pages/online_payment_page.dart';
+import '../pages/receipt_page.dart';
 import '../payment_copy.dart';
 
 /// Payment status for one appointment, with "Pay now" when the clinic takes
@@ -109,6 +111,30 @@ class _AppointmentPaymentCardState extends State<AppointmentPaymentCard> {
                       ),
                     ),
                   ],
+                  if (p.status.isSettled)
+                    if (repository case final ReceiptsSource receipts)
+                      Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: TextButton.icon(
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            visualDensity: VisualDensity.compact,
+                          ),
+                          icon: const Icon(
+                            Icons.receipt_long_rounded,
+                            size: 18,
+                          ),
+                          label: Text(context.l10n.receiptView),
+                          onPressed: () => Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => ReceiptDetailsPage(
+                                source: receipts,
+                                appointmentId: widget.appointmentId,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                   if (p.canPayOnline) ...[
                     const SizedBox(height: 14),
                     SaxlemButton(

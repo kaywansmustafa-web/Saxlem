@@ -1889,4 +1889,91 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get ntfEarlierNext =>
       'Open your visit to move to it. Whoever confirms first gets it.';
+
+  @override
+  String get receiptsTitle => 'Payments & receipts';
+
+  @override
+  String get receiptsFailed => 'Couldn\'t load your payments';
+
+  @override
+  String get receiptsMoreFailed => 'More payments couldn\'t be loaded.';
+
+  @override
+  String get receiptsEmptyTitle => 'No payments yet';
+
+  @override
+  String get receiptsEmptyBody =>
+      'When you pay for a visit, in the app or at the clinic, its receipt appears here.';
+
+  @override
+  String get receiptTitle => 'Receipt';
+
+  @override
+  String get receiptFailed => 'Couldn\'t load this receipt';
+
+  @override
+  String get receiptCopy => 'Copy receipt';
+
+  @override
+  String get receiptCopied => 'Receipt copied';
+
+  @override
+  String get receiptView => 'View receipt';
+
+  @override
+  String get receiptAmount => 'Amount';
+
+  @override
+  String get receiptStatus => 'Status';
+
+  @override
+  String get receiptNumber => 'Receipt no.';
+
+  @override
+  String get receiptPaidOn => 'Paid on';
+
+  @override
+  String get receiptRefundedOn => 'Refunded on';
+
+  @override
+  String get receiptPaidBy => 'Paid by';
+
+  @override
+  String get receiptMethodCounter => 'At the clinic desk';
+
+  @override
+  String get receiptMethodFib => 'FIB, in the app';
+
+  @override
+  String get receiptMethodOnline => 'Online, in the app';
+
+  @override
+  String get receiptTransaction => 'Transaction ID';
+
+  @override
+  String get receiptPaidTo => 'Paid to';
+
+  @override
+  String receiptPaidToPlatform(String organization) {
+    return 'Saxlem, for $organization';
+  }
+
+  @override
+  String get receiptPatient => 'Patient';
+
+  @override
+  String get receiptClinic => 'Clinic';
+
+  @override
+  String get receiptAddress => 'Address';
+
+  @override
+  String get receiptPhone => 'Phone';
+
+  @override
+  String get receiptVisit => 'Visit';
+
+  @override
+  String get receiptTextHeading => 'Saxlem receipt';
 }

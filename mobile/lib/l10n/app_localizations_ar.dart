@@ -1842,4 +1842,91 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get ntfEarlierNext =>
       'افتح موعدك لتنتقل إليه. من يؤكد أولًا يحصل عليه.';
+
+  @override
+  String get receiptsTitle => 'المدفوعات والإيصالات';
+
+  @override
+  String get receiptsFailed => 'تعذّر تحميل مدفوعاتك';
+
+  @override
+  String get receiptsMoreFailed => 'تعذّر تحميل المزيد من المدفوعات.';
+
+  @override
+  String get receiptsEmptyTitle => 'لا توجد مدفوعات بعد';
+
+  @override
+  String get receiptsEmptyBody =>
+      'عندما تدفع ثمن زيارة، في التطبيق أو في العيادة، يظهر إيصالها هنا.';
+
+  @override
+  String get receiptTitle => 'إيصال';
+
+  @override
+  String get receiptFailed => 'تعذّر تحميل هذا الإيصال';
+
+  @override
+  String get receiptCopy => 'نسخ الإيصال';
+
+  @override
+  String get receiptCopied => 'تم نسخ الإيصال';
+
+  @override
+  String get receiptView => 'عرض الإيصال';
+
+  @override
+  String get receiptAmount => 'المبلغ';
+
+  @override
+  String get receiptStatus => 'الحالة';
+
+  @override
+  String get receiptNumber => 'رقم الإيصال';
+
+  @override
+  String get receiptPaidOn => 'تاريخ الدفع';
+
+  @override
+  String get receiptRefundedOn => 'تاريخ الاسترداد';
+
+  @override
+  String get receiptPaidBy => 'طريقة الدفع';
+
+  @override
+  String get receiptMethodCounter => 'في استقبال العيادة';
+
+  @override
+  String get receiptMethodFib => 'FIB، عبر التطبيق';
+
+  @override
+  String get receiptMethodOnline => 'إلكترونيًا عبر التطبيق';
+
+  @override
+  String get receiptTransaction => 'رقم المعاملة';
+
+  @override
+  String get receiptPaidTo => 'المستلم';
+
+  @override
+  String receiptPaidToPlatform(String organization) {
+    return 'ساكسلم نيابةً عن $organization';
+  }
+
+  @override
+  String get receiptPatient => 'المريض';
+
+  @override
+  String get receiptClinic => 'العيادة';
+
+  @override
+  String get receiptAddress => 'العنوان';
+
+  @override
+  String get receiptPhone => 'الهاتف';
+
+  @override
+  String get receiptVisit => 'الزيارة';
+
+  @override
+  String get receiptTextHeading => 'إيصال ساكسلم';
 }

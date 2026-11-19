@@ -14,9 +14,12 @@ String formatIqd(int value) {
   return '$b IQD';
 }
 
-String paymentStatusLabel(BuildContext context, AppointmentPayment payment) {
+String paymentStatusLabel(BuildContext context, AppointmentPayment payment) =>
+    paymentStatusText(context, payment.status);
+
+String paymentStatusText(BuildContext context, PaymentStatus status) {
   final l10n = context.l10n;
-  return switch (payment.status) {
+  return switch (status) {
     PaymentStatus.dueAtCounter => l10n.paymentStatusDueAtCounter,
     PaymentStatus.pending => l10n.paymentStatusPending,
     PaymentStatus.paid => l10n.paymentStatusPaid,

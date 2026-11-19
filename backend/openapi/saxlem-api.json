@@ -8002,6 +8002,101 @@
         ]
       }
     },
+    "/api/v1/patients/me/payments": {
+      "get": {
+        "description": "Every visit paid by the account’s profiles, online or at the counter, including refunds.",
+        "operationId": "ReceiptsController_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "From nextCursor.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptPageDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "My payments, newest first",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/api/v1/appointments/{id}/receipt": {
+      "get": {
+        "operationId": "ReceiptsController_receipt",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelopeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "The receipt for a paid visit",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
     "/api/v1/appointments/{id}/review": {
       "get": {
         "operationId": "AppointmentReviewController_get",
@@ -16667,6 +16762,147 @@
         "required": [
           "method",
           "expectedNetPayableIqd"
+        ]
+      },
+      "ReceiptDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "appointmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reference": {
+            "type": "string",
+            "example": "SX-2026-000123",
+            "description": "The visit reference; one payment per visit."
+          },
+          "patientName": {
+            "type": "string",
+            "description": "Who the visit was for (a family member too)."
+          },
+          "doctorName": {
+            "type": "string"
+          },
+          "clinicName": {
+            "type": "string"
+          },
+          "clinicAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "clinicPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "The clinic organization that was paid."
+          },
+          "visitStartsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "counter",
+              "online"
+            ]
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "fib",
+              "simulated"
+            ],
+            "nullable": true
+          },
+          "transactionId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The payment id at the provider, for online payments."
+          },
+          "collectedBy": {
+            "type": "string",
+            "enum": [
+              "platform",
+              "organization"
+            ],
+            "nullable": true,
+            "description": "Online payments only. platform: Saxlem collected the money for the clinic. organization: it went straight to the clinic’s own account. Null for counter payments, which the clinic takes in person."
+          },
+          "amountIqd": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "IQD"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "paid",
+              "refundPending",
+              "refunded",
+              "refundFailed"
+            ]
+          },
+          "paidAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "refundedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "appointmentId",
+          "reference",
+          "patientName",
+          "doctorName",
+          "clinicName",
+          "clinicAddress",
+          "clinicPhone",
+          "organizationName",
+          "visitStartsAt",
+          "method",
+          "provider",
+          "transactionId",
+          "collectedBy",
+          "amountIqd",
+          "currency",
+          "status",
+          "paidAt",
+          "refundedAt"
+        ]
+      },
+      "ReceiptPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReceiptDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
         ]
       },
       "MyReviewDto": {

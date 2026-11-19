@@ -164,4 +164,47 @@ describe('verified reviews', () => {
       anonymous: true,
     }).expect(409);
   });
+
+  it('pages through a doctor’s reviews', async () => {
+    const seeded = await createSeededQueue(0);
+    const { organizationId, clinicId } = seeded.tenant;
+    const doctorId = seeded.doctor.doctorId!;
+    const server = app.getHttpServer();
+    for (const daysAgo of [1, 2]) {
+      const visit = await apiPrisma.appointment.create({
+        data: {
+          organizationId,
+          clinicId,
+          doctorId,
+          patientProfileId: seeded.profile.id,
+          origin: 'patientBooked',
+          startsAt: new Date(Date.now() - daysAgo * 86_400_000),
+          endsAt: new Date(Date.now() - daysAgo * 86_400_000 + 15 * 60_000),
+          durationMinutes: 15,
+          feeIqd: 25000,
+          status: 'completed',
+        },
+      });
+      await request(server)
+        .post(`/api/v1/appointments/${visit.id}/review`)
+        .set('authorization', `Bearer ${seeded.patient.token}`)
+        .send({ rating: 4, anonymous: true })
+        .expect(200);
+    }
+    const first = await request(server)
+      .get(`/api/v1/doctors/${doctorId}/reviews?pageSize=1`)
+      .set('authorization', `Bearer ${seeded.patient.token}`)
+      .expect(200);
+    expect(first.body.items).toHaveLength(1);
+    expect(typeof first.body.nextCursor).toBe('string');
+    const second = await request(server)
+      .get(
+        `/api/v1/doctors/${doctorId}/reviews?pageSize=1&cursor=${first.body.nextCursor}`,
+      )
+      .set('authorization', `Bearer ${seeded.patient.token}`)
+      .expect(200);
+    expect(second.body.items).toHaveLength(1);
+    expect(second.body.items[0].id).not.toBe(first.body.items[0].id);
+    expect(second.body.nextCursor).toBeNull();
+  });
 });

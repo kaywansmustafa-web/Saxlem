@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { AppointmentsModule } from '../appointments/appointments.module';
 import { IdentityModule } from '../identity/identity.module';
 import { PaymentService } from './application/payment.service';
+import { ReceiptService } from './application/receipt.service';
+import { ReceiptsController } from './presentation/receipts.controller';
 import { PayoutService } from './application/payout.service';
 import { PAYOUT_REPOSITORY } from './domain/payout';
 import { PrismaPayoutRepository } from './infrastructure/prisma-payout.repository';
@@ -29,9 +31,11 @@ import {
     PaymentCallbackController,
     PayoutsController,
     StatementsController,
+    ReceiptsController,
   ],
   providers: [
     PaymentService,
+    ReceiptService,
     PayoutService,
     PrismaPayoutRepository,
     { provide: PAYOUT_REPOSITORY, useExisting: PrismaPayoutRepository },

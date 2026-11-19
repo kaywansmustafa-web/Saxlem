@@ -9,6 +9,7 @@ import 'package:saxlem_app/features/authentication/domain/repositories/auth_repo
 import 'package:saxlem_app/features/payments/data/backend_payments_repository.dart';
 import 'package:saxlem_app/features/payments/domain/appointment_payment.dart';
 import 'package:saxlem_app/features/payments/domain/payments_repository.dart';
+import 'package:saxlem_app/features/payments/domain/receipt.dart';
 
 const appointmentId = '01a1e0f5-05cb-713b-a70f-946f28664cd3';
 const clinicId = '01a1e0f5-05cb-713b-a70f-946f28664cd4';
@@ -128,7 +129,81 @@ void main() {
       throwsA(isA<PaymentFailure>()),
     );
   });
+
+  test('reads payment history and follows the cursor', () async {
+    final asked = <Uri>[];
+    final repository = _repository(
+      MockClient((request) async {
+        asked.add(request.url);
+        return http.Response.bytes(
+          utf8.encode(
+            jsonEncode({
+              'items': [receipt()],
+              'nextCursor': 'next-page',
+            }),
+          ),
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
+      }),
+    );
+    final first = await repository.receipts();
+    await repository.receipts(cursor: first.nextCursor);
+    expect(asked.first.path, '/api/v1/patients/me/payments');
+    expect(asked.first.queryParameters, isEmpty);
+    expect(asked.last.queryParameters, {'cursor': 'next-page'});
+    final item = first.items.single;
+    expect(item.reference, 'SX-2026-000123');
+    expect(item.method, PaymentMethod.online);
+    expect(item.collectedBy, ReceiptCollector.platform);
+    expect(item.paidAt, DateTime.utc(2026, 11, 3, 8));
+    expect(item.clinicAddress, 'Zakho Road, Duhok');
+  });
+
+  test('a receipt must be for money that changed hands', () async {
+    final repository = _repository(
+      MockClient(
+        (_) async => http.Response(jsonEncode(receipt(status: 'pending')), 200),
+      ),
+    );
+    await expectLater(
+      repository.receipt(appointmentId),
+      throwsA(isA<PaymentFailure>()),
+    );
+  });
+
+  test('no receipt yet reads as a failure, not a crash', () async {
+    final repository = _repository(
+      MockClient((_) async => http.Response('{}', 404)),
+    );
+    await expectLater(
+      repository.receipt(appointmentId),
+      throwsA(isA<PaymentFailure>()),
+    );
+  });
 }
+
+Map<String, Object?> receipt({String status = 'paid'}) => {
+  'id': '01a1e0f5-05cb-713b-a70f-946f28664cd9',
+  'appointmentId': appointmentId,
+  'reference': 'SX-2026-000123',
+  'patientName': 'Avin Kawa',
+  'doctorName': 'Dr. Shilan Ahmed',
+  'clinicName': 'Hillview Clinic',
+  'clinicAddress': 'Zakho Road, Duhok',
+  'clinicPhone': null,
+  'organizationName': 'Hillview Medical',
+  'visitStartsAt': '2026-11-04T06:00:00.000Z',
+  'method': 'online',
+  'provider': 'fib',
+  'transactionId': 'fib-7731',
+  'collectedBy': 'platform',
+  'amountIqd': 25000,
+  'currency': 'IQD',
+  'status': status,
+  'paidAt': '2026-11-03T08:00:00.000Z',
+  'refundedAt': null,
+};
 
 BackendPaymentsRepository _repository(http.Client client) {
   final storage = _Storage();

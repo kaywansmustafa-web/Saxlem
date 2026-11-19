@@ -1860,4 +1860,91 @@ class AppLocalizationsKu extends AppLocalizations {
   @override
   String get ntfEarlierNext =>
       'ژڤانا خۆ ڤەکە دا بۆ وی بگوهێزی. یێ ئێکەمین پشتڕاست بکەت دێ وەرگریت.';
+
+  @override
+  String get receiptsTitle => 'پارەدان و وەسل';
+
+  @override
+  String get receiptsFailed => 'نەشیاین پارەدانێن تە ڤەکەین';
+
+  @override
+  String get receiptsMoreFailed => 'نەشیاین پارەدانێن پتر ڤەکەین.';
+
+  @override
+  String get receiptsEmptyTitle => 'هێشتا چ پارەدان نینن';
+
+  @override
+  String get receiptsEmptyBody =>
+      'دەمێ تو پارێ سەرەدانەکێ ددەی، ل ئەپی یان ل کلینیکێ، وەسلا وێ دێ ل ڤێرە دیار بیت.';
+
+  @override
+  String get receiptTitle => 'وەسل';
+
+  @override
+  String get receiptFailed => 'نەشیاین ڤی وەسلی ڤەکەین';
+
+  @override
+  String get receiptCopy => 'وەسلێ کۆپی بکە';
+
+  @override
+  String get receiptCopied => 'وەسل هاتە کۆپیکرن';
+
+  @override
+  String get receiptView => 'وەسلێ ببینە';
+
+  @override
+  String get receiptAmount => 'بڕ';
+
+  @override
+  String get receiptStatus => 'رەوش';
+
+  @override
+  String get receiptNumber => 'ژمارا وەسلێ';
+
+  @override
+  String get receiptPaidOn => 'دەمێ پارەدانێ';
+
+  @override
+  String get receiptRefundedOn => 'دەمێ ڤەگەڕاندنێ';
+
+  @override
+  String get receiptPaidBy => 'رێکا پارەدانێ';
+
+  @override
+  String get receiptMethodCounter => 'ل پێشوازیا کلینیکێ';
+
+  @override
+  String get receiptMethodFib => 'FIB، ب رێکا ئەپی';
+
+  @override
+  String get receiptMethodOnline => 'ئۆنلاین، ب رێکا ئەپی';
+
+  @override
+  String get receiptTransaction => 'ژمارا مامەلێ';
+
+  @override
+  String get receiptPaidTo => 'پارە بۆ';
+
+  @override
+  String receiptPaidToPlatform(String organization) {
+    return 'ساخله‌م، بۆ $organization';
+  }
+
+  @override
+  String get receiptPatient => 'نەخۆش';
+
+  @override
+  String get receiptClinic => 'کلینیک';
+
+  @override
+  String get receiptAddress => 'ناڤنیشان';
+
+  @override
+  String get receiptPhone => 'تەلەفۆن';
+
+  @override
+  String get receiptVisit => 'سەرەدان';
+
+  @override
+  String get receiptTextHeading => 'وەسلا ساخله‌م';
 }

@@ -1,3 +1,6 @@
+import '../../../payments/domain/receipt.dart';
+import '../../../payments/payments_scope.dart';
+import '../../../payments/presentation/pages/payment_history_page.dart';
 import '../../../saved_doctors/domain/saved_doctors.dart';
 import '../../../saved_doctors/presentation/saved_doctors.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -139,6 +142,17 @@ class PatientProfilesPage extends StatelessWidget {
                             source: saved,
                             onOpenDoctor: open,
                           ),
+                        ),
+                      ),
+                    ),
+                if (!controller.guest)
+                  if (PaymentsScope.of(context) case final ReceiptsSource r)
+                    _SettingsRow(
+                      icon: Icons.receipt_long_rounded,
+                      label: context.l10n.receiptsTitle,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => PaymentHistoryPage(source: r),
                         ),
                       ),
                     ),

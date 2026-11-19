@@ -3327,6 +3327,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open your visit to move to it. Whoever confirms first gets it.'**
   String get ntfEarlierNext;
+
+  /// No description provided for @receiptsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments & receipts'**
+  String get receiptsTitle;
+
+  /// No description provided for @receiptsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your payments'**
+  String get receiptsFailed;
+
+  /// No description provided for @receiptsMoreFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'More payments couldn\'t be loaded.'**
+  String get receiptsMoreFailed;
+
+  /// No description provided for @receiptsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No payments yet'**
+  String get receiptsEmptyTitle;
+
+  /// No description provided for @receiptsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'When you pay for a visit, in the app or at the clinic, its receipt appears here.'**
+  String get receiptsEmptyBody;
+
+  /// No description provided for @receiptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt'**
+  String get receiptTitle;
+
+  /// No description provided for @receiptFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this receipt'**
+  String get receiptFailed;
+
+  /// No description provided for @receiptCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy receipt'**
+  String get receiptCopy;
+
+  /// No description provided for @receiptCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt copied'**
+  String get receiptCopied;
+
+  /// No description provided for @receiptView.
+  ///
+  /// In en, this message translates to:
+  /// **'View receipt'**
+  String get receiptView;
+
+  /// No description provided for @receiptAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get receiptAmount;
+
+  /// No description provided for @receiptStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get receiptStatus;
+
+  /// No description provided for @receiptNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt no.'**
+  String get receiptNumber;
+
+  /// No description provided for @receiptPaidOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid on'**
+  String get receiptPaidOn;
+
+  /// No description provided for @receiptRefundedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded on'**
+  String get receiptRefundedOn;
+
+  /// No description provided for @receiptPaidBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid by'**
+  String get receiptPaidBy;
+
+  /// No description provided for @receiptMethodCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'At the clinic desk'**
+  String get receiptMethodCounter;
+
+  /// No description provided for @receiptMethodFib.
+  ///
+  /// In en, this message translates to:
+  /// **'FIB, in the app'**
+  String get receiptMethodFib;
+
+  /// No description provided for @receiptMethodOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Online, in the app'**
+  String get receiptMethodOnline;
+
+  /// No description provided for @receiptTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction ID'**
+  String get receiptTransaction;
+
+  /// No description provided for @receiptPaidTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid to'**
+  String get receiptPaidTo;
+
+  /// No description provided for @receiptPaidToPlatform.
+  ///
+  /// In en, this message translates to:
+  /// **'Saxlem, for {organization}'**
+  String receiptPaidToPlatform(String organization);
+
+  /// No description provided for @receiptPatient.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get receiptPatient;
+
+  /// No description provided for @receiptClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic'**
+  String get receiptClinic;
+
+  /// No description provided for @receiptAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get receiptAddress;
+
+  /// No description provided for @receiptPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get receiptPhone;
+
+  /// No description provided for @receiptVisit.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit'**
+  String get receiptVisit;
+
+  /// No description provided for @receiptTextHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Saxlem receipt'**
+  String get receiptTextHeading;
 }
 
 class _AppLocalizationsDelegate

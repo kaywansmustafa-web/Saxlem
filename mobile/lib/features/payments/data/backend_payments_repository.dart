@@ -2,8 +2,9 @@ import '../../../core/network/api_failure.dart';
 import '../../../core/network/authenticated_api_client.dart';
 import '../domain/appointment_payment.dart';
 import '../domain/payments_repository.dart';
+import '../domain/receipt.dart';
 
-class BackendPaymentsRepository implements PaymentsRepository {
+class BackendPaymentsRepository implements PaymentsRepository, ReceiptsSource {
   BackendPaymentsRepository(this._api);
   final AuthenticatedApiClient _api;
   static final _uuid = RegExp(
@@ -72,6 +73,106 @@ class BackendPaymentsRepository implements PaymentsRepository {
         )).body,
         appointmentId,
       ),
+    );
+  }
+
+  @override
+  Future<ReceiptList> receipts({String? cursor}) => _guard(() async {
+    if (cursor != null && cursor.length > 200) {
+      throw const FormatException('cursor');
+    }
+    final body = (await _api.getJson(
+      '/patients/me/payments',
+      queryParameters: {'cursor': ?cursor},
+    )).body;
+    final items = body['items'];
+    final next = body['nextCursor'];
+    if (items is! List ||
+        (next != null && (next is! String || next.length > 200))) {
+      throw const FormatException('receipts');
+    }
+    return ReceiptList(
+      items: [
+        for (final item in items)
+          if (item is Map<String, Object?>)
+            parseReceipt(item)
+          else
+            throw const FormatException('receipt'),
+      ],
+      nextCursor: next as String?,
+    );
+  });
+
+  @override
+  Future<Receipt> receipt(String appointmentId) {
+    _requireUuid(appointmentId);
+    return _guard(() async {
+      final receipt = parseReceipt(
+        (await _api.getJson('/appointments/$appointmentId/receipt')).body,
+      );
+      if (receipt.appointmentId != appointmentId) {
+        throw const FormatException('appointmentId');
+      }
+      return receipt;
+    });
+  }
+
+  static Receipt parseReceipt(Map<String, Object?> body) {
+    String text(String key, {int max = 300}) {
+      final value = body[key];
+      if (value is! String || value.isEmpty || value.length > max) {
+        throw FormatException(key);
+      }
+      return value;
+    }
+
+    String? optional(String key, {int max = 300}) {
+      final value = body[key];
+      if (value == null) return null;
+      if (value is! String || value.length > max) throw FormatException(key);
+      return value.isEmpty ? null : value;
+    }
+
+    final amount = body['amountIqd'];
+    if (amount is! int || amount <= 0) throw const FormatException('amount');
+    final status = PaymentStatus.parse(body['status']);
+    if (!status.isSettled) throw const FormatException('status');
+    final appointmentId = text('appointmentId');
+    if (!_uuid.hasMatch(appointmentId) || !_uuid.hasMatch(text('id'))) {
+      throw const FormatException('id');
+    }
+    if (body['currency'] != 'IQD') throw const FormatException('currency');
+    return Receipt(
+      id: text('id'),
+      appointmentId: appointmentId,
+      reference: text('reference', max: 40),
+      patientName: text('patientName'),
+      doctorName: text('doctorName'),
+      clinicName: text('clinicName'),
+      clinicAddress: optional('clinicAddress'),
+      clinicPhone: optional('clinicPhone', max: 40),
+      organizationName: text('organizationName'),
+      visitStartsAt: DateTime.parse(text('visitStartsAt', max: 40)).toUtc(),
+      method: switch (body['method']) {
+        'counter' => PaymentMethod.counter,
+        'online' => PaymentMethod.online,
+        _ => throw const FormatException('method'),
+      },
+      provider: optional('provider', max: 40),
+      transactionId: optional('transactionId', max: 120),
+      collectedBy: switch (body['collectedBy']) {
+        'platform' => ReceiptCollector.platform,
+        'organization' => ReceiptCollector.organization,
+        null => null,
+        _ => throw const FormatException('collectedBy'),
+      },
+      amountIqd: amount,
+      status: status,
+      paidAt: DateTime.parse(text('paidAt', max: 40)).toUtc(),
+      refundedAt: switch (optional('refundedAt', max: 40)) {
+        final String value => DateTime.parse(value).toUtc(),
+        null => null,
+      },
     );
   }
 
