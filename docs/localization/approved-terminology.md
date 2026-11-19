@@ -9,6 +9,20 @@ This document is the durable source of truth for Saxlem English, Arabic, and Bad
 - A receipt (patient or clinic) is **پسوولە** (پسوولێ, پسوولا).
 - "Own" is written **خو**, not خۆ.
 
+## Patient app final review, 2026-11-19
+
+The founder's reviewed file (an external machine draft) was checked line by line; 246 of 633 lines were corrected. The full before/after record is `badini-patient-app-final-2026-11-19.csv`, and `mobile/lib/l10n/app_ku.arb` is the source of truth for patient-app wording. `test/localization/localization_integrity_test.dart` keeps the Sorani forms below out of the app.
+
+- Badini, not Sorani: هیڤییە (not تکایە), هەول (not هەوڵ), نوکە (not ئێستا), بکارئینان (not بەکارهێنان), نەشێت/بشێت (not ناتوانیت/بتوانیت), پێدڤی (not پێویست), گەلەک (not زۆر, "very"), کەڤن (not کۆن), هویرکاری (not وردەکاری), گوهۆڕین (not گۆڕین), گاڤ (not گام). No ڵ. Plurals take ـێن/ـان, never ـەکان.
+- "Live" is **زندی** everywhere: ڕێزبەندییا زندی, and the LIVE badge زندی.
+- **ژڤان** (appointment) is treated as feminine: ژڤانا تە, ڤێ ژڤانێ, ژڤانێن.
+- Follow-up visit: **ژڤانا دویڤچوونێ**. Turn in the queue: **نۆرا تە**. Iraq: **عیراق**.
+- Reference / ID: **کودێ ژڤانێ** for the booking reference, **ژمارا ژڤانێ** for the ID.
+- Months keep the established Badini set: کانوونا دووێ, شوبات, ئادار, نیسان, گولان, حزیران, تیرمەه, تەباخ, ئیلوون, چریا ئێکێ, چریا دووێ, کانوونا ئێکێ.
+- Weekdays: دووشەمبی, سێشەمبی, چارشەمبی, پێنجشەمبی, ئەینی, شەمبی, یەکشەمبی.
+- Digits are Western (0–9). Phone numbers, references, codes and versions are isolated left-to-right in code (`ltrIsolate`), never with control characters in the ARB.
+- Push titles and next steps use exactly the in-app inbox wording.
+- Still for a native ear: ئەینی vs ئێنی (Friday), ڕ vs ر at the start of words (the Clinic Portal still writes ر), the gender of ژڤان in the Clinic Portal (it uses ژڤانێ/ژڤانی), and specialty names (deferred by the founder).
 
 ## Policy
 

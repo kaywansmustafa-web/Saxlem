@@ -11,27 +11,27 @@ const TITLES: Record<string, Record<PushLocale, string>> = {
   'appointment.booked': {
     en: 'Booking confirmed',
     ar: 'تم تأكيد الحجز',
-    ku: 'ژڤان هاتە پشتراستکرن',
+    ku: 'ژڤانا تە هاتە پشتڕاستکرن',
   },
   'appointment.cancelled.by-clinic': {
     en: 'The clinic cancelled your visit',
     ar: 'ألغت العيادة موعدك',
-    ku: 'کلینیکێ ژڤانێ تە هەلوەشاند',
+    ku: 'کلینیکێ ژڤانا تە هەلوەشاند',
   },
   'appointment.rescheduled.by-clinic': {
     en: 'Your visit has a new time',
     ar: 'تم تغيير موعدك',
-    ku: 'ژڤانێ تە دەمەکێ نوی هەیە',
+    ku: 'ژڤانا تە دەمەکێ نوی هەیە',
   },
   'appointment.reminder.day-before': {
     en: 'Your visit is tomorrow',
     ar: 'موعدك غداً',
-    ku: 'ژڤانێ تە سوبەهی یە',
+    ku: 'ژڤانا تە سوبەهی یە',
   },
   'appointment.reminder.soon': {
     en: 'Your visit is soon',
     ar: 'موعدك قريب',
-    ku: 'ژڤانێ تە نێزیکە',
+    ku: 'ژڤانا تە نێزیکە',
   },
   'appointment.review.requested': {
     en: 'How was your visit?',
@@ -41,7 +41,7 @@ const TITLES: Record<string, Record<PushLocale, string>> = {
   'appointment.earlier.available': {
     en: 'An earlier time is free',
     ar: 'يتوفر موعد أبكر',
-    ku: 'دەمەکێ زووتر یێ ڤالایە',
+    ku: 'دەمەکێ زووتر ڤالا بوو',
   },
   'queue.patient.almost': {
     en: 'Almost your turn',
@@ -51,27 +51,27 @@ const TITLES: Record<string, Record<PushLocale, string>> = {
   'queue.session.opened': {
     en: 'The queue is open',
     ar: 'بدأ الطابور',
-    ku: 'رێزبەندی ڤەبوو',
+    ku: 'ڕێزبەندی ڤەبوو',
   },
   'queue.session.paused': {
     en: 'The queue is paused',
     ar: 'توقف الطابور مؤقتاً',
-    ku: 'رێزبەندی بۆ دەمەکێ کورت راوەستا',
+    ku: 'ڕێزبەندی بۆ دەمەکێ کورت راوەستایە',
   },
   'queue.session.resumed': {
     en: 'The queue is moving again',
     ar: 'عاد الطابور للحركة',
-    ku: 'رێزبەندی دیسان دەست پێ کر',
+    ku: 'ڕێزبەندی دیسان دەست پێ کر',
   },
   'queue.session.closed': {
     en: 'The queue is closed',
     ar: 'أُغلق الطابور',
-    ku: 'رێزبەندی هاتە گرتن',
+    ku: 'ڕێزبەندی هاتە گرتن',
   },
   'queue.entry.enqueued': {
     en: "You're in the queue",
     ar: 'أنت في الطابور',
-    ku: 'تو د رێزبەندیێ دا یی',
+    ku: 'تو د ڕێزبەندیێ دا یی',
   },
   'queue.patient.called': {
     en: "It's your turn",
@@ -91,7 +91,7 @@ const TITLES: Record<string, Record<PushLocale, string>> = {
   'queue.consultation.started': {
     en: 'Your consultation has started',
     ar: 'بدأت معاينتك',
-    ku: 'پشکنینا تە دەست پێ کر',
+    ku: 'ڕاوێژا تە دەست پێ کر',
   },
   'queue.consultation.completed': {
     en: 'Visit finished',
@@ -105,12 +105,12 @@ const NEXT: Record<string, Record<PushLocale, string>> = {
   'appointment.review.requested': {
     en: 'Rate it in a few seconds. It helps other patients choose.',
     ar: 'قيّمها في ثوانٍ. هذا يساعد المرضى الآخرين على الاختيار.',
-    ku: 'د چەند چرکەیان دا هەلسەنگینە. هاریکاریا نەخوشێن دی دکەت.',
+    ku: 'د چەند چرکەیان دا هەلسەنگاندنێ بکە. ئەڤە هاریکاریا نەخۆشێن دی دکەت دا نوژدارەکێ هەلبژێرن.',
   },
   'appointment.earlier.available': {
     en: 'Open your visit to move to it. Whoever confirms first gets it.',
     ar: 'افتح موعدك لتنتقل إليه. من يؤكد أولًا يحصل عليه.',
-    ku: 'ژڤانا خو ڤەکە دا بۆ وی بگوهێزی. یێ ئێکەمین پشتڕاست بکەت دێ وەرگریت.',
+    ku: 'ژڤانا خو ڤەکە و بۆ ڤی دەمێ زووتر بگوهێزە. یێ زووترین پشتڕاست بکەت، ئەو دەم وەردگریت.',
   },
   'queue.patient.almost': {
     en: 'Make your way to the waiting area and stay close.',
@@ -120,12 +120,12 @@ const NEXT: Record<string, Record<PushLocale, string>> = {
   'queue.patient.called': {
     en: 'Please go in to the doctor now.',
     ar: 'تفضّل بالدخول إلى الطبيب الآن.',
-    ku: 'هیڤیە نوکە بچە دەڤ نوژداری.',
+    ku: 'هیڤییە نوکە بچە ژوور بۆ دەڤ نوژداری.',
   },
   'queue.patient.no-response': {
     en: 'Speak to reception — they can put you back in the queue.',
     ar: 'تحدّث مع الاستقبال، يمكنهم إعادتك إلى الطابور.',
-    ku: 'دگەل پێشوازیێ باخڤە، دشێن تە ڤەگەڕیننە رێزبەندیێ.',
+    ku: 'دگەل کارمەندێ پێشوازیێ باخڤە؛ ئەو دشێن تە دیسان بخەنە ڕێزبەندیێ.',
   },
 };
 NEXT['queue.patient.recalled'] = NEXT['queue.patient.called']!;
@@ -165,7 +165,7 @@ const MONTHS: Record<PushLocale, readonly string[]> = {
 const TICKET: Record<PushLocale, (n: number) => string> = {
   en: (n) => `Ticket ${n}`,
   ar: (n) => `رقم ${n}`,
-  ku: (n) => `ژمارە ${n}`,
+  ku: (n) => `ژمارا تیکێتێ ${n}`,
 };
 
 function ahead(count: number, locale: PushLocale): string {
@@ -183,8 +183,8 @@ function ahead(count: number, locale: PushLocale): string {
     return count === 0
       ? 'کەس بەری تە نینە'
       : count === 1
-        ? 'ئێک کەس بەری تە'
-        : `${count} کەس بەری تە`;
+        ? 'ئێک کەس بەری تە یە'
+        : `${count} کەس بەری تە نە`;
   return count === 0
     ? 'Nobody ahead of you'
     : count === 1
@@ -231,5 +231,9 @@ export function pushMessage(
     ]);
   else body = join([ticket, context.doctorName]);
   if (!body) body = NEXT[type]?.[locale] ?? '';
-  return { title, body };
+  // Phones lay out a notification by its first letter, so one that starts
+  // with a doctor's name in Latin letters would run left to right. A
+  // right-to-left mark keeps Kurdish and Arabic pushes right to left.
+  const rtl = locale === 'en' ? '' : '\u200F';
+  return { title: rtl + title, body: body ? rtl + body : body };
 }

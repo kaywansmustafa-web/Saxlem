@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
+import '../../../../core/formatting/ltr_isolate.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../../design_system/design_system.dart';
 import '../controllers/auth_controller.dart';
@@ -95,7 +96,11 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                   ),
                 ),
                 const SizedBox(height: SaxlemSpacing.one),
-                Text(strings.otpBody(state.challenge?.maskedDestination ?? '')),
+                Text(
+                  strings.otpBody(
+                    ltrIsolate(state.challenge?.maskedDestination ?? ''),
+                  ),
+                ),
                 const SizedBox(height: SaxlemSpacing.three),
                 SaxlemTextField(
                   label: strings.otpLabel,
@@ -118,7 +123,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                 const SizedBox(height: SaxlemSpacing.one),
                 if (widget.developmentOtp case final developmentOtp?)
                   Text(
-                    strings.developmentCodeHint(developmentOtp),
+                    strings.developmentCodeHint(ltrIsolate(developmentOtp)),
                     textAlign: TextAlign.center,
                   ),
                 const SizedBox(height: SaxlemSpacing.three),

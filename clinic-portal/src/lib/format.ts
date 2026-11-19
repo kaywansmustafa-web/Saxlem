@@ -11,7 +11,7 @@ const badiniMonths = [
   "کانوونا دووێ", "شوبات", "ئادار", "نیسان", "گولان", "حزیران",
   "تیرمەه", "تەباخ", "ئیلوون", "چریا ئێکێ", "چریا دووێ", "کانوونا ئێکێ",
 ];
-const badiniWeekdays = ["یەکشەمب", "دووشەمب", "سێشەمب", "چارشەمب", "پێنجشەمب", "ئەینی", "شەمبی"];
+const badiniWeekdays = ["یەکشەمبی", "دووشەمبی", "سێشەمبی", "چارشەمبی", "پێنجشەمبی", "ئەینی", "شەمبی"];
 
 function parts(value: Date, timeZone: string) {
   const [year, month, day, weekday] = new Intl.DateTimeFormat("en-US", {

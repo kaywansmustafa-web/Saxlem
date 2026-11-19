@@ -71,9 +71,50 @@ void main() {
     expect(arabic['doctorProfile'], 'ملف الطبيب');
     expect(arabic['appointments'], 'المواعيد');
     expect(arabic['liveQueue'], 'قائمة الانتظار المباشرة');
-    expect(badini['doctorProfile'], 'پروفایلێ نوژداری');
+    expect(badini['doctorProfile'], 'پڕۆفایلا نوژداری');
     expect(badini['appointments'], 'ژڤان');
-    expect(badini['liveQueue'], 'رێزبەندییا زندی');
+    expect(badini['liveQueue'], 'ڕێزبەندییا زندی');
+  });
+
+  test('Badini copy keeps Sorani words and the old spellings out', () {
+    final badini =
+        jsonDecode(File('lib/l10n/app_ku.arb').readAsStringSync())
+            as Map<String, dynamic>;
+    // Sorani forms with a Badini word of their own, and spellings the
+    // founder replaced (docs/localization/approved-terminology.md).
+    const banned = {
+      'ڵ': 'Badini writes ل',
+      'تکایە': 'هیڤییە',
+      'هەوڵ': 'هەول',
+      'ڕاستەوخۆ': 'زندی',
+      'پزیشک': 'نوژدار',
+      'وەسل': 'پسوولە',
+      'ئێستا': 'نوکە',
+      'بەکارهێنان': 'بکارئینان',
+      'وردەکاری': 'هویرکاری',
+    };
+    // Arabic-script letters only, so punctuation such as ، still ends a word.
+    const letter = r'[\u0621-\u064A\u0671-\u06D3\u06D5]';
+    final soraniSuffix = RegExp('$letterەکان(?!$letter)');
+    final soraniSelf = RegExp('(?<!$letter)خۆ(?!$letter)');
+    for (final entry in badini.entries) {
+      if (entry.key.startsWith('@') || entry.value is! String) continue;
+      final text = entry.value as String;
+      for (final word in banned.entries) {
+        expect(
+          text.contains(word.key),
+          isFalse,
+          reason: '${entry.key}: use ${word.value} instead of ${word.key}',
+        );
+      }
+      expect(soraniSuffix.hasMatch(text), isFalse, reason: entry.key);
+      expect(soraniSelf.hasMatch(text), isFalse, reason: '${entry.key}: خو');
+      expect(
+        RegExp('[٠-٩]').hasMatch(text),
+        isFalse,
+        reason: '${entry.key}: the app shows Western digits',
+      );
+    }
   });
 
   test('translations keep every simple placeholder of the English message', () {

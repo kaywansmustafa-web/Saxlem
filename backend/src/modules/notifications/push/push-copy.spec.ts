@@ -24,8 +24,8 @@ describe('push copy', () => {
         'ku',
       ),
     ).toEqual({
-      title: 'ژڤان هاتە پشتراستکرن',
-      body: 'د. شیلان · 19 چریا دووێ · 10:30',
+      title: '\u200Fژڤانا تە هاتە پشتڕاستکرن',
+      body: '\u200Fد. شیلان · 19 چریا دووێ · 10:30',
     });
   });
 
@@ -35,10 +35,10 @@ describe('push copy', () => {
       'Ticket 12 · 2 people ahead of you',
     );
     expect(pushMessage('queue.patient.almost', p, 'ar')?.body).toBe(
-      'رقم 12 · شخصان قبلك',
+      '\u200Fرقم 12 · شخصان قبلك',
     );
     expect(pushMessage('queue.patient.almost', p, 'ku')?.body).toBe(
-      'ژمارە 12 · 2 کەس بەری تە',
+      '\u200Fژمارا تیکێتێ 12 · 2 کەس بەری تە نە',
     );
   });
 
@@ -47,6 +47,17 @@ describe('push copy', () => {
       title: "It's your turn",
       body: 'Please go in to the doctor now.',
     });
+  });
+
+  it('keeps Kurdish and Arabic pushes right to left', () => {
+    const p = payload({ doctorName: 'Dr. Shilan', ticketNumber: 3 });
+    for (const locale of ['ku', 'ar'] as const) {
+      const message = pushMessage('queue.patient.called', p, locale)!;
+      expect(message.title.startsWith('\u200F')).toBe(true);
+      expect(message.body.startsWith('\u200F')).toBe(true);
+    }
+    const english = pushMessage('queue.patient.called', p, 'en')!;
+    expect(english.body).toBe('Ticket 3 · Dr. Shilan');
   });
 
   it('pushes nothing for types it has no words for', () => {

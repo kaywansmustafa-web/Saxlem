@@ -1,0 +1,634 @@
+#,area,key,english,external_draft,final,changed
+1,Start-up,splash wordmark,Saxlem (name under the logo),ساخلەم,ساخلەم,
+2,Language,chooseLanguage,Choose your language,زمانێ خۆ هەلبژێرە,زمانێ خو هەلبژێرە,yes
+3,Language,languageCanChange,You can change this later in your profile.,تو دشێی پاشتر ل پڕۆفایلا خۆ بگوهۆڕی.,تو دشێی پاشتر ل پڕۆفایلا خو بگوهۆڕی.,yes
+4,Language,savingLanguage,Saving language,زمان دهێتە پاراستن,زمان دهێتە تۆمارکرن,yes
+5,Language,languageSaveFailed,We couldn't save your language. Please try again.,نەشیاین زمانێ پاراستن. تکایە دیسان هەوڵ بدە.,نەشیاین زمانێ تە تۆمار بکەین. هیڤییە دیسان هەول بدە.,yes
+6,Language,language picker title,Badini Kurdish (language choice),کوردی بادینی,کوردی (بادینی),yes
+7,Language,language picker badge,K (letter on the Kurdish option),ک,ک,
+8,Sign-in,appName,Saxlem,ساخلەم,ساخلەم,
+9,Sign-in,welcomeTitle,"Healthcare, made clearer",چاڤدێریا تەندروستی ب شێوەیەکێ ڕوونتر,چاڤدێریا تەندروستی ب شێوەیەکێ ڕوونتر,
+10,Sign-in,welcomeBody,"Saxlem brings trusted care, appointments, and live clinic updates into one calm experience.",ساخلەم چاڤدێریا باوەرپێکری، ژڤان و نویکرنێن ڕاستەوخۆ یێن کلینیکێ د ئەزموونەکا ئارام دا کۆم دکەت.,ساخلەم چاڤدێریا باوەرپێکری، ژڤان و نویکرنێن زندی یێن کلینیکێ د ئەزموونەکا ئارام دا کۆم دکەت.,yes
+11,Sign-in,welcomeTrust,Built for patients across Kurdistan and Iraq,بۆ نەخۆشێن سەرانسەری کوردستان و عێراقێ هاتیە چێکرن.,بۆ نەخۆشێن سەرانسەری کوردستان و عیراقێ هاتیە چێکرن,yes
+12,Sign-in,continueAsGuest,Continue as Guest,وەک مێهڤان بەردەوام بە,وەک مێهڤان بەردەوام بە,
+13,Sign-in,phoneTitle,Your mobile number,ژمارا موبایلا تە,ژمارا مۆبایلا تە,yes
+14,Sign-in,phoneBody,We'll send a one-time code to securely verify your number.,ئەم دێ کودەکا ئێکجار ب شێوەیەکێ پاراستی بۆ پشتڕاستکرنا ژمارا تە فرێکەین.,ئەم دێ کودەکا ئێکجار ب شێوەیەکێ پاراستی بۆ پشتڕاستکرنا ژمارا تە فرێکەین.,
+15,Sign-in,country,Country,وەلات,وەلات,
+16,Sign-in,iraq,Iraq,ئیراق,عیراق,yes
+17,Sign-in,phoneNumber,Mobile number,ژمارا موبایلێ,ژمارا مۆبایلێ,yes
+18,Sign-in,phoneHint,750 123 4567,750 123 4567,750 123 4567,
+19,Sign-in,phoneInvalid,Enter a valid Iraqi mobile number.,ژمارەکا موبایلا ئیراقی یا دروست بنڤیسە,ژمارەکا مۆبایلا عیراقی یا دروست بنڤیسە.,yes
+20,Sign-in,sendCode,Send code,کودێ فرێکە,کودێ فرێکە,
+21,Sign-in,otpTitle,Enter your code,کودا خۆ بنڤیسە,کودا خو بنڤیسە,yes
+22,Sign-in,otpBody,We sent a 6-digit code to {phone}.,مە کودەکا پشتڕاستکرنێ یا ٦ ژمارەیی بۆ {phone} فرێکر.,مە کودەکا پشتڕاستکرنێ یا 6 ژمارەیی بۆ {phone} فرێکر.,yes
+23,Sign-in,otpLabel,6-digit verification code,کودێ پشتڕاستکرنێ یێ ٦ ژمارەیی,کودێ پشتڕاستکرنێ یێ 6 ژمارەیی,yes
+24,Sign-in,otpHint,Enter 6 digits,٦ ژمارە بنڤیسە,6 ژمارە بنڤیسە,yes
+25,Sign-in,verify,Verify and continue,پشتڕاست بکە و بەردەوام بە,پشتڕاست بکە و بەردەوام بە,
+26,Sign-in,changeNumber,Change number,ژمارێ بگۆڕە,ژمارێ بگوهۆڕە,yes
+27,Sign-in,resendCode,Resend code,کودێ دیسان فرێکە,کودێ دیسان فرێکە,
+28,Sign-in,resendIn,Resend in {seconds}s,پشتی {seconds} چرکە کودێ دیسان فرێکە.,پشتی {seconds} چرکە کودێ دیسان فرێکە,yes
+29,Sign-in,otpInvalid,That code is not correct. Please try again.,ئەڤ کودە نەدروستە. تکایە دیسان هەوڵ بدە.,ئەڤ کودە نەدروستە. هیڤییە دیسان هەول بدە.,yes
+30,Sign-in,otpExpired,This code has expired. Request a new one.,ماوەیا بەکارهێنانا ڤی کودەی تەمام بوو. کودەکێ نوی داخواز بکە.,ماوەیا بکارئینانا ڤی کودی تەمام بوو. کودەکێ نوی داخواز بکە.,yes
+31,Sign-in,otpLimited,Too many attempts. Please request a new code.,ژمارا هەوڵدانان زۆر بوو. تکایە کودەکێ نوی داخواز بکە.,هەولدانێن تە گەلەک بوون. هیڤییە کودەکێ نوی داخواز بکە.,yes
+32,Sign-in,authUnavailable,Phone verification is not available in this build yet.,پشتڕاستکرنا ژمارا مۆبایلێ هێشتا د ڤێ وەشانێ دا بەردەست نینە.,پشتڕاستکرنا ژمارا مۆبایلێ هێشتا د ڤێ وەشانێ دا بەردەست نینە.,
+33,Sign-in,developmentCodeHint,Development code: {code},کودا پەرەپێدانێ: {code},کودا پەرەپێدانێ: {code},
+34,Home,home,Home,سەرەکی,سەرەکی,
+35,Home,discover,Discover,گەڕان,گەڕان,
+36,Home,profileTitle,Your profile is coming soon,پڕۆفایلا تە دێ بزوی بەردەست بیت.,پڕۆفایلا تە دێ ب زوویی بەردەست بیت,yes
+37,Home,profileBody,"You'll be able to manage your details, language, and care preferences here.",دێ شێی ل ڤێرێ زانیاریێن خۆ، زمان و هەلبژاردنێن چاڤدێریا خۆ رێک بخەی.,دێ شێی ل ڤێرێ زانیاریێن خو، زمان و هەلبژاردنێن چاڤدێریا خو رێک بخەی.,yes
+38,Home,goodMorning,"Good morning,",ڕۆژباش،,سپێدە باش،,yes
+39,Home,goodAfternoon,"Good afternoon,",ڕۆژباش،,ڕۆژباش،,
+40,Home,goodEvening,"Good evening,",ئێڤارباش،,ئێڤارباش،,
+41,Home,searchHint,"Search doctors, clinics or specialties",ل نوژداران، کلینیکان یان پسپۆڕییان بگەڕێ.,ل نوژداران، کلینیکان یان پسپۆڕییان بگەڕێ,yes
+42,Home,openHealthcareSearch,Open healthcare search,گەڕیانا تەندروستی ڤەکە,گەڕیانا تەندروستی ڤەکە,
+43,Home,popularSpecialties,Popular specialties,پسپۆڕیێن بەناڤودەنگ,پسپۆڕیێن بەناڤودەنگ,
+44,Home,seeAll,See all,هەمی ببینە,هەمی ببینە,
+45,Home,estimatedWaitMinutes,Estimated wait: {minutes} min,دەمێ پێشبینی کری یێ چاڤەڕێکرنێ: {minutes} خولەک,مەزەندەیا چاڤەڕێیێ: {minutes} خولەک,yes
+46,Home,informationalScreen,Informational screen,پەڕا زانیاریێ,لاپەڕا زانیاریان,yes
+47,Home,welcomeBook,Find and book trusted doctors,نوژدارێن باوەرپێکری بدۆزەڤە و ژڤانەکێ بگرە.,نوژدارێن باوەرپێکری بدۆزەڤە و ژڤانەکێ بگرە,yes
+48,Home,welcomeQueue,Understand your place in the live queue,جهێ خۆ د ڕیزا زیندی دا بزانە,جهێ خو د ڕێزبەندییا زندی دا بزانە,yes
+49,Home,guestModeMessage,"You can explore Saxlem, but booking and personal appointments require verification.",تو دشێی ساخلەمێ بگەڕی، لێ بۆ گرتنا ژڤان و بکارئینانا تایبەتمەندیێن چاڤدێریا کەسی، پشتڕاستکرن پێدڤییە.,تو دشێی ساخلەمێ بگەڕی، لێ بۆ گرتنا ژڤان و بکارئینانا تایبەتمەندیێن چاڤدێریا کەسی، پشتڕاستکرن پێدڤییە.,
+50,Home,personalizedFeatureTitle,Verification required,پشتڕاستکرن پێدڤییە,پشتڕاستکرن پێدڤییە,
+51,Home,personalizedFeatureBody,Sign in with your mobile number to use appointments and other personalized care features.,ب ژمارا مۆبایلا خۆ بچۆ ژوور، دا ژڤانان و تایبەتمەندیێن چاڤدێریا کەسی بکار بینیت.,ب ژمارا مۆبایلا خو بچە ژوور، دا ژڤانان و تایبەتمەندیێن چاڤدێریا کەسی بکار بینی.,yes
+52,Home,nextAppointmentTitle,Your next appointment,ژڤانا تە یا داهاتی,ژڤانا تە یا داهاتی,
+53,Home,estimatedWaitLong,Estimated wait: {minutes} minutes,دەمێ پێشبینی کری یێ چاڤەڕێکرنێ: {minutes} خولەک,مەزەندەیا چاڤەڕێیێ: {minutes} خولەک,yes
+54,Home,specialtyDentist,Dentist,نوژدارێ ددانان,نوژدارێ ددانان,
+55,Home,specialtyCardiology,Cardiology,پسپۆڕییا نەخۆشیێن دل,پسپۆڕییا نەخۆشیێن دل,
+56,Home,specialtyPediatrics,Pediatrics,پسپۆڕییا نەخۆشیێن زارۆکان,پسپۆڕییا نەخۆشیێن زارۆکان,
+57,Home,specialtyEye,Eye,پسپۆڕییا چاڤان,پسپۆڕییا چاڤان,
+58,Home,specialtyNeurology,Neurology,پسپۆڕییا دەماران,پسپۆڕییا دەماران,
+59,Home,browseSpecialty,Browse {specialty} doctors,نوژدارێن پسپۆڕ د {specialty} دا ببینە.,نوژدارێن پسپۆڕ د {specialty} دا ببینە,yes
+60,Home,nextVisitTitle,Your next visit,سەرەدانا تە یا داهاتی,سەرەدانا تە یا داهاتی,
+61,Home,howItWorks,How Saxlem works,ساخلەم چاوا کار دکەت,ساخلەم چاوا کار دکەت,
+62,Home,stepBook,Book in the app,د ئەپێ دا ژڤانی بگرە,د ئەپی دا ژڤانەکێ بگرە,yes
+63,Home,stepCheckIn,Check in at reception,ل پێشوازیێ هاتنا خۆ تۆمار بکە,ل پێشوازیێ هاتنا خو تۆمار بکە,yes
+64,Home,stepCalled,Get called on your phone,دێ ل مۆبایلا تە گازی تە بکەن.,دێ ل مۆبایلا تە گازی تە بکەن,yes
+65,Home,bookAgainTitle,Book again,دیسان ژڤانەکێ بگرە.,دیسان ژڤانەکێ بگرە,yes
+66,Home,bookAgainAction,Book again with {doctor},دگەل {doctor} دیسان ژڤانەکێ بگرە.,دگەل {doctor} دیسان ژڤانەکێ بگرە,yes
+67,Home,familyTileTitle,Family,خێزان,خێزان,
+68,Home,familyTileSubtitle,Book for your children and parents,بۆ زارۆکێن خۆ و دایک و بابێن خۆ ژڤانەکێ بگرە.,بۆ زارۆکێن خو و دایک و بابێن خو ژڤانەکێ بگرە,yes
+69,Home,whatsBothering,What's bothering you?,تە چ ئێش هەیە؟,تە چ ئێش هەیە؟,
+70,Home,symptomFever,Fever or cold,تا یان سەرمابوون,تا یان سەرمابوون,
+71,Home,symptomChild,My child is sick,زارۆکێ من نەخۆشە,زارۆکێ من نەخۆشە,
+72,Home,symptomTooth,Tooth pain,ئێشانا ددانان,ئێشانا ددانان,
+73,Home,symptomSkin,Skin,پێست,پێست,
+74,Home,symptomHeart,Heart and blood pressure,دل و پەستانا خوێنێ,دل و پەستانا خوێنێ,
+75,Home,symptomEyes,Eyes,چاڤ,چاڤ,
+76,Home,symptomPregnancy,Pregnancy and women's health,دووگیانی و ساخلەمێا ئافرەتان,دووگیانی و ساخلەمیا ئافرەتان,yes
+77,Home,symptomBones,Bones and joints,هەستی و جومگە,هەستی و جومگە,
+78,Home,symptomEar,"Ear, nose, throat",گوه، لووت و قورگ,گوه، لووت و قورگ,
+79,Home,symptomHead,Headache and nerves,سەرئێشان و نەخۆشیێن دەماران,سەرئێشان و نەخۆشیێن دەماران,
+80,Home,symptomStomach,Stomach,گەدە,گەدە,
+81,Home,specialtiesTitle,Specialties,پسپۆڕییەکان,پسپۆڕی,yes
+82,Home,emergencyTitle,Emergency,فریاکەفتن,فریاکەفتن,
+83,Home,emergencySubtitle,Ambulance: 122,ئەمبولانس: 122,ئەمبولانس: 122,
+84,Home,emergencyConfirmTitle,Call 122 now?,نوکە ب 122 پەیوەندیێ بکەی؟,نوکە ب 122 پەیوەندیێ بکەی؟,
+85,Home,emergencyConfirmBody,"Saxlem is for booking visits, not emergencies. If someone needs urgent help, call the ambulance.",ساخلەم بۆ گرتنا ژڤانانە، نە بۆ فریاکەفتنێ. ئەگەر کەسەکێ پێدڤی ب هاریکاریا لەز هەبیت، پەیوەندی ب ئەمبولانسێ بکە.,ساخلەم بۆ گرتنا ژڤانانە، نە بۆ فریاکەفتنێ. ئەگەر کەسەکێ پێدڤی ب هاریکاریا لەز هەبیت، پەیوەندی ب ئەمبولانسێ بکە.,
+86,Home,emergencyCall,Call 122,نوکە ب 122 پەیوەندیێ بکە,نوکە ب 122 پەیوەندیێ بکە,
+87,Home,liveNotOpen,The queue hasn't opened yet,ڕێزبەندی هێشتا ڤەنەبوویە,ڕێزبەندی هێشتا ڤەنەبوویە,
+88,Home,liveCheckIn,Queue open · check in at reception,ڕێزبەندی ڤەکریە · ل پێشوازیێ هاتنا خۆ تۆمار بکە,ڕێزبەندی ڤەکریە · ل پێشوازیێ هاتنا خو تۆمار بکە,yes
+89,Home,liveWithDoctor,With the doctor now,نوکە ل دەڤ نوژداری یی,نوکە ل دەڤ نوژداری یی,
+90,Home,liveWait,about {min}–{max} min,نێزیکی {min}–{max} خولەک,نێزیکی {min}–{max} خولەک,
+91,Home,pushChannelName,Visit and queue updates,نویکرنێن ژڤانان و ڕێزبەندیێ,نویکرنێن ژڤانان و ڕێزبەندیێ,
+92,Find a doctor,badiniKurdish,Badini Kurdish,کوردی بادینی,کوردی (بادینی),yes
+93,Find a doctor,openSearchFilters,Open search filters,فلتەرێن گەڕیانێ ڤەکە,فلتەرێن گەڕیانێ ڤەکە,
+94,Find a doctor,filters,Filters,فلتەر,فلتەر,
+95,Find a doctor,tryAgain,Try again,دیسان هەوڵ بدە,دیسان هەول بدە,yes
+96,Find a doctor,clearFilters,Clear filters,فلتەرێن هەلبژێردی ژێ ببە,فلتەرێن هەلبژێردی ژێ ببە,
+97,Find a doctor,doctorProfile,Doctor Profile,پڕۆفایلا نوژداری,پڕۆفایلا نوژداری,
+98,Find a doctor,viewProfile,View profile,پڕۆفایلێ ببینە,پڕۆفایلێ ببینە,
+99,Find a doctor,verifyNumber,Verify my number,ژمارا مۆبایلا خۆ پشتڕاست بکە,ژمارا مۆبایلا خو پشتڕاست بکە,yes
+100,Find a doctor,guestMode,Guest mode,ڕەوشا مێهڤانی,ڕەوشا مێهڤانی,
+101,Find a doctor,sessionExpiredTitle,Your session has expired,ماوەیا دانیشتنا تە تەمام بوو.,ماوەیا دانیشتنا تە تەمام بوو,yes
+102,Find a doctor,sessionExpiredBody,Verify your number again to continue securely.,ژمارا مۆبایلا خۆ دیسان پشتڕاست بکە، دا ب شێوەیەکێ پاراستی بەردەوام بی.,ژمارا مۆبایلا خو دیسان پشتڕاست بکە، دا ب شێوەیەکێ پاراستی بەردەوام بی.,yes
+103,Find a doctor,gender,Gender,رەگەز,رەگەز,
+104,Find a doctor,doctorDiscoveryTitle,Find a doctor,نوژداران بدۆزەڤە,نوژداران بدۆزەڤە,
+105,Find a doctor,doctorDiscoveryInstruction,Search trusted doctors and narrow the results with the available filters.,ل نوژدارێن باوەرپێکری بگەڕێ و ئەنجامان ب فلتەرێن بەردەست هەلبژێرە.,ل نوژدارێن باوەرپێکری بگەڕێ و ب فلتەرێن بەردەست ئەنجامان کێم بکە.,yes
+106,Find a doctor,searchDoctorsLabel,Search doctors,نوژداران بگەڕێ,ل نوژداران بگەڕێ,yes
+107,Find a doctor,searchDoctorsHint,Doctor name,ناڤێ نوژداری,ناڤێ نوژداری,
+108,Find a doctor,clearSearch,Clear search,گەریانێ پاک بکە,گەڕیانێ پاک بکە,yes
+109,Find a doctor,applyFilters,Apply filters,فلتەرەکان جێبەجێ بکە,فلتەران جێبەجێ بکە,yes
+110,Find a doctor,specialtyLabel,Specialty,پسپۆڕی,پسپۆڕی,
+111,Find a doctor,languageLabel,Language,زمانەکان,زمان,yes
+112,Find a doctor,soraniKurdish,Sorani Kurdish,کوردی سۆرانی,کوردی سۆرانی,
+113,Find a doctor,turkish,Turkish,تورکی,تورکی,
+114,Find a doctor,experienceLabel,Experience,ئەزموون,ئەزموون,
+115,Find a doctor,minimumExperienceLabel,Minimum experience,کێمترین ئەزموون,کێمترین ئەزموون,
+116,Find a doctor,anyOption,Any,بێ سنوور,بێ سنوور,
+117,Find a doctor,appliedFilters,Applied filters,فلتەرێن جێبەجێکری,فلتەرێن جێبەجێکری,
+118,Find a doctor,doctorResults,"{count, plural, =0 {No doctors} =1 {1 doctor} other {{count} doctors}}","{count, plural, =0 {چ نوژدار نینن} =1 {ئێک نوژدار} other {{count} نوژدار}}","{count, plural, =0 {چ نوژدار نینن} =1 {ئێک نوژدار} other {{count} نوژدار}}",
+119,Find a doctor,noDoctorsTitle,No doctors found,هیچ نوژدارەک نەهاتە دیتن,هیچ نوژدارەک نەهاتە دیتن,
+120,Find a doctor,noDoctorsBody,Try another doctor name.,ناڤێ نوژدارەکێ دی تاقی بکە.,ناڤێ نوژدارەکێ دی تاقی بکە.,
+121,Find a doctor,noDoctorsFilteredBody,Try removing one or more filters.,فلتەرەک یان پتر ژێ ببە.,فلتەرەک یان پتر ژێ ببە.,
+122,Find a doctor,loadingDoctors,Loading doctors,نوژدار دهێنە بارکرن,نوژدار دهێنە بارکرن,
+123,Find a doctor,loadingMoreDoctors,Loading more doctors,نوژدارێن پتر دهێنە بارکرن,نوژدارێن پتر دهێنە بارکرن,
+124,Find a doctor,loadMoreFailed,More doctors could not be loaded. Your current results are still shown.,بارکرنا نوژدارێن پتر سەرنەکەفت. ئەنجامێن نوکە هێشتا دیارن.,بارکرنا نوژدارێن پتر سەرنەکەفت. ئەنجامێن نوکە هێشتا دیارن.,
+125,Find a doctor,offlineTitle,You are offline,تو ئۆفلاینی,تو بێ ئینتەرنێتی,yes
+126,Find a doctor,offlineBody,Check your connection and try again.,پەیوەندییا ئینتەرنێتێ بپشکنە و دیسان هەوڵ بدە.,پەیوەندییا ئینتەرنێتێ بپشکنە و دیسان هەول بدە.,yes
+127,Find a doctor,discoveryUnavailableTitle,Doctor discovery is unavailable,گەڕیان ل نوژداران بەردەست نینە,گەڕیان ل نوژداران بەردەست نینە,
+128,Find a doctor,discoveryUnavailableBody,The service is temporarily unavailable. Please try again.,خزمەتگوزاری نوکە بەردەست نینە. دیسان هەوڵ بدە.,خزمەت بۆ دەمەکێ کورت بەردەست نینە. هیڤییە دیسان هەول بدە.,yes
+129,Find a doctor,discoveryForbiddenTitle,Doctor discovery is restricted,گەڕیان ل نوژداران سنووردارە,گەڕیان ل نوژداران سنووردارە,
+130,Find a doctor,discoveryForbiddenBody,Your account cannot access doctor discovery.,هەژمارا تە دەستگەهشتنا گەڕیان ل نوژداران نینە.,هەژمارا تە نەشێت ل نوژداران بگەڕیت.,yes
+131,Find a doctor,malformedDoctorDataTitle,Doctor information is unavailable,زانیاریێن نوژداری بەردەست نینن,زانیاریێن نوژداری بەردەست نینن,
+132,Find a doctor,malformedDoctorDataBody,We could not safely read the doctor information. Please try again.,مە نەشیا زانیاریێن نوژداری ب پارێزراوی بخوێنین. دیسان هەوڵ بدە.,نەشیاین زانیاریێن نوژداری ب پارێزراوی بخوینین. دیسان هەول بدە.,yes
+133,Find a doctor,discoveryErrorTitle,Something went wrong,تشتەک خەلەت چێبوو,تشتەک خەلەت چێبوو,
+134,Find a doctor,discoveryErrorBody,Please try again.,دیسان هەوڵ بدە.,دیسان هەول بدە.,yes
+135,Find a doctor,discoveryAuthTitle,Sign in to find doctors,چوونا ژوور بۆ دیتنا نوژداران,بچە ژوور دا نوژداران ببینی,yes
+136,Find a doctor,discoveryAuthBody,Verify your mobile number to browse authoritative doctor information.,ژمارا مۆبایلا خۆ پشتڕاست بکە، دا زانیاریێن فەرمی یێن نوژداران ببینی.,ژمارا مۆبایلا خو پشتڕاست بکە، دا زانیاریێن فەرمی یێن نوژداران ببینی.,yes
+137,Find a doctor,doctorNotFound,Doctor not found,نوژدار نەهاتە دیتن,نوژدار نەهاتە دیتن,
+138,Find a doctor,doctorNotFoundBody,This doctor profile is no longer available.,پڕۆفایلا ڤی نوژداری ئێدی بەردەست نینە.,پڕۆفایلا ڤی نوژداری ئیدی بەردەست نینە.,yes
+139,Find a doctor,yearsExperience,"{years, plural, =0 {New to practice} =1 {1 year of experience} other {{years} years of experience}}","{years, plural, =0 {تازە دەست ب کارێ پزیشکی کریە} =1 {١ سال ئەزموون} other {{years} سال ئەزموون}}","{years, plural, =0 {تازە دەست ب کارێ نوژداریێ کریە} =1 {1 سال ئەزموون} other {{years} سال ئەزموون}}",yes
+140,Find a doctor,genderFemale,Female,مێ,مێ,
+141,Find a doctor,genderMale,Male,نێر,نێر,
+142,Find a doctor,genderUnspecified,Not specified,دیار نەکری,دیار نەکری,
+143,Find a doctor,languagesLabel,Languages,زمانەکان,زمان,yes
+144,Find a doctor,clinicsLabel,Clinics,کلینیک,کلینیک,
+145,Find a doctor,specialtiesLabel,Specialties,پسپۆڕییەکان,پسپۆڕی,yes
+146,Find a doctor,biographyLabel,About,دەربارە,دەربارە,
+147,Find a doctor,doctorAvailable,Available,بەردەست,بەردەست,
+148,Find a doctor,doctorUnavailable,Unavailable,بەردەست نینە,بەردەست نینە,
+149,Find a doctor,acceptingNewPatients,Accepting new patients,نەخۆشێن نوی وەردگریت,نەخۆشێن نوی وەردگریت,
+150,Find a doctor,notAcceptingNewPatients,Not accepting new patients,نەخۆشێن نوی وەرناگریت,نەخۆشێن نوی وەرناگریت,
+151,Find a doctor,profileImageLabel,Profile image for {name},وێنەیا پڕۆفایلا {name},وێنەیا پڕۆفایلا {name},
+152,Find a doctor,profileImageFallback,No profile image for {name},وێنەیا پڕۆفایلا {name} نینە,وێنەیا پڕۆفایلا {name} نینە,
+153,Find a doctor,removeAppliedFilter,Remove {label} filter,فلتەرا {label} پاک بکە,فلتەرا {label} ژێ ببە,yes
+154,Find a doctor,loadMore,Load more,پتر بار بکە,پتر بار بکە,
+155,Find a doctor,todayChip,Today,ئەڤرۆ,ئەڤرۆ,
+156,Find a doctor,tomorrowChip,Tomorrow,سوبەهی,سوبەهی,
+157,Find a doctor,feeFirstVisit,First visit,سەرەدانا ئێکێ,سەرەدانا ئێکێ,
+158,Find a doctor,feeFollowUp,Follow-up,پێداچوون,دویڤچوون,yes
+159,Find a doctor,feesTitle,Fees,کرێ,بها,yes
+160,Find a doctor,feesNote,"Pay at the clinic, or in the app with FIB when you book.",ل کلینیکێ پارە بدە، یان دەمێ ژڤانێ دگری، ل ئەپێ ب FIB پارە بدە.,ل کلینیکێ پارە بدە، یان دەمێ ژڤانێ دگری، د ئەپی دا ب FIB پارە بدە.,yes
+161,Find a doctor,nextFreeLabel,Next free,نێزیکترین دەمێ ڤالا,نێزیکترین دەمێ ڤالا,
+162,Find a doctor,yearsShort [many],{count} years,{count} سال,{count} سال,
+163,Find a doctor,directions,Directions,رێنیشاندان,رێنیشاندان,
+164,Find a doctor,callClinic,Call,پەیوەندی بکە,پەیوەندی بکە,
+165,Find a doctor,clinicLocationMissing,The clinic hasn't added its address yet.,کلینیکێ هێشتا ناڤنیشانێ خۆ زێدە نەکریە.,کلینیکێ هێشتا ناڤنیشانا خو زێدە نەکرییە.,yes
+166,Find a doctor,openMapsFailed,Couldn't open maps on this phone.,نەشیاین نەخشەکان ل ڤی مۆبایلی ڤەکەین.,نەشیاین نەخشێ ل ڤی مۆبایلی ڤەکەین.,yes
+167,Find a doctor,freeTodayFilter,Free today,ئەڤرۆ ڤالایە,ئەڤرۆ ڤالایە,
+168,Find a doctor,noneFreeToday,"None of these doctors has a free time left today. Turn off ""Free today"" to see other days.",چ دەمەکێ ڤالا ل ئەڤرۆ ل دەڤ ڤان نوژداران نەماوە. فلتەرا «ئەڤرۆ ڤالایە» ژێ ببە، دا رۆژێن دی ببینی.,ئەڤرۆ چ دەمێن ڤالا ل دەڤ ڤان نوژداران نەمایە. فلتەرا «ئەڤرۆ ڤالایە» ڕاکە، دا رۆژێن دی ببینی.,yes
+169,Find a doctor,reviewsTitle,Reviews,هەلسەنگاندن,هەلسەنگاندن,
+170,Booking,book,Book,ژڤانەکێ بگرە,ژڤانەکێ بگرە,
+171,Booking,bookAppointment,Book appointment,ژڤانەکێ بگرە,ژڤانەکێ بگرە,
+172,Booking,chooseAppointment,Choose an appointment,ژڤانەکێ هەلبژێرە,ژڤانەکێ هەلبژێرە,
+173,Booking,chooseClinic,Choose a clinic,کلینیکەکێ هەلبژێرە,کلینیکەکێ هەلبژێرە,
+174,Booking,chooseTime,Choose a time,دەمەکێ هەلبژێرە,دەمەکێ هەلبژێرە,
+175,Booking,appointmentType,Appointment type,جورێ ژڤانێ,جۆرێ ژڤانێ,yes
+176,Booking,initialAppointment,Initial appointment,ژڤانا ئێکێ,ژڤانا ئێکێ,
+177,Booking,followUpAppointment,Follow-up appointment,ژڤانا پێداچوونێ,ژڤانا دویڤچوونێ,yes
+178,Booking,appointmentReason,Reason for visit,ئەگەرێ سەرەدانێ,ئەگەرێ سەرەدانێ,
+179,Booking,checkAvailability,Check availability,دەمێن بەردەست بپشکنە,دەمێن بەردەست بپشکنە,
+180,Booking,noAvailableSlots,No available times in this date range.,د ڤی ماوەی دا هیچ دەمەکێ بەردەست نینە.,د ڤێ ماوێ دا چ دەمێن بەردەست نینن.,yes
+181,Booking,timezone,Time zone,هەرێما دەمێ,هەرێما دەمێ,
+182,Booking,bookingTimeout,The availability request timed out. Please try again.,داخوازا دەمێن بەردەست زۆر دەم گرت. تکایە دیسان هەوڵ بدە.,داخوازا دەمێن بەردەست گەلەک دەم کێشا. هیڤییە دیسان هەول بدە.,yes
+183,Booking,slotTaken,That time is no longer available. Check availability again.,ئەو دەمە ئیدی بەردەست نینە. دەمێن بەردەست دیسان بپشکنە.,ئەو دەمە ئیدی بەردەست نینە. دەمێن بەردەست دیسان بپشکنە.,
+184,Booking,bookingValidationFailure,Check your booking details and try again.,وردەکاریێن ژڤانا خۆ بپشکنە و دیسان هەوڵ بدە.,هویرکاریێن گرتنا ژڤانێ بپشکنە و دیسان هەول بدە.,yes
+185,Booking,bookingUnknownOutcome,We could not confirm the result. Do not submit another booking until you retry this request.,مە نەشیاین ئەنجامێ پشتڕاست بکەین. هەتا هەمان داخوازێ دیسان نەکەی، ژڤانەکا دی مەگرە.,نەشیاین ئەنجامێ پشتڕاست بکەین. هەتا هەمان داخوازێ دیسان نەکەی، ژڤانەکا دی نەگرە.,yes
+186,Booking,bookingSuccessful,Your appointment is booked.,ژڤانا تە هاتە گرتن.,ژڤانا تە هاتە گرتن.,
+187,Booking,appointmentReferenceValue,Appointment reference {reference},ناسناما ژڤانێ {reference},کۆدێ ژڤانێ {reference},yes
+188,Booking,reviewAppointment,Review appointment,ژڤانێ بپشکنە,ژڤانێ بپشکنە,
+189,Booking,confirmAppointment,Confirm appointment,ژڤانێ پشتڕاست بکە,ژڤانێ پشتڕاست بکە,
+190,Booking,confirmingAppointment,Confirming appointment,ژڤان دهێتە پشتڕاستکرن,ژڤان دهێتە پشتڕاستکرن,
+191,Booking,appointmentConfirmed,Appointment confirmed,ژڤان هاتە پشتڕاستکرن,ژڤان هاتە پشتڕاستکرن,
+192,Booking,viewDoctor,View Doctor,پڕۆفایلا نوژداری ببینە,پڕۆفایلا نوژداری ببینە,
+193,Booking,returnHome,Return Home,بۆ لاپەڕا سەرەکی ڤەگەڕە,بۆ لاپەڕا سەرەکی ڤەگەڕە,
+194,Booking,loadingBooking,Loading booking options,هەلبژاردنێن ژڤانیێ دهێنە بارکرن,هەلبژاردنێن ژڤانێ دهێنە بارکرن,yes
+195,Booking,bookingUnavailable,Booking unavailable,گرتنا ژڤانی بەردەست نینە,گرتنا ژڤانێ بەردەست نینە,yes
+196,Booking,timeUnavailable,Time unavailable,دەم بەردەست نینە,دەم بەردەست نینە,
+197,Booking,clinic,Clinic,کلینیک,کلینیک,
+198,Booking,date,Date,رێکەفت,رێکەفت,
+199,Booking,time,Time,دەم,دەم,
+200,Booking,fee,Fee,بها,بها,
+201,Booking,duration,Duration,ماوە,ماوە,
+202,Booking,minutesLong,{minutes} minutes,{minutes} خولەک,{minutes} خولەک,
+203,Booking,bookingFor,Booking For,ژڤان بۆ,ژڤان بۆ,
+204,Booking,appointmentReference,Appointment reference,ناسناما ژڤانێ,کۆدێ ژڤانێ,yes
+205,Booking,paymentAtCounterTitle,Pay at the clinic,پارەدان ل کلینیکێ,پارەدان ل کلینیکێ,
+206,Booking,paymentConfirmAndPay,Confirm and pay,پشتڕاست بکە و پارەی بدە,پشتڕاست بکە و پارەی بدە,
+207,Booking,paymentStatusPending,Payment pending,پارەدان ل چاڤەڕێیێ,پارەدان ل چاڤەڕێیێ,
+208,Booking,paymentStatusPaid,Paid,پارە هاتیە دان,پارە هاتیە دان,
+209,Booking,paymentPayNow,Pay now,نوکە پارەی بدە,نوکە پارەی بدە,
+210,Booking,slotMorning,Morning,سپێدە,سپێدە,
+211,Booking,slotAfternoon,Afternoon,پشتی نیڤرۆ,پشتی نیڤرۆ,
+212,Booking,slotEvening,Evening,ئێڤار,ئێڤار,
+213,Booking,addToCalendar,Add to calendar,زێدە بکە بۆ سالنامێ,زێدە بکە بۆ سالنامێ,
+214,Booking,visitWith,Visit with {doctor},سەرەدانا تە ل دەڤ {doctor},سەرەدانا تە ل دەڤ {doctor},
+215,Payments,status,Status,ڕەوش,ڕەوش,
+216,Payments,appointmentId,Appointment ID,ژمارا ژڤانێ,ژمارا ژڤانێ,
+217,Payments,iqdAmount,{amount} IQD,{amount} د.ع,{amount} د.ع,
+218,Payments,doctorLabel,Doctor,نوژدار,نوژدار,
+219,Payments,paymentHowToPay,How would you like to pay?,تو دڤێ چاوا پارە بدەی؟,تە دڤێت چاوا پارە بدەی؟,yes
+220,Payments,paymentAtCounterBody,Pay the receptionist when you arrive.,دەمێ دگەهیە، پارەی بدە کارمەندێ پێشوازیێ.,دەمێ دگەهی، پارەی بدە کارمەندێ پێشوازیێ.,yes
+221,Payments,paymentOnlineTitle,Pay now in the app,نوکە ب ئەپێ پارەی بدە,نوکە د ئەپی دا پارەی بدە,yes
+222,Payments,paymentOnlineBody,Pay securely with your FIB app and skip the counter.,ب ئەپێ FIB ب پارێزراوی پارەی بدە و ل بەر پێشوازیێ نەراوەستە.,ب ئەپێ FIB ب پارێزراوی پارەی بدە و ل بەر پێشوازیێ نەراوەستە.,
+223,Payments,paymentOnlineUnavailable,This clinic takes payment at the clinic only for now.,ئەڤ کلینیکە نوکە تنێ پارەدانا ل کلینیکێ وەردگریت.,ئەڤ کلینیکە نوکە تنێ پارەدانا ل کلینیکێ وەردگریت.,
+224,Payments,paymentRecommended,Fastest,یێ هەری لەز,هەری بلەز,yes
+225,Payments,paymentTitle,Payment,پارەدان,پارەدان,
+226,Payments,paymentAmountDue,Amount to pay,بڕێ پارەی,بڕێ پارەی,
+227,Payments,paymentOpenFib,Open FIB to pay,FIB ڤەکە بۆ پارەدانێ,FIB ڤەکە بۆ پارەدانێ,
+228,Payments,paymentScanQr,Paying from another phone? Scan this code.,ژ مۆبایلەکێ دی پارەی ددەی؟ کودێ QR سکان بکە.,ژ مۆبایلەکێ دی پارەی ددەی؟ کودێ QR سکان بکە.,
+229,Payments,paymentWaiting,Waiting for your payment…,چاڤەڕێی پارەدانا تەینە...,ل چاڤەڕێیا پارەدانا تە…,yes
+230,Payments,paymentWaitingBody,"Approve the payment in FIB, then come back. This screen updates on its own.",پارەدانێ د ئەپێ FIB دا پشتڕاست بکە، پاشان ڤەگەڕە. ئەڤ پەڕە ب خۆ نوو دبیت.,پارەدانێ د ئەپێ FIB دا پشتڕاست بکە، پاشان ڤەگەڕە. ئەڤ لاپەڕە ب خو نوی دبیت.,yes
+231,Payments,paymentPaidTitle,Payment received,پارە گەهشت,پارە گەهشت,
+232,Payments,paymentPaidBody,You're all set. There's nothing to pay at the clinic.,هەمی تشت بە ڕێکە. پێدڤی ب پارەدانێ ل کلینیکێ نینە.,هەمی تشت ئامادەیە. پێدڤی ب پارەدانێ ل کلینیکێ نینە.,yes
+233,Payments,paymentExpiredTitle,This payment wasn't completed,ئەڤ پارەدانە ب دووماهی نەهات,ئەڤ پارەدانە ب دوماهی نەهات,yes
+234,Payments,paymentExpiredBody,"Start a new payment, or pay at the clinic. Your appointment is still booked.",پارەدانەکا نوی دەستپێبکە یان ل کلینیکێ پارەی بدە. ژڤانا تە هێشتا یا گرتییە.,پارەدانەکا نوی دەستپێبکە یان ل کلینیکێ پارەی بدە. ژڤانا تە هێشتا یا گرتییە.,
+235,Payments,paymentTryAgain,Start a new payment,پارەدانەکا نوی دەستپێبکە,پارەدانەکا نوی دەستپێبکە,
+236,Payments,paymentSwitchToCounter,Pay at the clinic instead,ل شوینێ ل کلینیکێ پارەی بدە,ل شوینا وێ، ل کلینیکێ پارەی بدە,yes
+237,Payments,paymentLater,I'll pay later,پاشی دێ پارەی دەم,پاشتر دێ پارەی دەم,yes
+238,Payments,paymentStatusDueAtCounter,Pay at clinic,پارەدان ل کلینیکێ,پارەدان ل کلینیکێ,
+239,Payments,paymentStatusRefunded,Refunded,پارە زڤڕی,پارە هاتە ڤەگەڕاندن,yes
+240,Payments,paymentStatusRefundPending,Refund in progress,زڤڕاندنا پارەی ل رێیێ,ڤەگەڕاندنا پارەی ل ڕێیێ,yes
+241,Payments,paymentStatusRefundFailed,Clinic will refund you,کلینیک دێ پارەیێ بۆ تە ڤەدگەڕینیت.,کلینیک دێ پارەی بۆ تە ڤەگەڕینیت,yes
+242,Payments,paymentStatusExpired,Payment not completed,پارەدان تەمام نەبوو. تکایە دیسان هەوڵ بدە.,پارەدان تەمام نەبوو,yes
+243,Payments,paymentStatusVoid,Nothing to pay,پێدڤی ب هیچ پارەدانەکێ نینە.,پێدڤی ب پارەدانێ نینە,yes
+244,Payments,paymentProblemOffline,You're offline. Check your connection and try again.,پەیوەندییا ئینتەرنێتا تە نینە. پەیوەندیێ بپشکنە و دیسان هەوڵ بدە.,پەیوەندییا ئینتەرنێتا تە نینە. پەیوەندیێ بپشکنە و دیسان هەول بدە.,yes
+245,Payments,paymentProblemUnavailable,Online payment is unavailable right now. You can pay at the clinic.,پارەدانێ ئۆنلاین نوکە بەردەست نینە. دشێی ل کلینیکێ پارە بدەی.,پارەدانا ئۆنلاین نوکە بەردەست نینە. دشێی ل کلینیکێ پارە بدەی.,yes
+246,Payments,paymentProblemNotAccepted,This payment can't be changed now.,نوکە نەشێی ڤی پارەدانێ بگوهۆڕی.,نوکە نەشێی ڤێ پارەدانێ بگوهۆڕی.,yes
+247,Payments,paymentProblemGeneric,Something went wrong with the payment. Your appointment is still booked.,تشتەک د پارەدانێ دا خەلەت چوو. ژڤانا تە هێشتا هاتیە گرتن.,تشتەک د پارەدانێ دا خەلەت چوو. ژڤانا تە هێشتا یا گرتییە.,yes
+248,Payments,paymentSecureNote,You pay inside the FIB app. Saxlem never sees your card or bank details.,تو د ئەپێ FIB دا پارە ددەی. ساخلەم زانیاریێن کارتا تە یان زانیاریێن هەژمارا بانکێ نابینیت.,تو د ئەپێ FIB دا پارە ددەی. ساخلەم زانیاریێن کارتا تە یان زانیاریێن هەژمارا بانکێ نابینیت.,
+249,Payments,paymentLinkValidUntil,Link valid until {time},لینک هەتا {time} کارا دەمینیت.,لینک هەتا {time} کارا دمینیت,yes
+250,Payments,paymentFibNotOpened,"We couldn't open FIB. Install or update the FIB app, or scan the QR code from another phone.",مە نەشیاین ئەپێ FIB ڤەکەین. ئەپێ FIB دابەزینە یان نوی بکە، یان کودێ QR ژ مۆبایلەکێ دی سکان بکە.,نەشیاین ئەپێ FIB ڤەکەین. ئەپێ FIB دابەزینە یان نوی بکە، یان کودێ QR ژ مۆبایلەکێ دی سکان بکە.,yes
+251,Payments,receiptsFailed,Couldn't load your payments,نەشیاین پارەدانێن تە بار بکەین.,نەشیاین پارەدانێن تە بار بکەین,yes
+252,Payments,receiptsMoreFailed,More payments couldn't be loaded.,نەشیاین پارەدانێن پتر بار بکەین.,نەشیاین پارەدانێن پتر بار بکەین.,
+253,Payments,receiptsEmptyTitle,No payments yet,هێشتا هیچ پارەدانەک نینە.,هێشتا هیچ پارەدانەک نینە,yes
+254,Payments,receiptsEmptyBody,"When you pay for a visit, in the app or at the clinic, its receipt appears here.",دەمێ تو پارێ سەرەدانەکێ ددەی، ل ئەپی یان ل کلینیکێ، وەسلا وێ دێ ل ڤێرە دیار بیت.,دەمێ تو پارێ سەرەدانەکێ ددەی، د ئەپی دا یان ل کلینیکێ، پسوولا وێ دێ ل ڤێرێ دیار بیت.,yes
+255,Payments,receiptTitle,Receipt,وەسل,پسوولە,yes
+256,Payments,receiptFailed,Couldn't load this receipt,نەشیاین ڤی وەسلی ڤەکەین,نەشیاین ڤێ پسوولێ ڤەکەین,yes
+257,Payments,receiptCopy,Copy receipt,وەسلێ کۆپی بکە,پسوولێ کۆپی بکە,yes
+258,Payments,receiptCopied,Receipt copied,وەسل هاتە کۆپیکرن,پسوولە هاتە کۆپیکرن,yes
+259,Payments,receiptView,View receipt,وەسلێ ببینە,پسوولێ ببینە,yes
+260,Payments,receiptAmount,Amount,بڕ,بڕ,
+261,Payments,receiptStatus,Status,ڕەوش,ڕەوش,
+262,Payments,receiptNumber,Receipt no.,ژمارا وەسلێ,ژمارا پسوولێ,yes
+263,Payments,receiptPaidOn,Paid on,دەمێ پارەدانێ,دەمێ پارەدانێ,
+264,Payments,receiptRefundedOn,Refunded on,دەمێ ڤەگەڕاندنێ,دەمێ ڤەگەڕاندنێ,
+265,Payments,receiptPaidBy,Paid by,رێکا پارەدانێ,رێکا پارەدانێ,
+266,Payments,receiptMethodCounter,At the clinic desk,ل پێشوازیا کلینیکێ,ل پێشوازیا کلینیکێ,
+267,Payments,receiptMethodFib,"FIB, in the app",FIB، ب رێکا ئەپی,FIB، ب رێکا ئەپی,
+268,Payments,receiptMethodOnline,"Online, in the app",ئۆنلاین، ب رێکا ئەپی,ئۆنلاین، ب رێکا ئەپی,
+269,Payments,receiptTransaction,Transaction ID,ژمارا مامەلێ,ژمارا مامەلێ,
+270,Payments,receiptPaidTo,Paid to,پارە بۆ,پارە بۆ,
+271,Payments,receiptPaidToPlatform,"Saxlem, for {organization}",ساخلەم، بۆ {organization},ساخلەم، بۆ {organization},
+272,Payments,receiptPatient,Patient,نەخۆش,نەخۆش,
+273,Payments,receiptClinic,Clinic,کلینیک,کلینیک,
+274,Payments,receiptAddress,Address,ناڤنیشان,ناڤنیشان,
+275,Payments,receiptPhone,Phone,تەلەفۆن,تەلەفۆن,
+276,Payments,receiptVisit,Visit,سەرەدان,سەرەدان,
+277,Payments,receiptTextHeading,Saxlem receipt,وەسلا ساخلەم,پسوولا ساخلەم,yes
+278,Appointments,appointments,Appointments,ژڤانێن,ژڤان,yes
+279,Appointments,myAppointments,My Appointments,ژڤانێن من,ژڤانێن من,
+280,Appointments,upcoming,Upcoming,داهاتی,داهاتی,
+281,Appointments,completed,Completed,تەمامبووی,تەمامبووی,
+282,Appointments,cancelled,Cancelled,هەلوەشای,هەلوەشای,
+283,Appointments,viewAppointment,View Appointment,ژڤانێ ببینە,ژڤانێ ببینە,
+284,Appointments,actionUnavailable,This action will be available in a future release.,ڤی کار دێ ل وەشانەکا داهاتی بەردەست بیت.,ئەڤ کارە دێ د وەشانەکا داهاتی دا بەردەست بیت.,yes
+285,Appointments,discoverDoctors,Discover Doctors,نوژداران بدۆزەڤە,نوژداران بدۆزەڤە,
+286,Appointments,firstAppointmentTitle,Your care starts here,چاڤدێریا تە ل ڤێرێ دەست پێ دکەت,چاڤدێریا تە ل ڤێرێ دەست پێ دکەت,
+287,Appointments,firstAppointmentBody,Book your first visit with a trusted doctor.,ژڤانا ئێکێ یا خۆ ل دەڤ نوژدارەکێ باوەرپێکری بگرە.,ژڤانا ئێکێ یا خو ل دەڤ نوژدارەکێ باوەرپێکری بگرە.,yes
+288,Appointments,emptyAppointmentsTitle,Nothing here right now,نوکە هیچ تشتەک ل ڤێرێ نینە,نوکە هیچ تشتەک ل ڤێرێ نینە,
+289,Appointments,emptyAppointmentsBody,Your appointments in this category will appear here.,ژڤانیێن ڤێ پۆلێ دێ ل ڤێرێ دیار بن.,ژڤانێن تە یێن ڤێ پۆلێ دێ ل ڤێرێ دیار بن.,yes
+290,Appointments,appointmentDetails,Appointment Details,وردەکاریێن ژڤانێ,هویرکاریێن ژڤانێ,yes
+291,Appointments,queueOpensAppointmentDay,Queue opens on appointment day.,ڕیز ل رۆژا ژڤانیێ ڤەدبیت.,ڕێزبەندی ل رۆژا ژڤانێ ڤەدبیت.,yes
+292,Appointments,queueAvailableToday,Live Queue is available for today's appointment.,ڕێزبەندییا زندی بۆ ژڤانیا ئەڤرۆ بەردەستە.,ڕێزبەندییا زندی بۆ ژڤانا ئەڤرۆ بەردەستە.,yes
+293,Appointments,openLiveQueue,Open Live Queue,ڕێزبەندییا زندی ڤەکە,ڕێزبەندییا زندی ڤەکە,
+294,Appointments,consultationMinutes,{minutes} min consultation,ڕاوێژا {minutes} خولەکی,ڕاوێژا {minutes} خولەکی,
+295,Appointments,tabWithCount,{label} ({count}),{label} ({count}),{label} ({count}),
+296,Appointments,notificationReservedWhy,The clinic recorded your arrival.,کلینیکێ هاتنا تە تۆمار کر.,کلینیکێ هاتنا تە تۆمار کر.,
+297,Appointments,patientAccountInvalid,We couldn't safely read your patient account. Please try again.,مە نەشیاین هەژمارا نەخۆشێ ب شێوەیەکێ پاراستی بخوینین. تکایە دیسان هەوڵ بدە.,نەشیاین هەژمارا نەخۆشێ ب شێوەیەکێ پاراستی بخوینین. هیڤییە دیسان هەول بدە.,yes
+298,Appointments,scheduled,Scheduled,پلانکری,پلانکری,
+299,Appointments,confirmed,Confirmed,پشتڕاستکری,پشتڕاستکری,
+300,Appointments,noShow,No-show,نەهات,نەهات,
+301,Appointments,appointmentTimeout,The request took too long. Please try again.,داخوازییەکە زۆر دەم گرت. تکایە دیسان هەوڵ بدە.,داخوازێ گەلەک دەم کێشا. هیڤییە دیسان هەول بدە.,yes
+302,Appointments,appointmentForbidden,Your account cannot access this appointment.,هەژمارا تە مۆڵەتا دەستگەهشتن ب ڤێ ژڤانێ نینە.,هەژمارا تە نەشێت ڤێ ژڤانێ ببینیت.,yes
+303,Appointments,appointmentNotFound,This appointment is no longer available.,ئەڤ ژڤانە ئیدی بەردەست نینە.,ئەڤ ژڤانە ئیدی بەردەست نینە.,
+304,Appointments,staleAppointment,The appointment changed. We loaded the latest details.,ژڤان هاتە گهورین. مە زانیاریێن نوی بارکرن.,ژڤان هاتە گوهۆڕین. مە زانیاریێن نوی بارکرن.,yes
+305,Appointments,appointmentValidation,Check the information and try again.,زانیارییان بپشکنە و دیسان هەوڵ بدە,زانیارییان بپشکنە و دیسان هەول بدە.,yes
+306,Appointments,appointmentUnknownOutcome,We could not confirm the result. Retry to safely check the same request.,مە نەشیاین ئەنجامێ پشتڕاست بکەین. بۆ پشکنینا هەمان داخوازێ، دیسان هەوڵ بدە.,نەشیاین ئەنجامێ پشتڕاست بکەین. بۆ پشکنینا هەمان داخوازێ، دیسان هەول بدە.,yes
+307,Appointments,appointmentsUnavailable,Appointments are temporarily unavailable.,ژڤانان بۆ دەمەکێ کورت بەردەست نینن.,ژڤان بۆ دەمەکێ کورت بەردەست نینن.,yes
+308,Appointments,cancellationReason,Cancellation reason,ئەگەرێ هەلوەشاندنێ,ئەگەرێ هەلوەشاندنێ,
+309,Appointments,cancelAppointment,Cancel appointment,ژڤانێ هەلوەشێنە,ژڤانێ هەلوەشینە,yes
+310,Appointments,rescheduleAppointment,Reschedule appointment,ژڤانێ بۆ دەمەکێ دی بگوهێزە,ژڤانێ بۆ دەمەکێ دی بگوهێزە,
+311,Appointments,chooseNewDateTime,Choose a new date and time,رێکەفت و دەمەکێ نوی ب هەلبژێرە,رێکەفت و دەمەکێ نوی هەلبژێرە,yes
+312,Appointments,confirmCancellation,Confirm cancellation,هەلوەشاندنێ پشتڕاست بکە,هەلوەشاندنێ پشتڕاست بکە,
+313,Appointments,earlierWatch,Tell me if an earlier time opens,ئەگەر دەمەکێ زووتر بەردەست بوو، ئاگەهدارم بکە.,ئەگەر دەمەکێ زووتر بەردەست بوو، ئاگەهدارم بکە,yes
+314,Appointments,earlierWatchHelp,"If {doctor} has a free time sooner, we'll let you know. Your visit stays booked until you move it.",ئەگەر {doctor} دەمەکێ زووترێ یێ ڤالا هەبیت، دێ تە ئاگەدار کەین. ژڤانا تە هەتا دەمێ تو بۆ دەمێ نوی نەگوهێزی، هێشتا وەک خۆ دەمینیت.,ئەگەر {doctor} دەمەکێ ڤالا یێ زووتر هەبیت، دێ تە ئاگەهدار کەین. ژڤانا تە وەک خو دمینیت هەتا تو وێ دگوهێزی.,yes
+315,Appointments,earlierFound,An earlier time is free,دەمەکێ زووتر بەردەستە,دەمەکێ زووتر ڤالا بوو,yes
+316,Appointments,earlierMove,Move my visit to this time,ژڤانا من بۆ ڤی دەمی بگوهێزە,ژڤانا من بۆ ڤی دەمی بگوهێزە,
+317,Appointments,earlierFirstCome,Whoever confirms first gets it.,یێ زووترین پشتڕاست بکەت، ئەو دەمە وەردگریت.,یێ زووترین پشتڕاست بکەت، ئەو دەمە وەردگریت.,
+318,Appointments,earlierFailed,Couldn't change this. Try again.,نەشیاین ڤێ بگوهێزین. دیسان هەوڵ بدە.,نەشیاین ڤێ بگوهێزین. دیسان هەول بدە.,yes
+319,Leave by,alerts,Alerts,ئاگەهدارییەکان,ئاگەهداری,yes
+320,Leave by,leaveByTime,Leave by {time},بەری {time} دەرکەڤە,بەری {time} دەرکەڤە,
+321,Leave by,leaveNow,Leave now,نوکە دەرکەڤە,نوکە دەرکەڤە,
+322,Leave by,leaveInMinutes,Leave in {minutes} min,پشتی {minutes} خولەک دەرکەڤە,پشتی {minutes} خولەک دەرکەڤە,
+323,Leave by,leaveLate,You may be late. Leave now,دبیت درەنگ بگەهی. نوکە دەرکەڤە,دبیت درەنگ بگەهی. نوکە دەرکەڤە,
+324,Leave by,leaveDrive,{minutes} min drive · {distance},{minutes} خولەک ب ترومبێلێ · {distance},{minutes} خولەک ب ترومبێلێ · {distance},
+325,Leave by,leaveKm,{km} km,{km} کم,{km} کم,
+326,Leave by,leaveMeters,{meters} m,{meters} م,{meters} م,
+327,Leave by,leaveWithTraffic,with traffic,دگەل قەرەبالغیا ڕێکێ,دگەل قەرەبالغیا ڕێکێ,
+328,Leave by,leaveNoTraffic,traffic not included,بێ قەرەبالغیا ڕێکێ,بێ قەرەبالغیا ڕێکێ,
+329,Leave by,leaveEstimate,estimate from distance,مەزەندە ل دویڤ دویراتیێ,مەزەندە ل دویڤ دویراتیێ,
+330,Leave by,leaveApproximate,approximate location,جهێ نێزیکی,جهێ نێزیکی,
+331,Leave by,leaveArriveBy,Be at reception by {time} to check in,بەری {time} ل پێشوازیێ ئامادە بە، دا هاتنا خۆ تۆمار بکەی.,بەری {time} ل پێشوازیێ ئامادە بە، دا هاتنا خو تۆمار بکەی,yes
+332,Leave by,leaveAskTitle,When should I leave?,کەنگی دەرکەڤم؟,کەنگی دەرکەڤم؟,
+333,Leave by,leaveAskBody,"Saxlem can use your location to work out the drive to the clinic, with traffic, and tell you when to leave.",ساخلەم دشێت جهێ تە بکاربینیت، دا دەمێ گەشتا تە بۆ کلینیکێ دگەل قەرەبالغیا ڕێکێ حساب بکەت و بێژیتە تە کەنگی دەرکەڤی.,ساخلەم دشێت جهێ تە بکاربینیت، دا دەمێ گەشتا تە بۆ کلینیکێ دگەل قەرەبالغیا ڕێکێ حساب بکەت و بێژیتە تە کەنگی دەرکەڤی.,
+334,Leave by,leaveAskPrivacy,Your location is used only for this and is never saved.,جهێ تە بتنێ بۆ ڤێ مەبەستێ دهێتە بکارئینان و ئەو هەرگیز ناهێتە پاشەکەفتکرن.,جهێ تە بتنێ بۆ ڤێ مەبەستێ دهێتە بکارئینان و ئەو هەرگیز ناهێتە پاشەکەفتکرن.,
+335,Leave by,leaveAskButton,Use my location,جهێ من بکاربینە,جهێ من بکاربینە,
+336,Leave by,leaveWorking,Working out your drive…,دەمێ ڕێکێ دهێتە حسابکرن…,دەمێ ڕێکێ دهێتە حسابکرن…,
+337,Leave by,leaveServiceOff,Turn on location to see when to leave.,خزمەتا دیارکرنا جهی ڤەکە، دا بزانی کەنگی دەرکەڤی.,خزمەتا دیارکرنا جهی ڤەکە، دا بزانی کەنگی دەرکەڤی.,
+338,Leave by,leaveDeniedForever,Allow location for Saxlem in Settings to see when to leave.,ل ڕێکخستنان دا مۆڵەتێ بدە ساخلەم جهێ تە بکاربینیت، دا بزانی کەنگی دەرکەڤی.,ل ڕێکخستنان دا مۆلەتێ بدە ساخلەم جهێ تە بکاربینیت، دا بزانی کەنگی دەرکەڤی.,yes
+339,Leave by,leaveTurnOn,Turn on location,خزمەتا دیارکرنا جهی ڤەکە,خزمەتا دیارکرنا جهی ڤەکە,
+340,Leave by,leaveOpenSettings,Open Settings,ڕێکخستنان ڤەکە,ڕێکخستنان ڤەکە,
+341,Leave by,leaveFailed,Couldn't work out the drive right now.,نوکە نەشیاین دەمێ ڕێکێ حساب بکەین.,نوکە نەشیاین دەمێ ڕێکێ حساب بکەین.,
+342,Leave by,leaveStop,Stop using my location,دیتر جهێ من بکارنەئینە.,ئیدی جهێ من بکار نەئینە,yes
+343,Leave by,leaveAlertChannel,Time to leave,دەمێ دەرکەفتنێ,دەمێ دەرکەفتنێ,
+344,Leave by,leaveAlertTitle,Time to get ready for your visit,دەمێ خۆ ئامادەکرنێ یە بۆ ژڤانا تە,دەمێ خو ئامادەکرنێ یە بۆ ژڤانا تە,yes
+345,Leave by,leaveAlertBody,Leave by {leave} to see {doctor} at {time} · {minutes} min drive,بەری {leave} دەرکەڤە، دا {doctor} ل دەمژمێر {time} ببینی · گەشتەکا {minutes} خولەکی ب ترومبێلێ,بەری {leave} دەرکەڤە، دا {doctor} ل دەمژمێر {time} ببینی · گەشتەکا {minutes} خولەکی ب ترومبێلێ,
+346,Leave by,minutesShortDrive,{minutes} min drive,{minutes} خولەک ب ترومبێلێ,{minutes} خولەک ب ترومبێلێ,
+347,Leave by,leaveOnMyWay,I'm on my way,ئەز ل ڕێکێ مە,ئەز ل ڕێکێ مە,
+348,Leave by,leaveOnMyWayNote,Lets the clinic know when to expect you. Your location isn't shared.,ڤێ چەندێ کلینیک ئاگەهدار دکەت کو تو کەنگی دگەهی. جهێ تە ناهێتە پارڤەکرن.,ڤێ چەندێ کلینیک ئاگەهدار دکەت کو تو کەنگی دگەهی. جهێ تە ناهێتە پارڤەکرن.,
+349,Leave by,leaveOnMyWayFailed,Couldn't tell the clinic. Try again.,نەشیاین کلینیکێ ئاگەهدار بکەین. دیسان هەوڵ بدە.,نەشیاین کلینیکێ ئاگەهدار بکەین. دیسان هەول بدە.,yes
+350,Leave by,leaveOnTheWayTitle,On your way,تو ل ڕێکێ یی,تو ل ڕێکێ یی,
+351,Leave by,leaveExpectedAt,The clinic expects you at about {time},کلینیک دەمژمێر {time} دەوروبەری چاڤەڕێی تە یە.,کلینیک نێزیکی دەمژمێر {time} چاڤەڕێی تە دکەت,yes
+352,Leave by,leaveReceptionSees,Reception can see you're coming.,پێشوازی دبینیت کو تو دهێی.,پێشوازی دبینیت کو تو دهێی.,
+353,Leave by,leaveExpectedShort,On your way · expected {time},ل ڕێکێ یی · پێشبینی دبیت ل {time} بگەهی.,ل ڕێکێ یی · گەهشتن نێزیکی {time},yes
+354,Leave by,leaveLearned,with usual traffic at this hour,دگەل قەرەبالغیا ئاسایی د ڤێ دەمژمێرێ دا,دگەل قەرەبالغیا ئاسایی د ڤێ دەمژمێرێ دا,
+355,Check-in,recordArrival,Record arrival,هاتنا خۆ تۆمار بکە,هاتنا خو تۆمار بکە,yes
+356,Live queue,live,LIVE,ڕاستەوخۆ,زندی,yes
+357,Live queue,currentPatient,Current Patient,نەخۆشێ نوکە,نەخۆشێ نوکە,
+358,Live queue,yourNumber,Your Number,ژمارا تە,ژمارا تە,
+359,Live queue,patientsAhead,Patients ahead,نەخۆشێن بەری تە,نەخۆشێن بەری تە,
+360,Live queue,estimatedWait,Estimated wait,دەمێ پێشبینی کری یێ چاڤەڕێکرنێ,مەزەندەیا چاڤەڕێیێ,yes
+361,Live queue,doctorStatus,Doctor status,ڕەوشا نوژداری,ڕەوشا نوژداری,
+362,Live queue,minutesShort,min,خولەک,خولەک,
+363,Live queue,queueNotReady,Your queue entry is not ready yet. We'll update this appointment when it becomes available.,تۆمارکرنا تە د ڕێزبەندیێ دا هێشتا ئامادە نینە. دەمێ بەردەست بوو، دێ ئەڤ ژڤانە نویکەین.,تۆمارکرنا تە د ڕێزبەندیێ دا هێشتا ئامادە نینە. دەمێ بەردەست بوو، دێ ئەڤ ژڤانە نویکەین.,
+364,Live queue,reload,Reload,دیسان بار بکە,دیسان بار بکە,
+365,Live queue,cancel,Cancel,هەلوەشێنە,هەلوەشینە,yes
+366,Live queue,patientsAheadCount,{count} patients ahead,{count} نەخۆش بەری تە,{count} نەخۆش بەری تە,
+367,Live queue,loadingYourLiveQueue,Loading your live queue,ڕێزبەندییا ڕاستەوخۆ دهێتە بارکرن,ڕێزبەندییا زندی دهێتە بارکرن,yes
+368,Live queue,queueStatusSemantic,Queue status: {status},ڕەوشا ڕێزبەندیێ: {status},ڕەوشا ڕێزبەندیێ: {status},
+369,Live queue,queueIsLive,Queue is live,ڕێزبەندی نوکە کارایە,ڕێزبەندی نوکە کارایە,
+370,Live queue,queueIsPaused,Queue is paused,ڕێزبەندی بۆ دەمەکێ کورت هاتیە راگرتن,ڕێزبەندی بۆ دەمەکێ کورت هاتیە راگرتن,
+371,Live queue,queueIsClosed,Queue is closed,ڕێزبەندی هاتیە گرتن,ڕێزبەندی هاتیە گرتن,
+372,Live queue,queueConnectedTitle,Connected,پەیوەندی هەیە,پەیوەندی هەیە,
+373,Live queue,queueConnectedBody,Your queue is live.,ڕێزبەندییا تە نوکە کارایە.,ڕێزبەندییا تە نوکە کارایە.,
+374,Live queue,queueReconnectingTitle,Reconnecting,دیسان پەیوەندی دهێتە کرن,دیسان پەیوەندی دهێتە کرن,
+375,Live queue,queueReconnectingBody,Showing your latest queue update.,نویکرنا دووماهی یا ڕێزبەندییا تە نیشان ددەین.,نویکرنا دوماهی یا ڕێزبەندییا تە نیشان ددەین.,yes
+376,Live queue,queueDelayedTitle,Update delayed,نویکرنێ دواکەفتیە,نویکرن درەنگ کەفتیە,yes
+377,Live queue,queueDelayedBody,This information may be out of date.,دبیت ئەڤ زانیارییە کۆن بیت.,دبیت ئەڤ زانیارییە کەڤن بیت.,yes
+378,Live queue,queueOfflineTitle,You are offline,تو بێ پەیوەندییە,تو بێ ئینتەرنێتی,yes
+379,Live queue,queueOfflineBody,Showing the last queue update saved on this device.,نویکرنا دووماهی یا پاراستی ل ڤی ئامیری نیشان ددەین.,نویکرنا دوماهی یا پاراستی ل ڤی ئامیری نیشان ددەین.,yes
+380,Live queue,queuePausedTitle,The queue is temporarily paused,ڕێزبەندی بۆ دەمەکێ کورت هاتیە راگرتن,ڕێزبەندی بۆ دەمەکێ کورت هاتیە راگرتن,
+381,Live queue,queuePausedBody,Your place is safe. We'll update you when the queue resumes.,جهێ تە پاراستییە. دەمێ ڕێزبەندی دیسان دەستپێدکەت دێ تە ئاگەهدار کەین.,جهێ تە پاراستییە. دەمێ ڕێزبەندی دیسان دەستپێدکەت دێ تە ئاگەهدار کەین.,
+382,Live queue,queueClosedTitle,This queue has closed,ئەڤ ڕێزبەندییە گرتییە,ئەڤ ڕێزبەندییە گرتییە,
+383,Live queue,queueClosedBody,"For assistance with your appointment, please contact reception.",بۆ هاریکاری دەربارەی ژڤانا خۆ، تکایە پەیوەندیێ ب پێشوازیێ بکە.,بۆ هاریکاری دەربارەی ژڤانا خو، هیڤییە پەیوەندیێ ب پێشوازیێ بکە.,yes
+384,Live queue,itsYourTurn,It's your turn,نوکە دۆرا تەیە,نوکە نۆرا تە یە,yes
+385,Live queue,aheadShort,ahead,بەری تە,بەری تە,
+386,Live queue,queueStepBooked,Booked,هاتە گرتن,هاتە گرتن,
+387,Live queue,queueStepArrived,Arrived,گەهشتی,گەهشتی,
+388,Live queue,queueStepWaiting,Waiting,چاڤەڕێ,چاڤەڕێ,
+389,Live queue,queueStepYourTurn,Your turn,دۆرا تە,نۆرا تە,yes
+390,Live queue,withDoctorTitle,You're with the doctor,تو نوکە ل دەڤ نوژداری,تو نوکە ل دەڤ نوژداری,
+391,Live queue,visitCompleteTitle,Visit complete,سەرەدان ب دوماهی هات,سەرەدان ب دوماهی هات,
+392,Live queue,calledNoResponseTitle,We called your number,ژمارا تە هاتە گازیکرن,ژمارا تە هاتە گازیکرن,
+393,Live queue,notCheckedInTitle,You're booked for today,ژڤانا تە بۆ ئەڤرۆ هاتیە گرتن,ژڤانا تە بۆ ئەڤرۆ هاتیە گرتن,
+394,Live queue,removedFromQueueTitle,You're no longer in this queue,تو ئێدی د ڤێ ڕێزبەندیێ دا نینی.,تو ئیدی د ڤێ ڕێزبەندیێ دا نینی,yes
+395,Live queue,waitRange,About {min}–{max} {unit},نێزیکی {min}–{max} {unit},نێزیکی {min}–{max} {unit},
+396,Notifications,liveQueue,Live queue,ڕێزبەندییا زندی,ڕێزبەندییا زندی,
+397,Notifications,loadingAppointments,Loading your appointments,ژڤانیێن تە دهێنە بارکرن,ژڤانێن تە دهێنە بارکرن,yes
+398,Notifications,notifications,Notifications,ئاگەهداری,ئاگەهداری,
+399,Notifications,unread,Unread,نەخواندی,نەخواندی,
+400,Notifications,today,Today,ئەڤرو,ئەڤرۆ,yes
+401,Notifications,earlier,Earlier,بەری نوکە,پێشتر,yes
+402,Notifications,unreadNotifications,{count} unread,{count} ئاگەهداریێن نەخواندی,{count} ئاگەهداریێن نەخواندی,
+403,Notifications,notificationUpdates,{count} queue updates,{count} نویکرنێن ڕێزبەندیێ,{count} نویکرنێن ڕێزبەندیێ,
+404,Notifications,notificationDetails,Notification details,وردەکاریێن ئاگەهداریێ,هویرکاریێن ئاگەهداریێ,yes
+405,Notifications,queueUpdates,Queue updates,نویکرنێن ڕێزبەندیێ,نویکرنێن ڕێزبەندیێ,
+406,Notifications,whatHappened,What happened,چی ڕووی دا؟,چ چێبوو,yes
+407,Notifications,whyItHappened,Why,بۆچی,بۆچی,
+408,Notifications,whatToDoNext,What to do next,پاشی چی بکەی؟,پاشان چ بکەی,yes
+409,Notifications,viewUpdate,View update,نووکرنێ ببینە,نویکرنێ ببینە,yes
+410,Notifications,notificationsEmpty,You're all caught up,هیچ ئاگەهدارییەکا نوی نینە.,هیچ ئاگەهدارییەکا نوی نینە,yes
+411,Notifications,notificationsEmptyBody,"Appointment, clinic, and queue updates will appear here.",نویکرنێن ژڤان، کلینیک و ڕێزبەندیێ دێ ل ڤێرێ دیار بن.,نویکرنێن ژڤان، کلینیک و ڕێزبەندیێ دێ ل ڤێرێ دیار بن.,
+412,Notifications,notificationsUnavailable,Notifications are unavailable,ئاگەهداری بەردەست نینن,ئاگەهداری بەردەست نینن,
+413,Notifications,notificationsUnavailableBody,We couldn't load your updates. Please try again.,مە نەشیاین نویکرنێن تە بار بکەین. تکایە دیسان هەوڵ بدە.,نەشیاین نویکرنێن تە بار بکەین. هیڤییە دیسان هەول بدە.,yes
+414,Notifications,notificationWelcome,Welcome to Saxlem,بخێر بهێی ساخلەمێ.,بخێر بهێی بۆ ساخلەم,yes
+415,Notifications,notificationWelcomeHappened,Your Saxlem experience is ready.,ئەزموونا تە یا ساخلەمێ بەرهەڤە.,ئەزموونا تە یا ساخلەمێ بەرهەڤە.,
+416,Notifications,notificationWelcomeWhy,You started using Saxlem on this device.,تە ل سەر ڤێ ئامیرێ دەست ب بکارئینانا ساخلەمێ کر.,تە ل سەر ڤی ئامیری دەست ب بکارئینانا ساخلەمێ کر.,yes
+417,Notifications,notificationWelcomeNext,Explore trusted doctors and keep your care organized.,نوژدارێن باوەرپێکری ببینە و چاڤدێرییا خۆ رێک بخە.,نوژدارێن باوەرپێکری ببینە و چاڤدێریا خو رێک بخە.,yes
+418,Notifications,notificationGeneralHappened,There is a new update about your care.,ئاگەهدارییەکا نوی دەربارەی چاڤدێریا تە هەیە.,ئاگەهدارییەکا نوی دەربارەی چاڤدێریا تە هەیە.,
+419,Notifications,notificationGeneralWhy,New information became available.,زانیاریێن نوی بەردەست بوون.,زانیاریێن نوی بەردەست بوون.,
+420,Notifications,notificationGeneralNext,Review the update and follow any instructions shown.,نویکرنێ بخوینە و هەر رێنماییەک هەیە پەیڕەوی بکە.,نویکرنێ بخوینە و هەر رێنماییەک هەیە پەیڕەوی بکە.,
+421,Notifications,notificationTimeJustNow,Updated just now,نوکە هاتە نووکرن,نوکە هاتە نویکرن,yes
+422,Notifications,notificationTimeMinutesAgo,Updated {minutes} minutes ago,{minutes} خولەک بەری نوکە هاتە نووکرن.,{minutes} خولەک بەری نوکە هاتە نویکرن,yes
+423,Notifications,notificationTimeEarlier,Updated earlier,پێشتر هاتە نووکرن.,پێشتر هاتە نویکرن,yes
+424,Notifications,loadingMoreAppointments,Loading more appointments,ژڤانێن پتر دهێنە بارکرن...,ژڤانێن پتر دهێنە بارکرن…,yes
+425,Notifications,patient,Patient,نەخۆش,نەخۆش,
+426,Notifications,ntfBookedTitle,Booking confirmed,ژڤانا تە هاتە پشتڕاستکرن,ژڤانا تە هاتە پشتڕاستکرن,
+427,Notifications,ntfBookedNext,We'll remind you the day before and shortly before your visit.,دێ رۆژەکێ بەری ژڤانا تە و دەمەکێ کورت بەری وێ، تە ئاگەدار کەین.,دێ رۆژەکێ بەری ژڤانا تە و دەمەکێ کورت بەری وێ، تە ئاگەهدار کەین.,yes
+428,Notifications,ntfReminderDayTitle,Your visit is tomorrow,ژڤانێ تە سوبەهی یە,ژڤانا تە سوبەهی یە,yes
+429,Notifications,ntfReminderSoonTitle,Your visit is soon,ژڤانێ تە نێزیکە,ژڤانا تە نێزیکە,yes
+430,Notifications,ntfReminderNext,Check in at reception when you arrive. Can't come? Cancel in Appointments so someone else can have the time.,دەمێ دگەهی، ل پێشوازیێ هاتنا خۆ تۆمار بکە. ناتوانی بهێی؟ ژڤانێ ژ بەشێ ژڤانێن خۆ هەلوەشێنە، دا کەسەکێ دی بتوانیت ئەو دەم بکار بینیت.,دەمێ دگەهی، ل پێشوازیێ هاتنا خو تۆمار بکە. نەشێی بهێی؟ ژڤانێ ژ بەشێ ژڤانێن خو هەلوەشینە، دا کەسەکێ دی بشێت وی دەمی بکار بینیت.,yes
+431,Notifications,ntfCancelledTitle,The clinic cancelled your visit,کلینیکێ ژڤانێ تە هەلوەشاند,کلینیکێ ژڤانا تە هەلوەشاند,yes
+432,Notifications,ntfCancelledNext,Book another time with the same doctor or another one.,دەمەکێ دی دگەل هەمان نوژداری یان نوژدارەکێ دی بگرە.,دەمەکێ دی دگەل هەمان نوژداری یان نوژدارەکێ دی بگرە.,
+433,Notifications,ntfRescheduledTitle,Your visit has a new time,ژڤانێ تە دەمەکێ نوی هەیە,ژڤانا تە دەمەکێ نوی هەیە,yes
+434,Notifications,ntfRescheduledNext,"If the new time doesn't suit you, change or cancel it in Appointments.",ئەگەر دەمێ نوی بۆ تە نەگونجیت، ژ بەشێ ژڤانان وێ بگوهۆڕە یان هەلوەشێنە.,ئەگەر دەمێ نوی بۆ تە نەگونجیت، ژ بەشێ ژڤانان وێ بگوهۆڕە یان هەلوەشینە.,yes
+435,Notifications,ntfAlmostTitle,Almost your turn,نۆرا تە نێزیک بوو,نۆرا تە نێزیک بوو,
+436,Notifications,ntfNextTitle,You're next,تو یێ دویڤدا یی,تو یێ دویڤدا یی,
+437,Notifications,ntfAlmostNext,Make your way to the waiting area and stay close.,بچە جهێ چاڤەڕێبوونێ و نێزیک بمینە.,بچە جهێ چاڤەڕێبوونێ و نێزیک بمینە.,
+438,Notifications,ntfQueueOpenedTitle,The queue is open,ڕێزبەندی ڤەبوو,ڕێزبەندی ڤەبوو,
+439,Notifications,ntfFollowQueue,Follow your place in the live queue.,جهێ خۆ د ڕێزبەندییا زندی دا ببینە.,جهێ خو د ڕێزبەندییا زندی دا ببینە.,yes
+440,Notifications,ntfPausedTitle,The queue is paused,ڕێزبەندی بۆ دەمەکێ کورت راوەستایە,ڕێزبەندی بۆ دەمەکێ کورت راوەستایە,
+441,Notifications,ntfPausedNext,Your place is kept. We'll tell you when it moves again.,جهێ تە پاراستیە. دەمێ دیسان دەست پێ دکەت دێ بێژینە تە.,جهێ تە پاراستیە. دەمێ دیسان دەست پێ دکەت دێ بێژینە تە.,
+442,Notifications,ntfResumedTitle,The queue is moving again,ڕێزبەندی دیسان دەست پێ کر,ڕێزبەندی دیسان دەست پێ کر,
+443,Notifications,ntfClosedTitle,The queue is closed,ڕێزبەندی هاتە گرتن,ڕێزبەندی هاتە گرتن,
+444,Notifications,ntfClosedNext,"If you weren't seen, ask the clinic's reception.",ئەگەر نوژدار تە نەدیتی، پەیوەندیێ ب پێشوازییا کلینیکێ بکە.,ئەگەر نوژداری تو نەدیتبی، پسیارێ ژ پێشوازیا کلینیکێ بکە.,yes
+445,Notifications,ntfEnqueuedTitle,You're in the queue,تو د ڕێزبەندیێ دا یی,تو د ڕێزبەندیێ دا یی,
+446,Notifications,ntfCalledTitle,It's your turn,نۆرا تە یە,نۆرا تە یە,
+447,Notifications,ntfCalledNext,Please go in to the doctor now.,هیڤییە نوکە بچە ژوور بۆ دەڤ نوژداری.,هیڤییە نوکە بچە ژوور بۆ دەڤ نوژداری.,
+448,Notifications,ntfMissedTitle,You missed your turn,نۆرا تە بۆری,نۆرا تە بۆری,
+449,Notifications,ntfMissedNext,Speak to reception — they can put you back in the queue.,دگەل کارمەندێ پێشوازیێ باخڤە؛ ئەو دشێن تە دیسان بخەنە ڕێزبەندیێ.,دگەل کارمەندێ پێشوازیێ باخڤە؛ ئەو دشێن تە دیسان بخەنە ڕێزبەندیێ.,
+450,Notifications,ntfStartedTitle,Your consultation has started,ڕاوێژا تە دەست پێ کر,ڕاوێژا تە دەست پێ کر,
+451,Notifications,ntfCompletedTitle,Visit finished,سەرەدانا تە ب دوماهی هات,سەرەدانا تە ب دوماهی هات,
+452,Notifications,ntfCompletedNext,Get well soon. Need a follow-up? Book it from the doctor's page.,زوی ساخلەم ببیت. پێدڤی ب پێداچوونەکێ هەیە؟ ژ پڕۆفایلا نوژداری ژڤانەکێ بگرە.,زوو ساخلەم ببی. پێدڤی ب ژڤانەکێ دویڤچوونێ هەیە؟ ژ پڕۆفایلا نوژداری ژڤانەکێ بگرە.,yes
+453,Notifications,ntfWhyAppointment,About a visit you booked in Saxlem.,دەربارەی ژڤانەکا تە یا ل ساخلەم گرتی.,دەربارەی ژڤانەکا تە یا ل ساخلەم گرتی.,
+454,Notifications,ntfWhyQueue,From the clinic's live queue.,ژ ڕێزبەندییا ڕاستەوخۆ یا کلینیکێ.,ژ ڕێزبەندییا زندی یا کلینیکێ.,yes
+455,Notifications,ntfAtClinic,{doctor} at {clinic},نوژدار {doctor} ل کلینیکا {clinic},{doctor} ل {clinic},yes
+456,Notifications,ntfTicket,Ticket {number},ژمارا تیکێتێ {number},ژمارا تیکێتێ {number},
+457,Notifications,ntfAhead [none],Nobody ahead of you,کەس بەری تە نینە,کەس بەری تە نینە,
+458,Notifications,ntfAhead [one],1 person ahead of you,ئێک کەس بەری تە,ئێک کەس بەری تە یە,yes
+459,Notifications,ntfAhead [many],{count} people ahead of you,{count} کەس بەری تە,{count} کەس بەری تە نە,yes
+460,Notifications,ntfDoctorStarted,{doctor} has started seeing patients.,{doctor} دەست ب دیتنا نەخۆشان کر.,{doctor} دەست ب دیتنا نەخۆشان کر.,
+461,Notifications,ntfDoctorPaused,{doctor} paused the queue for a short time.,{doctor} بۆ دەمەکێ کورت ڕێزبەندیێ راگرت.,{doctor} بۆ دەمەکێ کورت ڕێزبەندیێ راگرت.,
+462,Notifications,ntfDoctorResumed,{doctor} is seeing patients again.,{doctor} دیسان دەست ب دیتنا نەخۆشان کر.,{doctor} دیسان دەست ب دیتنا نەخۆشان کر.,
+463,Notifications,ntfDoctorFinished,{doctor} has finished for today.,{doctor} کارێ خۆ یێ ئەڤرۆ تەمام کر.,{doctor} کارێ خو یێ ئەڤرۆ تەمام کر.,yes
+464,Notifications,ntfCompletedHappened,Your visit with {doctor} is complete.,ژڤانا تە دگەل {doctor} تەمام بوو.,سەرەدانا تە دگەل {doctor} ب دوماهی هات.,yes
+465,Notifications,ntfReviewTitle,How was your visit?,سەرەدانا تە چاوا بوو؟,سەرەدانا تە چاوا بوو؟,
+466,Notifications,ntfReviewNext,Rate it in a few seconds. It helps other patients choose.,د چەند چرکەیان دا هەلسەنگاندنێ بکە. ئەڤە هاریکاریا نەخۆشێن دی دکەت دا نوژدارەکێ هەلبژێرن.,د چەند چرکەیان دا هەلسەنگاندنێ بکە. ئەڤە هاریکاریا نەخۆشێن دی دکەت دا نوژدارەکێ هەلبژێرن.,
+467,Notifications,ntfEarlierTitle,An earlier time is free,دەمەکێ زووتر یێ ڤالایە,دەمەکێ زووتر ڤالا بوو,yes
+468,Notifications,ntfEarlierNext,Open your visit to move to it. Whoever confirms first gets it.,ژڤانا خۆ ڤەکە و بۆ ڤی دەمێ زووتر بگوهێزە. یێ زووترین پشتڕاست بکەت، ئەو دەم وەردگریت.,ژڤانا خو ڤەکە و بۆ ڤی دەمێ زووتر بگوهێزە. یێ زووترین پشتڕاست بکەت، ئەو دەم وەردگریت.,yes
+469,Phone notifications,push title: appointment.booked,Booking confirmed,ژڤان هاتە پشتڕاستکرن,ژڤانا تە هاتە پشتڕاستکرن,yes
+470,Phone notifications,push title: appointment.cancelled.by-clinic,The clinic cancelled your visit,کلینیکێ ژڤانا تە هەلوەشاند,کلینیکێ ژڤانا تە هەلوەشاند,
+471,Phone notifications,push title: appointment.rescheduled.by-clinic,Your visit has a new time,ژڤانا تە دەمەکێ نوی هەیە,ژڤانا تە دەمەکێ نوی هەیە,
+472,Phone notifications,push title: appointment.reminder.day-before,Your visit is tomorrow,ژڤانێ تە سوبەهی یە,ژڤانا تە سوبەهی یە,yes
+473,Phone notifications,push title: appointment.reminder.soon,Your visit is soon,ژڤانێ تە نێزیکە,ژڤانا تە نێزیکە,yes
+474,Phone notifications,push title: appointment.review.requested,How was your visit?,سەرەدانا تە چاوا بوو؟,سەرەدانا تە چاوا بوو؟,
+475,Phone notifications,push title: appointment.earlier.available,An earlier time is free,دەمەکێ زووتر بەردەستە,دەمەکێ زووتر ڤالا بوو,yes
+476,Phone notifications,push title: queue.patient.almost,Almost your turn,نۆرا تە نێزیک بوو,نۆرا تە نێزیک بوو,
+477,Phone notifications,push title: queue.session.opened,The queue is open,ڕێزبەندی ڤەکریە,ڕێزبەندی ڤەبوو,yes
+478,Phone notifications,push title: queue.session.paused,The queue is paused,ڕێزبەندی بۆ دەمەکێ کورت راوەستایە,ڕێزبەندی بۆ دەمەکێ کورت راوەستایە,
+479,Phone notifications,push title: queue.session.resumed,The queue is moving again,ڕێزبەندی دیسان دەست پێ کر,ڕێزبەندی دیسان دەست پێ کر,
+480,Phone notifications,push title: queue.session.closed,The queue is closed,ڕێزبەندی هاتیە گرتن,ڕێزبەندی هاتە گرتن,yes
+481,Phone notifications,push title: queue.entry.enqueued,You're in the queue,تو د ڕێزبەندیێ دا یی,تو د ڕێزبەندیێ دا یی,
+482,Phone notifications,push title: queue.patient.called,It's your turn,نۆرا تە یە,نۆرا تە یە,
+483,Phone notifications,push title: queue.patient.recalled,It's your turn,نۆرا تە یە,نۆرا تە یە,
+484,Phone notifications,push title: queue.patient.no-response,You missed your turn,نۆرا تە بۆری,نۆرا تە بۆری,
+485,Phone notifications,push title: queue.consultation.started,Your consultation has started,ڕاوێژا تە دەست پێ کر,ڕاوێژا تە دەست پێ کر,
+486,Phone notifications,push title: queue.consultation.completed,Visit finished,سەرەدانا تە ب دوماهی هات,سەرەدانا تە ب دوماهی هات,
+487,Phone notifications,push next step: appointment.review.requested,Rate it in a few seconds. It helps other patients choose.,د چەند چرکەیان دا هەلسەنگاندنێ بکە. ئەڤە هاریکاریا نەخۆشێن دی دکەت دا نوژدارەکێ هەلبژێرن.,د چەند چرکەیان دا هەلسەنگاندنێ بکە. ئەڤە هاریکاریا نەخۆشێن دی دکەت دا نوژدارەکێ هەلبژێرن.,
+488,Phone notifications,push next step: appointment.earlier.available,Open your visit to move to it. Whoever confirms first gets it.,ژڤانا خۆ ڤەکە و بۆ ڤی دەمێ زووتر بگوهێزە. یێ زووترین پشتڕاست بکەت، ئەو دەم وەردگریت.,ژڤانا خو ڤەکە و بۆ ڤی دەمێ زووتر بگوهێزە. یێ زووترین پشتڕاست بکەت، ئەو دەم وەردگریت.,yes
+489,Phone notifications,push next step: queue.patient.almost,Make your way to the waiting area and stay close.,بچە جهێ چاڤەڕێبوونێ و ل نێزیک بمینە.,بچە جهێ چاڤەڕێبوونێ و نێزیک بمینە.,yes
+490,Phone notifications,push next step: queue.patient.called,Please go in to the doctor now.,هیڤییە نوکە بچە ژوور بۆ دەڤ نوژداری.,هیڤییە نوکە بچە ژوور بۆ دەڤ نوژداری.,
+491,Phone notifications,push next step: queue.patient.no-response,Speak to reception — they can put you back in the queue.,دگەل کارمەندێ پێشوازیێ باخڤە؛ ئەو دشێن تە دیسان بخەنە ڕێزبەندیێ.,دگەل کارمەندێ پێشوازیێ باخڤە؛ ئەو دشێن تە دیسان بخەنە ڕێزبەندیێ.,
+492,Phone notifications,push: ticket,Ticket {n},ژمارا تیکێتێ {n},ژمارا تیکێتێ {n},
+493,Phone notifications,push: ahead [none],Nobody ahead of you,هیچ کەس بەری تە نینە,کەس بەری تە نینە,yes
+494,Phone notifications,push: ahead [one],1 person ahead of you,ئێک کەس بەری تە یە,ئێک کەس بەری تە یە,
+495,Phone notifications,push: ahead [many],{count} people ahead of you,{count} کەس بەری تە هەن.,{count} کەس بەری تە نە,yes
+496,Reviews,starsLabel,{rating} out of 5 stars,{rating} ژ ٥ ئەستێرە,{rating} ژ 5 ئەستێرە,yes
+497,Reviews,reviewCount [one],1 review,١ هەلسەنگاندن,1 هەلسەنگاندن,yes
+498,Reviews,reviewCount [many],{count} reviews,{count} هەلسەنگاندن,{count} هەلسەنگاندن,
+499,Reviews,reviewsNone,No reviews yet. Only patients who had a visit can review.,هێشتا هیچ هەلسەنگاندنەک نینە. بتنێ ئەو نەخۆشێن سەرەدان کری دشێن هەلسەنگاندنێ بکەن.,هێشتا هیچ هەلسەنگاندنەک نینە. بتنێ ئەو نەخۆشێن سەرەدان کری دشێن هەلسەنگاندنێ بکەن.,
+500,Reviews,reviewsSeeAll,See all {count} reviews,هەمی هەلسەنگاندنان ببینە ({count}),هەمی هەلسەنگاندنان ببینە ({count}),
+501,Reviews,reviewsMore,Show more,پتر نیشان بدە,پتر نیشان بدە,
+502,Reviews,reviewsOf,Reviews of {doctor},هەلسەنگاندنێن {doctor},هەلسەنگاندنێن {doctor},
+503,Reviews,reviewAnonymous,Saxlem patient,نەخۆشێ ساخلەم,نەخۆشەکێ ساخلەمێ,yes
+504,Reviews,reviewVerified,Verified visit,سەرەدانا پشتڕاستکری,سەرەدانا پشتڕاستکری,
+505,Reviews,rateTitle,How was your visit?,سەرەدانا تە چاوا بوو؟,سەرەدانا تە چاوا بوو؟,
+506,Reviews,rateWith,Rate your visit with {doctor},سەرەدانا خۆ دگەل {doctor} هەلسەنگینە.,سەرەدانا خو دگەل {doctor} هەلسەنگینە,yes
+507,Reviews,rateCommentHint,Anything other patients should know? (optional),تشتەک هەیە نەخۆشێن دی بزانن؟ (نە پێدڤییە),تشتەک هەیە نەخۆشێن دی بزانن؟ (نە مەرجە),yes
+508,Reviews,rateCommentRule,"Shown to everyone. No links, emails or phone numbers.",دێ بۆ هەمییان دیار بیت. لینک، ئیمەیل یان ژمارا تەلەفۆنێ لێ مەنووسە.,دێ بۆ هەمییان دیار بیت. لینک، ئیمەیل یان ژمارا تەلەفۆنێ لێ نەنڤیسە.,yes
+509,Reviews,rateAnonymous,Post without my name,بێ ناڤێ خۆ بەلاڤ بکە,بێ ناڤێ خو بەلاڤ بکە,yes
+510,Reviews,ratePost,Post review,هەلسەنگاندنێ بەلاڤ بکە,هەلسەنگاندنێ بەلاڤ بکە,
+511,Reviews,rateUpdate,Update review,هەلسەنگاندنێ نوو بکە,هەلسەنگاندنێ نوی بکە,yes
+512,Reviews,rateEdit,Change,گوهۆڕین,بگوهۆڕە,yes
+513,Reviews,rateThanks,Thanks. Your review helps other patients choose.,سوپاس. هەلسەنگاندنا تە یارمەتی نەخۆشێن دی ددەت تا نوژدار هەلبژێرن.,سوپاس. هەلسەنگاندنا تە هاریکاریا نەخۆشێن دی دکەت دا نوژدارەکێ هەلبژێرن.,yes
+514,Reviews,rateRemoved,This review was removed by Saxlem.,ساخلەم ئەڤ هەلسەنگاندنە ژێ بری.,ساخلەمێ ئەڤ هەلسەنگاندنە ژێبر.,yes
+515,Reviews,rateFailed,Couldn't post your review. Try again.,نەشیاین هەلسەنگاندنا تە بەلاڤ بکەین. دیسان هەوڵ بدە.,نەشیاین هەلسەنگاندنا تە بەلاڤ بکەین. دیسان هەول بدە.,yes
+516,Reviews,rateEditUntil,You can change it until {date}.,تو دشێی هەتا {date} بگوهۆڕی.,تو دشێی هەتا {date} بگوهۆڕی.,
+517,Saved doctors,viewDoctorProfile,View profile for {name},پڕۆفایلا {name} ببینە,پڕۆفایلا {name} ببینە,
+518,Saved doctors,savedDoctorsTitle,Saved doctors,نوژدارێن پاشەکەفتکری,نوژدارێن پاشەکەفتکری,
+519,Saved doctors,savedDoctorsEmpty,Tap the heart on a doctor's profile to keep them here.,ل سەر دڵێ ل پڕۆفایلا نوژداری بگرە، دا ل ڤێرێ بهێتە پاراستن.,دەست ل نیشانا دلی بدە ل سەر پڕۆفایلا نوژداری، دا ل ڤێرێ بهێتە پاراستن.,yes
+520,Saved doctors,saveDoctor,Save {doctor},{doctor} پاشەکەفت بکە,{doctor} پاشەکەفت بکە,
+521,Saved doctors,unsaveDoctor,Remove {doctor} from saved,{doctor} ژ پاشەکەفتکریان ڕاکە,{doctor} ژ پاشەکەفتکریان ڕاکە,
+522,Saved doctors,savedAdded,Saved,هاتە پاشەکەفتکرن,هاتە پاشەکەفتکرن,
+523,Saved doctors,savedRemoved,Removed from saved,ژ پاشەکەفتکریان هاتە ڕاکرن,ژ پاشەکەفتکریان هاتە ڕاکرن,
+524,Saved doctors,savedFailed,Couldn't update saved doctors. Try again.,نەشیاین نوژدارێن پاشەکەفتکری نوی بکەین. دیسان هەوڵ بدە.,نەشیاین نوژدارێن پاشەکەفتکری نوی بکەین. دیسان هەول بدە.,yes
+525,Profile & family,english,English,ئینگلیزی,ئینگلیزی,
+526,Profile & family,arabic,Arabic,عەرەبی,عەرەبی,
+527,Profile & family,continueLabel,Continue,بەردەوام بە,بەردەوام بە,
+528,Profile & family,profile,Profile,پڕۆفایل,پڕۆفایل,
+529,Profile & family,chooseDate,Choose a date,رێکەفتەکێ ب هەلبژێرە,رێکەفتەکێ هەلبژێرە,yes
+530,Profile & family,logOut,Log out,دەرکەڤە,دەرکەفتن ژ هەژمارێ,yes
+531,Profile & family,choosePatient,Choose Patient,نەخۆشەکێ هەلبژێرە,نەخۆشەکێ هەلبژێرە,
+532,Profile & family,addPatient,Add family member,ئەندامەکێ خێزانێ زێدە بکە,ئەندامەکێ خێزانێ زێدە بکە,
+533,Profile & family,firstName,First name,ناڤێ ئێکێ,ناڤێ ئێکێ,
+534,Profile & family,lastName,Last name,ناڤێ خێزانێ,پاشناڤ,yes
+535,Profile & family,relationship,Relationship,پەیوەندی,پەیوەندی,
+536,Profile & family,dateOfBirth,Date of birth,رێکەفتا ژدایکبوونێ,رێکەفتا ژدایکبوونێ,
+537,Profile & family,patientRelationship [mother],Mother,دایک,دایک,
+538,Profile & family,patientRelationship [father],Father,باب,باب,
+539,Profile & family,patientRelationship [wife],Wife,ژن,ژن,
+540,Profile & family,patientRelationship [husband],Husband,مێر,مێر,
+541,Profile & family,patientRelationship [son],Son,کور,کور,
+542,Profile & family,patientRelationship [daughter],Daughter,کچ,کچ,
+543,Profile & family,patientRelationship [brother],Brother,برا,برا,
+544,Profile & family,patientRelationship [sister],Sister,خوشک,خوشک,
+545,Profile & family,patientRelationship [grandfather],Grandfather,باپیر,باپیر,
+546,Profile & family,patientRelationship [grandmother],Grandmother,داپیر,داپیر,
+547,Profile & family,patientRelationship [me],Me,ئەز,ئەز,
+548,Profile & family,patientRelationship [other],Other,یێ دی,یێ دی,
+549,Profile & family,patientGender [female],Female,مێ,مێ,
+550,Profile & family,patientGender [male],Male,نێر,نێر,
+551,Profile & family,patientGender [other],Not specified,دیار نەکری,دیار نەکری,
+552,Profile & family,profileSetupTitle,Tell us about the patient,دەربارەی نەخۆشێ بێژە مە,دەربارەی نەخۆشێ بێژە مە,
+553,Profile & family,profileSetupBody,Add the essential details needed to personalize your care.,زانیاریێن پێویست بنڤیسە، دا چاڤدێریا تە تایبەت بکەین.,زانیاریێن پێدڤی بنڤیسە، دا چاڤدێریا تە تایبەت بکەین.,yes
+554,Profile & family,creatingPatientProfile,Creating patient profile,پڕۆفایلا نەخۆشێ دهێتە دروستکرن,پڕۆفایلا نەخۆشێ دهێتە دروستکرن,
+555,Profile & family,profileCreationFailed,We couldn't create this patient profile. Your details are still here—please try again.,مە نەشیاین پڕۆفایلا نەخۆشێ دروست بکەین. زانیاریێن تە هێشتا پاراستینە؛ تکایە دیسان هەوڵ بدە.,نەشیاین پڕۆفایلا نەخۆشێ دروست بکەین. زانیاریێن تە هێشتا پاراستینە؛ هیڤییە دیسان هەول بدە.,yes
+556,Profile & family,profileSelectionFailed,We couldn't switch patients. Please try again.,مە نەشیاین بۆ پڕۆفایلا نەخۆشێ دی بگوهێزین. تکایە دیسان هەوڵ بدە.,نەشیاین نەخۆشی بگوهۆڕین. هیڤییە دیسان هەول بدە.,yes
+557,Profile & family,emptyPatientProfiles,No patient profiles are available yet.,هێشتا هیچ پڕۆفایلەکا نەخۆشێ نینە.,هێشتا هیچ پڕۆفایلەکا نەخۆشێ نینە.,
+558,Profile & family,familyMembersTitle,Family members,ئەندامێن خێزانێ,ئەندامێن خێزانێ,
+559,Profile & family,settingsTitle,Settings,رێکخستن,رێکخستن,
+560,Profile & family,appLanguage,App language,زمانێ ئەپێ,زمانێ ئەپی,yes
+561,Profile & family,deleteAccount,Delete account,ژێبرنا هەژمارێ,ژێبرنا هەژمارێ,
+562,Profile & family,deleteAccountTitle,Delete your Saxlem account?,دڤێ هەژمارا خۆ یا ساخلەم ژێ ببەی؟,تە دڤێت هەژمارا خو یا ساخلەم ژێ ببەی؟,yes
+563,Profile & family,deleteAccountBody,You'll be signed out on every device and your family profiles will be removed from the app. Clinics keep the record of visits you already had.,تو دێ ل هەمی ئامێرێن خۆ دەرکەڤی و پڕۆفایلێن خێزانا تە ژ ئەپێ دهێنە ژێبرن. کلینیک دێ تۆمارا سەرەدانێن تە یێن بۆری دپارێزیت.,تو دێ ل هەمی ئامیرێن خو دەرکەڤی و پڕۆفایلێن خێزانا تە ژ ئەپی دهێنە ژێبرن. کلینیک تۆمارا سەرەدانێن تە یێن بۆری دپارێزن.,yes
+564,Profile & family,deleteAccountConfirm,Delete my account,هەژمارا من ژێ ببە,هەژمارا من ژێ ببە,
+565,Profile & family,deleteAccountUpcoming,"Cancel your upcoming appointments first, then try again.",پێشتر ژڤانێن داهاتی یێن خۆ هەلوەشێنە، پاشان دیسان هەوڵ بدە.,پێشتر ژڤانێن داهاتی یێن خو هەلوەشینە، پاشان دیسان هەول بدە.,yes
+566,Profile & family,deleteAccountFailed,We couldn't delete your account. Check your connection and try again.,مە نەشیا هەژمارا تە ژێ ببەین. پەیوەندیێ بپشکنە و دووبارە هەوڵ بدە.,نەشیاین هەژمارا تە ژێ ببەین. پەیوەندیێ بپشکنە و دووبارە هەول بدە.,yes
+567,Profile & family,cancelAction,Cancel,هەلوەشاندن,هەلوەشینە,yes
+568,Profile & family,helpTitle,Help and support,هاریکاری و پشتگیری,هاریکاری و پشتگیری,
+569,Profile & family,contactSaxlem,Message Saxlem on WhatsApp,ب واتسئەپ نامە بۆ ساخلەم بهنێرە,ب واتسئەپ نامە بۆ ساخلەم بهنێرە,
+570,Profile & family,termsOfUse,Terms of use,مەرجێن ب کارئینانێ,مەرجێن بکارئینانێ,yes
+571,Profile & family,privacyPolicy,Privacy policy,سیاسەتا پاراستنا تایبەتمەندیێ,سیاسەتا پاراستنا تایبەتمەندیێ,
+572,Profile & family,appVersion,Version {version},وەشان {version},وەشان {version},
+573,Profile & family,receiptsTitle,Payments & receipts,پارەدان و وەسل,پارەدان و پسوولە,yes
+574,Profile & family,settings language name,Badini Kurdish (Settings → Language),کوردی (بادینی),کوردی (بادینی),
+575,Dates,month 1,January,کانوونا مەزن,کانوونا دووێ,yes
+576,Dates,month 2,February,شوبات,شوبات,
+577,Dates,month 3,March,ئادار,ئادار,
+578,Dates,month 4,April,نیسان,نیسان,
+579,Dates,month 5,May,گولان,گولان,
+580,Dates,month 6,June,هەزیران,حزیران,yes
+581,Dates,month 7,July,تیرمەه,تیرمەه,
+582,Dates,month 8,August,تەباخ,تەباخ,
+583,Dates,month 9,September,ئەیلوول,ئیلوون,yes
+584,Dates,month 10,October,چریا ئێکێ,چریا ئێکێ,
+585,Dates,month 11,November,چریا دووێ,چریا دووێ,
+586,Dates,month 12,December,کانوونا بچووک,کانوونا ئێکێ,yes
+587,Dates,weekday Monday,Monday,دووشەمبی,دووشەمبی,
+588,Dates,weekday Tuesday,Tuesday,سێشەمبی,سێشەمبی,
+589,Dates,weekday Wednesday,Wednesday,چارشەمبی,چارشەمبی,
+590,Dates,weekday Thursday,Thursday,پێنجشەمبی,پێنجشەمبی,
+591,Dates,weekday Friday,Friday,ئێنی,ئەینی,yes
+592,Dates,weekday Saturday,Saturday,شەمبی,شەمبی,
+593,Dates,weekday Sunday,Sunday,یەکشەمبی,یەکشەمبی,
+594,Shared,alertsTitle,Alerts are coming soon,ئاگەهداری دێ بزوی بەردەست بن,ئاگەهداری دێ ب زوویی بەردەست بن,yes
+595,Shared,alertsBody,Important appointment and clinic updates will appear here in a future release.,نویکرنێن گرنگ یێن ژڤان و کلینیکێ د وەشانەکا داهاتی دا دێ ل ڤێرێ دیار بن.,نویکرنێن گرنگ یێن ژڤان و کلینیکێ د وەشانەکا داهاتی دا دێ ل ڤێرێ دیار بن.,
+596,Shared,viewLiveQueue,View live queue,ڕێزبەندییا ڕاستەوخۆ ببینە,ڕێزبەندییا زندی ببینە,yes
+597,Shared,recommendedDoctors,Recommended doctors,نوژدارێن پێشنیارکری,نوژدارێن پێشنیارکری,
+598,Shared,sortResults,Sort results,ئەنجامان رێک بخە,ئەنجامان رێک بخە,
+599,Shared,findRightCare,Find the right care,چاڤدێریا گونجای بدۆزەڤە,چاڤدێریا گونجای بدۆزەڤە,
+600,Shared,findRightCareBody,Search in everyday words. We'll help you find doctors who may be able to help.,ب پەیڤێن سادە بگەڕێ. ئەم دێ هاریکاریا تە کەین نوژدارێن گونجای بدۆزی.,ب پەیڤێن سادە بگەڕێ. ئەم دێ هاریکاریا تە کەین دا نوژدارێن گونجای بدۆزی.,yes
+601,Shared,quickCategories,Quick categories,پۆلێن خێرا,پۆلێن بلەز,yes
+602,Shared,addToMyDoctors,Add to My Doctors,زێدە بکە بۆ نوژدارێن من,زێدە بکە بۆ نوژدارێن من,
+603,Shared,removeFromMyDoctors,Remove from My Doctors,ژ نوژدارێن من ڕاکە,ژ نوژدارێن من ڕاکە,
+604,Shared,goToAppointments,Go to My Appointments,بەشێ ژڤانێن من ڤەکە,بەشێ ژڤانێن من ڤەکە,
+605,Shared,rateVisit,Rate Visit,سەرەدانا خۆ هەلسەنگینە,سەرەدانا خو هەلسەنگینە,yes
+606,Shared,bookAgain,Book Again,دیسان ژڤانەکێ بگرە,دیسان ژڤانەکێ بگرە,
+607,Shared,appointmentsLoadFailed,We could not load your appointments.,بارکرنا ژڤانێن تە سەرنەکەفت.,بارکرنا ژڤانێن تە سەرنەکەفت.,
+608,Shared,appointmentIdValue,Appointment ID {id},ناسناما ژڤانیێ {id},ژمارا ژڤانێ {id},yes
+609,Shared,welcomeAppointments,Keep your care organized,چاڤدێرییا خۆ ڕێک و پێک بکە,چاڤدێریا خو ڕێک و پێک بکە,yes
+610,Shared,deleteNotification,Delete notification,ئاگەهداریێ ژێ ببە,ئاگەهداریێ ژێ ببە,
+611,Shared,notificationBookingConfirmed,Appointment confirmed,ژڤانا تە هاتە پشتڕاستکرن,ژڤانا تە هاتە پشتڕاستکرن,
+612,Shared,notificationBookingHappened,Your appointment with {doctor} is confirmed.,ژڤانا تە دگەل {doctor} هاتە پشتڕاستکرن.,ژڤانا تە دگەل {doctor} هاتە پشتڕاستکرن.,
+613,Shared,notificationBookingWhy,The clinic accepted your booking request.,کلینیکێ داخوازا گرتنا ژڤانا تە قەبویل کر.,کلینیکێ داخوازا گرتنا ژڤانا تە قەبویل کر.,
+614,Shared,notificationBookingNext,Review the appointment details and arrive at the recommended time.,وردەکاریێن ژڤانێ بپشکنە و ل دەمێ پێشنیارکری بگەهە.,هویرکاریێن ژڤانێ بپشکنە و ل دەمێ پێشنیارکری بگەهە.,yes
+615,Shared,notificationQueueOpened,Your queue is open,ڕێزبەندییا تە ڤەبوو,ڕێزبەندییا تە ڤەبوو,
+616,Shared,notificationQueueOpenedHappened,The live queue for {doctor} is now available.,ڕێزبەندییا ڕاستەوخۆ بۆ {doctor} نوکە بەردەستە.,ڕێزبەندییا زندی بۆ {doctor} نوکە بەردەستە.,yes
+617,Shared,notificationQueueOpenedWhy,The clinic has started today's patient queue.,کلینیکێ ئەڤرۆ دەست ب ڕێزبەندیا نەخۆشان کر.,کلینیکێ ئەڤرۆ دەست ب ڕێزبەندییا نەخۆشان کر.,yes
+618,Shared,notificationQueueOpenedNext,Open Live Queue when you are ready to follow your place.,دەمێ ئامادە دبی، ڕێزبەندییا ڕاستەوخۆ ڤەکە و جهێ خۆ ببینە.,دەمێ ئامادە دبی، ڕێزبەندییا زندی ڤەکە و جهێ خو ببینە.,yes
+619,Shared,notificationAlmostTurn,You're almost next,نۆرا تە نێزیکە,نۆرا تە نێزیکە,
+620,Shared,notificationAlmostTurnHappened,Your current number is {number}.,ژمارا تە یا نوکە {number} ـە.,ژمارا تە یا نوکە {number} یە.,yes
+621,Shared,notificationAlmostTurnWhy,The queue has moved closer to your turn.,نۆرا تە نێزیکتر بوو.,نۆرا تە نێزیکتر بوو.,
+622,Shared,notificationAlmostTurnNext,Please head to reception and stay nearby.,هیڤییە بچە پێشوازیێ و ل نێزیک بمینە.,هیڤییە بچە پێشوازیێ و ل نێزیک بمینە.,
+623,Shared,notificationReservedType,Appointment update,نویکرنا ژڤانێ,نویکرنا ژڤانێ,
+624,Shared,notificationReservedHappened,Your appointment check-in was updated.,تۆمارکرنا گەهشتنا تە هاتە نووکرن.,تۆمارکرنا گەهشتنا تە هاتە نویکرن.,yes
+625,Shared,notificationReservedNext,Please wait for guidance from reception.,هیڤییە چاڤەرێی رێنماییێن پێشوازیێ بە.,هیڤییە چاڤەڕێی رێنماییێن پێشوازیێ بە.,yes
+626,Shared,loadingPatientAccount,Loading your patient account,هەژمارا نەخۆشێ دهێتە بارکرن,هەژمارا نەخۆشێ دهێتە بارکرن,
+627,Shared,patientAccountUnavailable,Your patient account is temporarily unavailable.,هەژمارا نەخۆشێ بۆ دەمەکێ کورت بەردەست نینە.,هەژمارا نەخۆشێ بۆ دەمەکێ کورت بەردەست نینە.,
+628,Shared,patientAccountOffline,You're offline. Showing your last available patient information.,تو بێ پەیوەندییە. زانیاریێن دوماهی یێن نەخۆشێ نیشان ددەین.,تو بێ ئینتەرنێتی. زانیاریێن دوماهیێ یێن نەخۆشی نیشان ددەین.,yes
+629,Shared,availabilityLabel,Availability,دەمێن بەردەست,دەمێن بەردەست,
+630,Shared,bookingComingSoon,Booking will be available in the next release.,گرتنا ژڤانێ د وەشانەکا داهاتی دا بەردەست دبیت.,گرتنا ژڤانێ د وەشانا داهاتی دا دێ بەردەست بیت.,yes
+631,Shared,paymentBookedPayNext,Booked! One last step: pay for your visit.,ژڤان هاتە گرتن! تەنێ گامەکا دی مایە: پارەیێ سەرەدانێ بدە.,ژڤان هاتە گرتن! تنێ گاڤەکا دی مایە: پارەیێ سەرەدانێ بدە.,yes
+632,Shared,languageSaved,Language changed,زمان هاتە گوهۆڕین,زمان هاتە گوهۆڕین,
+633,Shared,alertsSubtitle,Queue calls and booking updates,گازیێن ڕێزبەندیێ و نویکرنێن ژڤانان,گازیێن ڕێزبەندیێ و نویکرنێن ژڤانان,

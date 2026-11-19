@@ -1,3 +1,4 @@
+import '../../../../core/formatting/ltr_isolate.dart';
 import '../../../payments/domain/receipt.dart';
 import '../../../payments/payments_scope.dart';
 import '../../../payments/presentation/pages/payment_history_page.dart';
@@ -223,7 +224,7 @@ class PatientProfilesPage extends StatelessWidget {
               const SizedBox(height: 16),
               Center(
                 child: Text(
-                  context.l10n.appVersion(SupportLinks.version),
+                  context.l10n.appVersion(ltrIsolate(SupportLinks.version)),
                   style: theme.textTheme.labelSmall,
                 ),
               ),

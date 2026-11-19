@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/calendar/calendar_link.dart';
+import '../../../../core/formatting/ltr_isolate.dart';
 import '../../../../design_system/design_system.dart';
 import '../../domain/entities/booking_confirmation.dart';
 import '../booking_copy.dart';
@@ -163,7 +164,7 @@ class _BookingSuccessPageState extends State<BookingSuccessPage> {
                       const SizedBox(height: 14),
                       Text(
                         context.l10n.appointmentReferenceValue(
-                          confirmation.reference,
+                          ltrIsolate(confirmation.reference),
                         ),
                         style: theme.textTheme.labelMedium?.copyWith(
                           color: colors.textSecondary,

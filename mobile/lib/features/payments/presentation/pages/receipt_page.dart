@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/formatting/clinic_format.dart';
+import '../../../../core/formatting/ltr_isolate.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../../design_system/design_system.dart';
 import '../../domain/payments_repository.dart';
@@ -161,7 +162,7 @@ class ReceiptCard extends StatelessWidget {
                       child: SelectableText(
                         // Isolated left to right, so "+964 750 …" keeps its
                         // order inside Arabic and Kurdish text.
-                        code ? '\u2066$value\u2069' : value,
+                        code ? ltrIsolate(value) : value,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: colors.textPrimary,
                           fontWeight: FontWeight.w600,
