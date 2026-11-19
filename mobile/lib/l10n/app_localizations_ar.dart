@@ -1932,4 +1932,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get pushChannelName => 'تحديثات المواعيد والطابور';
+
+  @override
+  String get appearanceTitle => 'المظهر';
+
+  @override
+  String get appearanceSystem => 'مثل الهاتف';
+
+  @override
+  String get appearanceLight => 'فاتح';
+
+  @override
+  String get appearanceDark => 'داكن';
 }

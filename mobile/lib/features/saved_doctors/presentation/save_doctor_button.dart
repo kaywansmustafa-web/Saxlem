@@ -67,7 +67,7 @@ class _SaveDoctorButtonState extends State<SaveDoctorButton> {
         icon: Icon(
           saved ? Icons.favorite_rounded : Icons.favorite_border_rounded,
           color: saved
-              ? const Color(0xFFE5484D)
+              ? context.saxlemColors.roseContent
               : context.saxlemColors.textSecondary,
         ),
       );

@@ -149,7 +149,7 @@ class _LanguageCard extends StatelessWidget {
               color: isSelected ? colors.brandPrimary : colors.border,
               width: isSelected ? 2 : 1,
             ),
-            boxShadow: SaxlemElevation.level1(colors.night),
+            boxShadow: colors.cardShadow,
           ),
           child: InkWell(
             onTap: onTap,

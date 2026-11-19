@@ -77,14 +77,15 @@ class _BookingDayPickerState extends State<BookingDayPicker> {
                         vertical: 12,
                       ),
                       decoration: BoxDecoration(
-                        color: selected ? null : colors.surfaceRaised,
-                        gradient: selected ? colors.deepAura : null,
+                        color: selected
+                            ? colors.brandFill
+                            : colors.surfaceRaised,
                         borderRadius: BorderRadius.circular(SaxlemRadii.medium),
                         border: Border.all(
                           color: selected ? Colors.transparent : colors.border,
                         ),
                         boxShadow: selected
-                            ? SaxlemElevation.glow(colors.brandPrimary)
+                            ? SaxlemElevation.glow(colors.brandFill)
                             : null,
                       ),
                       child: ExcludeSemantics(

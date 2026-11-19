@@ -134,7 +134,7 @@ class _MethodCard extends StatelessWidget {
           gradient: selected ? colors.aura : null,
           color: selected ? null : colors.border,
           boxShadow: selected
-              ? SaxlemElevation.glow(colors.brandPrimary)
+              ? SaxlemElevation.glow(colors.brandFill)
               : SaxlemElevation.none,
         ),
         child: Material(

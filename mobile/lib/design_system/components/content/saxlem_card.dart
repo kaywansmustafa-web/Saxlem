@@ -38,8 +38,11 @@ class SaxlemCard extends StatelessWidget {
     final colors = context.saxlemColors;
     final shadows = switch (elevation) {
       SaxlemCardElevation.flat => SaxlemElevation.none,
-      SaxlemCardElevation.low => SaxlemElevation.level1(Colors.black),
-      SaxlemCardElevation.medium => SaxlemElevation.level2(Colors.black),
+      SaxlemCardElevation.low => colors.cardShadow,
+      SaxlemCardElevation.medium =>
+        colors.isDark
+            ? SaxlemElevation.none
+            : SaxlemElevation.level2(colors.night),
     };
     final content = Container(
       width: width,

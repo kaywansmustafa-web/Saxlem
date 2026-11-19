@@ -7,6 +7,7 @@ import '../../../saved_doctors/presentation/saved_doctors.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../config/environment/support_links.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/appearance/appearance.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../../core/models/patient_profile.dart';
 import '../../../../design_system/design_system.dart';
@@ -87,7 +88,7 @@ class PatientProfilesPage extends StatelessWidget {
                   color: colors.surfaceRaised,
                   borderRadius: BorderRadius.circular(SaxlemRadii.card),
                   border: Border.all(color: colors.border),
-                  boxShadow: SaxlemElevation.level1(colors.night),
+                  boxShadow: colors.cardShadow,
                 ),
                 child: Column(
                   children: [
@@ -161,6 +162,13 @@ class PatientProfilesPage extends StatelessWidget {
                         ),
                       ),
                     ),
+                if (AppearanceScope.maybeOf(context) case final look?)
+                  _SettingsRow(
+                    icon: Icons.contrast_rounded,
+                    label: context.l10n.appearanceTitle,
+                    value: _appearanceName(context, look.value),
+                    onTap: () => _chooseAppearance(context, look),
+                  ),
                 if (onChangeLanguage != null)
                   _SettingsRow(
                     icon: Icons.translate_rounded,
@@ -243,6 +251,49 @@ class PatientProfilesPage extends StatelessWidget {
     'ku' => 'کوردی (بادینی)',
     _ => 'English',
   };
+
+  static String _appearanceName(BuildContext context, AppAppearance value) =>
+      switch (value) {
+        AppAppearance.system => context.l10n.appearanceSystem,
+        AppAppearance.light => context.l10n.appearanceLight,
+        AppAppearance.dark => context.l10n.appearanceDark,
+      };
+
+  Future<void> _chooseAppearance(
+    BuildContext context,
+    AppearanceController look,
+  ) async {
+    final chosen = await showModalBottomSheet<AppAppearance>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheet) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final (option, icon) in const [
+              (AppAppearance.system, Icons.smartphone_rounded),
+              (AppAppearance.light, Icons.light_mode_outlined),
+              (AppAppearance.dark, Icons.dark_mode_outlined),
+            ])
+              ListTile(
+                minTileHeight: 56,
+                leading: Icon(icon),
+                title: Text(_appearanceName(sheet, option)),
+                trailing: option == look.value
+                    ? Icon(
+                        Icons.check_circle_rounded,
+                        color: sheet.saxlemColors.brandPrimary,
+                      )
+                    : null,
+                onTap: () => Navigator.of(sheet).pop(option),
+              ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+    if (chosen != null) await look.select(chosen);
+  }
 
   Future<void> _chooseLanguage(BuildContext context) async {
     final current = Localizations.localeOf(context).languageCode;
@@ -337,7 +388,7 @@ class _ActiveHero extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: colors.deepAura,
             borderRadius: BorderRadius.circular(SaxlemRadii.hero),
-            boxShadow: SaxlemElevation.glow(colors.brandPrimary),
+            boxShadow: SaxlemElevation.glow(colors.brandFill),
           ),
           child: Row(
             children: [
@@ -476,7 +527,7 @@ class _SettingsCard extends StatelessWidget {
         color: colors.surfaceRaised,
         borderRadius: BorderRadius.circular(SaxlemRadii.card),
         border: Border.all(color: colors.border),
-        boxShadow: SaxlemElevation.level1(colors.night),
+        boxShadow: colors.cardShadow,
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(

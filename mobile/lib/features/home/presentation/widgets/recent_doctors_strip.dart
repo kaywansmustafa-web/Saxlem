@@ -92,7 +92,7 @@ class _RecentDoctorsStripState extends State<RecentDoctorsStrip> {
           ),
           const SizedBox(height: 12),
           SizedBox(
-            height: 132,
+            height: 144,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: _doctors.length,

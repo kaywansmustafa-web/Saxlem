@@ -161,16 +161,43 @@ class DashboardView extends StatelessWidget {
                 ),
             ],
             const SizedBox(height: 18),
-            _SearchPanel(
-              title: strings.welcomeBook,
-              subtitle: strings.welcomeQueue,
-              search: DashboardSearchBar(
-                hintText: strings.searchHint,
-                searchSemanticLabel: strings.openHealthcareSearch,
-                filterSemanticLabel: strings.openSearchFilters,
-                onTap: () => onOpenDiscover(focus: true, openFilters: false),
-                onFilterPressed: () =>
-                    onOpenDiscover(focus: false, openFilters: true),
+            DashboardSearchBar(
+              hintText: strings.searchHint,
+              searchSemanticLabel: strings.openHealthcareSearch,
+              filterSemanticLabel: strings.openSearchFilters,
+              onTap: () => onOpenDiscover(focus: true, openFilters: false),
+              onFilterPressed: () =>
+                  onOpenDiscover(focus: false, openFilters: true),
+            ),
+            const SizedBox(height: 12),
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: _QuickTile(
+                      icon: Icons.add_rounded,
+                      title: strings.bookAppointment,
+                      subtitle: strings.doctorDiscoveryTitle,
+                      filled: true,
+                      stacked: profiles != null,
+                      onTap: () =>
+                          onOpenDiscover(focus: false, openFilters: false),
+                    ),
+                  ),
+                  if (profiles != null) ...[
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _QuickTile(
+                        icon: Icons.family_restroom_rounded,
+                        title: strings.familyTileTitle,
+                        subtitle: strings.familyTileSubtitle,
+                        stacked: true,
+                        onTap: onOpenFamily ?? onOpenAppointments,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
             if (discoveryRepository != null && onOpenDoctor != null)
@@ -206,32 +233,12 @@ class DashboardView extends StatelessWidget {
                 ),
               ),
             const SizedBox(height: 22),
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (profiles != null) ...[
-                    Expanded(
-                      child: _QuickTile(
-                        icon: Icons.family_restroom_rounded,
-                        title: strings.familyTileTitle,
-                        subtitle: strings.familyTileSubtitle,
-                        onTap: onOpenFamily ?? onOpenAppointments,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                  ],
-                  Expanded(
-                    child: _QuickTile(
-                      icon: Icons.emergency_outlined,
-                      title: strings.emergencyTitle,
-                      subtitle: strings.emergencySubtitle,
-                      danger: true,
-                      onTap: () => _confirmEmergency(context),
-                    ),
-                  ),
-                ],
-              ),
+            _QuickTile(
+              icon: Icons.emergency_outlined,
+              title: strings.emergencyTitle,
+              subtitle: strings.emergencySubtitle,
+              danger: true,
+              onTap: () => _confirmEmergency(context),
             ),
             ValueListenableBuilder<bool>(
               valueListenable: returning ?? ValueNotifier(false),
@@ -307,47 +314,6 @@ class DashboardView extends StatelessWidget {
   }
 }
 
-/// The search, on frosted glass over the aura.
-class _SearchPanel extends StatelessWidget {
-  const _SearchPanel({
-    required this.title,
-    required this.subtitle,
-    required this.search,
-  });
-  final String title, subtitle;
-  final Widget search;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.saxlemColors;
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsetsDirectional.fromSTEB(18, 18, 18, 16),
-      decoration: BoxDecoration(
-        color: colors.surfaceRaised,
-        borderRadius: BorderRadius.circular(SaxlemRadii.hero),
-        border: Border.all(color: colors.border),
-        boxShadow: SaxlemElevation.level1(colors.night),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: theme.textTheme.titleLarge),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: colors.textSecondary,
-            ),
-          ),
-          const SizedBox(height: 14),
-          search,
-        ],
-      ),
-    );
-  }
-}
-
 /// Specialties as a sideways strip of glowing tiles.
 class _SpecialtyStrip extends StatelessWidget {
   const _SpecialtyStrip({
@@ -392,7 +358,7 @@ class _SpecialtyStrip extends StatelessWidget {
                     color: colors.surfaceRaised,
                     borderRadius: BorderRadius.circular(SaxlemRadii.card),
                     border: Border.all(color: colors.border),
-                    boxShadow: SaxlemElevation.level1(colors.night),
+                    boxShadow: colors.cardShadow,
                   ),
                   child: InkWell(
                     onTap: () => onSelected(item),
@@ -404,15 +370,12 @@ class _SpecialtyStrip extends StatelessWidget {
                           width: 46,
                           height: 46,
                           decoration: BoxDecoration(
-                            gradient: colors.deepAura,
+                            color: colors.brandTint,
                             borderRadius: BorderRadius.circular(16),
-                            boxShadow: SaxlemElevation.glow(
-                              colors.brandPrimary,
-                            ),
                           ),
                           child: Icon(
                             _icons[item.id] ?? Icons.local_hospital_outlined,
-                            color: colors.onFill,
+                            color: colors.brandPrimary,
                             size: 22,
                           ),
                         ),
@@ -450,6 +413,8 @@ class _QuickTile extends StatelessWidget {
     required this.subtitle,
     required this.onTap,
     this.danger = false,
+    this.filled = false,
+    this.stacked = false,
   });
   final IconData icon;
   final String title, subtitle;
@@ -458,10 +423,22 @@ class _QuickTile extends StatelessWidget {
   /// Emergency: red, so it is never mistaken for an ordinary shortcut.
   final bool danger;
 
+  /// The main shortcut (Book): a solid blue icon.
+  final bool filled;
+
+  /// Icon above the words, for the half-width tiles, so long titles
+  /// (and Kurdish or Arabic) wrap between words instead of inside them.
+  final bool stacked;
+
   @override
   Widget build(BuildContext context) {
     final colors = context.saxlemColors;
     final theme = Theme.of(context);
+    final (wash, tint) = danger
+        ? (colors.criticalSurface, colors.criticalContent)
+        : filled
+        ? (colors.brandFill, colors.onFill)
+        : (colors.brandTint, colors.brandPrimary);
     return Semantics(
       button: true,
       label: '$title. $subtitle',
@@ -473,47 +450,55 @@ class _QuickTile extends StatelessWidget {
               color: colors.surfaceRaised,
               borderRadius: BorderRadius.circular(SaxlemRadii.card),
               border: Border.all(color: colors.border),
-              boxShadow: SaxlemElevation.level1(colors.night),
+              boxShadow: colors.cardShadow,
             ),
             child: InkWell(
               onTap: onTap,
               borderRadius: BorderRadius.circular(SaxlemRadii.card),
               child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.all(14),
+                child: Flex(
+                  direction: stacked ? Axis.vertical : Axis.horizontal,
+                  crossAxisAlignment: stacked
+                      ? CrossAxisAlignment.start
+                      : CrossAxisAlignment.center,
                   children: [
                     Container(
-                      width: 40,
-                      height: 40,
+                      width: 42,
+                      height: 42,
                       decoration: BoxDecoration(
-                        color: danger
-                            ? colors.criticalSurface
-                            : colors.brandTint,
-                        borderRadius: BorderRadius.circular(13),
+                        color: wash,
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: filled
+                            ? SaxlemElevation.glow(colors.brandFill)
+                            : null,
                       ),
-                      child: Icon(
-                        icon,
-                        color: danger
-                            ? colors.criticalContent
-                            : colors.brandPrimary,
-                        size: 22,
-                      ),
+                      child: Icon(icon, color: tint, size: 22),
                     ),
-                    const SizedBox(height: 14),
-                    Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleSmall,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colors.textSecondary,
+                    SizedBox(width: 12, height: stacked ? 12 : 0),
+                    Flexible(
+                      fit: stacked ? FlexFit.loose : FlexFit.tight,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleSmall,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            subtitle,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colors.textSecondary,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -543,7 +528,7 @@ class _HowItWorks extends StatelessWidget {
         color: colors.surfaceRaised,
         borderRadius: BorderRadius.circular(SaxlemRadii.hero),
         border: Border.all(color: colors.border),
-        boxShadow: SaxlemElevation.level1(colors.night),
+        boxShadow: colors.cardShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

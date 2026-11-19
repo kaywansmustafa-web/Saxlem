@@ -40,7 +40,7 @@ class PhoneNumberPage extends StatelessWidget {
                       gradient: context.saxlemColors.deepAura,
                       borderRadius: BorderRadius.circular(22),
                       boxShadow: SaxlemElevation.glow(
-                        context.saxlemColors.brandPrimary,
+                        context.saxlemColors.brandFill,
                       ),
                     ),
                     child: Icon(

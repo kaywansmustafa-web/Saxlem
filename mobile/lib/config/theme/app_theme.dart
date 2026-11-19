@@ -11,6 +11,13 @@ import '../../design_system/theme/saxlem_colors.dart';
 /// 20px cards and 28px sheets on the light canvas.
 abstract final class AppTheme {
   static ThemeData get light => lightFor();
+  static ThemeData get dark => darkFor();
+
+  static ThemeData lightFor([Locale? locale]) =>
+      _build(SaxlemColors.light, locale);
+
+  static ThemeData darkFor([Locale? locale]) =>
+      _build(SaxlemColors.dark, locale);
 
   /// The font that draws this language's letters: Cairo for Arabic, Rudaw
   /// for Badini, none for English (Latin is always Sora / Inter).
@@ -31,16 +38,17 @@ abstract final class AppTheme {
         _ => const ['Rudaw', 'Cairo'],
       };
 
-  static ThemeData lightFor([Locale? locale]) {
-    const c = SaxlemColors.light;
+  static ThemeData _build(SaxlemColors c, Locale? locale) {
+    final brightness = c.isDark ? Brightness.dark : Brightness.light;
     final arabicScript = fontFamilyFor(locale) != null;
     final fallback = scriptFontsFor(locale);
     const textFamily = SaxlemTypography.text;
     const displayFamily = SaxlemTypography.display;
     final scheme = ColorScheme.fromSeed(
-      seedColor: c.brandPrimary,
+      seedColor: c.brandFill,
+      brightness: brightness,
       primary: c.brandPrimary,
-      onPrimary: c.onFill,
+      onPrimary: c.isDark ? c.night : c.onFill,
       primaryContainer: c.brandTint,
       onPrimaryContainer: c.brandPrimary,
       secondary: c.brandSecondary,
@@ -62,7 +70,7 @@ abstract final class AppTheme {
     );
     final baseTheme = ThemeData(
       useMaterial3: true,
-      brightness: Brightness.light,
+      brightness: brightness,
       colorScheme: scheme,
       scaffoldBackgroundColor: c.canvas,
       fontFamily: textFamily,
@@ -96,7 +104,7 @@ abstract final class AppTheme {
         );
 
     return baseTheme.copyWith(
-      extensions: const [SaxlemColors.light],
+      extensions: [c],
       textTheme: textTheme,
       appBarTheme: AppBarTheme(
         backgroundColor: c.canvas,
@@ -117,7 +125,7 @@ abstract final class AppTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: c.brandPrimary,
+          backgroundColor: c.brandFill,
           foregroundColor: c.onFill,
           disabledBackgroundColor: c.surfaceSunken,
           disabledForegroundColor: c.textDisabled,
@@ -129,7 +137,7 @@ abstract final class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: c.brandPrimary,
+          backgroundColor: c.brandFill,
           foregroundColor: c.onFill,
           elevation: 0,
           minimumSize: const Size(
@@ -143,8 +151,8 @@ abstract final class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: c.textPrimary,
-          backgroundColor: c.surfaceRaised,
-          side: BorderSide(color: c.outlineStrong),
+          backgroundColor: Colors.transparent,
+          side: BorderSide(color: c.outline),
           minimumSize: buttonSize,
           padding: buttonPadding,
           shape: buttonShape,
@@ -209,8 +217,8 @@ abstract final class AppTheme {
       ),
       chipTheme: ChipThemeData(
         backgroundColor: c.surfaceRaised,
-        selectedColor: c.brandPrimary,
-        secondarySelectedColor: c.brandPrimary,
+        selectedColor: c.brandFill,
+        secondarySelectedColor: c.brandFill,
         checkmarkColor: c.onFill,
         side: BorderSide(color: c.border),
         shape: RoundedRectangleBorder(
@@ -253,7 +261,7 @@ abstract final class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: c.night,
+        backgroundColor: c.isDark ? c.surfaceElevated : c.night,
         contentTextStyle: TextStyle(
           fontFamily: textFamily,
           fontFamilyFallback: fallback,
@@ -278,10 +286,27 @@ abstract final class AppTheme {
       ),
       segmentedButtonTheme: SegmentedButtonThemeData(
         style: SegmentedButton.styleFrom(
-          selectedBackgroundColor: c.brandPrimary,
+          selectedBackgroundColor: c.brandFill,
           selectedForegroundColor: c.onFill,
           side: BorderSide(color: c.border),
           textStyle: buttonText.copyWith(fontSize: 14),
+        ),
+      ),
+      // On: solid brand blue with a white thumb. Off: a quiet track with a
+      // visible outline, in both modes.
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith(
+          (states) =>
+              states.contains(WidgetState.selected) ? c.onFill : c.textMuted,
+        ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? c.brandFill
+              : c.surfaceSunken,
+        ),
+        trackOutlineColor: WidgetStateProperty.resolveWith(
+          (states) =>
+              states.contains(WidgetState.selected) ? c.brandFill : c.outline,
         ),
       ),
       badgeTheme: BadgeThemeData(

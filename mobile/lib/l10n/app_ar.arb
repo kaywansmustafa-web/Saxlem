@@ -744,5 +744,9 @@
   "receiptPhone": "الهاتف",
   "receiptVisit": "الزيارة",
   "receiptTextHeading": "إيصال ساكسلم",
-  "pushChannelName": "تحديثات المواعيد والطابور"
+  "pushChannelName": "تحديثات المواعيد والطابور",
+  "appearanceTitle": "المظهر",
+  "appearanceSystem": "مثل الهاتف",
+  "appearanceLight": "فاتح",
+  "appearanceDark": "داكن"
 }

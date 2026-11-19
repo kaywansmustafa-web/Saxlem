@@ -78,7 +78,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                       gradient: context.saxlemColors.deepAura,
                       borderRadius: BorderRadius.circular(22),
                       boxShadow: SaxlemElevation.glow(
-                        context.saxlemColors.brandPrimary,
+                        context.saxlemColors.brandFill,
                       ),
                     ),
                     child: Icon(

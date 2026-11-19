@@ -62,6 +62,7 @@ void main() {
             ..sort();
       expect(offenders, [
         // One on/off switch: whether "Leave by" may read the location.
+        'lib/core/appearance/appearance.dart',
         'lib/core/location/leave_by_consent.dart',
         'lib/features/language/data/repositories/shared_preferences_locale_repository.dart',
         'lib/main.dart',

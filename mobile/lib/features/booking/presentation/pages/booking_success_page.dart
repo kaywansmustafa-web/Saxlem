@@ -87,7 +87,7 @@ class _BookingSuccessPageState extends State<BookingSuccessPage> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: colors.aura,
-                boxShadow: SaxlemElevation.glow(colors.brandPrimary),
+                boxShadow: SaxlemElevation.glow(colors.brandFill),
               ),
               child: Icon(Icons.check_rounded, size: 48, color: colors.onFill),
             ),

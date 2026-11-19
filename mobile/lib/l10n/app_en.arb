@@ -882,19 +882,52 @@
     }
   },
   "leaveByTime": "Leave by {time}",
-  "@leaveByTime": {"placeholders": {"time": {"type": "String"}}},
+  "@leaveByTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "leaveNow": "Leave now",
   "@leaveNow": {},
   "leaveInMinutes": "Leave in {minutes} min",
-  "@leaveInMinutes": {"placeholders": {"minutes": {"type": "int"}}},
+  "@leaveInMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "leaveLate": "You may be late. Leave now",
   "@leaveLate": {},
   "leaveDrive": "{minutes} min drive · {distance}",
-  "@leaveDrive": {"placeholders": {"minutes": {"type": "int"}, "distance": {"type": "String"}}},
+  "@leaveDrive": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      },
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
   "leaveKm": "{km} km",
-  "@leaveKm": {"placeholders": {"km": {"type": "String"}}},
+  "@leaveKm": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
   "leaveMeters": "{meters} m",
-  "@leaveMeters": {"placeholders": {"meters": {"type": "String"}}},
+  "@leaveMeters": {
+    "placeholders": {
+      "meters": {
+        "type": "String"
+      }
+    }
+  },
   "leaveWithTraffic": "with traffic",
   "@leaveWithTraffic": {},
   "leaveNoTraffic": "traffic not included",
@@ -904,7 +937,13 @@
   "leaveApproximate": "approximate location",
   "@leaveApproximate": {},
   "leaveArriveBy": "Be at reception by {time} to check in",
-  "@leaveArriveBy": {"placeholders": {"time": {"type": "String"}}},
+  "@leaveArriveBy": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "leaveAskTitle": "When should I leave?",
   "@leaveAskTitle": {},
   "leaveAskBody": "Saxlem can use your location to work out the drive to the clinic, with traffic, and tell you when to leave.",
@@ -932,9 +971,30 @@
   "leaveAlertTitle": "Time to get ready for your visit",
   "@leaveAlertTitle": {},
   "leaveAlertBody": "Leave by {leave} to see {doctor} at {time} · {minutes} min drive",
-  "@leaveAlertBody": {"placeholders": {"leave": {"type": "String"}, "doctor": {"type": "String"}, "time": {"type": "String"}, "minutes": {"type": "int"}}},
+  "@leaveAlertBody": {
+    "placeholders": {
+      "leave": {
+        "type": "String"
+      },
+      "doctor": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "minutesShortDrive": "{minutes} min drive",
-  "@minutesShortDrive": {"placeholders": {"minutes": {"type": "int"}}},
+  "@minutesShortDrive": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "leaveOnMyWay": "I'm on my way",
   "@leaveOnMyWay": {},
   "leaveOnMyWayNote": "Lets the clinic know when to expect you. Your location isn't shared.",
@@ -944,27 +1004,63 @@
   "leaveOnTheWayTitle": "On your way",
   "@leaveOnTheWayTitle": {},
   "leaveExpectedAt": "The clinic expects you at about {time}",
-  "@leaveExpectedAt": {"placeholders": {"time": {"type": "String"}}},
+  "@leaveExpectedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "leaveReceptionSees": "Reception can see you're coming.",
   "@leaveReceptionSees": {},
   "leaveExpectedShort": "On your way · expected {time}",
-  "@leaveExpectedShort": {"placeholders": {"time": {"type": "String"}}},
+  "@leaveExpectedShort": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "leaveLearned": "with usual traffic at this hour",
   "@leaveLearned": {},
   "starsLabel": "{rating} out of 5 stars",
-  "@starsLabel": {"placeholders": {"rating": {"type": "String"}}},
+  "@starsLabel": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
   "reviewCount": "{count, plural, =1{1 review} other{{count} reviews}}",
-  "@reviewCount": {"placeholders": {"count": {"type": "int"}}},
+  "@reviewCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "reviewsTitle": "Reviews",
   "@reviewsTitle": {},
   "reviewsNone": "No reviews yet. Only patients who had a visit can review.",
   "@reviewsNone": {},
   "reviewsSeeAll": "See all {count} reviews",
-  "@reviewsSeeAll": {"placeholders": {"count": {"type": "int"}}},
+  "@reviewsSeeAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "reviewsMore": "Show more",
   "@reviewsMore": {},
   "reviewsOf": "Reviews of {doctor}",
-  "@reviewsOf": {"placeholders": {"doctor": {"type": "String"}}},
+  "@reviewsOf": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
   "reviewAnonymous": "Saxlem patient",
   "@reviewAnonymous": {},
   "reviewVerified": "Verified visit",
@@ -972,7 +1068,13 @@
   "rateTitle": "How was your visit?",
   "@rateTitle": {},
   "rateWith": "Rate your visit with {doctor}",
-  "@rateWith": {"placeholders": {"doctor": {"type": "String"}}},
+  "@rateWith": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
   "rateCommentHint": "Anything other patients should know? (optional)",
   "@rateCommentHint": {},
   "rateCommentRule": "Shown to everyone. No links, emails or phone numbers.",
@@ -992,7 +1094,13 @@
   "rateFailed": "Couldn't post your review. Try again.",
   "@rateFailed": {},
   "rateEditUntil": "You can change it until {date}.",
-  "@rateEditUntil": {"placeholders": {"date": {"type": "String"}}},
+  "@rateEditUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "ntfReviewTitle": "How was your visit?",
   "@ntfReviewTitle": {},
   "ntfReviewNext": "Rate it in a few seconds. It helps other patients choose.",
@@ -1002,9 +1110,21 @@
   "savedDoctorsEmpty": "Tap the heart on a doctor's profile to keep them here.",
   "@savedDoctorsEmpty": {},
   "saveDoctor": "Save {doctor}",
-  "@saveDoctor": {"placeholders": {"doctor": {"type": "String"}}},
+  "@saveDoctor": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
   "unsaveDoctor": "Remove {doctor} from saved",
-  "@unsaveDoctor": {"placeholders": {"doctor": {"type": "String"}}},
+  "@unsaveDoctor": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
   "savedAdded": "Saved",
   "@savedAdded": {},
   "savedRemoved": "Removed from saved",
@@ -1014,7 +1134,13 @@
   "earlierWatch": "Tell me if an earlier time opens",
   "@earlierWatch": {},
   "earlierWatchHelp": "If {doctor} has a free time sooner, we'll let you know. Your visit stays booked until you move it.",
-  "@earlierWatchHelp": {"placeholders": {"doctor": {"type": "String"}}},
+  "@earlierWatchHelp": {
+    "placeholders": {
+      "doctor": {
+        "type": "String"
+      }
+    }
+  },
   "earlierFound": "An earlier time is free",
   "@earlierFound": {},
   "earlierMove": "Move my visit to this time",
@@ -1070,7 +1196,13 @@
   "receiptPaidTo": "Paid to",
   "@receiptPaidTo": {},
   "receiptPaidToPlatform": "Saxlem, for {organization}",
-  "@receiptPaidToPlatform": {"placeholders": {"organization": {"type": "String"}}},
+  "@receiptPaidToPlatform": {
+    "placeholders": {
+      "organization": {
+        "type": "String"
+      }
+    }
+  },
   "receiptPatient": "Patient",
   "@receiptPatient": {},
   "receiptClinic": "Clinic",
@@ -1084,5 +1216,21 @@
   "receiptTextHeading": "Saxlem receipt",
   "@receiptTextHeading": {},
   "pushChannelName": "Visit and queue updates",
-  "@pushChannelName": {}
+  "@pushChannelName": {},
+  "appearanceTitle": "Appearance",
+  "@appearanceTitle": {
+    "description": "Settings row: light or dark look"
+  },
+  "appearanceSystem": "Same as phone",
+  "@appearanceSystem": {
+    "description": "Appearance option: follow the phone setting"
+  },
+  "appearanceLight": "Light",
+  "@appearanceLight": {
+    "description": "Appearance option: light"
+  },
+  "appearanceDark": "Dark",
+  "@appearanceDark": {
+    "description": "Appearance option: dark"
+  }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../design_system/foundations/saxlem_elevation.dart';
+import '../../../../design_system/components/content/saxlem_mark.dart';
 import '../../../../design_system/theme/saxlem_colors.dart';
 
 class DashboardHeader extends StatelessWidget {
@@ -31,6 +31,8 @@ class DashboardHeader extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        SaxlemMark(size: 38, onDark: colors.isDark),
+        const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,9 +40,8 @@ class DashboardHeader extends StatelessWidget {
               if (greeting.isNotEmpty) ...[
                 Text(
                   greeting,
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: colors.textSecondary,
-                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -51,7 +52,7 @@ class DashboardHeader extends StatelessWidget {
                   userName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.headlineMedium,
+                  style: theme.textTheme.headlineSmall,
                 ),
               ),
             ],
@@ -68,14 +69,14 @@ class DashboardHeader extends StatelessWidget {
                 color: colors.surfaceRaised,
                 shape: BoxShape.circle,
                 border: Border.all(color: colors.border),
-                boxShadow: SaxlemElevation.level1(colors.night),
+                boxShadow: colors.cardShadow,
               ),
               child: InkWell(
                 onTap: onNotificationPressed,
                 customBorder: const CircleBorder(),
                 child: SizedBox(
-                  width: 52,
-                  height: 52,
+                  width: 48,
+                  height: 48,
                   child: Stack(
                     clipBehavior: Clip.none,
                     alignment: Alignment.center,

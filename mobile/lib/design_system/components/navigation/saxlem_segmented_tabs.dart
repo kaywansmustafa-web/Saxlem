@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../foundations/saxlem_elevation.dart';
 import '../../foundations/saxlem_motion.dart';
 import '../../foundations/saxlem_radii.dart';
 import '../../theme/saxlem_colors.dart';
@@ -53,9 +52,7 @@ class SaxlemSegmentedTabs<T> extends StatelessWidget {
                           ? colors.surfaceRaised
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(SaxlemRadii.full),
-                      boxShadow: value == selected
-                          ? SaxlemElevation.level1(colors.night)
-                          : null,
+                      boxShadow: value == selected ? colors.cardShadow : null,
                     ),
                     child: FittedBox(
                       fit: BoxFit.scaleDown,

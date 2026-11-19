@@ -35,9 +35,7 @@ class InformationalPage extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: context.saxlemColors.deepAura,
                 borderRadius: BorderRadius.circular(26),
-                boxShadow: SaxlemElevation.glow(
-                  context.saxlemColors.brandPrimary,
-                ),
+                boxShadow: SaxlemElevation.glow(context.saxlemColors.brandFill),
               ),
               child: Icon(icon, size: 34, color: context.saxlemColors.onFill),
             ),

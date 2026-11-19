@@ -512,7 +512,7 @@ class _DetailsCard extends StatelessWidget {
         color: colors.surfaceRaised,
         borderRadius: BorderRadius.circular(SaxlemRadii.card),
         border: Border.all(color: colors.border),
-        boxShadow: SaxlemElevation.level1(colors.night),
+        boxShadow: colors.cardShadow,
       ),
       child: Column(
         children: [
@@ -570,7 +570,8 @@ class _ArrivalPanel extends StatelessWidget {
 }
 
 /// The top of an appointment: doctor, status, date, time and clinic. Upcoming
-/// visits sit on the Deep Aura gradient; past ones on a plain card.
+/// visits sit on the Design A hero (navy glass in dark, pale blue in light);
+/// past ones on a plain card.
 class _AppointmentHero extends StatelessWidget {
   const _AppointmentHero({
     required this.appointment,
@@ -584,10 +585,8 @@ class _AppointmentHero extends StatelessWidget {
     final colors = context.saxlemColors;
     final theme = Theme.of(context);
     final active = appointment.canMutate;
-    final ink = active ? colors.onFill : colors.textPrimary;
-    final sub = active
-        ? colors.onFill.withValues(alpha: .88)
-        : colors.textSecondary;
+    final ink = active ? colors.heroContent : colors.textPrimary;
+    final sub = active ? colors.heroContentMuted : colors.textSecondary;
     final initials = appointment.doctor.displayName
         .replaceFirst(RegExp(r'^(Dr\.?|د\.)\s*', caseSensitive: false), '')
         .split(RegExp(r'\s+'))
@@ -599,14 +598,13 @@ class _AppointmentHero extends StatelessWidget {
       child: Container(
         padding: const EdgeInsetsDirectional.all(12),
         decoration: BoxDecoration(
-          color: active
-              ? colors.onFill.withValues(alpha: .14)
-              : colors.surfaceSunken,
+          color: active ? colors.heroStrip : colors.surfaceSunken,
           borderRadius: BorderRadius.circular(SaxlemRadii.medium),
+          border: active ? Border.all(color: colors.border) : null,
         ),
         child: Row(
           children: [
-            Icon(icon, size: 18, color: ink),
+            Icon(icon, size: 18, color: active ? colors.brandPrimary : ink),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
@@ -626,12 +624,20 @@ class _AppointmentHero extends StatelessWidget {
         padding: const EdgeInsetsDirectional.all(20),
         decoration: BoxDecoration(
           color: active ? null : colors.surfaceRaised,
-          gradient: active ? colors.deepAura : null,
+          gradient: active ? colors.hero : null,
           borderRadius: BorderRadius.circular(SaxlemRadii.hero),
-          border: active ? null : Border.all(color: colors.border),
+          border: Border.all(color: active ? colors.heroBorder : colors.border),
           boxShadow: active
-              ? SaxlemElevation.glow(colors.brandPrimary)
-              : SaxlemElevation.level1(colors.night),
+              ? [
+                  BoxShadow(
+                    color: colors.brandFill.withValues(
+                      alpha: colors.isDark ? .28 : .16,
+                    ),
+                    blurRadius: 40,
+                    offset: const Offset(0, 16),
+                  ),
+                ]
+              : colors.cardShadow,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -644,9 +650,8 @@ class _AppointmentHero extends StatelessWidget {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: active
-                        ? colors.onFill.withValues(alpha: .2)
-                        : colors.brandTint,
+                    color: active ? null : colors.brandTint,
+                    gradient: active ? colors.deepAura : null,
                   ),
                   child: Text(
                     initials,
@@ -682,13 +687,17 @@ class _AppointmentHero extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: active ? colors.onFill : colors.surfaceSunken,
+                    color: active ? colors.liveSurface : colors.surfaceSunken,
                     borderRadius: BorderRadius.circular(SaxlemRadii.full),
+                    border: active
+                        ? Border.all(color: colors.liveBorder)
+                        : null,
                   ),
                   child: Text(
                     statusLabel,
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: active ? colors.night : colors.textSecondary,
+                      color: active ? colors.liveContent : colors.textSecondary,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),

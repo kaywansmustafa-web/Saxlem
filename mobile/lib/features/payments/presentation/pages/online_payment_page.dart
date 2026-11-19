@@ -328,7 +328,7 @@ class _AmountHero extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: colors.deepAura,
         borderRadius: BorderRadius.circular(SaxlemRadii.hero),
-        boxShadow: SaxlemElevation.glow(colors.brandPrimary),
+        boxShadow: SaxlemElevation.glow(colors.brandFill),
       ),
       child: Stack(
         clipBehavior: Clip.none,
@@ -467,7 +467,7 @@ class _PulseBeaconState extends State<_PulseBeacon>
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: colors.aura,
-            boxShadow: SaxlemElevation.glow(colors.brandPrimary),
+            boxShadow: SaxlemElevation.glow(colors.brandFill),
           ),
           child: Icon(
             Icons.phone_iphone_rounded,
@@ -665,7 +665,7 @@ class _SuccessBurstState extends State<_SuccessBurst>
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: colors.aura,
-                    boxShadow: SaxlemElevation.glow(colors.brandPrimary),
+                    boxShadow: SaxlemElevation.glow(colors.brandFill),
                   ),
                   child: Icon(
                     Icons.check_rounded,

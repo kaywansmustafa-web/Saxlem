@@ -159,13 +159,19 @@ class _HomeDiscoverySectionsState extends State<HomeDiscoverySections> {
         if (symptoms.isNotEmpty) ...[
           const SizedBox(height: 22),
           _Heading(strings.whatsBothering),
-          const SizedBox(height: 10),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
+          const SizedBox(height: 14),
+          GridView.count(
+            crossAxisCount: 4,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 14,
+            crossAxisSpacing: 8,
+            childAspectRatio: .72,
+            padding: EdgeInsets.zero,
             children: [
-              for (final item in symptoms)
-                _SymptomChip(
+              for (final (index, item) in symptoms.indexed)
+                _SymptomTile(
+                  index: index,
                   icon: item.symptom.icon,
                   label: item.symptom.label(strings),
                   onTap: () => widget.onOpenDiscover(
@@ -180,7 +186,7 @@ class _HomeDiscoverySectionsState extends State<HomeDiscoverySections> {
           _Heading(strings.freeTodayFilter),
           const SizedBox(height: 12),
           SizedBox(
-            height: 150,
+            height: 160,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: _freeToday.length,
@@ -205,7 +211,7 @@ class _HomeDiscoverySectionsState extends State<HomeDiscoverySections> {
           ),
           const SizedBox(height: 4),
           SizedBox(
-            height: 104,
+            height: 112,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: specialties.length,
@@ -250,45 +256,63 @@ class _Heading extends StatelessWidget {
   );
 }
 
-class _SymptomChip extends StatelessWidget {
-  const _SymptomChip({
+/// Design A symptom tile: a coloured shape with the icon, the words below.
+class _SymptomTile extends StatelessWidget {
+  const _SymptomTile({
+    required this.index,
     required this.icon,
     required this.label,
     required this.onTap,
   });
+  final int index;
   final IconData icon;
   final String label;
   final VoidCallback onTap;
 
+  static const _kinds = [
+    SaxlemShapeKind.circle,
+    SaxlemShapeKind.cookie,
+    SaxlemShapeKind.squircle,
+    SaxlemShapeKind.flower,
+  ];
+
   @override
   Widget build(BuildContext context) {
     final colors = context.saxlemColors;
+    final hues = [
+      (colors.roseSurface, colors.roseContent),
+      (colors.cautionSurface, colors.cautionContent),
+      (colors.liveSurface, colors.liveContent),
+      (colors.lilacSurface, colors.lilacContent),
+      (colors.infoSurface, colors.infoContent),
+    ];
+    final (wash, tint) = hues[index % hues.length];
     return Semantics(
       button: true,
-      child: Material(
-        color: colors.surfaceRaised,
-        shape: StadiumBorder(side: BorderSide(color: colors.border)),
-        child: InkWell(
-          customBorder: const StadiumBorder(),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(12, 9, 14, 9),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, size: 18, color: colors.brandPrimary),
-                const SizedBox(width: 6),
-                Flexible(
-                  child: Text(
-                    label,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.labelLarge?.copyWith(color: colors.textPrimary),
-                  ),
-                ),
-              ],
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Column(
+          children: [
+            SaxlemShape(
+              kind: _kinds[index % _kinds.length],
+              color: wash,
+              size: 62,
+              child: Icon(icon, size: 26, color: tint),
             ),
-          ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w500,
+                height: 1.25,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -333,15 +357,29 @@ class _FreeDoctorCard extends StatelessWidget {
                       vertical: 5,
                     ),
                     decoration: BoxDecoration(
-                      color: colors.positiveSurface,
+                      color: colors.liveSurface,
                       borderRadius: BorderRadius.circular(SaxlemRadii.full),
                     ),
-                    child: Text(
-                      time,
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        color: colors.positiveContent,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: colors.liveContent,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          time,
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: colors.liveContent,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -406,10 +444,10 @@ class _SpecialtyTile extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  gradient: colors.deepAura,
+                  color: colors.brandTint,
                   borderRadius: BorderRadius.circular(13),
                 ),
-                child: Icon(icon, size: 21, color: colors.onFill),
+                child: Icon(icon, size: 21, color: colors.brandPrimary),
               ),
               const SizedBox(height: 8),
               Text(

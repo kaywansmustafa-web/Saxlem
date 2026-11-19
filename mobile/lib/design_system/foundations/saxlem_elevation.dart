@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-/// Soft, navy-tinted shadows (v2 "Aura"). The [shadow] argument is kept for
-/// compatibility; depth is always tinted with the brand's night colour.
+/// Soft shadows tinted with [shadow] (pass `colors.night`): navy in the
+/// light theme, near-black in the dark one, where cards lean on their
+/// hairline edge instead.
 abstract final class SaxlemElevation {
   static const List<BoxShadow> none = [];
-  static const Color _night = Color(0xFF0B1533);
 
   /// v3: a hairline contact shadow plus a wide, soft lift.
   static List<BoxShadow> level1(Color shadow) => [
     BoxShadow(
-      color: _night.withValues(alpha: .04),
+      color: shadow.withValues(alpha: .04),
       blurRadius: 2,
       offset: const Offset(0, 1),
     ),
     BoxShadow(
-      color: _night.withValues(alpha: .08),
+      color: shadow.withValues(alpha: .08),
       blurRadius: 28,
       spreadRadius: -12,
       offset: const Offset(0, 10),
@@ -23,12 +23,12 @@ abstract final class SaxlemElevation {
 
   static List<BoxShadow> level2(Color shadow) => [
     BoxShadow(
-      color: _night.withValues(alpha: .06),
+      color: shadow.withValues(alpha: .06),
       blurRadius: 6,
       offset: const Offset(0, 2),
     ),
     BoxShadow(
-      color: _night.withValues(alpha: .12),
+      color: shadow.withValues(alpha: .12),
       blurRadius: 40,
       offset: const Offset(0, 16),
     ),
@@ -38,7 +38,7 @@ abstract final class SaxlemElevation {
 
   static List<BoxShadow> level4(Color shadow) => [
     BoxShadow(
-      color: _night.withValues(alpha: .16),
+      color: shadow.withValues(alpha: .16),
       blurRadius: 56,
       offset: const Offset(0, 24),
     ),

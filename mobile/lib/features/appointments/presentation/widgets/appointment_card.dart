@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/patient_appointment.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../../design_system/components/content/saxlem_status_pill.dart';
-import '../../../../design_system/foundations/saxlem_elevation.dart';
 import '../../../../design_system/foundations/saxlem_radii.dart';
 import '../../../../design_system/theme/saxlem_colors.dart';
 
@@ -42,7 +41,7 @@ class AppointmentCard extends StatelessWidget {
             color: colors.surfaceRaised,
             borderRadius: BorderRadius.circular(SaxlemRadii.card),
             border: Border.all(color: colors.border),
-            boxShadow: SaxlemElevation.level1(colors.night),
+            boxShadow: colors.cardShadow,
           ),
           child: InkWell(
             onTap: onView,

@@ -3501,6 +3501,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Visit and queue updates'**
   String get pushChannelName;
+
+  /// Settings row: light or dark look
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearanceTitle;
+
+  /// Appearance option: follow the phone setting
+  ///
+  /// In en, this message translates to:
+  /// **'Same as phone'**
+  String get appearanceSystem;
+
+  /// Appearance option: light
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get appearanceLight;
+
+  /// Appearance option: dark
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get appearanceDark;
 }
 
 class _AppLocalizationsDelegate

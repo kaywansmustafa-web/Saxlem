@@ -22,7 +22,7 @@ void main() {
     expect(find.text('Popular specialties'), findsOneWidget);
     // Emergency is always one (confirmed) tap away.
     expect(find.text('Emergency'), findsOneWidget);
-    expect(find.text('Find and book trusted doctors'), findsOneWidget);
+    expect(find.text('Book appointment'), findsOneWidget);
     expect(find.text('Patients ahead'), findsNothing);
     // No placeholder people, ratings or prices: home shows only real data.
     expect(find.text('Recommended doctors'), findsNothing);

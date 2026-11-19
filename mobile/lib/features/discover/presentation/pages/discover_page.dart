@@ -3,7 +3,7 @@ import '../../../../core/formatting/clinic_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../../config/theme/app_colors.dart';
+import '../../../../design_system/theme/saxlem_colors.dart';
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../../design_system/components/feedback/saxlem_state_view.dart';
 import '../../../../design_system/components/layout/saxlem_responsive_content.dart';
@@ -119,7 +119,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   @override
   Widget build(BuildContext context) => ColoredBox(
-    color: AppColors.background,
+    color: context.saxlemColors.canvas,
     child: SafeArea(
       child: ListenableBuilder(
         listenable: widget.controller,

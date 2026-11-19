@@ -28,14 +28,19 @@ class NotificationCard extends StatelessWidget {
         type: MaterialType.transparency,
         child: Ink(
           decoration: BoxDecoration(
-            color: unread ? const Color(0xFFF7F9FF) : colors.surfaceRaised,
+            color: unread
+                ? Color.alphaBlend(
+                    colors.brandPrimary.withValues(alpha: .05),
+                    colors.surfaceRaised,
+                  )
+                : colors.surfaceRaised,
             borderRadius: BorderRadius.circular(SaxlemRadii.card),
             border: Border.all(
               color: unread
                   ? colors.brandPrimary.withValues(alpha: .18)
                   : colors.border,
             ),
-            boxShadow: SaxlemElevation.level1(colors.night),
+            boxShadow: colors.cardShadow,
           ),
           child: InkWell(
             onTap: onTap,

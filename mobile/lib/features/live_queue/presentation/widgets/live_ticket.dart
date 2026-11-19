@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/localization/localization_extensions.dart';
 import '../../../../design_system/components/content/saxlem_avatar.dart';
+import '../../../../design_system/components/content/saxlem_shape.dart';
 import '../../../../design_system/foundations/saxlem_elevation.dart';
 import '../../../../design_system/foundations/saxlem_motion.dart';
 import '../../../../design_system/foundations/saxlem_radii.dart';
@@ -170,7 +171,8 @@ class _LiveBadgeState extends State<LiveBadge>
     return Container(
       padding: const EdgeInsetsDirectional.fromSTEB(10, 5, 12, 5),
       decoration: BoxDecoration(
-        color: colors.brandTint,
+        color: colors.liveSurface,
+        border: Border.all(color: colors.liveBorder),
         borderRadius: BorderRadius.circular(SaxlemRadii.full),
       ),
       child: Row(
@@ -182,11 +184,11 @@ class _LiveBadgeState extends State<LiveBadge>
               width: 7,
               height: 7,
               decoration: BoxDecoration(
-                color: colors.brandPrimary,
+                color: colors.liveContent,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: colors.brandPrimary.withValues(
+                    color: colors.liveContent.withValues(
                       alpha: (1 - _pulse.value) * .5,
                     ),
                     spreadRadius: _pulse.value * 6,
@@ -199,7 +201,7 @@ class _LiveBadgeState extends State<LiveBadge>
           Text(
             context.l10n.live,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: colors.brandPrimary,
+              color: colors.liveContent,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -500,26 +502,62 @@ class _QueueSteps extends StatelessWidget {
   }
 }
 
-class _CalledTicket extends StatelessWidget {
+/// "It's your turn": the one moment that must not be missed. The ticket
+/// becomes a tall Deep Aura card with the number on a white cookie that
+/// pulses (still when the phone asks for less motion), and the clinic's own
+/// instruction ("Go to room 2") underneath in large type.
+class _CalledTicket extends StatefulWidget {
   const _CalledTicket({required this.status});
   final PatientQueueStatus status;
 
   @override
+  State<_CalledTicket> createState() => _CalledTicketState();
+}
+
+class _CalledTicketState extends State<_CalledTicket>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulse = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1800),
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _pulse
+        ..stop()
+        ..value = .35;
+    } else if (!_pulse.isAnimating) {
+      _pulse.repeat();
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final status = widget.status;
     final colors = context.saxlemColors;
     final theme = Theme.of(context);
     final l10n = context.l10n;
+    final white = colors.onFill;
     return Semantics(
       container: true,
       liveRegion: true,
       label: '${l10n.itsYourTurn}. ${status.instruction}',
       child: Container(
         clipBehavior: Clip.antiAlias,
+        constraints: const BoxConstraints(minHeight: 440),
         decoration: BoxDecoration(
           gradient: colors.deepAura,
           borderRadius: BorderRadius.circular(SaxlemRadii.hero),
           boxShadow: [
-            ...SaxlemElevation.glow(colors.brandPrimary),
+            ...SaxlemElevation.glow(colors.brandFill),
             ...SaxlemElevation.level2(colors.night),
           ],
         ),
@@ -528,58 +566,88 @@ class _CalledTicket extends StatelessWidget {
             PositionedDirectional(
               end: -90,
               top: -110,
-              child: Container(
-                width: 260,
-                height: 260,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      colors.onFill.withValues(alpha: .22),
-                      colors.onFill.withValues(alpha: 0),
-                    ],
-                  ),
-                ),
-              ),
+              child: _Glow(color: white, size: 280),
+            ),
+            PositionedDirectional(
+              start: -120,
+              bottom: -140,
+              child: _Glow(color: colors.auraEnd, size: 320),
             ),
             Padding(
-              padding: const EdgeInsetsDirectional.all(20),
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 24),
               child: ExcludeSemantics(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _TicketHeader(status: status, onGradient: true),
                     const SizedBox(height: 28),
-                    Container(
-                      padding: const EdgeInsetsDirectional.symmetric(
-                        horizontal: 14,
-                        vertical: 7,
-                      ),
-                      decoration: BoxDecoration(
-                        color: colors.onFill,
-                        borderRadius: BorderRadius.circular(SaxlemRadii.full),
-                      ),
-                      child: Text(
-                        l10n.itsYourTurn,
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: colors.night,
-                          fontWeight: FontWeight.w700,
+                    Center(
+                      child: SizedBox.square(
+                        dimension: 184,
+                        child: AnimatedBuilder(
+                          animation: _pulse,
+                          builder: (context, child) => CustomPaint(
+                            painter: _PulsePainter(_pulse.value, white),
+                            child: child,
+                          ),
+                          child: Center(
+                            child: SaxlemShape(
+                              kind: SaxlemShapeKind.cookie,
+                              color: white,
+                              size: 132,
+                              child: status.ticketNumber == null
+                                  ? Icon(
+                                      Icons.notifications_active_rounded,
+                                      size: 48,
+                                      color: colors.brandFill,
+                                    )
+                                  : FittedBox(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(18),
+                                        child: Text(
+                                          '${status.ticketNumber}',
+                                          style: _ticketNumberStyle(
+                                            context,
+                                            colors.brandFill,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                    if (status.ticketNumber != null) ...[
-                      const SizedBox(height: 12),
-                      Text(
-                        '${status.ticketNumber}',
-                        style: _ticketNumberStyle(context, colors.onFill),
+                    const SizedBox(height: 22),
+                    Text(
+                      l10n.itsYourTurn,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        color: white,
+                        fontWeight: FontWeight.w700,
                       ),
-                    ],
+                    ),
                     if (status.instruction.isNotEmpty) ...[
-                      const SizedBox(height: 12),
-                      Text(
-                        status.instruction,
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          color: colors.onFill,
+                      const SizedBox(height: 14),
+                      Container(
+                        padding: const EdgeInsetsDirectional.symmetric(
+                          horizontal: 18,
+                          vertical: 14,
+                        ),
+                        decoration: BoxDecoration(
+                          color: white.withValues(alpha: .14),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: white.withValues(alpha: .28),
+                          ),
+                        ),
+                        child: Text(
+                          status.instruction,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            color: white,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ],
@@ -592,6 +660,50 @@ class _CalledTicket extends StatelessWidget {
       ),
     );
   }
+}
+
+class _Glow extends StatelessWidget {
+  const _Glow({required this.color, required this.size});
+  final Color color;
+  final double size;
+  @override
+  Widget build(BuildContext context) => Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      gradient: RadialGradient(
+        colors: [color.withValues(alpha: .24), color.withValues(alpha: 0)],
+      ),
+    ),
+  );
+}
+
+/// Two soft rings that spread out from the ticket number.
+class _PulsePainter extends CustomPainter {
+  _PulsePainter(this.t, this.color);
+  final double t;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final centre = size.center(Offset.zero);
+    for (final phase in [0.0, .5]) {
+      final p = (t + phase) % 1;
+      final radius = 66 + p * (size.width / 2 - 66);
+      canvas.drawCircle(
+        centre,
+        radius,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2
+          ..color = color.withValues(alpha: (1 - p) * .45),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_PulsePainter old) => old.t != t;
 }
 
 enum _NoticeTone { positive, caution, neutral }

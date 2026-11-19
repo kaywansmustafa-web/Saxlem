@@ -63,7 +63,9 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     final colors = context.saxlemColors;
     return Scaffold(
-      backgroundColor: colors.night,
+      // The native launch screens (iOS storyboard, Android launch_background)
+      // are this exact navy in light and dark mode, so there is no jump.
+      backgroundColor: SaxlemColors.light.night,
       body: Semantics(
         label: 'Saxlem',
         image: true,

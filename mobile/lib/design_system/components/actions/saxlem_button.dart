@@ -104,7 +104,7 @@ class _SaxlemButtonState extends State<SaxlemButton> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(SaxlemRadii.large),
         boxShadow: isPrimary && enabled
-            ? SaxlemElevation.glow(colors.brandPrimary)
+            ? SaxlemElevation.glow(colors.brandFill)
             : SaxlemElevation.none,
       ),
       child: button,

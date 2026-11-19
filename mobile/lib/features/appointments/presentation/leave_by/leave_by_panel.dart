@@ -15,8 +15,8 @@ enum LeaveByLook {
   /// A card of its own, on the visit's page.
   card,
 
-  /// One line inside Home's dark "next visit" card.
-  onAura,
+  /// A strip inside Home's "next visit" card (Design A).
+  onHero,
 }
 
 /// "Leave by 09:40 · 14 min drive · 8.2 km", from the patient's location, for
@@ -110,7 +110,7 @@ class _LeaveByPanelState extends State<LeaveByPanel> {
       listenable: controller,
       builder: (context, _) => switch (widget.look) {
         LeaveByLook.card => _card(context, controller),
-        LeaveByLook.onAura => _line(context, controller),
+        LeaveByLook.onHero => _line(context, controller),
       },
     );
   }
@@ -391,40 +391,65 @@ class _LeaveByPanelState extends State<LeaveByPanel> {
     final theme = Theme.of(context);
     final strings = context.l10n;
     final state = controller.state;
-    final (IconData, String, VoidCallback?)? line = switch (state) {
+    // (icon, tone, title, detail, button label, action)
+    final (IconData, Color, Color, String, String?, String?, VoidCallback?)?
+    line = switch (state) {
       LeaveByAsk() => (
         Icons.directions_car_rounded,
-        '${strings.leaveAskTitle} · ${strings.leaveAskButton}',
+        colors.cautionContent,
+        colors.cautionSurface,
+        strings.leaveAskTitle,
+        null,
+        strings.leaveAskButton,
         controller.enable,
       ),
       LeaveByWorking() => (
         Icons.directions_car_rounded,
+        colors.cautionContent,
+        colors.cautionSurface,
         strings.leaveWorking,
+        null,
+        null,
         null,
       ),
       LeaveByReady(:final plan) when controller.canSayOnMyWay(plan) => (
         _late(plan)
             ? Icons.warning_amber_rounded
             : Icons.directions_car_rounded,
-        '${_headline(strings, plan)} · ${strings.leaveOnMyWay}',
+        colors.cautionContent,
+        colors.cautionSurface,
+        _headline(strings, plan),
+        strings.minutesShortDrive(plan.travelMinutes),
+        strings.leaveOnMyWay,
         controller.onMyWay,
       ),
       LeaveByReady(:final plan) => (
         Icons.directions_car_rounded,
-        // Short enough for one line on a phone; the visit page has the rest.
-        '${_headline(strings, plan)} · ${strings.minutesShortDrive(plan.travelMinutes)}',
+        colors.cautionContent,
+        colors.cautionSurface,
+        _headline(strings, plan),
+        strings.minutesShortDrive(plan.travelMinutes),
+        null,
         null,
       ),
       LeaveByOnTheWay(:final arrivalEta) => (
         Icons.near_me_rounded,
+        colors.liveContent,
+        colors.liveSurface,
         strings.leaveExpectedShort(ClinicFormat.time(arrivalEta)),
+        null,
+        null,
         null,
       ),
       LeaveByBlocked(:final problem) => (
         Icons.location_off_rounded,
+        colors.cautionContent,
+        colors.cautionSurface,
         problem == LocationProblem.serviceOff
             ? strings.leaveServiceOff
             : strings.leaveDeniedForever,
+        null,
+        null,
         () async {
           await controller.openSettings();
           await controller.refresh();
@@ -433,53 +458,102 @@ class _LeaveByPanelState extends State<LeaveByPanel> {
       LeaveByHidden() || LeaveByFailed() => null,
     };
     if (line == null) return const SizedBox.shrink();
-    final (icon, text, onTap) = line;
-    final content = Container(
-      padding: const EdgeInsetsDirectional.symmetric(
-        horizontal: 12,
-        vertical: 10,
-      ),
-      decoration: BoxDecoration(
-        color: colors.onFill.withValues(alpha: .16),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: colors.onFill),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: theme.textTheme.labelLarge?.copyWith(
-                color: colors.onFill,
-                fontWeight: FontWeight.w700,
+    final (icon, tint, wash, title, detail, button, onTap) = line;
+    // The first ask has a long button label: it goes under the words, full
+    // width, so neither has to squeeze (Kurdish and Arabic run longer).
+    final buttonBelow = state is LeaveByAsk && button != null;
+    final action = button == null
+        ? null
+        : FilledButton.icon(
+            onPressed: onTap,
+            style: FilledButton.styleFrom(
+              minimumSize: const Size(48, 44),
+              padding: const EdgeInsetsDirectional.symmetric(horizontal: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(13),
+              ),
+              textStyle: theme.textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.w600,
               ),
             ),
+            icon: const Icon(Icons.near_me_rounded, size: 16),
+            label: Text(button),
+          );
+    final strip = Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: colors.heroStrip,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: colors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: wash,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, size: 20, color: tint),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        color: colors.heroContent,
+                      ),
+                    ),
+                    if (detail != null)
+                      Text(
+                        detail,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colors.heroContentMuted,
+                          fontSize: 13,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              if (action != null && !buttonBelow) ...[
+                const SizedBox(width: 8),
+                action,
+              ] else if (onTap != null)
+                Icon(
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.chevron_left_rounded
+                      : Icons.chevron_right_rounded,
+                  size: 20,
+                  color: colors.heroContentMuted,
+                ),
+            ],
           ),
-          if (onTap != null)
-            Icon(
-              Directionality.of(context) == TextDirection.rtl
-                  ? Icons.chevron_left_rounded
-                  : Icons.chevron_right_rounded,
-              size: 18,
-              color: colors.onFill,
-            ),
+          if (buttonBelow) ...[const SizedBox(height: 10), action!],
         ],
       ),
     );
     return Padding(
-      padding: const EdgeInsetsDirectional.only(top: 10),
+      padding: const EdgeInsetsDirectional.only(top: 14),
       child: Semantics(
         liveRegion: state is LeaveByReady,
-        button: onTap != null,
-        child: onTap == null
-            ? content
+        button: onTap != null && button == null,
+        child: onTap == null || button != null
+            ? strip
             : Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(18),
                   onTap: onTap,
-                  child: content,
+                  child: strip,
                 ),
               ),
       ),

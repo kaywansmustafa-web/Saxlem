@@ -89,7 +89,7 @@ class _SavedDoctorsStripState extends State<SavedDoctorsStrip> {
           ),
           const SizedBox(height: 12),
           SizedBox(
-            height: 132,
+            height: 144,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: _doctors.length,
@@ -120,10 +120,10 @@ class _SavedDoctorsStripState extends State<SavedDoctorsStrip> {
                                 semanticLabel: doctor.doctorDisplayName,
                               ),
                               const Spacer(),
-                              const Icon(
+                              Icon(
                                 Icons.favorite_rounded,
                                 size: 18,
-                                color: Color(0xFFE5484D),
+                                color: context.saxlemColors.roseContent,
                               ),
                             ],
                           ),

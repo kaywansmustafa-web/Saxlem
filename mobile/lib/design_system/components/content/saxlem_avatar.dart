@@ -53,7 +53,7 @@ class SaxlemAvatar extends StatelessWidget {
             ? BoxDecoration(
                 gradient: colors.deepAura,
                 borderRadius: BorderRadius.circular(size * .34),
-                boxShadow: SaxlemElevation.glow(colors.brandPrimary),
+                boxShadow: SaxlemElevation.glow(colors.brandFill),
               )
             : BoxDecoration(color: colors.brandTint, shape: BoxShape.circle),
         child: imageUrl == null

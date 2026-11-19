@@ -11,6 +11,9 @@ abstract final class SaxlemTypography {
   static const display = 'Sora';
   static const text = 'Inter';
 
+  /// Design A's data labels (English only; see SaxlemDataLabel).
+  static const mono = 'JetBrainsMono';
+
   /// Letter spacing for small-caps labels: none in Kurdish and Arabic, where
   /// spacing pulls joined letters apart.
   static double tracking(BuildContext context, double value) =>
@@ -98,12 +101,12 @@ abstract final class SaxlemTypography {
       ),
       titleMedium: style(17, 24, FontWeight.w600, primary, spacing: -.1),
       titleSmall: style(16, 22, FontWeight.w600, primary),
-      bodyLarge: style(16, 24, FontWeight.w400, primary),
-      bodyMedium: style(15, 22, FontWeight.w400, secondary),
-      bodySmall: style(14, 20, FontWeight.w400, secondary),
+      bodyLarge: style(17, 25, FontWeight.w400, primary),
+      bodyMedium: style(16, 23, FontWeight.w400, secondary),
+      bodySmall: style(15, 21, FontWeight.w400, secondary),
       labelLarge: style(16, 20, FontWeight.w600, primary, spacing: -.1),
-      labelMedium: style(14, 18, FontWeight.w600, primary),
-      labelSmall: style(12, 16, FontWeight.w600, secondary, spacing: .1),
+      labelMedium: style(15, 19, FontWeight.w600, primary),
+      labelSmall: style(13, 17, FontWeight.w600, secondary, spacing: .1),
     );
   }
 

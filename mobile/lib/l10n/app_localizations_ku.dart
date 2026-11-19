@@ -1979,4 +1979,16 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get pushChannelName => 'نویکرنێن ژڤانان و ڕێزبەندیێ';
+
+  @override
+  String get appearanceTitle => 'ڕۆهن یان تاری';
+
+  @override
+  String get appearanceSystem => 'وەکی مۆبایلی';
+
+  @override
+  String get appearanceLight => 'ڕۆهن';
+
+  @override
+  String get appearanceDark => 'تاری';
 }

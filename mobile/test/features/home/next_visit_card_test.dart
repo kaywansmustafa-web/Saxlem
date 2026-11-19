@@ -78,7 +78,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('Dr. Soon'), findsOneWidget);
-    expect(find.text('Your next visit · Today'), findsOneWidget);
+    // Design A data label: upper-case in English.
+    expect(find.text('YOUR NEXT VISIT · TODAY'), findsOneWidget);
     expect(find.text('13:30'), findsOneWidget);
     await tester.tap(find.text('Dr. Soon'));
     expect(opened, isTrue);

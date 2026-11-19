@@ -8,7 +8,6 @@ import '../../../../core/localization/supported_app_locale.dart';
 import 'package:flutter/material.dart';
 import '../../../../design_system/design_system.dart';
 
-import '../../../../config/theme/app_colors.dart';
 import '../../../../shared/widgets/navigation/saxlem_bottom_navigation.dart';
 import '../widgets/dashboard_view.dart';
 import '../../../discover/discover_feature.dart';
@@ -248,7 +247,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future<void> _openNotifications() => Navigator.of(context).push(
     MaterialPageRoute<void>(
       builder: (context) => Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: context.saxlemColors.canvas,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           surfaceTintColor: Colors.transparent,
@@ -282,7 +281,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final strings = context.l10n;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.saxlemColors.canvas,
       body: SafeArea(
         bottom: false,
         child: Column(

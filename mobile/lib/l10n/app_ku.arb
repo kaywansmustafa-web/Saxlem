@@ -744,5 +744,9 @@
   "receiptPhone": "تەلەفۆن",
   "receiptVisit": "سەرەدان",
   "receiptTextHeading": "پسوولا ساخلەم",
-  "pushChannelName": "نویکرنێن ژڤانان و ڕێزبەندیێ"
+  "pushChannelName": "نویکرنێن ژڤانان و ڕێزبەندیێ",
+  "appearanceTitle": "ڕۆهن یان تاری",
+  "appearanceSystem": "وەکی مۆبایلی",
+  "appearanceLight": "ڕۆهن",
+  "appearanceDark": "تاری"
 }

@@ -185,7 +185,7 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
                       color: colors.surfaceRaised,
                       borderRadius: BorderRadius.circular(SaxlemRadii.hero),
                       border: Border.all(color: colors.border),
-                      boxShadow: SaxlemElevation.level1(colors.night),
+                      boxShadow: colors.cardShadow,
                     ),
                     child: Column(
                       children: [

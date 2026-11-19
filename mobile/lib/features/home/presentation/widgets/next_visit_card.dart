@@ -13,6 +13,7 @@ import '../../../appointments/presentation/leave_by/leave_by_services.dart';
 import '../../../appointments/domain/repositories/patient_appointments_repository.dart';
 import '../../../live_queue/domain/entities/patient_queue_status.dart';
 import '../../../live_queue/domain/repositories/live_queue_repository.dart';
+import '../../../discover/presentation/widgets/doctor_result_card.dart';
 
 /// Home's first answer to "what's next?": the active patient's nearest booked
 /// visit. Quietly absent when there is none or it can't be loaded.
@@ -171,6 +172,10 @@ class _NextVisitCardState extends State<NextVisitCard> {
         : days == 1
         ? strings.tomorrowChip
         : ClinicFormat.clinicDay(next.startsAt, language);
+    final live = _live;
+    final ticket = _inQueue ? live?.ticketNumber : null;
+    final queueOpen = live != null && live.queueState == QueueState.open;
+    final rtl = Directionality.of(context) == TextDirection.rtl;
     return Padding(
       padding: const EdgeInsetsDirectional.only(top: 16),
       child: Semantics(
@@ -187,55 +192,62 @@ class _NextVisitCardState extends State<NextVisitCard> {
               open(next.id, inQueue: _inQueue);
             },
             child: Ink(
-              padding: const EdgeInsets.all(18),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: colors.deepAura,
+                gradient: colors.hero,
                 borderRadius: BorderRadius.circular(SaxlemRadii.hero),
-                boxShadow: SaxlemElevation.level2(colors.night),
+                border: Border.all(color: colors.heroBorder),
+                boxShadow: [
+                  BoxShadow(
+                    color: colors.brandFill.withValues(
+                      alpha: colors.isDark ? .25 : .16,
+                    ),
+                    blurRadius: 50,
+                    offset: const Offset(0, 20),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Row(
                     children: [
-                      Container(
-                        width: 62,
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        decoration: BoxDecoration(
-                          color: colors.onFill.withValues(alpha: .16),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              ClinicFormat.time(next.startsAt),
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                color: colors.onFill,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
+                      Expanded(
+                        child: SaxlemDataLabel(
+                          '${strings.nextVisitTitle} · $when',
+                          color: colors.heroContentMuted,
                         ),
                       ),
-                      const SizedBox(width: 14),
+                      if (queueOpen) ...[
+                        const SizedBox(width: 8),
+                        SaxlemStatusPill(
+                          label: strings.liveQueue,
+                          tone: SaxlemStatusTone.live,
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      SaxlemAvatar(
+                        semanticLabel: next.doctor.displayName,
+                        initials: doctorInitials(next.doctor.displayName),
+                        size: 48,
+                        ring: true,
+                      ),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '${strings.nextVisitTitle} · $when',
-                              style: theme.textTheme.labelMedium?.copyWith(
-                                color: colors.onFill.withValues(alpha: .85),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
                               next.doctor.displayName,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                color: colors.onFill,
-                                fontWeight: FontWeight.w700,
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                color: colors.heroContent,
+                                fontSize: 19,
                               ),
                             ),
                             const SizedBox(height: 2),
@@ -244,18 +256,52 @@ class _NextVisitCardState extends State<NextVisitCard> {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: colors.onFill.withValues(alpha: .85),
+                                color: colors.heroContentMuted,
                               ),
                             ),
                           ],
                         ),
                       ),
                       Icon(
-                        Directionality.of(context) == TextDirection.rtl
+                        rtl
                             ? Icons.chevron_left_rounded
                             : Icons.chevron_right_rounded,
-                        color: colors.onFill,
+                        color: colors.heroContentMuted,
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        ClinicFormat.time(next.startsAt),
+                        style: theme.textTheme.displayMedium?.copyWith(
+                          color: colors.heroContent,
+                          fontSize: 44,
+                          height: 1,
+                        ),
+                      ),
+                      const Spacer(),
+                      if (ticket != null)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            SaxlemDataLabel(
+                              strings.yourNumber,
+                              color: colors.heroContentMuted,
+                              size: 10,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              '$ticket',
+                              style: theme.textTheme.headlineMedium?.copyWith(
+                                color: colors.liveContent,
+                                height: 1,
+                              ),
+                            ),
+                          ],
+                        ),
                     ],
                   ),
                   if (!_inQueue)
@@ -264,7 +310,7 @@ class _NextVisitCardState extends State<NextVisitCard> {
                       appointment: next,
                       planner: _planner,
                       services: widget.leaveByServices,
-                      look: LeaveByLook.onAura,
+                      look: LeaveByLook.onHero,
                       now: widget.now,
                     ),
                   if (_liveLine(context) case final line?) ...[
@@ -272,24 +318,33 @@ class _NextVisitCardState extends State<NextVisitCard> {
                     Semantics(
                       liveRegion: true,
                       child: Container(
-                        padding: const EdgeInsetsDirectional.symmetric(
-                          horizontal: 12,
-                          vertical: 10,
-                        ),
+                        padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: colors.onFill.withValues(alpha: .16),
-                          borderRadius: BorderRadius.circular(14),
+                          color: colors.heroStrip,
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: colors.border),
                         ),
                         child: Row(
                           children: [
-                            Icon(line.icon, size: 18, color: colors.onFill),
-                            const SizedBox(width: 8),
+                            Container(
+                              width: 38,
+                              height: 38,
+                              decoration: BoxDecoration(
+                                color: colors.liveSurface,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                line.icon,
+                                size: 20,
+                                color: colors.liveContent,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
                             Expanded(
                               child: Text(
                                 line.text,
-                                style: theme.textTheme.labelLarge?.copyWith(
-                                  color: colors.onFill,
-                                  fontWeight: FontWeight.w700,
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  color: colors.heroContent,
                                 ),
                               ),
                             ),

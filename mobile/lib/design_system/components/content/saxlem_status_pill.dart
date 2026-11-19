@@ -2,7 +2,17 @@ import 'package:flutter/material.dart';
 import '../../foundations/saxlem_radii.dart';
 import '../../theme/saxlem_colors.dart';
 
-enum SaxlemStatusTone { neutral, informative, positive, caution, critical }
+/// Colour only means something: positive = on time / confirmed, live = the
+/// queue is moving now, caution = running late, informative = your turn
+/// soon, critical = cancelled or failed.
+enum SaxlemStatusTone {
+  neutral,
+  informative,
+  positive,
+  caution,
+  critical,
+  live,
+}
 
 class SaxlemStatusPill extends StatelessWidget {
   const SaxlemStatusPill({
@@ -32,6 +42,7 @@ class SaxlemStatusPill extends StatelessWidget {
         colors.criticalSurface,
         colors.criticalContent,
       ),
+      SaxlemStatusTone.live => (colors.liveSurface, colors.liveContent),
       SaxlemStatusTone.neutral => (colors.surfaceSunken, colors.textSecondary),
     };
     return Semantics(
@@ -57,6 +68,9 @@ class SaxlemStatusPill extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: content,
                   shape: BoxShape.circle,
+                  boxShadow: tone == SaxlemStatusTone.live
+                      ? [BoxShadow(color: content, blurRadius: 8)]
+                      : null,
                 ),
               ),
             const SizedBox(width: 6),

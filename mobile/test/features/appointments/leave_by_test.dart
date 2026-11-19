@@ -560,7 +560,8 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('Leave by 09:31 · 14 min drive'), findsOneWidget);
+      expect(find.text('Leave by 09:31'), findsOneWidget);
+      expect(find.text('14 min drive'), findsOneWidget);
       // Alerts for visits no longer coming up are dropped.
       expect(alerts.kept.single, {visit().id});
     });

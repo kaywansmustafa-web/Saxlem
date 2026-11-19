@@ -1,5 +1,7 @@
 export 'components/actions/saxlem_button.dart';
 export 'components/content/saxlem_card.dart';
+export 'components/content/saxlem_data_label.dart';
+export 'components/content/saxlem_shape.dart';
 export 'components/content/saxlem_mark.dart';
 export 'components/content/saxlem_avatar.dart';
 export 'components/content/saxlem_details_list.dart';

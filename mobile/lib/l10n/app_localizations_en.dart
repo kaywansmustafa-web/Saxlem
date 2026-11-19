@@ -1979,4 +1979,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pushChannelName => 'Visit and queue updates';
+
+  @override
+  String get appearanceTitle => 'Appearance';
+
+  @override
+  String get appearanceSystem => 'Same as phone';
+
+  @override
+  String get appearanceLight => 'Light';
+
+  @override
+  String get appearanceDark => 'Dark';
 }
