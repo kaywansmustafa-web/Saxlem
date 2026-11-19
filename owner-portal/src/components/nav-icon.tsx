@@ -1,5 +1,27 @@
 // Small line icons for the Owner Portal navigation. Decorative only.
 const paths: Record<string, React.ReactNode> = {
+  specialties: (
+    <>
+      <path d="M12 3v18M3 12h18" />
+      <rect x="6" y="6" width="12" height="12" rx="3" />
+    </>
+  ),
+  tiles: (
+    <>
+      <circle cx="7" cy="7" r="3.5" />
+      <rect x="13.5" y="3.5" width="7" height="7" rx="2" />
+      <rect x="3.5" y="13.5" width="7" height="7" rx="2" />
+      <circle cx="17" cy="17" r="3.5" />
+    </>
+  ),
+  sliders: (
+    <>
+      <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" />
+      <circle cx="16" cy="6" r="2" />
+      <circle cx="10" cy="12" r="2" />
+      <circle cx="18" cy="18" r="2" />
+    </>
+  ),
   dashboard: (
     <>
       <rect x="3" y="3" width="7" height="9" rx="2" />

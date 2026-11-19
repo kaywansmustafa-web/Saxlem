@@ -11,6 +11,7 @@ import { AdministrationModule } from './administration/administration.module';
 import { BillingModule } from './billing/billing.module';
 import { PlatformControlModule } from './platform-control/platform-control.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { AppConfigModule } from './app-config/app-config.module';
 
 @Module({})
 export class ClinicStaffModule {}
@@ -24,6 +25,7 @@ export class AuditModule {}
 
 @Module({
   imports: [
+    AppConfigModule,
     IdentityModule,
     AdministrationModule,
     BillingModule,

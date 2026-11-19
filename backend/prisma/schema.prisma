@@ -259,6 +259,7 @@ model User {
   recordedPayments     AppointmentPayment[]
   organizationPayouts  OrganizationPayout[]
   receptionistDoctors  ReceptionistDoctorAssignment[] @relation("ReceptionistDoctors")
+  platformSettings     PlatformSetting[]
 
   @@map("users")
 }
@@ -445,14 +446,68 @@ model Doctor {
 model Specialty {
   id          String                      @id @default(uuid(7)) @db.Uuid
   code        String                      @unique
+  /// The English name.
   displayName String                      @map("display_name")
+  /// Arabic and Badini names; null means "show the English name".
+  nameAr      String?                     @map("name_ar")
+  nameKu      String?                     @map("name_ku")
+  /// One of the app's icon keys (src/modules/catalog/catalog-rules.ts).
+  icon        String                      @default("hospital")
+  sortOrder   Int                         @default(100) @map("sort_order")
+  /// Shown in Home's specialty strip (doctor search lists every active one).
+  showOnHome  Boolean                     @default(true) @map("show_on_home")
   status      RecordStatus                @default(active)
   createdAt   DateTime                    @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime                    @updatedAt @map("updated_at") @db.Timestamptz(3)
   doctors     DoctorSpecialtyAssignment[]
+  concerns    HomeConcernSpecialty[]
 
   @@index([status, displayName])
+  @@index([status, sortOrder], map: "specialties_status_sort_idx")
   @@map("specialties")
+}
+
+/// A "What's bothering you?" tile on Home. Tapping it lists the doctors of
+/// every linked specialty.
+model HomeConcern {
+  id          String                 @id @default(uuid(7)) @db.Uuid
+  labelEn     String                 @map("label_en")
+  labelAr     String                 @map("label_ar")
+  labelKu     String                 @map("label_ku")
+  icon        String
+  /// blue | rose | amber | aqua | lilac
+  tone        String                 @default("blue")
+  sortOrder   Int                    @default(100) @map("sort_order")
+  status      RecordStatus           @default(active)
+  createdAt   DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime               @updatedAt @map("updated_at") @db.Timestamptz(3)
+  specialties HomeConcernSpecialty[]
+
+  @@index([status, sortOrder], map: "home_concerns_status_sort_idx")
+  @@map("home_concerns")
+}
+
+model HomeConcernSpecialty {
+  concernId   String      @map("concern_id") @db.Uuid
+  specialtyId String      @map("specialty_id") @db.Uuid
+  concern     HomeConcern @relation(fields: [concernId], references: [id], onDelete: Cascade, map: "home_concern_specialties_concern_fkey")
+  specialty   Specialty   @relation(fields: [specialtyId], references: [id], onDelete: Restrict, map: "home_concern_specialties_specialty_fkey")
+
+  @@id([concernId, specialtyId])
+  @@index([specialtyId], map: "home_concern_specialties_specialty_idx")
+  @@map("home_concern_specialties")
+}
+
+/// Values the owner changes from the Owner Portal (src/modules/app-settings).
+/// A missing key means the built-in default.
+model PlatformSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  updatedBy String?  @map("updated_by") @db.Uuid
+  updater   User?    @relation(fields: [updatedBy], references: [id], onDelete: SetNull, map: "platform_settings_updated_by_fkey")
+
+  @@map("platform_settings")
 }
 
 model DoctorSpecialtyAssignment {

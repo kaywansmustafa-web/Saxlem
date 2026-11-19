@@ -16,6 +16,9 @@ export const navigation = [
   ["Appointments", "/appointments"],
   ["Live Operations", "/live-operations"],
   ["Reviews", "/reviews"],
+  ["Specialties", "/specialties"],
+  ["Home tiles", "/home-tiles"],
+  ["App settings", "/app-settings"],
   ["Billing", "/billing"],
   ["Commissions", "/commissions"],
   ["Statements", "/statements"],
@@ -38,6 +41,9 @@ const icons: Record<string, string> = {
   "/appointments": "appointments",
   "/live-operations": "live",
   "/reviews": "reviews",
+  "/specialties": "specialties",
+  "/home-tiles": "tiles",
+  "/app-settings": "sliders",
   "/billing": "billing",
   "/commissions": "commissions",
   "/statements": "statements",
@@ -52,6 +58,8 @@ const icons: Record<string, string> = {
 const groupOf = (href: string) =>
   ["/dashboard", "/analytics"].includes(href)
     ? "Overview"
+    : ["/specialties", "/home-tiles", "/app-settings"].includes(href)
+      ? "App"
     : [
           "/organizations",
           "/clinics",
@@ -75,6 +83,7 @@ export const navigationGroups = [
   "Overview",
   "Network",
   "Operations",
+  "App",
   "Money",
   "System",
 ].map((title) => ({

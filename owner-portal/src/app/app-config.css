@@ -1,0 +1,148 @@
+/* Owner Portal → Specialties, Home tiles, App settings */
+.catalog-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.catalog-toolbar .form-error {
+  margin: 0;
+}
+.catalog-table td {
+  vertical-align: top;
+}
+.catalog-names {
+  display: grid;
+  gap: 2px;
+  margin: 4px 0;
+  font-size: 0.92rem;
+}
+.catalog-hint {
+  margin-inline-start: 8px;
+}
+.order-buttons {
+  display: inline-flex;
+  gap: 4px;
+}
+.row-muted {
+  opacity: 0.62;
+}
+.catalog-editor {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0;
+  max-width: 760px;
+}
+.catalog-editor h2 {
+  margin: 0;
+}
+.concern-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.concern-card {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: start;
+  padding: 16px;
+}
+.concern-card > .catalog-editor {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+.concern-preview {
+  display: grid;
+  place-items: center;
+  min-height: 72px;
+  padding: 8px;
+  border-radius: 22px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+}
+.concern-body {
+  display: grid;
+  gap: 2px;
+}
+.concern-body p {
+  margin: 6px 0;
+}
+.concern-body .badge {
+  justify-self: start;
+}
+.concern-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  max-width: 260px;
+}
+.tone-swatch {
+  width: 16px;
+  height: 16px;
+  border: 2px solid;
+  border-radius: 50%;
+}
+.settings-form {
+  display: grid;
+  gap: 16px;
+  max-width: 860px;
+}
+.settings-group {
+  display: grid;
+  gap: 14px;
+}
+.settings-group legend {
+  padding: 0 6px;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.setting-row {
+  display: grid;
+  gap: 4px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ax-line);
+}
+.setting-row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.setting-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.setting-input input {
+  max-width: 320px;
+}
+.setting-help {
+  margin: 0;
+  font-size: 0.9rem;
+}
+.settings-save {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  background: var(--ax-canvas);
+}
+.settings-save p {
+  margin: 0;
+}
+@media (max-width: 760px) {
+  .concern-card {
+    grid-template-columns: 1fr;
+  }
+  .concern-actions {
+    justify-content: flex-start;
+    max-width: none;
+  }
+}

@@ -1,6 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
+  ArrayMaxSize,
+  IsArray,
   IsIn,
   IsInt,
   IsOptional,
@@ -25,6 +27,24 @@ export class DoctorSearchDto {
   @IsOptional()
   @Matches(/^[a-z][a-z0-9-]{1,63}$/)
   specialty?: string;
+  @ApiPropertyOptional({
+    description:
+      'Doctors in ANY of these specialties, comma separated (a Home tile). Ignored when specialty is given.',
+    example: 'general-practice,internal-medicine',
+  })
+  @IsOptional()
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string'
+      ? value
+          .split(',')
+          .map((code) => code.trim())
+          .filter(Boolean)
+      : value,
+  )
+  @IsArray()
+  @ArrayMaxSize(30)
+  @Matches(/^[a-z][a-z0-9-]{1,63}$/, { each: true })
+  specialties?: string[];
   @ApiPropertyOptional({ format: 'uuid' })
   @IsOptional()
   @IsUUID()

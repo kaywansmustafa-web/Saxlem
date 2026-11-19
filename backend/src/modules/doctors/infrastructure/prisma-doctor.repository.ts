@@ -298,7 +298,16 @@ export class PrismaDoctorRepository implements DoctorRepository {
         ? {
             some: { specialty: { code: criteria.specialty, status: 'active' } },
           }
-        : { some: { specialty: { status: 'active' } } },
+        : criteria.specialties?.length
+          ? {
+              some: {
+                specialty: {
+                  code: { in: [...criteria.specialties] },
+                  status: 'active',
+                },
+              },
+            }
+          : { some: { specialty: { status: 'active' } } },
       ...(criteria.name
         ? {
             OR: [

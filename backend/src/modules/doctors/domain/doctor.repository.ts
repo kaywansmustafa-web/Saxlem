@@ -10,6 +10,8 @@ export interface DoctorSearchCriteria {
   readonly organizationId?: string | undefined;
   readonly clinicId?: string | undefined;
   readonly specialty?: string | undefined;
+  /** Any of these specialty codes (a Home tile links several). */
+  readonly specialties?: readonly string[] | undefined;
   readonly language?: string | undefined;
   readonly gender?: 'female' | 'male' | 'unspecified' | undefined;
   readonly status: 'active' | 'inactive';
